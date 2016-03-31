@@ -14,10 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settings.cpp
+    settingsdialog.cpp
 
 HEADERS  += mainwindow.h \
-    settings.h
+    settingsdialog.h
 
 FORMS    += mainwindow.ui \
-    settings.ui
+    settingsdialog.ui
+
+RESOURCES += \
+    images.qrc
+
+DISTFILES +=

@@ -8,7 +8,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class Settings;
+class SettingsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -18,10 +18,15 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_pushButtonStartTest_clicked();
+    void on_pushButtonHome_clicked();
+    void on_pushButtonResults_clicked();
+
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
-    Settings *settings;
+    SettingsDialog *settings;
     void inicializar();
     void conexiones();
 };
