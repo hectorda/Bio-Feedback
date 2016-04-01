@@ -7,14 +7,14 @@
 namespace Ui {
 class SettingsDialog;
 }
-
+class QIntValidator;
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
 
 public:
     struct Settings {
-        QString name;
+        QString portName;
         qint32 baudRate;
         QString stringBaudRate;
         QSerialPort::DataBits dataBits;
@@ -28,6 +28,7 @@ public:
         bool localEchoEnabled;
     };
 
+    Settings getCurrentSettings() const;
 
 public:
     explicit SettingsDialog(QWidget *parent = 0);
@@ -35,8 +36,22 @@ public:
 
 private:
     Ui::SettingsDialog *ui;
-    QSerialPort *serial;
+    Settings currentSettings;
+    QIntValidator *intValidator;
+
+private:
+    void fillPortsParameters();
+    void fillPortsInfo();
+    void updateSettings();
     void init_Connections();
+
+private slots:
+    void showPortInfo(int idx);
+    void apply();
+
+
+
+
 };
 
 #endif // SETTINGSDIALOG_H

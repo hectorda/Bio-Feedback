@@ -23,12 +23,22 @@ private slots:
     void on_pushButtonHome_clicked();
     void on_pushButtonResults_clicked();
 
+    void openSerialPort();
+    void closeSerialPort();
+    void readData();
+    void writeData();
+
+
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
     SettingsDialog *settings;
-    void inicializar();
-    void conexiones();
+    QElapsedTimer timer;
+    double samplesNumber;
+    QString serialReaded;
+
+    void init_Connections();
+
 };
 
 #endif // MAINWINDOW_H
