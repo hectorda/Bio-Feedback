@@ -22,12 +22,12 @@ private slots:
     void on_pushButtonStartTest_clicked();
     void on_pushButtonHome_clicked();
     void on_pushButtonResults_clicked();
+    void on_pushButtonTest1_clicked();
 
     void openSerialPort();
     void closeSerialPort();
     void readData();
     void writeData();
-
 
 private:
     Ui::MainWindow *ui;

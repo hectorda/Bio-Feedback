@@ -25,6 +25,7 @@ void MainWindow::init_Connections(){
     connect(ui->pushButtonExit,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),settings,SLOT(show()));
     connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
+    connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 }
 
@@ -36,13 +37,17 @@ void MainWindow::readData(){
             serialReaded=QString(serialData);
 
             QStringList linea=serialReaded.split(" ");
-                samplesNumber+=1;
-                const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
-                QTextStream(stdout)<<serialReaded<<status<<endl;
+            bool ok;
+            const double AngleX=QString(linea.at(0)).toDouble();
+            const double AngleY=QString(linea.at(1)).toDouble();
+
+            samplesNumber+=1;
+            const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
+            QTextStream(stdout)<<serialReaded<<status<<endl;
 //                showStatusMessage(status);
 //                emit emitstatustographics(status);
-                if(samplesNumber==1)//Cuando se agrega el primer dato, se inicia el tiempo.
-                    timer.start();
+            if(samplesNumber==1)//Cuando se agrega el primer dato, se inicia el tiempo.
+                timer.start();
 
 //                listaTiempos.append(timer.elapsed()/1000.0);
 //                datos.append(linea);
@@ -57,6 +62,8 @@ void MainWindow::readData(){
     else{
         serial->close();
         QTextStream(stdout)<<"Cerrado";
+        ui->pushButtonRestartTest->show();
+        ui->pushButtonResults->show();
 //        ui->connectButton->setDisabled(false);
 //        ui->stopButton->setDisabled(true);
 //        serial->close();
@@ -86,6 +93,8 @@ void MainWindow::openSerialPort()
     if (serial->open(QIODevice::ReadWrite)){
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
+        ui->pushButtonRestartTest->hide();
+        ui->pushButtonResults->hide();
 //        ui->connectButton->setDisabled(true);
 //        ui->stopButton->setDisabled(false);
 //        emit vamosagraficar(this->GetGraphicsCheckboxs());
@@ -119,10 +128,15 @@ void MainWindow::on_pushButtonStartTest_clicked()
 
 void MainWindow::on_pushButtonHome_clicked()
 {
-    ui->stackedWidget->setCurrentWidget(ui->widgetHome);
+    ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 }
 
 void MainWindow::on_pushButtonResults_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetResults);
+}
+
+void MainWindow::on_pushButtonTest1_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->widgetHome);
 }

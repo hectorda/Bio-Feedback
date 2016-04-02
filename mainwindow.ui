@@ -59,26 +59,26 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
-       <widget class="QLabel" name="label_2">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>120</y>
-          <width>111</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QLabel{
-	
-	color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 0, 0, 255), stop:0.339795 rgba(255, 0, 0, 255), stop:0.339799 rgba(255, 255, 255, 255), stop:0.662444 rgba(255, 255, 255, 255), stop:0.662469 rgba(0, 0, 255, 255), stop:1 rgba(0, 0, 255, 255));
-	font: 75 14pt &quot;MS Shell Dlg 2&quot;;
-}</string>
-        </property>
-        <property name="text">
-         <string>Bienvenido</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButtonTest1">
+            <property name="text">
+             <string>Prueba 1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButtonTest2">
+            <property name="text">
+             <string>Prueba 2</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="widgetHome">
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -98,6 +98,9 @@
             </property>
             <property name="maximum">
              <number>500</number>
+            </property>
+            <property name="value">
+             <number>4</number>
             </property>
            </widget>
           </item>
