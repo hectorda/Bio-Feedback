@@ -25,7 +25,7 @@ void MainWindow::init_Connections(){
     connect(ui->pushButtonExit,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),settings,SLOT(show()));
     connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
-    connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
+    //connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 }
 
