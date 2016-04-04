@@ -13,7 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings= new SettingsDialog;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+    ui->qCustomPlotGraphic->plotLayout()->insertRow(0);
+    ui->qCustomPlotGraphic->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGraphic, "Grafico de Tiempo vs Y"));
     init_Connections();
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -25,29 +30,51 @@ void MainWindow::init_Connections(){
     connect(ui->pushButtonExit,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),settings,SLOT(show()));
     connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
-    //connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
+    connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(this,SIGNAL(emitdata(double,double)),this,SLOT(realtimeDataSlot(double,double)));
 }
 
-void MainWindow::readData(){
+void MainWindow::init_graph()
+{
+    ui->qCustomPlotGraphic->removeGraph(0);
+    ui->qCustomPlotGraphic->addGraph(); // blue line
+    ui->qCustomPlotGraphic->graph(0)->setPen(QPen(Qt::blue));
+    ui->qCustomPlotGraphic->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
 
+
+//    // make left and bottom axes transfer their ranges to right and top axes:
+//    connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
+//    connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+//    dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+//    //doPlot();
+}
+
+
+void MainWindow::readData(){
     if ( timer.elapsed()/1000.0 <= (double)ui->spinBoxTime->value()){
         while (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
             serialReaded=QString(serialData);
 
             QStringList linea=serialReaded.split(" ");
-            bool ok;
             const double AngleX=QString(linea.at(0)).toDouble();
             const double AngleY=QString(linea.at(1)).toDouble();
 
             samplesNumber+=1;
-            const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
-            QTextStream(stdout)<<serialReaded<<status<<endl;
+
 //                showStatusMessage(status);
 //                emit emitstatustographics(status);
             if(samplesNumber==1)//Cuando se agrega el primer dato, se inicia el tiempo.
                 timer.start();
+
+            if(samplesNumber %5==0)
+                emit emitdata(timer.elapsed()/1000.0,AngleY);
+            //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
+            QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesNumber << " X: "<<AngleX<<" Y: "<< AngleY <<endl;
 
 //                listaTiempos.append(timer.elapsed()/1000.0);
 //                datos.append(linea);
@@ -75,6 +102,34 @@ void MainWindow::writeData()
     //serial->write(ui->serialDataLineEdit->text().toLocal8Bit());
 }
 
+void MainWindow::realtimeDataSlot(double X, double Y)
+{
+    ui->qCustomPlotGraphic->graph(0)->addData(X, Y);
+
+    //ui->graficoAcX->graph(1)->addData(tiempo, AcX);
+    // set data of dots:
+    //ui->graficoAcX->graph(2)->clearData();
+    //ui->graficoAcX->graph(2)->addData(tiempo, AcX+1);
+    //ui->graficoAcX->graph(3)->clearData();
+    //ui->graficoAcX->graph(3)->addData(tiempo, AcX+2);
+    // remove data of lines that's outside visible range:
+
+    ui->qCustomPlotGraphic->graph(0)->removeDataBefore(X-8);
+    //ui->graficoAcX->graph(1)->removeDataBefore(tiempo-8);
+    // rescale value (vertical) axis to fit the current data:
+    //rafico->graph(0)->rescaleValueAxis();
+    //ui->graficoAcX->graph(1)->rescaleValueAxis(true);
+
+
+
+    //Update the display range of your graph
+
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->qCustomPlotGraphic->yAxis->setRange(-40,40);
+    ui->qCustomPlotGraphic->xAxis->setRange(X, 8, Qt::AlignRight);
+    ui->qCustomPlotGraphic->replot();
+}
+
 void MainWindow::openSerialPort()
 {
     timer.start();
@@ -91,6 +146,8 @@ void MainWindow::openSerialPort()
     serial->setParity(QSerialPort::NoParity);
     serial->setFlowControl(QSerialPort::NoFlowControl);
     if (serial->open(QIODevice::ReadWrite)){
+         serial->clear();
+         init_graph();
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
         ui->pushButtonRestartTest->hide();
@@ -114,10 +171,10 @@ void MainWindow::closeSerialPort()
         QMessageBox::information(this,"Cerrar Puerto","Puerto Cerrado");
         QTextStream(stdout)<<"Cerrado";
         //ui->connectButton->setDisabled(false);
-    }
+    }/*
     else {
          QMessageBox::information(this,"Cerrar Puerto","El puerto ya estaba cerrado");
-    }
+    }*/
 }
 
 
@@ -129,6 +186,7 @@ void MainWindow::on_pushButtonStartTest_clicked()
 void MainWindow::on_pushButtonHome_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+    closeSerialPort();
 }
 
 void MainWindow::on_pushButtonResults_clicked()

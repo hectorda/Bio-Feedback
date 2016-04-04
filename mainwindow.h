@@ -28,17 +28,22 @@ private slots:
     void closeSerialPort();
     void readData();
     void writeData();
+    void realtimeDataSlot(double X,double Y);
+
+signals:
+    void emitdata(double,double);
+
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
     SettingsDialog *settings;
     QElapsedTimer timer;
-    double samplesNumber;
+    int samplesNumber;
     QString serialReaded;
 
     void init_Connections();
-
+    void init_graph();
 };
 
 #endif // MAINWINDOW_H
