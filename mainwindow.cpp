@@ -37,19 +37,18 @@ void MainWindow::init_Connections(){
 
 void MainWindow::init_graph()
 {
-    QMessageBox::information(this,"Graficos",QString::number(ui->qCustomPlotGraphic->graphCount()));
-    ui->qCustomPlotGraphic->removeGraph(0);
-    ui->qCustomPlotGraphic->removeGraph(1);
-    ui->qCustomPlotGraphic->removeGraph(2);
+//    QMessageBox::information(this,"Graficos",QString::number(ui->qCustomPlotGraphic->graphCount()));
+    ui->qCustomPlotGraphic->clearGraphs();
+//    ui->qCustomPlotGraphic->removeGraph(2);
     ui->qCustomPlotGraphic->addGraph(); // blue line
     ui->qCustomPlotGraphic->graph(0)->setPen(QPen(Qt::blue));
     ui->qCustomPlotGraphic->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
 
 
-//    ui->qCustomPlotGraphic->addGraph(); // blue dot
-//    ui->qCustomPlotGraphic->graph(1)->setPen(QPen(Qt::blue));
-//    ui->qCustomPlotGraphic->graph(1)->setLineStyle(QCPGraph::lsNone);
-//    ui->qCustomPlotGraphic->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
+    ui->qCustomPlotGraphic->addGraph(); // blue dot
+    ui->qCustomPlotGraphic->graph(1)->setPen(QPen(Qt::blue));
+    ui->qCustomPlotGraphic->graph(1)->setLineStyle(QCPGraph::lsNone);
+    ui->qCustomPlotGraphic->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
 
 
 
@@ -123,8 +122,8 @@ void MainWindow::realtimeDataSlot(double X, double Y)
     //ui->graficoAcX->graph(3)->clearData();
     //ui->graficoAcX->graph(3)->addData(tiempo, AcX+2);
     // remove data of lines that's outside visible range:
-//     ui->qCustomPlotGraphic->graph(1)->clearData();
-//     ui->qCustomPlotGraphic->graph(1)->addData(X, Y);
+     ui->qCustomPlotGraphic->graph(1)->clearData();
+     ui->qCustomPlotGraphic->graph(1)->addData(X, Y);
 
      ui->qCustomPlotGraphic->graph(0)->removeDataBefore(X-8);
     //ui->graficoAcX->graph(1)->removeDataBefore(tiempo-8);
