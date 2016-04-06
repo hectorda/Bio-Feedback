@@ -17,6 +17,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    struct Data{
+      double time;
+      double AX;
+      double AY;
+    };
 
 private slots:
     void on_pushButtonStartTest_clicked();
@@ -28,10 +33,10 @@ private slots:
     void closeSerialPort();
     void readData();
     void writeData();
-    void realtimeDataSlot(double X,double Y);
+    void realtimeDataSlot(Data data);
 
 signals:
-    void emitdata(double,double);
+    void emitdata(Data);
 
 
 private:

@@ -32,7 +32,7 @@ void MainWindow::init_Connections(){
     connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(this,SIGNAL(emitdata(double,double)),this,SLOT(realtimeDataSlot(double,double)));
+    connect(this,SIGNAL(emitdata(Data)),this,SLOT(realtimeDataSlot(Data)));
 }
 
 void MainWindow::init_graph()
@@ -80,9 +80,16 @@ void MainWindow::readData(){
             if(samplesNumber==1)//Cuando se agrega el primer dato, se inicia el tiempo.
                 timer.start();
 
-            if(samplesNumber %5==0)
-                emit emitdata(timer.elapsed()/1000.0,AngleY);
-            //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
+            if(samplesNumber %20==0){
+                Data data;
+                data.time=timer.elapsed()/1000.0;
+                data.AX=AngleX;
+                data.AY=AngleY;
+
+
+                emit emitdata(data);
+                //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
+            }
             QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesNumber << " X: "<<AngleX<<" Y: "<< AngleY <<endl;
 
 //                listaTiempos.append(timer.elapsed()/1000.0);
@@ -111,9 +118,9 @@ void MainWindow::writeData()
     //serial->write(ui->serialDataLineEdit->text().toLocal8Bit());
 }
 
-void MainWindow::realtimeDataSlot(double X, double Y)
+void MainWindow::realtimeDataSlot(Data data)
 {
-    ui->qCustomPlotGraphic->graph(0)->addData(X, Y);
+    ui->qCustomPlotGraphic->graph(0)->addData(data.AX, data.AY);
 
     //ui->graficoAcX->graph(1)->addData(tiempo, AcX);
     // set data of dots:
@@ -123,21 +130,22 @@ void MainWindow::realtimeDataSlot(double X, double Y)
     //ui->graficoAcX->graph(3)->addData(tiempo, AcX+2);
     // remove data of lines that's outside visible range:
      ui->qCustomPlotGraphic->graph(1)->clearData();
-     ui->qCustomPlotGraphic->graph(1)->addData(X, Y);
+     ui->qCustomPlotGraphic->graph(1)->addData(data.AX, data.AY);
 
-     ui->qCustomPlotGraphic->graph(0)->removeDataBefore(X-8);
+    // ui->qCustomPlotGraphic->graph(0)->removeDataBefore(data.time-8);
     //ui->graficoAcX->graph(1)->removeDataBefore(tiempo-8);
     // rescale value (vertical) axis to fit the current data:
     //rafico->graph(0)->rescaleValueAxis();
-    //ui->graficoAcX->graph(1)->rescaleValueAxis(true);
+    ui->qCustomPlotGraphic->graph(1)->rescaleValueAxis(true);
 
 
 
     //Update the display range of your graph
 
     // make key axis range scroll with the data (at a constant range size of 8):
+    ui->qCustomPlotGraphic->xAxis->setRange(-40,40);
     ui->qCustomPlotGraphic->yAxis->setRange(-40,40);
-    ui->qCustomPlotGraphic->xAxis->setRange(X, 8, Qt::AlignRight);
+    //ui->qCustomPlotGraphic->xAxis->setRange(data.time, 8, Qt::AlignRight);
     ui->qCustomPlotGraphic->replot();
 }
 
