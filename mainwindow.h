@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSerialPort>
+#include <qcustomplot.h>
 
 namespace Ui {
 class MainWindow;
@@ -34,9 +35,11 @@ private slots:
     void readData();
     void writeData();
     void realtimeDataSlot(Data data);
+    void replotgraph();
 
 signals:
     void emitdata(Data);
+    void senddata();
 
 
 private:
@@ -46,6 +49,9 @@ private:
     QElapsedTimer timer;
     int samplesNumber;
     QString serialReaded;
+    QVector<double> AnglesX;
+    QCPCurve *qccuve;
+    QVector<double> AnglesY;
 
     void init_Connections();
     void init_graph();

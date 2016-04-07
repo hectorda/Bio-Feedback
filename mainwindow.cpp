@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings= new SettingsDialog;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+    qccuve = new QCPCurve(ui->qCustomPlotGraphic->xAxis,ui->qCustomPlotGraphic->yAxis);
+    ui->qCustomPlotGraphic->addPlottable(qccuve);
     ui->qCustomPlotGraphic->plotLayout()->insertRow(0);
     ui->qCustomPlotGraphic->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGraphic, "Grafico de Tiempo vs Y"));
     init_Connections();
@@ -32,7 +34,8 @@ void MainWindow::init_Connections(){
     connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(this,SIGNAL(emitdata(Data)),this,SLOT(realtimeDataSlot(Data)));
+    //connect(this,SIGNAL(emitdata(Data)),this,SLOT(realtimeDataSlot(Data)));
+    connect(this,SIGNAL(senddata()),this,SLOT(replotgraph()));
 }
 
 void MainWindow::init_graph()
@@ -45,8 +48,8 @@ void MainWindow::init_graph()
     ui->qCustomPlotGraphic->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
 
 
-    ui->qCustomPlotGraphic->addGraph(); // blue dot
-    ui->qCustomPlotGraphic->graph(1)->setPen(QPen(Qt::blue));
+    ui->qCustomPlotGraphic->addGraph(); // red dot
+    ui->qCustomPlotGraphic->graph(1)->setPen(QPen(Qt::red));
     ui->qCustomPlotGraphic->graph(1)->setLineStyle(QCPGraph::lsNone);
     ui->qCustomPlotGraphic->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
 
@@ -85,9 +88,11 @@ void MainWindow::readData(){
                 data.time=timer.elapsed()/1000.0;
                 data.AX=AngleX;
                 data.AY=AngleY;
+                AnglesX.append(AngleX);
+                AnglesY.append(AngleY);
 
-
-                emit emitdata(data);
+                emit senddata();
+                //emit emitdata(data);
                 //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
             }
             QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesNumber << " X: "<<AngleX<<" Y: "<< AngleY <<endl;
@@ -149,10 +154,43 @@ void MainWindow::realtimeDataSlot(Data data)
     ui->qCustomPlotGraphic->replot();
 }
 
+void MainWindow::replotgraph()
+{
+    qccuve->setData(AnglesX, AnglesY);
+
+    //ui->graficoAcX->graph(1)->addData(tiempo, AcX);
+    // set data of dots:
+    //ui->graficoAcX->graph(2)->clearData();
+    //ui->graficoAcX->graph(2)->addData(tiempo, AcX+1);
+    //ui->graficoAcX->graph(3)->clearData();
+    //ui->graficoAcX->graph(3)->addData(tiempo, AcX+2);
+    // remove data of lines that's outside visible range:
+     ui->qCustomPlotGraphic->graph(1)->clearData();
+     ui->qCustomPlotGraphic->graph(1)->addData(AnglesX.last(), AnglesY.last());
+
+    // ui->qCustomPlotGraphic->graph(0)->removeDataBefore(data.time-8);
+    //ui->graficoAcX->graph(1)->removeDataBefore(tiempo-8);
+    // rescale value (vertical) axis to fit the current data:
+    //rafico->graph(0)->rescaleValueAxis();
+    ui->qCustomPlotGraphic->graph(1)->rescaleValueAxis(true);
+
+
+
+    //Update the display range of your graph
+
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->qCustomPlotGraphic->xAxis->setRange(-40,40);
+    ui->qCustomPlotGraphic->yAxis->setRange(-40,40);
+    //ui->qCustomPlotGraphic->xAxis->setRange(data.time, 8, Qt::AlignRight);
+    ui->qCustomPlotGraphic->replot();
+}
+
 void MainWindow::openSerialPort()
 {
     timer.start();
     samplesNumber=0;
+    AnglesX.clear();
+    AnglesY.clear();
 //    datos.clear();        //Limpieza de las listas
 //    listaTiempos.clear();
     SettingsDialog::Settings cs=settings->getCurrentSettings();
@@ -215,5 +253,5 @@ void MainWindow::on_pushButtonResults_clicked()
 
 void MainWindow::on_pushButtonTest1_clicked()
 {
-    ui->stackedWidget->setCurrentWidget(ui->widgetHome);
+    ui->stackedWidget->setCurrentWidget(ui->widgetConfigTest);
 }
