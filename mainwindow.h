@@ -35,12 +35,9 @@ private slots:
     void readData();
     void writeData();
     void realtimeDataSlot(Data data);
-    void replotgraph();
 
 signals:
     void emitdata(Data);
-    void senddata();
-
 
 private:
     Ui::MainWindow *ui;
@@ -49,9 +46,8 @@ private:
     QElapsedTimer timer;
     int samplesNumber;
     QString serialReaded;
-    QVector<double> AnglesX;
+    QList<Data> SampleList;
     QCPCurve *qccuve;
-    QVector<double> AnglesY;
 
     void init_Connections();
     void init_graph();

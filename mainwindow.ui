@@ -230,7 +230,7 @@ QPushButton:hover {
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit"/>
+            <widget class="QLineEdit" name="lineEditName"/>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_4">
@@ -373,9 +373,22 @@ border: 3px solid #398439;
            </widget>
           </item>
           <item>
+           <widget class="QLCDNumber" name="lcdNumberTime"/>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButtonResults">
             <property name="text">
              <string>Resultados</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxgraphupdate">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -399,10 +412,22 @@ border: 3px solid #398439;
       <widget class="QWidget" name="widgetResults">
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
            <string>Resultados</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelResultsName">
+             <property name="text">
+              <string>Paciente:</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
