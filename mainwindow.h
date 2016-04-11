@@ -3,8 +3,9 @@
 
 #include <QMainWindow>
 #include <QtSerialPort>
+#include <settingsdialog.h>
 #include <qcustomplot.h>
-#include "data.h"
+#include <data.h>
 
 namespace Ui {
 class MainWindow;
@@ -44,8 +45,8 @@ private:
     QElapsedTimer timer;
     int samplesNumber;
     QString serialReaded;
-    QList<Data*> SampleList;
-    QCPCurve *qccuve;
+    QList<Data*> samplesList;
+    QCPCurve *lienzo;
 
     void init_Connections();
     void init_graph();

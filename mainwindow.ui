@@ -336,7 +336,7 @@ border: 3px solid #398439;
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">
             <widget class="QDockWidget" name="dockWidget">
-             <widget class="QWidget" name="dockWidgetContents_2">
+             <widget class="QWidget" name="dockWidgetContentsQCustomPlot">
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
                 <widget class="QCustomPlot" name="qCustomPlotGraphic" native="true">
