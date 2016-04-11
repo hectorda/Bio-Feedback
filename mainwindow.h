@@ -32,6 +32,8 @@ private slots:
     void writeData();
     void realtimeDataSlot(Data *data);
 
+    void on_pushButtonSaveImage_clicked();
+
 signals:
     void emitdata(Data*);
 

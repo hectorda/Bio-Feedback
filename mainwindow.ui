@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>456</width>
     <height>576</height>
    </rect>
   </property>
@@ -56,7 +56,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -393,6 +393,13 @@ border: 3px solid #398439;
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButtonSaveImage">
+            <property name="text">
+             <string>Guardar Imagen</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_8">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -484,7 +491,7 @@ border: 3px solid rgb(102, 0, 0);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>720</width>
+     <width>456</width>
      <height>21</height>
     </rect>
    </property>

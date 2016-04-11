@@ -48,6 +48,19 @@ void MainWindow::init_graph()
 //    ui->qCustomPlotGraphic->addGraph(); // blue line
 //    ui->qCustomPlotGraphic->graph(0)->setPen(QPen(Qt::blue));
 //    ui->qCustomPlotGraphic->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
+    QCPItemEllipse *circle;
+    circle= new QCPItemEllipse(ui->qCustomPlotGraphic);
+    int r=10;
+    circle->topLeft->setCoords(-r,r);
+    circle->bottomRight->setCoords(r,-r);
+
+    QCPItemEllipse *circleexterior;
+    circleexterior= new QCPItemEllipse(ui->qCustomPlotGraphic);
+    int rexterior=20;
+    circleexterior->topLeft->setCoords(-rexterior,rexterior);
+    circleexterior->bottomRight->setCoords(rexterior,-rexterior);
+
+
 
 
     ui->qCustomPlotGraphic->addGraph(); // red dot
@@ -111,6 +124,7 @@ void MainWindow::readData(){
         QTextStream(stdout)<<"Cerrado";
         ui->pushButtonRestartTest->show();
         ui->pushButtonResults->show();
+        ui->pushButtonSaveImage->show();
 //        ui->connectButton->setDisabled(false);
 //        ui->stopButton->setDisabled(true);
 //        serial->close();
@@ -176,6 +190,7 @@ void MainWindow::openSerialPort()
         //serial->requestToSendChanged(true);
         ui->pushButtonRestartTest->hide();
         ui->pushButtonResults->hide();
+        ui->pushButtonSaveImage->hide();
 //        ui->connectButton->setDisabled(true);
 //        ui->stopButton->setDisabled(false);
 //        emit vamosagraficar(this->GetGraphicsCheckboxs());
@@ -239,4 +254,11 @@ void MainWindow::on_pushButtonResults_clicked()
 void MainWindow::on_pushButtonTest1_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigTest);
+}
+
+void MainWindow::on_pushButtonSaveImage_clicked()
+{
+    qDebug()<<"cicked";
+    ui->qCustomPlotGraphic->grab().save("image.png");
+
 }
