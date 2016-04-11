@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtSerialPort>
 #include <qcustomplot.h>
+#include "data.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,11 +19,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    struct Data{
-      double time;
-      double AX;
-      double AY;
-    };
 
 private slots:
     void on_pushButtonStartTest_clicked();
@@ -34,10 +30,10 @@ private slots:
     void closeSerialPort();
     void readData();
     void writeData();
-    void realtimeDataSlot(Data data);
+    void realtimeDataSlot(Data *data);
 
 signals:
-    void emitdata(Data);
+    void emitdata(Data*);
 
 private:
     Ui::MainWindow *ui;
@@ -46,7 +42,7 @@ private:
     QElapsedTimer timer;
     int samplesNumber;
     QString serialReaded;
-    QList<Data> SampleList;
+    QList<Data*> SampleList;
     QCPCurve *qccuve;
 
     void init_Connections();

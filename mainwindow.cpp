@@ -3,6 +3,8 @@
 #include "qserialport.h"
 #include "settingsdialog.h"
 #include "qmessagebox.h"
+#include "data.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,7 +36,7 @@ void MainWindow::init_Connections(){
     connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(this,SIGNAL(emitdata(Data)),this,SLOT(realtimeDataSlot(Data)));
+    connect(this,SIGNAL(emitdata(Data*)),this,SLOT(realtimeDataSlot(Data*)));
 }
 
 void MainWindow::init_graph()
@@ -67,7 +69,7 @@ void MainWindow::init_graph()
 
 
 void MainWindow::readData(){
-    if ( timer.elapsed()/1000.0 < (double)ui->spinBoxTime->value()){
+    if ( timer.elapsed()/1000.0 <= ui->spinBoxTime->value()){
         while (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
             serialReaded=QString(serialData);
@@ -83,10 +85,7 @@ void MainWindow::readData(){
             if(samplesNumber==1)//Cuando se agrega el primer dato, se inicia el tiempo.
                 timer.start();
 
-            Data data;
-            data.time=timer.elapsed()/1000.0;
-            data.AX=AngleX;
-            data.AY=AngleY;
+            Data *data=new Data(AngleX,AngleY,timer.elapsed()/1000.0);
             SampleList.append(data);
 
                 //emit senddata();
@@ -95,7 +94,7 @@ void MainWindow::readData(){
                 emit emitdata(data);
                 //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
             }
-            QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< SampleList.size() << " X: "<<AngleX<<" Y: "<< AngleY <<endl;
+            QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< SampleList.size() << " X: "<<data->getAngleX()<<" Y: "<< data->getAngleY() <<endl;
 
 //                listaTiempos.append(timer.elapsed()/1000.0);
 //                datos.append(linea);
@@ -123,9 +122,9 @@ void MainWindow::writeData()
     //serial->write(ui->serialDataLineEdit->text().toLocal8Bit());
 }
 
-void MainWindow::realtimeDataSlot(Data data)
+void MainWindow::realtimeDataSlot(Data *data)
 {
-    qccuve->addData(data.AX, data.AY);
+    qccuve->addData(data->getAngleX(), data->getAngleY());
 
     //ui->graficoAcX->graph(1)->addData(tiempo, AcX);
     // set data of dots:
@@ -135,7 +134,7 @@ void MainWindow::realtimeDataSlot(Data data)
     //ui->graficoAcX->graph(3)->addData(tiempo, AcX+2);
     // remove data of lines that's outside visible range:
      ui->qCustomPlotGraphic->graph(0)->clearData();
-     ui->qCustomPlotGraphic->graph(0)->addData(data.AX, data.AY);
+     ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleX(), data->getAngleY());
 
     // ui->qCustomPlotGraphic->graph(0)->removeDataBefore(data.time-8);
     //ui->graficoAcX->graph(1)->removeDataBefore(tiempo-8);
@@ -210,14 +209,21 @@ void MainWindow::on_pushButtonStartTest_clicked()
 
 void MainWindow::on_pushButtonHome_clicked()
 {
-    QMessageBox::StandardButton reply;
-    reply=QMessageBox::question(this,"Regresar a Inicio","Se perdera la informacion no Guardada",QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-        closeSerialPort();
-      } else {
-        qDebug() << "Yes was *not* clicked";
-      }
+
+    QMessageBox messageBox(QMessageBox::Question,
+                tr("¿Volver a Pagina Principal?"),
+                tr("¿Seguro que desea volver a Inicio\nTodos los resultados no guardados se perderán?"),
+                QMessageBox::Yes | QMessageBox::No,
+                this);
+    messageBox.setButtonText(QMessageBox::Yes, tr("Si"));
+    messageBox.setButtonText(QMessageBox::No, tr("No"));
+
+    if (messageBox.exec() == QMessageBox::Yes) {
+          ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+          closeSerialPort();
+    } else {
+          qDebug() << "Yes was *not* clicked";
+    }
 }
 
 void MainWindow::on_pushButtonResults_clicked()
