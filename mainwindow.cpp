@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     settings= new SettingsDialog;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
-    ui->qCustomPlotGraphic->xAxis->setVisible(false);
-    ui->qCustomPlotGraphic->yAxis->setVisible(false);
+//    ui->qCustomPlotGraphic->xAxis->setVisible(false);
+//    ui->qCustomPlotGraphic->yAxis->setVisible(false);
     ui->qCustomPlotGraphic->plotLayout()->insertRow(0);
     ui->qCustomPlotGraphic->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGraphic, "Grafico Angulos X e Y"));
     init_Connections();
@@ -107,10 +107,10 @@ void MainWindow::writeData()
 
 void MainWindow::realtimeDataSlot(Data *data)
 {
-    lienzo->addData(data->getAngleX(), data->getAngleY());
+    lienzo->addData(data->getAngleY(), data->getAngleX());
 
     ui->qCustomPlotGraphic->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
-    ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleX(), data->getAngleY());
+    ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleY(), data->getAngleX());
     ui->qCustomPlotGraphic->graph(0)->rescaleValueAxis(true);
 
     ui->qCustomPlotGraphic->replot(); //Se redibuja el grafico
