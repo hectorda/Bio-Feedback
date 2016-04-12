@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     settings= new SettingsDialog;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
-//    ui->qCustomPlotGraphic->xAxis->setVisible(false);
-//    ui->qCustomPlotGraphic->yAxis->setVisible(false);
+    //ui->qCustomPlotGraphic->xAxis->setVisible(false);
+    //ui->qCustomPlotGraphic->yAxis->setVisible(false);
     ui->qCustomPlotGraphic->plotLayout()->insertRow(0);
     ui->qCustomPlotGraphic->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGraphic, "Grafico Angulos X e Y"));
     init_Connections();
@@ -42,7 +42,7 @@ void MainWindow::init_graph()
     int rexterior=20;
     circleexterior->topLeft->setCoords(-rexterior,rexterior);
     circleexterior->bottomRight->setCoords(rexterior,-rexterior);
-    circleexterior->setBrush(QBrush(Qt::yellow));
+    //circleexterior->setBrush(QBrush(Qt::yellow));
 
     QCPItemEllipse *circle;
     circle= new QCPItemEllipse(ui->qCustomPlotGraphic);
@@ -59,8 +59,6 @@ void MainWindow::init_graph()
     ui->qCustomPlotGraphic->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->qCustomPlotGraphic->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
     ui->qCustomPlotGraphic->setInteractions(false);
-    ui->qCustomPlotGraphic->xAxis->setRange(-40,40);
-    ui->qCustomPlotGraphic->yAxis->setRange(-40,40);
 }
 
 void MainWindow::readData(){
@@ -112,6 +110,9 @@ void MainWindow::realtimeDataSlot(Data *data)
     ui->qCustomPlotGraphic->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
     ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleY(), data->getAngleX());
     ui->qCustomPlotGraphic->graph(0)->rescaleValueAxis(true);
+
+    ui->qCustomPlotGraphic->xAxis->setRange(-30,30);
+    ui->qCustomPlotGraphic->yAxis->setRange(-30,30);
 
     ui->qCustomPlotGraphic->replot(); //Se redibuja el grafico
 }
