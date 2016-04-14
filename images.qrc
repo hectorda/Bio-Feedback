@@ -6,5 +6,6 @@
         <file>images/disconnect.png</file>
         <file>images/settings.png</file>
         <file>images/home.png</file>
+        <file>images/save.png</file>
     </qresource>
 </RCC>

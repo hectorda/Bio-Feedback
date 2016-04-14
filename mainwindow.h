@@ -32,6 +32,9 @@ private slots:
     void readData();
     void writeData();
     void realtimeDataSlot(Data *data);
+    void xRangeGraphic(int xRange);
+    void yRangeGraphic(int yRange);
+    void ZoomGraphic(QWheelEvent *event);
 
     void on_pushButtonSaveImage_clicked();
 
@@ -43,13 +46,15 @@ private:
     QSerialPort *serial;
     SettingsDialog *settings;
     QElapsedTimer timer;
-    int samplesNumber;
     QString serialReaded;
     QList<Data*> samplesList;
     QCPCurve *lienzo;
+    QLabel *status;
+    int samplesNumber;
 
     void init_Connections();
     void init_graph();
+    void showStatusMessage(const QString &message);
 };
 
 #endif // MAINWINDOW_H
