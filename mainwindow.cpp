@@ -59,6 +59,9 @@ void MainWindow::init_graph()
     ui->qCustomPlotGraphic->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->qCustomPlotGraphic->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
     ui->qCustomPlotGraphic->setInteractions(false);
+    ui->qCustomPlotGraphic->xAxis->setRange(-30,30);
+    ui->qCustomPlotGraphic->yAxis->setRange(-30,30);
+
 }
 
 void MainWindow::readData(){
@@ -68,8 +71,8 @@ void MainWindow::readData(){
             serialReaded=QString(serialData);
 
             QStringList linea=serialReaded.split(" ");
-            const double AngleX=QString(linea.at(0)).toDouble();
-            const double AngleY=QString(linea.at(1)).toDouble();
+            const double AngleY=QString(linea.at(0)).toDouble();
+            const double AngleX=QString(linea.at(1)).toDouble();
 
             samplesNumber+=1;
 
@@ -105,14 +108,11 @@ void MainWindow::writeData()
 
 void MainWindow::realtimeDataSlot(Data *data)
 {
-    lienzo->addData(data->getAngleY(), data->getAngleX());
+    lienzo->addData(data->getAngleX(), data->getAngleY());
 
     ui->qCustomPlotGraphic->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
-    ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleY(), data->getAngleX());
-    ui->qCustomPlotGraphic->graph(0)->rescaleValueAxis(true);
-
-    ui->qCustomPlotGraphic->xAxis->setRange(-30,30);
-    ui->qCustomPlotGraphic->yAxis->setRange(-30,30);
+    ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleX(), data->getAngleY());
+    //ui->qCustomPlotGraphic->graph(0)->rescaleValueAxis(true);
 
     ui->qCustomPlotGraphic->replot(); //Se redibuja el grafico
 }
@@ -187,6 +187,29 @@ void MainWindow::on_pushButtonResults_clicked()
         ui->labelResultsName->setText(tr("Paciente: %1").arg("Sin Nombre"));
     else
         ui->labelResultsName->setText(tr("Paciente: %1").arg(name));
+
+    double q1=0,q2=0,q3=0,q4=0;
+
+    foreach (Data *var, samplesList) {
+        //QTextStream(stdout)<<"X"<<var->getAngleX()<<"Y"<<var->getAngleY()<<endl;
+        if(var->getAngleX()>0){
+            if(var->getAngleY()>0)
+                q1+=1;
+            else
+                q3+=1;
+        }
+        else{
+            if(var->getAngleY()>0)
+                q2+=1;
+            else
+                q4+=1;
+        }
+    }
+    qDebug()<<"1="<<(q1/samplesList.size())*100<<"% 2="<<(q2/samplesList.size())*100<<"% 3="<<(q3/samplesList.size())*100<<"% 4="<<(q4/samplesList.size())*100<<"%"<<endl;
+    ui->labelQ1->setText("Cuadrante 1: " + QString::number((q1/samplesList.size())*100) + "%");
+    ui->labelQ2->setText("Cuadrante 2: " + QString::number((q2/samplesList.size())*100) + "%");
+    ui->labelQ3->setText("Cuadrante 3: " + QString::number((q3/samplesList.size())*100) + "%");
+    ui->labelQ4->setText("Cuadrante 4: " + QString::number((q4/samplesList.size())*100) + "%");
 }
 
 void MainWindow::on_pushButtonTest1_clicked()
