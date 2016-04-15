@@ -3,15 +3,15 @@
 
 #include <QMainWindow>
 #include <QtSerialPort>
-#include <settingsdialog.h>
+#include <ajustespuertoserial.h>
 #include <qcustomplot.h>
-#include <data.h>
+#include <dato.h>
 
 namespace Ui {
 class MainWindow;
 }
 
-class SettingsDialog;
+class AjustesPuertoSerial;
 
 class MainWindow : public QMainWindow
 {
@@ -22,39 +22,40 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButtonStartTest_clicked();
-    void on_pushButtonHome_clicked();
-    void on_pushButtonResults_clicked();
-    void on_pushButtonTest1_clicked();
+    void on_pushButtonIniciarPrueba_clicked();
+    void on_pushButtonResultados_clicked();
+    void on_pushButtonPrueba1_clicked();
+    void on_pushButtonGuardarImagen_clicked();
+    void on_pushButtonGuardarMuestras_clicked();
+    void on_pushButtonRegresarInicio_clicked();
 
-    void openSerialPort();
+    void abrirPuertoSerial();
     void closeSerialPort();
-    void readData();
-    void writeData();
-    void realtimeDataSlot(Data *data);
+    void leerDatosSerial();
+    void escribirDatosSerial();
+    void slotDatosTiempoReal(Dato *data);
     void xRangeGraphic(int xRange);
     void yRangeGraphic(int yRange);
     void ZoomGraphic(QWheelEvent *event);
 
-    void on_pushButtonSaveImage_clicked();
 
-    void on_pushButtonSaveSamples_clicked();
 
 signals:
-    void emitdata(Data*);
+    void emitdata(Dato*);
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
-    SettingsDialog *settings;
-    QElapsedTimer timer;
-    QString serialReaded;
-    QList<Data*> samplesList;
+    AjustesPuertoSerial *ajustesSerial;
+    QElapsedTimer temporizador;
+    QString datosLeidosPuertoSerial;
+    QList<Dato*> listaMuestras;
     QCPCurve *lienzo;
     QLabel *status;
-    int samplesNumber;
+    int cantidadMuestras;
 
-    void init_Connections();
+    void inicializar();
+    void conexiones();
     void init_graph();
     void showStatusMessage(const QString &message);
 };

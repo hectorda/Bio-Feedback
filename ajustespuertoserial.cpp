@@ -1,51 +1,51 @@
-#include "settingsdialog.h"
+#include "ajustespuertoserial.h"
 #include "ui_settingsdialog.h"
 #include "qserialportinfo.h"
 #include "qdebug.h"
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
+AjustesPuertoSerial::AjustesPuertoSerial(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SettingsDialog)
+    ui(new Ui::AjustesPuertoSerial)
 {
+    inicializar();
+    conexiones();
+
+    llenarParametros();
+    informacionPuertos();
+    actualizarAjustes();
+
+
+}
+
+AjustesPuertoSerial::~AjustesPuertoSerial()
+{
+    delete ui;
+}
+
+void AjustesPuertoSerial::inicializar(){
     ui->setupUi(this);
 
     foreach (QSerialPortInfo info, QSerialPortInfo::availablePorts()) {
         ui->comboBoxPortList->addItem(info.portName());
     }
-    //ui->labelBaudRate->setText("Baudios: 115200");
-     init_Connections();
-
-    fillPortsParameters();
-    fillPortsInfo();
-
-    updateSettings();
-
 }
 
-SettingsDialog::~SettingsDialog()
+void AjustesPuertoSerial::conexiones()
 {
-    delete ui;
-}
-
-void SettingsDialog::init_Connections()
-{
-
-    connect(ui->pushButtonOK, SIGNAL(clicked()),this, SLOT(apply()));
-    connect(ui->comboBoxPortList, SIGNAL(currentIndexChanged(int)),this, SLOT(showPortInfo(int)));
-
+    connect(ui->pushButtonOK, SIGNAL(clicked()),this, SLOT(aplicar()));
+    connect(ui->comboBoxPortList, SIGNAL(currentIndexChanged(int)),this, SLOT(mostrarInformacionPuerto(int)));
     connect(ui->pushButtonExit,SIGNAL(clicked()),this,SLOT(close()));
-
 }
 
 
-SettingsDialog::Settings SettingsDialog::getCurrentSettings() const
+AjustesPuertoSerial::Ajustes AjustesPuertoSerial::getAjustes() const
 {
-    return currentSettings;
+    return ajustesActuales;
 }
 
-void SettingsDialog::showPortInfo(int idx)
+void AjustesPuertoSerial::mostrarInformacionPuerto(int idx)
 {
     if (idx == -1)
         return;
@@ -59,14 +59,14 @@ void SettingsDialog::showPortInfo(int idx)
 //    ui->pidLabel->setText(tr("Product Identifier: %1").arg(list.count() > 6 ? list.at(6) : tr(blankString)));
 }
 
-void SettingsDialog::apply()
+void AjustesPuertoSerial::aplicar()
 {
-    updateSettings();
+    actualizarAjustes();
     hide();
 }
 
 
-void SettingsDialog::fillPortsParameters()
+void AjustesPuertoSerial::llenarParametros()
 {
     ui->comboBoxBaudRate->addItem(QStringLiteral("9600"), QSerialPort::Baud9600);
     ui->comboBoxBaudRate->addItem(QStringLiteral("19200"), QSerialPort::Baud19200);
@@ -98,7 +98,7 @@ void SettingsDialog::fillPortsParameters()
     ui->comboBoxFlowControl->addItem(tr("XON/XOFF"), QSerialPort::SoftwareControl);
 }
 
-void SettingsDialog::fillPortsInfo()
+void AjustesPuertoSerial::informacionPuertos()
 {
     ui->comboBoxPortList->clear();
     QString description;
@@ -121,32 +121,32 @@ void SettingsDialog::fillPortsInfo()
     }
 }
 
-void SettingsDialog::updateSettings()
+void AjustesPuertoSerial::actualizarAjustes()
 {
-    currentSettings.portName = ui->comboBoxPortList->currentText();
+    ajustesActuales.portName = ui->comboBoxPortList->currentText();
 
     if (ui->comboBoxBaudRate->currentIndex() == 4) {
-        currentSettings.baudRate = ui->comboBoxBaudRate->currentText().toInt();
+        ajustesActuales.baudRate = ui->comboBoxBaudRate->currentText().toInt();
     } else {
-        currentSettings.baudRate = static_cast<QSerialPort::BaudRate>(
+        ajustesActuales.baudRate = static_cast<QSerialPort::BaudRate>(
                     ui->comboBoxBaudRate->itemData(ui->comboBoxBaudRate->currentIndex()).toInt());
     }
-    currentSettings.stringBaudRate = QString::number(currentSettings.baudRate);
+    ajustesActuales.stringBaudRate = QString::number(ajustesActuales.baudRate);
 
-    currentSettings.dataBits = static_cast<QSerialPort::DataBits>(
+    ajustesActuales.dataBits = static_cast<QSerialPort::DataBits>(
                 ui->comboBoxDataBits->itemData(ui->comboBoxDataBits->currentIndex()).toInt());
-    currentSettings.stringDataBits = ui->comboBoxDataBits->currentText();
+    ajustesActuales.stringDataBits = ui->comboBoxDataBits->currentText();
 
-    currentSettings.parity = static_cast<QSerialPort::Parity>(
+    ajustesActuales.parity = static_cast<QSerialPort::Parity>(
                 ui->comboBoxParity->itemData(ui->comboBoxParity->currentIndex()).toInt());
-    currentSettings.stringParity = ui->comboBoxParity->currentText();
+    ajustesActuales.stringParity = ui->comboBoxParity->currentText();
 
-    currentSettings.stopBits = static_cast<QSerialPort::StopBits>(
+    ajustesActuales.stopBits = static_cast<QSerialPort::StopBits>(
                 ui->comboBoxBits->itemData(ui->comboBoxBits->currentIndex()).toInt());
-    currentSettings.stringStopBits = ui->comboBoxBits->currentText();
+    ajustesActuales.stringStopBits = ui->comboBoxBits->currentText();
 
-    currentSettings.flowControl = static_cast<QSerialPort::FlowControl>(
+    ajustesActuales.flowControl = static_cast<QSerialPort::FlowControl>(
                 ui->comboBoxFlowControl->itemData(ui->comboBoxFlowControl->currentIndex()).toInt());
-    currentSettings.stringFlowControl = ui->comboBoxFlowControl->currentText();
+    ajustesActuales.stringFlowControl = ui->comboBoxFlowControl->currentText();
 
 }

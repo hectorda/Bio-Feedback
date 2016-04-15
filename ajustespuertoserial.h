@@ -1,19 +1,19 @@
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef AJUSTESPUERTOSERIAL_H
+#define AJUSTESPUERTOSERIAL_H
 
 #include <QDialog>
 #include <QSerialPort>
 
 namespace Ui {
-class SettingsDialog;
+class AjustesPuertoSerial;
 }
 class QIntValidator;
-class SettingsDialog : public QDialog
+class AjustesPuertoSerial : public QDialog
 {
     Q_OBJECT
 
 public:
-    struct Settings {
+    struct Ajustes {
         QString portName;
         qint32 baudRate;
         QString stringBaudRate;
@@ -25,33 +25,30 @@ public:
         QString stringStopBits;
         QSerialPort::FlowControl flowControl;
         QString stringFlowControl;
-        bool localEchoEnabled;
     };
 
-    Settings getCurrentSettings() const;
+    Ajustes getAjustes() const;
 
 public:
-    explicit SettingsDialog(QWidget *parent = 0);
-    ~SettingsDialog();
+    explicit AjustesPuertoSerial(QWidget *parent = 0);
+    ~AjustesPuertoSerial();
 
 private:
-    Ui::SettingsDialog *ui;
-    Settings currentSettings;
+    Ui::AjustesPuertoSerial *ui;
+    Ajustes ajustesActuales;
     QIntValidator *intValidator;
 
 private:
-    void fillPortsParameters();
-    void fillPortsInfo();
-    void updateSettings();
-    void init_Connections();
+    void llenarParametros();
+    void informacionPuertos();
+    void actualizarAjustes();
+    void inicializar();
+    void conexiones();
 
 private slots:
-    void showPortInfo(int idx);
-    void apply();
-
-
-
+    void mostrarInformacionPuerto(int idx);
+    void aplicar();
 
 };
 
-#endif // SETTINGSDIALOG_H
+#endif // AJUSTESPUERTOSERIAL_H

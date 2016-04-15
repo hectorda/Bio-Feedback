@@ -14,14 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    settingsdialog.cpp \
     qcustomplot.cpp \
-    data.cpp
+    dato.cpp \
+    ajustespuertoserial.cpp
 
 HEADERS  += mainwindow.h \
-    settingsdialog.h \
     qcustomplot.h \
-    data.h
+    dato.h \
+    ajustespuertoserial.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

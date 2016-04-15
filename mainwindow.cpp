@@ -5,68 +5,71 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-    serial=new QSerialPort(this);
-    ui->menuVer->addAction(ui->dockWidget->toggleViewAction());
-
-    settings= new SettingsDialog;
-    ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-
-//    ui->qCustomPlotGraphic->xAxis->setVisible(false);
-//    ui->qCustomPlotGraphic->yAxis->setVisible(false);
-    ui->qCustomPlotGraphic->plotLayout()->insertRow(0);
-    ui->qCustomPlotGraphic->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGraphic, "Grafico Angulos X e Y"));
-    status = new QLabel;
-    ui->statusBar->addWidget(status);
-    init_Connections();
+    inicializar();
+    conexiones();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+void MainWindow::inicializar(){
+    ui->setupUi(this);
+    serial=new QSerialPort(this);
+    ui->menuVer->addAction(ui->dockWidget->toggleViewAction());
 
-void MainWindow::init_Connections(){
-    connect(ui->pushButtonExit,SIGNAL(clicked()),this,SLOT(close()));
-    connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),settings,SLOT(show()));
-    connect(ui->pushButtonStartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
-    connect(ui->pushButtonRestartTest,SIGNAL(clicked()),this,SLOT(openSerialPort()));
-    connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(this,SIGNAL(emitdata(Data*)),this,SLOT(realtimeDataSlot(Data*)));
+    ajustesSerial= new AjustesPuertoSerial;
+    ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+
+//    ui->qCustomPlotGrafico->xAxis->setVisible(false);
+//    ui->qCustomPlotGrafico->yAxis->setVisible(false);
+    ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
+    ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGrafico, "Grafico Angulos X e Y"));
+    status = new QLabel;
+    ui->statusBar->addWidget(status);
+}
+
+void MainWindow::conexiones(){
+    connect(ui->pushButtonSalir,SIGNAL(clicked()),this,SLOT(close()));
+    connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
+    connect(ui->pushButtonIniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
+    connect(ui->pushButtonReiniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
+    connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
+    connect(this,SIGNAL(emitdata(Dato*)),this,SLOT(slotDatosTiempoReal(Dato*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(yRangeGraphic(int)));
     connect(ui->horizontalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(xRangeGraphic(int)));
-    connect(ui->qCustomPlotGraphic,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
+    connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
 }
 
 void MainWindow::init_graph()
 {
-    ui->qCustomPlotGraphic->clearGraphs(); //Se limpian los graficos agregados
-    ui->qCustomPlotGraphic->clearPlottables(); //Se eliminan los elementos graficables
+    ui->qCustomPlotGrafico->clearGraphs(); //Se limpian los graficos agregados
+    ui->qCustomPlotGrafico->clearPlottables(); //Se eliminan los elementos graficables
 
     QCPItemEllipse *circleexterior;
-    circleexterior= new QCPItemEllipse(ui->qCustomPlotGraphic);
+    circleexterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
     int rexterior=20;
     circleexterior->topLeft->setCoords(-rexterior,rexterior);
     circleexterior->bottomRight->setCoords(rexterior,-rexterior);
     circleexterior->setBrush(QBrush(Qt::yellow));
 
     QCPItemEllipse *circle;
-    circle= new QCPItemEllipse(ui->qCustomPlotGraphic);
+    circle= new QCPItemEllipse(ui->qCustomPlotGrafico);
     int r=10;
 
     circle->topLeft->setCoords(-r,r);
     circle->bottomRight->setCoords(r,-r);
 
-    lienzo = new QCPCurve(ui->qCustomPlotGraphic->xAxis,ui->qCustomPlotGraphic->yAxis);
-    ui->qCustomPlotGraphic->addPlottable(lienzo);
+    lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
+    ui->qCustomPlotGrafico->addPlottable(lienzo);
 
-    ui->qCustomPlotGraphic->addGraph(); // Punto rojo
-    ui->qCustomPlotGraphic->graph(0)->setPen(QPen(Qt::red));
-    ui->qCustomPlotGraphic->graph(0)->setLineStyle(QCPGraph::lsNone);
-    ui->qCustomPlotGraphic->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-    ui->qCustomPlotGraphic->setInteractions(false);
-    ui->qCustomPlotGraphic->xAxis->setRange(-ui->horizontalSliderRangeGraphic->value(),ui->horizontalSliderRangeGraphic->value());
-    ui->qCustomPlotGraphic->yAxis->setRange(-ui->verticalSliderRangeGraphic->value(),ui->verticalSliderRangeGraphic->value());
+    ui->qCustomPlotGrafico->addGraph(); // Punto rojo
+    ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::red));
+    ui->qCustomPlotGrafico->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+    ui->qCustomPlotGrafico->setInteractions(false);
+    ui->qCustomPlotGrafico->xAxis->setRange(-ui->horizontalSliderRangeGraphic->value(),ui->horizontalSliderRangeGraphic->value());
+    ui->qCustomPlotGrafico->yAxis->setRange(-ui->verticalSliderRangeGraphic->value(),ui->verticalSliderRangeGraphic->value());
 
 }
 
@@ -75,91 +78,92 @@ void MainWindow::showStatusMessage(const QString &message)
     status->setText(message);
 }
 
-void MainWindow::readData(){
-    if ( timer.elapsed()/1000.0 <= ui->spinBoxTime->value()){
+void MainWindow::leerDatosSerial(){
+    if ( temporizador.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
         while (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
-            serialReaded=QString(serialData);
+            datosLeidosPuertoSerial=QString(serialData);
 
-            QStringList linea=serialReaded.split(" ");
-            const double AngleY=QString(linea.at(0)).toDouble();
-            const double AngleX=QString(linea.at(1)).toDouble();
+            QStringList linea=datosLeidosPuertoSerial.split(" ");
+            const double AnguloY=QString(linea.at(0)).toDouble();
+            const double AnguloX=QString(linea.at(1)).toDouble();
 
-            samplesNumber+=1;
+            cantidadMuestras+=1;
 
 //                showStatusMessage(status);
 //                emit emitstatustographics(status);
-            if(samplesNumber==1)//Cuando se agrega el primer dato, se inicia el tiempo.
-                timer.start();
+            if(cantidadMuestras==1)//Cuando se agrega el primer dato, se inicia el tiempo.
+                temporizador.start();
 
-            Data *data=new Data(AngleX,AngleY,timer.elapsed()/1000.0);
-            samplesList.append(data);
+            Dato *data=new Dato(AnguloX,AnguloY,temporizador.elapsed()/1000.0);
+            listaMuestras.append(data);
 
-            if(samplesNumber %ui->spinBoxgraphupdate->value()==0){//Mod
+            if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0){//Mod
                 emit emitdata(data);
                 //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
             }
-            ui->lcdNumberTime->display( QString::number(timer.elapsed()/1000.0, 'f', 2) );
-            const QString message="Tiempo: "+QString::number(timer.elapsed()/1000.0) + " Muestras:" + QString::number(samplesList.size())+ " X: "+QString::number(data->getAngleX())+" Y: "+QString::number(data->getAngleY());
-            showStatusMessage(message);
+            ui->lcdNumberTiempoTranscurrido->display( QString::number(temporizador.elapsed()/1000.0, 'f', 2) );
+            const QString mensaje="Tiempo: "+QString::number(temporizador.elapsed()/1000.0) + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(data->getAnguloX())+" Y: "+QString::number(data->getAnguloY());
+            showStatusMessage(mensaje);
             //QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesList.size() << "  X: "<<data->getAngleX()<<" Y: "<< data->getAngleY() <<endl;
         }
     }
     else{
         serial->close();
-        ui->pushButtonRestartTest->show();
-        ui->pushButtonResults->show();
-        ui->pushButtonSaveImage->show();
-        ui->qCustomPlotGraphic->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+        ui->pushButtonReiniciarPrueba->show();
+        ui->pushButtonResultados->show();
+        ui->pushButtonGuardarImagen->show();
+        ui->pushButtonGuardarMuestras->show();
+        ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     }
 }
 
-void MainWindow::writeData()
+void MainWindow::escribirDatosSerial()
 {
     //serial->write(ui->serialDataLineEdit->text().toLocal8Bit());
 }
 
-void MainWindow::realtimeDataSlot(Data *data)
+void MainWindow::slotDatosTiempoReal(Dato *data)
 {
-    lienzo->addData(data->getAngleX(), data->getAngleY());
+    lienzo->addData(data->getAnguloX(), data->getAnguloY());
 
-    ui->qCustomPlotGraphic->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
-    ui->qCustomPlotGraphic->graph(0)->addData(data->getAngleX(), data->getAngleY());
-    //ui->qCustomPlotGraphic->graph(0)->rescaleValueAxis(true);
+    ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
+    ui->qCustomPlotGrafico->graph(0)->addData(data->getAnguloX(), data->getAnguloY());
+    //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
 
-    ui->qCustomPlotGraphic->replot(); //Se redibuja el grafico
+    ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
 
 void MainWindow::xRangeGraphic(int xRange)
 {
-    ui->qCustomPlotGraphic->xAxis->setRange(-xRange,xRange);
-    ui->qCustomPlotGraphic->replot();
+    ui->qCustomPlotGrafico->xAxis->setRange(-xRange,xRange);
+    ui->qCustomPlotGrafico->replot();
 }
 
 void MainWindow::yRangeGraphic(int yRange)
 {
-    ui->qCustomPlotGraphic->yAxis->setRange(-yRange,yRange);
-    ui->qCustomPlotGraphic->replot();
+    ui->qCustomPlotGrafico->yAxis->setRange(-yRange,yRange);
+    ui->qCustomPlotGrafico->replot();
 }
 
 void MainWindow::ZoomGraphic(QWheelEvent *event)
 {
-    QCPRange xRange=ui->qCustomPlotGraphic->xAxis->range();
-    QCPRange yRange=ui->qCustomPlotGraphic->yAxis->range();
-    ui->qCustomPlotGraphic->xAxis->setRange(xRange);
-    ui->qCustomPlotGraphic->yAxis->setRange(yRange);
+    QCPRange xRange=ui->qCustomPlotGrafico->xAxis->range();
+    QCPRange yRange=ui->qCustomPlotGrafico->yAxis->range();
+    ui->qCustomPlotGrafico->xAxis->setRange(xRange);
+    ui->qCustomPlotGrafico->yAxis->setRange(yRange);
     ui->verticalSliderRangeGraphic->setValue(yRange.upper);
     ui->horizontalSliderRangeGraphic->setValue(xRange.upper);
 
 }
 
-void MainWindow::openSerialPort()
+void MainWindow::abrirPuertoSerial()
 {
-    timer.start();
-    samplesNumber=0;
-    samplesList.clear();
+    temporizador.start();
+    cantidadMuestras=0;
+    listaMuestras.clear();
 
-    SettingsDialog::Settings cs=settings->getCurrentSettings();
+    AjustesPuertoSerial::Ajustes cs=ajustesSerial->getAjustes();
     serial->setPortName(cs.portName);
     serial->setBaudRate(cs.baudRate);
     QTextStream(stdout)<<"Baudios: "<< serial->baudRate();
@@ -173,9 +177,10 @@ void MainWindow::openSerialPort()
          init_graph(); //Se limpian los graficos
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
-        ui->pushButtonRestartTest->hide();
-        ui->pushButtonResults->hide();
-        ui->pushButtonSaveImage->hide();
+        ui->pushButtonReiniciarPrueba->hide();
+        ui->pushButtonResultados->hide();
+        ui->pushButtonGuardarImagen->hide();
+        ui->pushButtonGuardarMuestras->hide();
 
         QMessageBox::information(this,"Puerto Abierto","El puerto se ha abierto");
     } else {
@@ -193,12 +198,12 @@ void MainWindow::closeSerialPort()
 }
 
 
-void MainWindow::on_pushButtonStartTest_clicked()
+void MainWindow::on_pushButtonIniciarPrueba_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetTest);
 }
 
-void MainWindow::on_pushButtonHome_clicked()
+void MainWindow::on_pushButtonRegresarInicio_clicked()
 {
     QMessageBox messageBox(QMessageBox::Question,
                 tr("¿Volver a Pagina Principal?"),
@@ -214,10 +219,10 @@ void MainWindow::on_pushButtonHome_clicked()
     }
 }
 
-void MainWindow::on_pushButtonResults_clicked()
+void MainWindow::on_pushButtonResultados_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetResults);
-    const QString name=ui->lineEditName->text();
+    const QString name=ui->lineEditNombrPaciente->text();
     if(name=="")
         ui->labelResultsName->setText(tr("Paciente: %1").arg("Sin Nombre"));
     else
@@ -225,29 +230,29 @@ void MainWindow::on_pushButtonResults_clicked()
 
     double q1=0, q2=0, q3=0, q4=0;
 
-    foreach (Data *var, samplesList) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
-        if(var->getAngleX()>0){
-            if(var->getAngleY()>0)
+    foreach (Dato *var, listaMuestras) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
+        if(var->getAnguloX()>0){
+            if(var->getAnguloY()>0)
                 q1+=1;
             else
                 q3+=1;
         }
         else{
-            if(var->getAngleY()>0)
+            if(var->getAnguloY()>0)
                 q2+=1;
             else
                 q4+=1;
         }
     }
 
-    q1=q1/samplesList.size()*100;
-    q2=q2/samplesList.size()*100;
-    q3=q3/samplesList.size()*100;
-    q4=q4/samplesList.size()*100;
+    q1=q1/listaMuestras.size()*100;
+    q2=q2/listaMuestras.size()*100;
+    q3=q3/listaMuestras.size()*100;
+    q4=q4/listaMuestras.size()*100;
     qDebug()<<"1="<<q1<<"% 2="<<q2<<"% 3="<<q3<<"% 4="<<q4<<"%"<<endl;
 
-    QCPBars *quadrants = new QCPBars(ui->qCustomPlotResults->xAxis, ui->qCustomPlotResults->yAxis);
-    ui->qCustomPlotResults->addPlottable(quadrants);
+    QCPBars *quadrants = new QCPBars(ui->qCustomPlotResultados->xAxis, ui->qCustomPlotResultados->yAxis);
+    ui->qCustomPlotResultados->addPlottable(quadrants);
     // set names and colors:
     QPen pen;
     pen.setWidthF(1.2);
@@ -263,27 +268,27 @@ void MainWindow::on_pushButtonResults_clicked()
     QVector<QString> labels;
     ticks << 1 << 2 << 3 << 4;
     labels << "Cuadrante 1" << "Cuadrante 2" << "Cuadrante 3" << "Cuadrante 4";
-    ui->qCustomPlotResults->xAxis->setAutoTicks(false);
-    ui->qCustomPlotResults->xAxis->setAutoTickLabels(false);
-    ui->qCustomPlotResults->xAxis->setTickVector(ticks);
-    ui->qCustomPlotResults->xAxis->setTickVectorLabels(labels);
-    ui->qCustomPlotResults->xAxis->setTickLabelRotation(60);
-    ui->qCustomPlotResults->xAxis->setSubTickCount(0);
-    ui->qCustomPlotResults->xAxis->setTickLength(0, 4);
-    ui->qCustomPlotResults->xAxis->grid()->setVisible(true);
-    ui->qCustomPlotResults->xAxis->setRange(0, 5);
+    ui->qCustomPlotResultados->xAxis->setAutoTicks(false);
+    ui->qCustomPlotResultados->xAxis->setAutoTickLabels(false);
+    ui->qCustomPlotResultados->xAxis->setTickVector(ticks);
+    ui->qCustomPlotResultados->xAxis->setTickVectorLabels(labels);
+    ui->qCustomPlotResultados->xAxis->setTickLabelRotation(60);
+    ui->qCustomPlotResultados->xAxis->setSubTickCount(0);
+    ui->qCustomPlotResultados->xAxis->setTickLength(0, 4);
+    ui->qCustomPlotResultados->xAxis->grid()->setVisible(true);
+    ui->qCustomPlotResultados->xAxis->setRange(0, 5);
 
     // prepare y axis:
-    ui->qCustomPlotResults->yAxis->setRange(0, 100);
-    ui->qCustomPlotResults->yAxis->setPadding(5); // a bit more space to the left border
-    ui->qCustomPlotResults->yAxis->setLabel("Porcentaje");
-    ui->qCustomPlotResults->yAxis->grid()->setSubGridVisible(true);
+    ui->qCustomPlotResultados->yAxis->setRange(0, 100);
+    ui->qCustomPlotResultados->yAxis->setPadding(5); // a bit more space to the left border
+    ui->qCustomPlotResultados->yAxis->setLabel("Porcentaje");
+    ui->qCustomPlotResultados->yAxis->grid()->setSubGridVisible(true);
     QPen gridPen;
     gridPen.setStyle(Qt::SolidLine);
     gridPen.setColor(QColor(0, 0, 0, 25));
-    ui->qCustomPlotResults->yAxis->grid()->setPen(gridPen);
+    ui->qCustomPlotResultados->yAxis->grid()->setPen(gridPen);
     gridPen.setStyle(Qt::DotLine);
-    ui->qCustomPlotResults->yAxis->grid()->setSubGridPen(gridPen);
+    ui->qCustomPlotResultados->yAxis->grid()->setSubGridPen(gridPen);
 
     // Add data:
     QVector<double> quadrantData;
@@ -291,41 +296,41 @@ void MainWindow::on_pushButtonResults_clicked()
     quadrants->setData(ticks, quadrantData);
 
     // setup legend:
-    ui->qCustomPlotResults->legend->setVisible(true);
-    ui->qCustomPlotResults->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    ui->qCustomPlotResults->legend->setBrush(QColor(255, 255, 255, 200));
+    ui->qCustomPlotResultados->legend->setVisible(true);
+    ui->qCustomPlotResultados->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
+    ui->qCustomPlotResultados->legend->setBrush(QColor(255, 255, 255, 200));
     QPen legendPen;
     legendPen.setColor(QColor(130, 130, 130, 200));
-    ui->qCustomPlotResults->legend->setBorderPen(legendPen);
+    ui->qCustomPlotResultados->legend->setBorderPen(legendPen);
     QFont legendFont = font();
     legendFont.setPointSize(10);
-    ui->qCustomPlotResults->legend->setFont(legendFont);
-    ui->qCustomPlotResults->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    ui->qCustomPlotResults->replot();
+    ui->qCustomPlotResultados->legend->setFont(legendFont);
+    ui->qCustomPlotResultados->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->qCustomPlotResultados->replot();
 }
 
-void MainWindow::on_pushButtonTest1_clicked()
+void MainWindow::on_pushButtonPrueba1_clicked()
 {
-    ui->stackedWidget->setCurrentWidget(ui->widgetConfigTest);
+    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
 }
 
-void MainWindow::on_pushButtonSaveImage_clicked()
+void MainWindow::on_pushButtonGuardarImagen_clicked()
 {
     QString filters("Imagen PNG (*.png);;Imagen JPG (*.jpg);;Archivo PDF (*.pdf)");
     QString selectedFilter;
     QString fileName = QFileDialog::getSaveFileName(this, "Guardar Imagen","",filters,&selectedFilter);
     qDebug()<<selectedFilter;
-//    ui->qCustomPlotGraphic->xAxis->setRange(-30,30);
-//    ui->qCustomPlotGraphic->yAxis->setRange(-30,30);
+//    ui->qCustomPlotGrafico->xAxis->setRange(-30,30);
+//    ui->qCustomPlotGrafico->yAxis->setRange(-30,30);
     if(selectedFilter.contains("PNG"))
-        ui->qCustomPlotGraphic->savePng(fileName,1000,1000);
+        ui->qCustomPlotGrafico->savePng(fileName,1000,1000);
     if(selectedFilter.contains("JPG"))
-        ui->qCustomPlotGraphic->saveJpg(fileName,1000,1000);
+        ui->qCustomPlotGrafico->saveJpg(fileName,1000,1000);
     if(selectedFilter.contains("PDF"))
-      ui->qCustomPlotGraphic->savePdf(fileName,false,1000,1000);
+      ui->qCustomPlotGrafico->savePdf(fileName,false,1000,1000);
 }
 
-void MainWindow::on_pushButtonSaveSamples_clicked()
+void MainWindow::on_pushButtonGuardarMuestras_clicked()
 {
     QString selectedFilter;
     QString filters(tr("Tipo de archivo (*.txt);;CSV (*.csv)"));
@@ -338,14 +343,14 @@ void MainWindow::on_pushButtonSaveSamples_clicked()
         file.remove();
         if (file.open(QIODevice::Append)) {
             QTextStream stream(&file);
-            foreach (Data *var, samplesList) {
+            foreach (Dato *var, listaMuestras) {
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTime()) << " X: " << QString::number(var->getAngleX())
-                           << " Y: " << QString::number(var->getAngleY()) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
+                           << " Y: " << QString::number(var->getAnguloY()) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTime()) << ";" <<QString::number(var->getAngleX())
-                           <<";" << QString::number(var->getAngleY()) << endl;
+                    stream <<QString::number(var->getTiempo()) << ";" <<QString::number(var->getAnguloX())
+                           <<";" << QString::number(var->getAnguloY()) << endl;
                 }
             }
             file.flush();

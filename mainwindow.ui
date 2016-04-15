@@ -35,7 +35,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonHome">
+       <widget class="QPushButton" name="pushButtonRegresarInicio">
         <property name="text">
          <string>Regresar a Inicio</string>
         </property>
@@ -56,7 +56,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -115,14 +115,14 @@ QPushButton:hover {
            </spacer>
           </item>
           <item row="1" column="2">
-           <widget class="QPushButton" name="pushButtonTest2">
+           <widget class="QPushButton" name="pushButtonPrueba2">
             <property name="text">
              <string>Prueba 2</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButtonTest1">
+           <widget class="QPushButton" name="pushButtonPrueba1">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -161,7 +161,7 @@ QPushButton:hover {
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="widgetConfigTest">
+      <widget class="QWidget" name="widgetConfigurarPrueba">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -186,7 +186,7 @@ QPushButton:hover {
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBoxTime">
+           <widget class="QSpinBox" name="spinBoxTiempoPrueba">
             <property name="minimum">
              <number>1</number>
             </property>
@@ -230,7 +230,7 @@ QPushButton:hover {
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEditName"/>
+            <widget class="QLineEdit" name="lineEditNombrPaciente"/>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_4">
@@ -274,7 +274,7 @@ QPushButton:hover {
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonStartTest">
+           <widget class="QPushButton" name="pushButtonIniciarPrueba">
             <property name="styleSheet">
              <string notr="true">QPushButton{
 color : white;
@@ -342,7 +342,7 @@ border: 3px solid #398439;
              <widget class="QWidget" name="dockWidgetContentsQCustomPlot">
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="1">
-                <widget class="QCustomPlot" name="qCustomPlotGraphic" native="true">
+                <widget class="QCustomPlot" name="qCustomPlotGrafico" native="true">
                  <layout class="QVBoxLayout" name="verticalLayout_4"/>
                 </widget>
                </item>
@@ -395,17 +395,17 @@ border: 3px solid #398439;
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonRestartTest">
+           <widget class="QPushButton" name="pushButtonReiniciarPrueba">
             <property name="text">
              <string>Reiniciar Prueba</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLCDNumber" name="lcdNumberTime"/>
+           <widget class="QLCDNumber" name="lcdNumberTiempoTranscurrido"/>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonResults">
+           <widget class="QPushButton" name="pushButtonResultados">
             <property name="text">
              <string>Resultados</string>
             </property>
@@ -422,7 +422,7 @@ border: 3px solid #398439;
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonSaveImage">
+           <widget class="QPushButton" name="pushButtonGuardarImagen">
             <property name="text">
              <string>Guardar Imagen</string>
             </property>
@@ -433,7 +433,7 @@ border: 3px solid #398439;
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonSaveSamples">
+           <widget class="QPushButton" name="pushButtonGuardarMuestras">
             <property name="text">
              <string>Guardar Muestras</string>
             </property>
@@ -466,7 +466,7 @@ border: 3px solid #398439;
          </widget>
         </item>
         <item>
-         <widget class="QCustomPlot" name="qCustomPlotResults" native="true"/>
+         <widget class="QCustomPlot" name="qCustomPlotResultados" native="true"/>
         </item>
        </layout>
       </widget>
@@ -475,7 +475,7 @@ border: 3px solid #398439;
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QPushButton" name="pushButtonExit">
+       <widget class="QPushButton" name="pushButtonSalir">
         <property name="styleSheet">
          <string notr="true">QPushButton{
 color : white;
