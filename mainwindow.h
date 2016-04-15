@@ -38,6 +38,8 @@ private slots:
 
     void on_pushButtonSaveImage_clicked();
 
+    void on_pushButtonSaveSamples_clicked();
+
 signals:
     void emitdata(Data*);
 

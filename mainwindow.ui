@@ -336,6 +336,9 @@ border: 3px solid #398439;
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">
             <widget class="QDockWidget" name="dockWidget">
+             <property name="windowTitle">
+              <string>Gráfico</string>
+             </property>
              <widget class="QWidget" name="dockWidgetContentsQCustomPlot">
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="1">
@@ -426,6 +429,13 @@ border: 3px solid #398439;
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonSaveSamples">
+            <property name="text">
+             <string>Guardar Muestras</string>
             </property>
            </widget>
           </item>
@@ -522,7 +532,13 @@ border: 3px solid rgb(102, 0, 0);
     </property>
     <addaction name="actionConfigurar_Serial"/>
    </widget>
+   <widget class="QMenu" name="menuVer">
+    <property name="title">
+     <string>Ver</string>
+    </property>
+   </widget>
    <addaction name="menuAjustes"/>
+   <addaction name="menuVer"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

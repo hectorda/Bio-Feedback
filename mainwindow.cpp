@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     serial=new QSerialPort(this);
+    ui->menuVer->addAction(ui->dockWidget->toggleViewAction());
 
     settings= new SettingsDialog;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
@@ -310,9 +311,49 @@ void MainWindow::on_pushButtonTest1_clicked()
 
 void MainWindow::on_pushButtonSaveImage_clicked()
 {
-    QString filters("Imagen (*.png);;All files (*.*)");
-    QString fileName =  QFileDialog::getSaveFileName(0, "Guardar Imagen", QDir::homePath()+"/pictures",filters);
+    QString filters("Imagen PNG (*.png);;Imagen JPG (*.jpg);;Archivo PDF (*.pdf)");
+    QString selectedFilter;
+    QString fileName = QFileDialog::getSaveFileName(this, "Guardar Imagen","",filters,&selectedFilter);
+    qDebug()<<selectedFilter;
 //    ui->qCustomPlotGraphic->xAxis->setRange(-30,30);
 //    ui->qCustomPlotGraphic->yAxis->setRange(-30,30);
-    ui->qCustomPlotGraphic->savePng(fileName,1000,1000);
+    if(selectedFilter.contains("PNG"))
+        ui->qCustomPlotGraphic->savePng(fileName,1000,1000);
+    if(selectedFilter.contains("JPG"))
+        ui->qCustomPlotGraphic->saveJpg(fileName,1000,1000);
+    if(selectedFilter.contains("PDF"))
+      ui->qCustomPlotGraphic->savePdf(fileName,false,1000,1000);
+}
+
+void MainWindow::on_pushButtonSaveSamples_clicked()
+{
+    QString selectedFilter;
+    QString filters(tr("Tipo de archivo (*.txt);;CSV (*.csv)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar el Archivo"), "",
+                                                    filters,&selectedFilter);
+
+    qDebug()<<selectedFilter;
+    if (fileName != "") {
+        QFile file(fileName);
+        file.remove();
+        if (file.open(QIODevice::Append)) {
+            QTextStream stream(&file);
+            foreach (Data *var, samplesList) {
+                if(selectedFilter.contains("txt")){
+                    stream <<"Tiempo: " << QString::number(var->getTime()) << " X: " << QString::number(var->getAngleX())
+                           << " Y: " << QString::number(var->getAngleY()) << endl;
+                }
+                if(selectedFilter.contains("csv")){
+                    stream <<QString::number(var->getTime()) << ";" <<QString::number(var->getAngleX())
+                           <<";" << QString::number(var->getAngleY()) << endl;
+                }
+            }
+            file.flush();
+            file.close();
+        }
+        else {
+            QMessageBox::critical(this, tr("Error"), tr("No se pudo guardar el archivo"));
+            return;
+        }
+    }
 }
