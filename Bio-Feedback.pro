@@ -24,7 +24,7 @@ HEADERS  += mainwindow.h \
     ajustespuertoserial.h
 
 FORMS    += mainwindow.ui \
-    settingsdialog.ui \
+    ajustespuertoserial.ui
 
 
 RESOURCES += \

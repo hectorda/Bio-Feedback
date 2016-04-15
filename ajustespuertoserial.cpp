@@ -1,5 +1,5 @@
 #include "ajustespuertoserial.h"
-#include "ui_settingsdialog.h"
+#include "ui_ajustespuertoserial.h"
 #include "qserialportinfo.h"
 #include "qdebug.h"
 
@@ -15,8 +15,6 @@ AjustesPuertoSerial::AjustesPuertoSerial(QWidget *parent) :
     llenarParametros();
     informacionPuertos();
     actualizarAjustes();
-
-
 }
 
 AjustesPuertoSerial::~AjustesPuertoSerial()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SettingsDialog</class>
- <widget class="QDialog" name="SettingsDialog">
+ <class>AjustesPuertoSerial</class>
+ <widget class="QDialog" name="AjustesPuertoSerial">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Ajustes Puerto Serial</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="images.qrc">
+    <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -72,7 +76,6 @@
        <zorder>labelDescription</zorder>
        <zorder>labelSerialNumber</zorder>
        <zorder>labelManufacturer</zorder>
-       <zorder>pushButtonExit</zorder>
        <zorder>verticalSpacer</zorder>
       </widget>
      </item>
@@ -118,6 +121,19 @@
         </item>
         <item>
          <widget class="QComboBox" name="comboBoxFlowControl"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <spacer name="verticalSpacer_2">
@@ -227,6 +243,8 @@ border: 3px solid rgb(102, 0, 0);
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>
