@@ -102,8 +102,9 @@ void MainWindow::leerDatosSerial(){
                 emit emitdata(data);
                 //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
             }
-            ui->lcdNumberTiempoTranscurrido->display( QString::number(temporizador.elapsed()/1000.0, 'f', 2) );
-            const QString mensaje="Tiempo: "+QString::number(temporizador.elapsed()/1000.0) + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(data->getAnguloX())+" Y: "+QString::number(data->getAnguloY());
+            const QString lapso=QString::number(temporizador.elapsed()/1000.0, 'f', 2);
+            ui->lcdNumberTiempoTranscurrido->display(lapso);
+            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(data->getAnguloX(),'f',3)+" Y: "+QString::number(data->getAnguloY(),'f',3);
             showStatusMessage(mensaje);
             //QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesList.size() << "  X: "<<data->getAngleX()<<" Y: "<< data->getAngleY() <<endl;
         }
@@ -319,7 +320,7 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
     QString filters("Imagen PNG (*.png);;Imagen JPG (*.jpg);;Archivo PDF (*.pdf)");
     QString selectedFilter;
     QString fileName = QFileDialog::getSaveFileName(this, "Guardar Imagen","",filters,&selectedFilter);
-    qDebug()<<selectedFilter;
+    //qDebug()<<selectedFilter;
 //    ui->qCustomPlotGrafico->xAxis->setRange(-30,30);
 //    ui->qCustomPlotGrafico->yAxis->setRange(-30,30);
     if(selectedFilter.contains("PNG"))
@@ -337,7 +338,7 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar el Archivo"), "",
                                                     filters,&selectedFilter);
 
-    qDebug()<<selectedFilter;
+    //qDebug()<<selectedFilter;
     if (fileName != "") {
         QFile file(fileName);
         file.remove();
@@ -345,12 +346,12 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
             QTextStream stream(&file);
             foreach (Dato *var, listaMuestras) {
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
-                           << " Y: " << QString::number(var->getAnguloY()) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',4) << " X: " << QString::number(var->getAnguloX(),'f',3)
+                           << " Y: " << QString::number(var->getAnguloY(),'f',3) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo()) << ";" <<QString::number(var->getAnguloX())
-                           <<";" << QString::number(var->getAnguloY()) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',4) << ";" <<QString::number(var->getAnguloX(),'f',3)
+                           <<";" << QString::number(var->getAnguloY(),'f',3) << endl;
                 }
             }
             file.flush();
