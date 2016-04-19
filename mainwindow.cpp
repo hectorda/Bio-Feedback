@@ -39,6 +39,7 @@ void MainWindow::conexiones(){
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(yRangeGraphic(int)));
     connect(ui->horizontalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(xRangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
+    connect(ui->qCustomPlotGrafico,SIGNAL(mousePress(QMouseEvent*)),this,SLOT(menuContextualGrafico(QMouseEvent*)));
 }
 
 void MainWindow::init_graph()
@@ -155,6 +156,56 @@ void MainWindow::ZoomGraphic(QWheelEvent *event)
     ui->qCustomPlotGrafico->yAxis->setRange(yRange);
     ui->verticalSliderRangeGraphic->setValue(yRange.upper);
     ui->horizontalSliderRangeGraphic->setValue(xRange.upper);
+
+}
+
+void MainWindow::menuContextualGrafico(QMouseEvent *event)
+{
+    if(event->buttons() == Qt::RightButton){
+        qDebug() << "Click Derecho"<<event->screenPos().x()<<event->screenPos().y();
+//        QPoint *pos=new QPoint(event->screenPos().x(),event->screenPos().y());
+//        QPoint globalPos = ui->qCustomPlotGrafico->mapToGlobal(pos);
+//            // for QAbstractScrollArea and derived classes you would use:
+//            // QPoint globalPos = myWidget->viewport()->mapToGlobal(pos);
+
+//            QMenu myMenu;
+//            myMenu.addAction("Menu Item 1");
+//            // ...
+
+//            QAction* selectedItem = myMenu.exec(globalPos);
+//            if (selectedItem)
+//            {
+//                // something was chosen, do stuff
+//            }
+//            else
+//            {
+//                // nothing was chosen
+//            }
+////        QMenu contextMenu(tr("Context menu"), this);
+////
+////        contextMenu.exec(mapToGlobal(pos));
+    }
+}
+
+bool MainWindow::event(QEvent *event)
+{
+    if(event->type() == QEvent::WindowStateChange || event->type() == QEvent::Resize || event->type() == QEvent::Create){
+        relacionAspectoGrafico();
+    }
+    return QWidget::event(event);
+
+}
+
+void MainWindow::relacionAspectoGrafico()
+{
+    int w=ui->qCustomPlotGrafico->width();
+    int h=ui->qCustomPlotGrafico->height();
+
+    QRect rect=ui->qCustomPlotGrafico->geometry();
+    if(w>h)
+        ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y(),h,h);
+    else
+        ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y(),w,w);
 
 }
 

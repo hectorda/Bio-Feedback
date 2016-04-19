@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
+    <width>541</width>
     <height>498</height>
    </rect>
   </property>
@@ -56,7 +56,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -522,7 +522,7 @@ border: 3px solid rgb(102, 0, 0);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>454</width>
+     <width>541</width>
      <height>21</height>
     </rect>
    </property>

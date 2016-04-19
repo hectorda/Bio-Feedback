@@ -37,8 +37,9 @@ private slots:
     void xRangeGraphic(int xRange);
     void yRangeGraphic(int yRange);
     void ZoomGraphic(QWheelEvent *event);
-
-
+    void menuContextualGrafico(QMouseEvent*event);
+    bool event(QEvent *event);
+    void relacionAspectoGrafico();
 
 signals:
     void emitdata(Dato*);
