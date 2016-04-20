@@ -27,6 +27,7 @@ void MainWindow::inicializar(){
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGrafico, "Grafico Angulos X e Y"));
     status = new QLabel;
     ui->statusBar->addWidget(status);
+    ui->dockWidget->installEventFilter(this);
 }
 
 void MainWindow::conexiones(){
@@ -34,15 +35,16 @@ void MainWindow::conexiones(){
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->pushButtonIniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
     connect(ui->pushButtonReiniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
+    connect(ui->dockWidget,SIGNAL(topLevelChanged(bool)),this,SLOT(relacionAspectodelGrafico()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
     connect(this,SIGNAL(emitdata(Dato*)),this,SLOT(slotDatosTiempoReal(Dato*)));
-    connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(yRangeGraphic(int)));
-    connect(ui->horizontalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(xRangeGraphic(int)));
+    connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mousePress(QMouseEvent*)),this,SLOT(menuContextualGrafico(QMouseEvent*)));
+
 }
 
-void MainWindow::init_graph()
+void MainWindow::inicializarGrafico()
 {
     ui->qCustomPlotGrafico->clearGraphs(); //Se limpian los graficos agregados
     ui->qCustomPlotGrafico->clearPlottables(); //Se eliminan los elementos graficables
@@ -68,13 +70,14 @@ void MainWindow::init_graph()
     ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::red));
     ui->qCustomPlotGrafico->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-    ui->qCustomPlotGrafico->setInteractions(false);
-    ui->qCustomPlotGrafico->xAxis->setRange(-ui->horizontalSliderRangeGraphic->value(),ui->horizontalSliderRangeGraphic->value());
-    ui->qCustomPlotGrafico->yAxis->setRange(-ui->verticalSliderRangeGraphic->value(),ui->verticalSliderRangeGraphic->value());
+    ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    const int range=ui->verticalSliderRangeGraphic->value();
+    ui->qCustomPlotGrafico->xAxis->setRange(-range,range);
+    ui->qCustomPlotGrafico->yAxis->setRange(-range,range);
 
 }
 
-void MainWindow::showStatusMessage(const QString &message)
+void MainWindow::mostrarMensajeBarraEstado(const QString &message)
 {
     status->setText(message);
 }
@@ -96,17 +99,17 @@ void MainWindow::leerDatosSerial(){
             if(cantidadMuestras==1)//Cuando se agrega el primer dato, se inicia el tiempo.
                 temporizador.start();
 
-            Dato *data=new Dato(AnguloX,AnguloY,temporizador.elapsed()/1000.0);
-            listaMuestras.append(data);
+            Dato *dato=new Dato(AnguloX,AnguloY,temporizador.elapsed()/1000.0);
+            listaMuestras.append(dato);
 
             if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0){//Mod
-                emit emitdata(data);
+                emit emitdata(dato);
                 //const QString status="Tiempo: "+QString::number(timer.elapsed()/1000.0)+"   Muestras: "+QString::number(samplesNumber);
             }
             const QString lapso=QString::number(temporizador.elapsed()/1000.0, 'f', 2);
             ui->lcdNumberTiempoTranscurrido->display(lapso);
-            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(data->getAnguloX(),'f',3)+" Y: "+QString::number(data->getAnguloY(),'f',3);
-            showStatusMessage(mensaje);
+            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(dato->getAnguloX(),'f',3)+" Y: "+QString::number(dato->getAnguloY(),'f',3);
+            mostrarMensajeBarraEstado(mensaje);
             //QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesList.size() << "  X: "<<data->getAngleX()<<" Y: "<< data->getAngleY() <<endl;
         }
     }
@@ -116,7 +119,7 @@ void MainWindow::leerDatosSerial(){
         ui->pushButtonResultados->show();
         ui->pushButtonGuardarImagen->show();
         ui->pushButtonGuardarMuestras->show();
-        ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+        //ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     }
 }
 
@@ -136,26 +139,22 @@ void MainWindow::slotDatosTiempoReal(Dato *data)
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
 
-void MainWindow::xRangeGraphic(int xRange)
+void MainWindow::RangeGraphic(int Range)
 {
-    ui->qCustomPlotGrafico->xAxis->setRange(-xRange,xRange);
-    ui->qCustomPlotGrafico->replot();
-}
-
-void MainWindow::yRangeGraphic(int yRange)
-{
-    ui->qCustomPlotGrafico->yAxis->setRange(-yRange,yRange);
+    ui->qCustomPlotGrafico->xAxis->setRange(-Range,Range);
+    ui->qCustomPlotGrafico->yAxis->setRange(-Range,Range);
     ui->qCustomPlotGrafico->replot();
 }
 
 void MainWindow::ZoomGraphic(QWheelEvent *event)
 {
-    QCPRange xRange=ui->qCustomPlotGrafico->xAxis->range();
-    QCPRange yRange=ui->qCustomPlotGrafico->yAxis->range();
-    ui->qCustomPlotGrafico->xAxis->setRange(xRange);
-    ui->qCustomPlotGrafico->yAxis->setRange(yRange);
-    ui->verticalSliderRangeGraphic->setValue(yRange.upper);
-    ui->horizontalSliderRangeGraphic->setValue(xRange.upper);
+    QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
+
+    ui->qCustomPlotGrafico->xAxis->setRange(range);
+    ui->qCustomPlotGrafico->yAxis->setRange(range);
+
+    ui->verticalSliderRangeGraphic->setValue(range.upper);
+//    ui->horizontalSliderRangeGraphic->setValue(xRange.upper);
 
 }
 
@@ -187,26 +186,22 @@ void MainWindow::menuContextualGrafico(QMouseEvent *event)
     }
 }
 
-bool MainWindow::event(QEvent *event)
-{
-    if(event->type() == QEvent::WindowStateChange || event->type() == QEvent::Resize || event->type() == QEvent::Create){
-        relacionAspectoGrafico();
-    }
-    return QWidget::event(event);
-
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::Resize && obj == ui->dockWidget)
+        relacionAspectodelGrafico();
+    return QWidget::eventFilter(obj, event);
 }
 
-void MainWindow::relacionAspectoGrafico()
+void MainWindow::relacionAspectodelGrafico()
 {
     int w=ui->qCustomPlotGrafico->width();
     int h=ui->qCustomPlotGrafico->height();
-
     QRect rect=ui->qCustomPlotGrafico->geometry();
+
     if(w>h)
-        ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y(),h,h);
+        ui->qCustomPlotGrafico->setGeometry(rect.x()+((w-h)/2),rect.y(),h,h);
     else
         ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y(),w,w);
-
 }
 
 void MainWindow::abrirPuertoSerial()
@@ -226,7 +221,7 @@ void MainWindow::abrirPuertoSerial()
     serial->setFlowControl(QSerialPort::NoFlowControl);
     if (serial->open(QIODevice::ReadWrite)){
         serial->clear();
-         init_graph(); //Se limpian los graficos
+         inicializarGrafico(); //Se limpian los graficos
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
         ui->pushButtonReiniciarPrueba->hide();
@@ -248,7 +243,6 @@ void MainWindow::closeSerialPort()
         QTextStream(stdout)<<"Cerrado";
     }
 }
-
 
 void MainWindow::on_pushButtonIniciarPrueba_clicked()
 {

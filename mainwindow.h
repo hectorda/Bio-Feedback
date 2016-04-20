@@ -34,12 +34,11 @@ private slots:
     void leerDatosSerial();
     void escribirDatosSerial();
     void slotDatosTiempoReal(Dato *data);
-    void xRangeGraphic(int xRange);
-    void yRangeGraphic(int yRange);
+    void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
     void menuContextualGrafico(QMouseEvent*event);
-    bool event(QEvent *event);
-    void relacionAspectoGrafico();
+    void relacionAspectodelGrafico();
+    bool eventFilter(QObject *obj, QEvent *event);
 
 signals:
     void emitdata(Dato*);
@@ -57,8 +56,8 @@ private:
 
     void inicializar();
     void conexiones();
-    void init_graph();
-    void showStatusMessage(const QString &message);
+    void inicializarGrafico();
+    void mostrarMensajeBarraEstado(const QString &message);
 };
 
 #endif // MAINWINDOW_H
