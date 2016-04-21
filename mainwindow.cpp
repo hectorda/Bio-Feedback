@@ -16,13 +16,13 @@ MainWindow::~MainWindow()
 void MainWindow::inicializar(){
     ui->setupUi(this);
     serial=new QSerialPort(this);
-    ui->menuVer->addAction(ui->dockWidget->toggleViewAction());
+    //ui->menuVer->addAction(ui->dockWidget->toggleViewAction());
 
     ajustesSerial= new AjustesPuertoSerial;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
-//    ui->qCustomPlotGrafico->xAxis->setVisible(false);
-//    ui->qCustomPlotGrafico->yAxis->setVisible(false);
+    //ui->qCustomPlotGrafico->yAxis->setVisible(false);
+    //ui->qCustomPlotGrafico->xAxis->setVisible(false);
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->qCustomPlotGrafico, "Grafico Angulos X e Y"));
     status = new QLabel;
@@ -35,7 +35,6 @@ void MainWindow::conexiones(){
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->pushButtonIniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
     connect(ui->pushButtonReiniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
-    connect(ui->dockWidget,SIGNAL(topLevelChanged(bool)),this,SLOT(relacionAspectodelGrafico()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
     connect(this,SIGNAL(emitdata(Dato*)),this,SLOT(slotDatosTiempoReal(Dato*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
@@ -408,3 +407,12 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
         }
     }
 }
+
+void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)
+{
+   relacionAspectodelGrafico();
+   if(topLevel){
+       QTextStream(stdout)<<"flotando";
+   }
+}
+

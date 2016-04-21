@@ -39,6 +39,7 @@ private slots:
     void menuContextualGrafico(QMouseEvent*event);
     void relacionAspectodelGrafico();
     bool eventFilter(QObject *obj, QEvent *event);
+    void on_dockWidget_topLevelChanged(bool topLevel);
 
 signals:
     void emitdata(Dato*);
