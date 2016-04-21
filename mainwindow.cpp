@@ -390,11 +390,11 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
             QTextStream stream(&file);
             foreach (Dato *var, listaMuestras) {
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',4) << " X: " << QString::number(var->getAnguloX(),'f',3)
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAnguloX(),'f',3)
                            << " Y: " << QString::number(var->getAnguloY(),'f',3) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',4) << ";" <<QString::number(var->getAnguloX(),'f',3)
+                    stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAnguloX(),'f',3)
                            <<";" << QString::number(var->getAnguloY(),'f',3) << endl;
                 }
             }
