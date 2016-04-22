@@ -34,17 +34,17 @@ private slots:
     void abrirPuertoSerial();
     void closeSerialPort();
     void leerDatosSerial();
-    void escribirDatosSerial();
     void slotDatosTiempoReal(Dato *data);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
-    void menuContextualGrafico(QMouseEvent*event);
+    void contextMenuRequest(QPoint pos);
     void relacionAspectodelGrafico();
     bool eventFilter(QObject *obj, QEvent *event);
     void on_dockWidget_topLevelChanged(bool topLevel);
 
 signals:
     void emitdata(Dato*);
+    void emitEscribirSerial(QString);
 
 private:
     Ui::MainWindow *ui;

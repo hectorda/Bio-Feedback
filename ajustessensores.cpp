@@ -41,34 +41,55 @@ void AjustesSensores::llenarParametros()
     ui->comboBoxGscale->addItem(QStringLiteral("1000 dps"), 2);
     ui->comboBoxGscale->addItem(QStringLiteral("2000 dps"), 3);
     ui->comboBoxGscale->setCurrentIndex(0);
+
+    double SampleRate=8000.0/(ui->spinBoxSampleRate->value()+1);
+    ui->labelSampleRate->setText(tr("Frecuencia de Muestreo= %1").arg(QString::number(SampleRate,'f',5)));
 }
 
 QString AjustesSensores::getAjustes() const
 {
-    QString cadena;
-    if(ui->comboBoxAscale->currentIndex()!=0)//Si no es el valor por defecto
-        cadena+="a"+QString::number(ui->comboBoxAscale->currentIndex());
-
-    if(ui->comboBoxGscale->currentIndex()!=0)
-        cadena+="g"+QString::number(ui->comboBoxGscale->currentIndex());
-
-    if(ui->spinBoxDLPF->value()!=0)
-        cadena.append("l"+QString::number(ui->spinBoxDLPF->value()));
-
-    if(ui->spinBoxSampleRate->value()!=79)
-        cadena+="s"+QString::number(ui->spinBoxSampleRate->value());
-
-    return cadena;
+    return ajustesactuales;
 }
 
-void AjustesSensores::on_spinBoxSampleRate_valueChanged(const QString &arg1)
+void AjustesSensores::aplicar()
+{
+    ajustesactuales.clear();
+    //if(ui->comboBoxAscale->currentIndex()!=0)//Si no es el valor por defecto
+        ajustesactuales+="a"+QString::number(ui->comboBoxAscale->currentIndex());
+
+    //if(ui->comboBoxGscale->currentIndex()!=0)
+        ajustesactuales+="g"+QString::number(ui->comboBoxGscale->currentIndex());
+
+    //if(ui->spinBoxDLPF->value()!=0)
+        ajustesactuales.append("l"+QString::number(ui->spinBoxDLPF->value()));
+
+    //if(ui->spinBoxSampleRate->value()!=79)
+        ajustesactuales+="s"+QString::number(ui->spinBoxSampleRate->value());
+
+     hide();
+
+}
+
+void AjustesSensores::on_spinBoxSampleRate_valueChanged(int arg1)
 {
     if(ui->spinBoxDLPF->value()==0){
-        double SampleRate=8000.0/(arg1.toInt()+1);
+        double SampleRate=8000.0/(arg1+1);
         ui->labelSampleRate->setText(tr("Frecuencia de Muestreo= %1").arg(QString::number(SampleRate,'f',5)));
     }
     else{
-        double SampleRate=1000.0/(arg1.toInt()+1);
+        double SampleRate=1000.0/(arg1+1);
+        ui->labelSampleRate->setText(tr("Frecuencia de Muestreo= %1").arg(QString::number(SampleRate,'f',5)));
+    }
+}
+
+void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
+{
+    if(arg1==0){
+        double SampleRate=8000.0/(ui->spinBoxSampleRate->value()+1);
+        ui->labelSampleRate->setText(tr("Frecuencia de Muestreo= %1").arg(QString::number(SampleRate,'f',5)));
+    }
+    else{
+        double SampleRate=1000.0/(ui->spinBoxSampleRate->value()+1);
         ui->labelSampleRate->setText(tr("Frecuencia de Muestreo= %1").arg(QString::number(SampleRate,'f',5)));
     }
 }

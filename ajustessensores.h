@@ -15,11 +15,13 @@ class AjustesSensores : public QDialog
 public:    
     explicit AjustesSensores(QWidget *parent = 0);
     ~AjustesSensores();
-
+    QString ajustesactuales;
     QString getAjustes() const;
 
 private slots:
-    void on_spinBoxSampleRate_valueChanged(const QString &arg1);
+    void on_spinBoxDLPF_valueChanged(int arg1);
+    void on_spinBoxSampleRate_valueChanged(int arg1);
+    void aplicar();
 
 private:
     Ui::AjustesSensores *ui;

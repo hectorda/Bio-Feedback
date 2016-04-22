@@ -77,7 +77,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="labelSampleRate">
      <property name="text">
       <string>Frecuencia de Muestreo=?</string>
