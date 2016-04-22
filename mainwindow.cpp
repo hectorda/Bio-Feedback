@@ -19,6 +19,7 @@ void MainWindow::inicializar(){
     //ui->menuVer->addAction(ui->dockWidget->toggleViewAction());
 
     ajustesSerial= new AjustesPuertoSerial;
+    ajustesSensores = new AjustesSensores;
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
     //ui->qCustomPlotGrafico->yAxis->setVisible(false);
@@ -33,6 +34,7 @@ void MainWindow::inicializar(){
 void MainWindow::conexiones(){
     connect(ui->pushButtonSalir,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
+    connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
     connect(ui->pushButtonIniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
     connect(ui->pushButtonReiniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));

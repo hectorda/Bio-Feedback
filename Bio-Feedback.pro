@@ -16,15 +16,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
     dato.cpp \
-    ajustespuertoserial.cpp
+    ajustespuertoserial.cpp \
+    ajustessensores.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
     dato.h \
-    ajustespuertoserial.h
+    ajustespuertoserial.h \
+    ajustessensores.h
 
 FORMS    += mainwindow.ui \
-    ajustespuertoserial.ui
+    ajustespuertoserial.ui \
+    ajustessensores.ui
 
 
 RESOURCES += \

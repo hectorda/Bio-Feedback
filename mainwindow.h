@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QtSerialPort>
 #include <ajustespuertoserial.h>
+#include <ajustessensores.h>
 #include <qcustomplot.h>
 #include <dato.h>
 
@@ -12,6 +13,7 @@ class MainWindow;
 }
 
 class AjustesPuertoSerial;
+class AjustesSensores;
 
 class MainWindow : public QMainWindow
 {
@@ -48,6 +50,7 @@ private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
     AjustesPuertoSerial *ajustesSerial;
+    AjustesSensores *ajustesSensores;
     QElapsedTimer temporizador;
     QString datosLeidosPuertoSerial;
     QList<Dato*> listaMuestras;

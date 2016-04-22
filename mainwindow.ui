@@ -522,6 +522,7 @@ border: 3px solid #398439;
      <string>Ajustes</string>
     </property>
     <addaction name="actionConfigurar_Serial"/>
+    <addaction name="actionConfigurar_Sensores"/>
    </widget>
    <addaction name="menuAjustes"/>
   </widget>
@@ -541,6 +542,11 @@ border: 3px solid #398439;
    </property>
    <property name="text">
     <string>Configurar Serial</string>
+   </property>
+  </action>
+  <action name="actionConfigurar_Sensores">
+   <property name="text">
+    <string>Configurar Sensores</string>
    </property>
   </action>
  </widget>
