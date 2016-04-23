@@ -106,6 +106,9 @@ void MainWindow::leerDatosSerial(){
             if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
                 emit emitdata(dato);
 
+            const double porcentaje=(dato->getTiempo()/ui->spinBoxTiempoPrueba->value())*100;
+            ui->progressBarPrueba->setValue(porcentaje);
+
             const QString lapso=QString::number(dato->getTiempo(), 'f', 2);
             ui->lcdNumberTiempoTranscurrido->display(lapso);
             const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(dato->getAnguloX(),'f',3)+" Y: "+QString::number(dato->getAnguloY(),'f',3);
@@ -115,6 +118,7 @@ void MainWindow::leerDatosSerial(){
         }
     }
     else{
+        QTextStream(stdout)<<"Muestras x Seg: "<<double(cantidadMuestras)/ui->spinBoxTiempoPrueba->value()<<endl;
         serial->close();
         ui->pushButtonReiniciarPrueba->show();
         ui->pushButtonResultados->show();
@@ -190,8 +194,8 @@ void MainWindow::abrirPuertoSerial()
 
     serial->setPortName(cs.portName);
     serial->setBaudRate(cs.baudRate);
-    QTextStream(stdout)<<"Baudios: "<< serial->baudRate();
-    QTextStream(stdout)<<"portName"<< serial->portName();
+    QTextStream(stdout)<<"Baudios: "<< serial->baudRate()<<endl;
+    QTextStream(stdout)<<"portName"<< serial->portName()<<endl;
     serial->setStopBits(QSerialPort::OneStop);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
@@ -200,7 +204,7 @@ void MainWindow::abrirPuertoSerial()
     if (serial->open(QIODevice::ReadWrite)){
         serial->clear();
         QString cadena=ajustesSensores->getAjustes();
-        QTextStream(stdout)<<cadena<<endl;
+        QTextStream(stdout)<<"Cadena de Configuracion: " <<cadena<<endl;
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
         serial->write(cadena.toLocal8Bit());

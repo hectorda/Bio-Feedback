@@ -11,19 +11,23 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Ajustes de Sensores</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="images.qrc">
+    <normaloff>:/images/IMU.png</normaloff>:/images/IMU.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>GroupBox</string>
+      <string>Ajustes de Muestreo</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Frecuencia de Muestreo</string>
+         <string>Divisor Frecuencia de Muestreo</string>
         </property>
        </widget>
       </item>
@@ -36,14 +40,14 @@
          <number>255</number>
         </property>
         <property name="value">
-         <number>79</number>
+         <number>39</number>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Sensibilidad Acelerometro</string>
+         <string>Rango Acelerometro</string>
         </property>
        </widget>
       </item>
@@ -53,7 +57,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Sensibilidad Giroscopio</string>
+         <string>Rango Giroscopio</string>
         </property>
        </widget>
       </item>
@@ -79,8 +83,17 @@
    </item>
    <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="labelSampleRate">
+     <property name="font">
+      <font>
+       <family>MS Shell Dlg 2</family>
+       <pointsize>13</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <strikeout>false</strikeout>
+      </font>
+     </property>
      <property name="text">
-      <string>Frecuencia de Muestreo=?</string>
+      <string>Frecuencia de Muestreo: ?</string>
      </property>
     </widget>
    </item>
@@ -104,6 +117,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

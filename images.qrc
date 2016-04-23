@@ -7,5 +7,6 @@
         <file>images/settings.png</file>
         <file>images/home.png</file>
         <file>images/save.png</file>
+        <file>images/IMU.png</file>
     </qresource>
 </RCC>

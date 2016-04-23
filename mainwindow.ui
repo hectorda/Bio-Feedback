@@ -439,6 +439,13 @@ border: 3px solid #398439;
            <widget class="QLCDNumber" name="lcdNumberTiempoTranscurrido"/>
           </item>
           <item>
+           <widget class="QProgressBar" name="progressBarPrueba">
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButtonResultados">
             <property name="text">
              <string>Resultados</string>
@@ -545,6 +552,10 @@ border: 3px solid #398439;
    </property>
   </action>
   <action name="actionConfigurar_Sensores">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/IMU.png</normaloff>:/images/IMU.png</iconset>
+   </property>
    <property name="text">
     <string>Configurar Sensores</string>
    </property>

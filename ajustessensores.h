@@ -28,6 +28,7 @@ private:
     void inicializar();
     void conexiones();
     void llenarParametros();
+    void mostrarFrecuenciaMuestreo(double SampleRate);
 
 };
 
