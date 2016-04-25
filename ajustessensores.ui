@@ -74,28 +74,51 @@
       <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxDLPF">
         <property name="maximum">
-         <number>7</number>
+         <number>6</number>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="labelSampleRate">
-     <property name="font">
-      <font>
-       <family>MS Shell Dlg 2</family>
-       <pointsize>13</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-       <strikeout>false</strikeout>
-      </font>
-     </property>
-     <property name="text">
-      <string>Frecuencia de Muestreo: ?</string>
-     </property>
-    </widget>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="labelSampleRate">
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>13</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+         <strikeout>false</strikeout>
+        </font>
+       </property>
+       <property name="text">
+        <string>Frecuencia de Muestreo: ?</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="labelDLPF">
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>14</pointsize>
+         <weight>75</weight>
+         <italic>false</italic>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>Filtro Pasa-Bajo= ?</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

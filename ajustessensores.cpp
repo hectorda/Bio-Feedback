@@ -16,11 +16,8 @@ AjustesSensores::~AjustesSensores()
     delete ui;
 }
 
-
 void AjustesSensores::inicializar(){
-
     ui->setupUi(this);
-
 }
 
 void AjustesSensores::conexiones()
@@ -45,12 +42,18 @@ void AjustesSensores::llenarParametros()
 
     double SampleRate=8000.0/(ui->spinBoxSampleRate->value()+1);
     mostrarFrecuenciaMuestreo(SampleRate);
+    mostrarFiltroPasaBajo("Desactivado");
 }
 
 void AjustesSensores::mostrarFrecuenciaMuestreo(double SampleRate)
 {
     const QString fSampleRate=tr("Frecuencia de Muestreo: %1 Hz").arg(QString::number(SampleRate,'f',2));
     ui->labelSampleRate->setText(fSampleRate);
+}
+
+void AjustesSensores::mostrarFiltroPasaBajo(const QString DLPF)
+{
+    ui->labelDLPF->setText("Filtro Pasa-Bajo: "+DLPF);
 }
 
 QString AjustesSensores::getAjustes() const
@@ -61,17 +64,11 @@ QString AjustesSensores::getAjustes() const
 void AjustesSensores::aplicar()
 {
     ajustesactuales.clear();
-
     ajustesactuales+="a"+QString::number(ui->comboBoxAscale->currentIndex());
-
     ajustesactuales+="g"+QString::number(ui->comboBoxGscale->currentIndex());
-
     ajustesactuales.append("l"+QString::number(ui->spinBoxDLPF->value()));
-
     ajustesactuales+="s"+QString::number(ui->spinBoxSampleRate->value());
-
     hide();
-
 }
 
 void AjustesSensores::on_spinBoxSampleRate_valueChanged(int arg1)
@@ -81,15 +78,16 @@ void AjustesSensores::on_spinBoxSampleRate_valueChanged(int arg1)
 
     else
         mostrarFrecuenciaMuestreo(1000.0/(arg1+1));
-
 }
 
 void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
 {
-    if(arg1==0)
+    if(arg1==0){
         mostrarFrecuenciaMuestreo(8000.0/(ui->spinBoxSampleRate->value()+1));
-
-    else
+        mostrarFiltroPasaBajo("Desactivado");
+    }
+    else{
         mostrarFrecuenciaMuestreo(1000.0/(ui->spinBoxSampleRate->value()+1));
-
+        mostrarFiltroPasaBajo("Actidado");
+    }
 }

@@ -62,6 +62,8 @@ private:
     void conexiones();
     void inicializarGrafico();
     void mostrarMensajeBarraEstado(const QString &message);
+    void limpiarGrafico(QCustomPlot *grafico);
+    void calcularResultados(QCustomPlot *grafico);
 };
 
 #endif // MAINWINDOW_H

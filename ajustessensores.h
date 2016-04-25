@@ -29,6 +29,7 @@ private:
     void conexiones();
     void llenarParametros();
     void mostrarFrecuenciaMuestreo(double SampleRate);
+    void mostrarFiltroPasaBajo(const QString DLPF);
 
 };
 

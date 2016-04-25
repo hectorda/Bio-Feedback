@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>541</width>
+    <width>655</width>
     <height>498</height>
    </rect>
   </property>
@@ -63,32 +63,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonSalir">
-        <property name="styleSheet">
-         <string notr="true">QPushButton{
-color : white;
-background-color: rgb(255, 0, 0);
-border: 2px solid;
-border-radius: 3px;
-padding: 5px;
-min-width: 80px;
-}
-
-QPushButton:hover {
-background-color: rgb(170, 0, 0);
-border: 2px solid ;
-}
-
-QPushButton:pressed {
-border: 3px solid rgb(102, 0, 0);
-}</string>
-        </property>
-        <property name="text">
-         <string>Cerrar</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>
@@ -371,46 +345,83 @@ border: 3px solid #398439;
       <widget class="QWidget" name="widgetTest">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QDockWidget" name="dockWidget">
-          <property name="features">
-           <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
-          </property>
-          <property name="windowTitle">
-           <string>Gráfico</string>
-          </property>
-          <widget class="QWidget" name="dockWidgetContentsQCustomPlot">
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QSlider" name="verticalSliderRangeGraphic">
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="value">
-               <number>30</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QCustomPlot" name="qCustomPlotGrafico" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>200</height>
-               </size>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4"/>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-        <item>
          <widget class="QWidget" name="widget" native="true">
-          <layout class="QGridLayout" name="gridLayout_3"/>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <widget class="QTabWidget" name="tabWidgetGrafico_Resultados">
+             <property name="tabPosition">
+              <enum>QTabWidget::North</enum>
+             </property>
+             <property name="tabShape">
+              <enum>QTabWidget::Rounded</enum>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <property name="elideMode">
+              <enum>Qt::ElideLeft</enum>
+             </property>
+             <property name="movable">
+              <bool>false</bool>
+             </property>
+             <widget class="QWidget" name="tab_grafico">
+              <attribute name="title">
+               <string>Grafico</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_5">
+               <item row="0" column="0">
+                <widget class="QDockWidget" name="dockWidget">
+                 <property name="features">
+                  <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+                 </property>
+                 <property name="windowTitle">
+                  <string>Gráfico</string>
+                 </property>
+                 <widget class="QWidget" name="dockWidgetContentsQCustomPlot">
+                  <layout class="QGridLayout" name="gridLayout_4">
+                   <item row="0" column="0">
+                    <widget class="QSlider" name="verticalSliderRangeGraphic">
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="value">
+                      <number>30</number>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QCustomPlot" name="qCustomPlotGrafico" native="true">
+                     <property name="minimumSize">
+                      <size>
+                       <width>200</width>
+                       <height>200</height>
+                      </size>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_4"/>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_resultados">
+              <attribute name="title">
+               <string>Resultados</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_6">
+               <item row="0" column="0">
+                <widget class="QCustomPlot" name="qCustomPlotResultados_tab" native="true"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -520,7 +531,7 @@ border: 3px solid #398439;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>541</width>
+     <width>655</width>
      <height>21</height>
     </rect>
    </property>
