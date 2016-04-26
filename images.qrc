@@ -8,5 +8,11 @@
         <file>images/home.png</file>
         <file>images/save.png</file>
         <file>images/IMU.png</file>
+        <file>images/csv_icon.png</file>
+        <file>images/png.png</file>
+        <file>images/results_icon.png</file>
+        <file>images/repeat.png</file>
+        <file>images/config.png</file>
+        <file>images/stop.png</file>
     </qresource>
 </RCC>

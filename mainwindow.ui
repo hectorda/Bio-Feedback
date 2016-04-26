@@ -34,10 +34,33 @@
         </property>
        </spacer>
       </item>
-      <item alignment="Qt::AlignHCenter">
+      <item>
        <widget class="QPushButton" name="pushButtonRegresarInicio">
+        <property name="maximumSize">
+         <size>
+          <width>64</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Volver a la Pagina Principal</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    padding: 10px 16px;
+    border: 5px solid #aba7a5;
+    border-radius: 10px;
+}
+
+QPushButton:hover {
+    border: 5px solid;	
+	background-color: rgb(247, 183, 19)
+}
+
+</string>
+        </property>
         <property name="text">
-         <string>Regresar a Inicio</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="images.qrc">
@@ -45,9 +68,12 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>64</width>
+          <height>64</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -68,6 +94,9 @@
     </item>
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="currentIndex">
        <number>2</number>
       </property>
@@ -75,11 +104,6 @@
        <property name="styleSheet">
         <string notr="true">QPushButton {
   background: #3498db;
-  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-  background-image: -o-linear-gradient(top, #3498db, #2980b9);
-  background-image: linear-gradient(to bottom, #3498db, #2980b9);
   border-radius: 8px;
   font-family: Arial;
   color: #ffffff;
@@ -90,15 +114,36 @@
 
 QPushButton:hover {
   background: #3cb0fd;
-  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
   text-decoration: none;
 }</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="2" column="0">
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="1" column="0">
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="0">
@@ -146,32 +191,6 @@ QPushButton:hover {
           </item>
          </layout>
         </item>
-        <item row="0" column="0">
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="0">
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="widgetConfigurarPrueba">
@@ -193,15 +212,47 @@ QPushButton:hover {
           </item>
           <item>
            <widget class="QLabel" name="label_3">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Tiempo que durara la Prueba seleccionada</string>
+            </property>
             <property name="text">
              <string>Tiempo</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item alignment="Qt::AlignHCenter">
            <widget class="QSpinBox" name="spinBoxTiempoPrueba">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Tiempo que durara la Prueba seleccionada</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
             <property name="minimum">
-             <number>1</number>
+             <number>2</number>
             </property>
             <property name="maximum">
              <number>500</number>
@@ -288,24 +339,30 @@ QPushButton:hover {
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonIniciarPrueba">
+            <property name="toolTip">
+             <string>Iniciar la Prueba</string>
+            </property>
             <property name="styleSheet">
              <string notr="true">QPushButton{
 color : white;
 background-color: #5cb85c;
-border: 2px solid #4cae4c;
-border-radius: 3px;
-padding: 5px;
+border: 3px solid #4cae4c;
+border-radius: 15px;
+font-size: 25px;
+padding: 10px 20px 10px 20px;
 min-width: 80px;
 }
 
 QPushButton:hover {
+color: black;
 background-color: #47a447;
-border: 2px solid #398439;
+border: 3px solid #398439;
 }
 
 QPushButton:pressed {
 border: 3px solid #398439;
-}</string>
+}
+</string>
             </property>
             <property name="text">
              <string>Iniciar Test</string>
@@ -346,8 +403,22 @@ border: 3px solid #398439;
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QWidget" name="widget" native="true">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+    padding: 10px 16px;
+    border: 5px solid #aba7a5;
+    border-radius: 10px;
+}
+
+QPushButton:hover {
+    border: 5px solid;	
+	background-color: rgb(247, 183, 19)
+}
+
+</string>
+          </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
+           <item row="0" column="1">
             <widget class="QTabWidget" name="tabWidgetGrafico_Resultados">
              <property name="tabPosition">
               <enum>QTabWidget::North</enum>
@@ -368,9 +439,23 @@ border: 3px solid #398439;
               <attribute name="title">
                <string>Grafico</string>
               </attribute>
-              <layout class="QGridLayout" name="gridLayout_5">
-               <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
                 <widget class="QDockWidget" name="dockWidget">
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton {
+    padding: 10px 16px;
+    border: 5px solid #aba7a5;
+    border-radius: 10px;
+}
+
+QPushButton:hover {
+    border: 5px solid;	
+	background-color: rgb(247, 183, 19)
+}
+
+</string>
+                 </property>
                  <property name="features">
                   <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
                  </property>
@@ -378,8 +463,8 @@ border: 3px solid #398439;
                   <string>Gráfico</string>
                  </property>
                  <widget class="QWidget" name="dockWidgetContentsQCustomPlot">
-                  <layout class="QGridLayout" name="gridLayout_4">
-                   <item row="0" column="0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <item>
                     <widget class="QSlider" name="verticalSliderRangeGraphic">
                      <property name="minimum">
                       <number>1</number>
@@ -390,9 +475,18 @@ border: 3px solid #398439;
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
+                     <property name="invertedAppearance">
+                      <bool>false</bool>
+                     </property>
+                     <property name="tickPosition">
+                      <enum>QSlider::NoTicks</enum>
+                     </property>
+                     <property name="tickInterval">
+                      <number>0</number>
+                     </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
+                   <item>
                     <widget class="QCustomPlot" name="qCustomPlotGrafico" native="true">
                      <property name="minimumSize">
                       <size>
@@ -421,6 +515,177 @@ border: 3px solid #398439;
              </widget>
             </widget>
            </item>
+           <item row="0" column="2">
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="3" column="0">
+              <widget class="QPushButton" name="pushButtonGuardarMuestras">
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Guardar Muestras en formato CSV o TXT</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="images.qrc">
+                 <normaloff>:/images/csv_icon.png</normaloff>:/images/csv_icon.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="pushButtonGuardarImagen">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Guardar Imagen del Grafico Actual</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="images.qrc">
+                 <normaloff>:/images/png.png</normaloff>:/images/png.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="pushButtonDetenerPrueba">
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Detener Prueba</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normalon>:/images/stop.png</normalon>
+                </iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0">
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QPushButton" name="pushButtonReiniciarPrueba">
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Reinciar Prueba</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="images.qrc">
+                 <normaloff>:/images/repeat.png</normaloff>:/images/repeat.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonConfPrueba">
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Configurar Prueba</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="images.qrc">
+                 <normaloff>:/images/config.png</normaloff>:/images/config.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonResultados">
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="images.qrc">
+                 <normaloff>:/images/results_icon.png</normaloff>:/images/results_icon.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
           </layout>
          </widget>
         </item>
@@ -440,26 +705,19 @@ border: 3px solid #398439;
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonReiniciarPrueba">
-            <property name="text">
-             <string>Reiniciar Prueba</string>
+           <widget class="QLCDNumber" name="lcdNumberTiempoTranscurrido">
+            <property name="toolTip">
+             <string>Segundos Transcurridos</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <widget class="QLCDNumber" name="lcdNumberTiempoTranscurrido"/>
           </item>
           <item>
            <widget class="QProgressBar" name="progressBarPrueba">
+            <property name="toolTip">
+             <string>Porcentaje completado de la prueba</string>
+            </property>
             <property name="value">
              <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonResultados">
-            <property name="text">
-             <string>Resultados</string>
             </property>
            </widget>
           </item>
@@ -470,24 +728,6 @@ border: 3px solid #398439;
             </property>
             <property name="value">
              <number>5</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonGuardarImagen">
-            <property name="text">
-             <string>Guardar Imagen</string>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonGuardarMuestras">
-            <property name="text">
-             <string>Guardar Muestras</string>
             </property>
            </widget>
           </item>

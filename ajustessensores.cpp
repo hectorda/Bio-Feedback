@@ -88,6 +88,6 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
     }
     else{
         mostrarFrecuenciaMuestreo(1000.0/(ui->spinBoxSampleRate->value()+1));
-        mostrarFiltroPasaBajo("Actidado");
+        mostrarFiltroPasaBajo("Activado");
     }
 }

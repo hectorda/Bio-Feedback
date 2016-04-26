@@ -39,8 +39,6 @@ void MainWindow::conexiones()
 {
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
-    connect(ui->pushButtonIniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
-    connect(ui->pushButtonReiniciarPrueba,SIGNAL(clicked()),this,SLOT(abrirPuertoSerial()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
     connect(this,SIGNAL(emitdata(Dato*)),this,SLOT(slotDatosTiempoReal(Dato*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
@@ -109,10 +107,10 @@ void MainWindow::leerDatosSerial()
             if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
                 emit emitdata(dato);
 
-            const double porcentaje=(dato->getTiempo()/ui->spinBoxTiempoPrueba->value())*100;
+            const double porcentaje=(dato->getTiempo()/ui->spinBoxTiempoPrueba->value())*100+0.1;
             ui->progressBarPrueba->setValue(porcentaje);
 
-            const QString lapso=QString::number(dato->getTiempo(), 'f', 2);
+            const QString lapso=QString::number(dato->getTiempo(), 'f', 1);
             ui->lcdNumberTiempoTranscurrido->display(lapso);
             const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(dato->getAnguloX(),'f',3)+" Y: "+QString::number(dato->getAnguloY(),'f',3);
             mostrarMensajeBarraEstado(mensaje);
@@ -123,13 +121,22 @@ void MainWindow::leerDatosSerial()
     else{
         QTextStream(stdout)<<"Muestras x Seg: "<<double(cantidadMuestras)/ui->spinBoxTiempoPrueba->value()<<endl;
         serial->close();
-        ui->pushButtonReiniciarPrueba->show();
-        ui->pushButtonResultados->show();
-        ui->pushButtonGuardarImagen->show();
-        ui->pushButtonGuardarMuestras->show();
+        mostrarBotones();
         ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
-        calcularResultados(ui->qCustomPlotResultados_tab);
+
+        generarGraficoResultados(ui->qCustomPlotResultados_tab);
     }
+}
+
+void MainWindow::mostrarBotones()
+{
+    ui->pushButtonReiniciarPrueba->show();
+    ui->pushButtonResultados->show();
+    ui->pushButtonGuardarImagen->show();
+    ui->pushButtonGuardarMuestras->show();
+    ui->pushButtonConfPrueba->show();
+    ui->pushButtonDetenerPrueba->hide();
+
 }
 
 void MainWindow::slotDatosTiempoReal(Dato *data)
@@ -142,6 +149,7 @@ void MainWindow::slotDatosTiempoReal(Dato *data)
 
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
+
 
 void MainWindow::RangeGraphic(int Range)
 {
@@ -196,7 +204,6 @@ void MainWindow::abrirPuertoSerial()
     listaMuestras.clear();
 
     AjustesPuertoSerial::Ajustes cs=ajustesSerial->getAjustes();
-
     serial->setPortName(cs.portName);
     serial->setBaudRate(cs.baudRate);
     QTextStream(stdout)<<"Baudios: "<< serial->baudRate()<<endl;
@@ -221,31 +228,45 @@ void MainWindow::abrirPuertoSerial()
 
         inicializarGrafico(); //Se limpian los graficos
 
-        ui->pushButtonReiniciarPrueba->hide();
+        ui->pushButtonDetenerPrueba->show();
+        ui->pushButtonConfPrueba->hide();
         ui->pushButtonResultados->hide();
         ui->pushButtonGuardarImagen->hide();
         ui->pushButtonGuardarMuestras->hide();
         ui->tabWidgetGrafico_Resultados->setTabEnabled(1,false);
 
-        QMessageBox::information(this,"Puerto Abierto","El puerto se ha abierto");
     } else {
         QMessageBox::critical(this, tr("Error"), serial->errorString());
     }
 }
 
-void MainWindow::closeSerialPort()
+void MainWindow::cerrarPuertoSerial()
 {
+    serial->clear();
     if (serial->isOpen()){
         serial->close();
-        QMessageBox::information(this,"Cerrar Puerto","Puerto Cerrado");
-        QTextStream(stdout)<<"Cerrado";
     }
 }
 
 void MainWindow::on_pushButtonIniciarPrueba_clicked()
 {
+    abrirPuertoSerial();
     ui->stackedWidget->setCurrentWidget(ui->widgetTest);
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
+
+}
+
+void MainWindow::on_pushButtonReiniciarPrueba_clicked()
+{
+    cerrarPuertoSerial();
+    abrirPuertoSerial();
+}
+
+void MainWindow::on_pushButtonDetenerPrueba_clicked()
+{
+    cerrarPuertoSerial();
+    mostrarBotones();
+
 }
 
 void MainWindow::on_pushButtonRegresarInicio_clicked()
@@ -260,13 +281,13 @@ void MainWindow::on_pushButtonRegresarInicio_clicked()
 
     if (messageBox.exec() == QMessageBox::Yes) {
         ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-        closeSerialPort();
+        cerrarPuertoSerial();
     }
 }
 
 void MainWindow::on_pushButtonResultados_clicked()
 {
-    calcularResultados(ui->qCustomPlotResultados);
+    generarGraficoResultados(ui->qCustomPlotResultados);
     ui->stackedWidget->setCurrentWidget(ui->widgetResults);
     const QString name=ui->lineEditNombrPaciente->text();
     if(name=="")
@@ -290,7 +311,7 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
     grafico->replot();
 }
 
-void MainWindow::calcularResultados(QCustomPlot *grafico)
+void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
 {
     limpiarGrafico(grafico);
     double q1=0, q2=0, q3=0, q4=0;
@@ -377,6 +398,11 @@ void MainWindow::on_pushButtonPrueba1_clicked()
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
 }
 
+void MainWindow::on_pushButtonConfPrueba_clicked()
+{
+     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
+}
+
 void MainWindow::on_pushButtonGuardarImagen_clicked()
 {
     QString filters("Imagen PNG (*.png);;Imagen JPG (*.jpg);;Archivo PDF (*.pdf)");
@@ -384,18 +410,31 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
     QString fileName = QFileDialog::getSaveFileName(this, "Guardar Imagen","",filters,&selectedFilter);
     ui->qCustomPlotGrafico->xAxis->setRange(-30,30);
     ui->qCustomPlotGrafico->yAxis->setRange(-30,30);
-    if(selectedFilter.contains("PNG"))
-        ui->qCustomPlotGrafico->savePng(fileName,1000,1000);
-    if(selectedFilter.contains("JPG"))
-        ui->qCustomPlotGrafico->saveJpg(fileName,1000,1000);
-    if(selectedFilter.contains("PDF"))
-      ui->qCustomPlotGrafico->savePdf(fileName,false,1000,1000);
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados){
+        if(selectedFilter.contains("PNG"))
+            ui->qCustomPlotResultados_tab->savePng(fileName,1000,1000);
+        if(selectedFilter.contains("JPG"))
+            ui->qCustomPlotResultados_tab->saveJpg(fileName,1000,1000);
+        if(selectedFilter.contains("PDF"))
+          ui->qCustomPlotResultados_tab->savePdf(fileName,false,1000,1000);
+
+    }
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
+    {
+        if(selectedFilter.contains("PNG"))
+            ui->qCustomPlotGrafico->savePng(fileName,1000,1000);
+        if(selectedFilter.contains("JPG"))
+            ui->qCustomPlotGrafico->saveJpg(fileName,1000,1000);
+        if(selectedFilter.contains("PDF"))
+          ui->qCustomPlotGrafico->savePdf(fileName,false,1000,1000);
+    }
 }
 
 void MainWindow::on_pushButtonGuardarMuestras_clicked()
 {
     QString selectedFilter;
-    QString filters(tr("Tipo de archivo (*.txt);;CSV (*.csv)"));
+    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
     QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar el Archivo"), "",
                                                     filters,&selectedFilter);
 
@@ -431,4 +470,10 @@ void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)
    if(topLevel){
        QTextStream(stdout)<<"flotando";
    }
+}
+
+void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
+{
+    if(index==0)
+        relacionAspectodelGrafico();//Al cambiar a la pestaña del grafico se reajusta.
 }

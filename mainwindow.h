@@ -30,9 +30,12 @@ private slots:
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
     void on_pushButtonRegresarInicio_clicked();
+    void on_pushButtonReiniciarPrueba_clicked();
+    void on_pushButtonDetenerPrueba_clicked();
+    void on_pushButtonConfPrueba_clicked();
 
     void abrirPuertoSerial();
-    void closeSerialPort();
+    void cerrarPuertoSerial();
     void leerDatosSerial();
     void slotDatosTiempoReal(Dato *data);
     void RangeGraphic(int Range);
@@ -41,6 +44,8 @@ private slots:
     void relacionAspectodelGrafico();
     bool eventFilter(QObject *obj, QEvent *event);
     void on_dockWidget_topLevelChanged(bool topLevel);
+    void on_tabWidgetGrafico_Resultados_currentChanged(int index);
+
 
 signals:
     void emitdata(Dato*);
@@ -61,9 +66,10 @@ private:
     void inicializar();
     void conexiones();
     void inicializarGrafico();
+    void mostrarBotones();
     void mostrarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
-    void calcularResultados(QCustomPlot *grafico);
+    void generarGraficoResultados(QCustomPlot *grafico);
 };
 
 #endif // MAINWINDOW_H
