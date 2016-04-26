@@ -23,6 +23,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+
 private slots:
     void on_pushButtonIniciarPrueba_clicked();
     void on_pushButtonResultados_clicked();
@@ -45,7 +46,9 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     void on_dockWidget_topLevelChanged(bool topLevel);
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
+    void regresarInicio();
 
+    void on_pushButton_clicked();
 
 signals:
     void emitdata(Dato*);

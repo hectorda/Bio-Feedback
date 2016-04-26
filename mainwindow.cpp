@@ -44,6 +44,11 @@ void MainWindow::conexiones()
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+
+    connect(ui->actionInicio,SIGNAL(triggered(bool)),this,SLOT(regresarInicio()));
+    connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
+    connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
+
 }
 
 void MainWindow::inicializarGrafico()
@@ -242,10 +247,28 @@ void MainWindow::abrirPuertoSerial()
 
 void MainWindow::cerrarPuertoSerial()
 {
-    serial->clear();
     if (serial->isOpen()){
+        serial->clear();
         serial->close();
     }
+}
+
+void MainWindow::regresarInicio()
+{
+    if(ui->stackedWidget->currentWidget()!=ui->widgetWelcome){
+          QMessageBox messageBox(QMessageBox::Question,
+                      tr("¿Volver a Pagina Principal?"),
+                      tr("¿Seguro que desea volver a Inicio\nTodos los resultados no guardados se perderán?"),
+                      QMessageBox::Yes | QMessageBox::No,
+                      this);
+          messageBox.setButtonText(QMessageBox::Yes, tr("Si"));
+          messageBox.setButtonText(QMessageBox::No, tr("No"));
+
+          if (messageBox.exec() == QMessageBox::Yes){
+              ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+              cerrarPuertoSerial();
+          }
+      }
 }
 
 void MainWindow::on_pushButtonIniciarPrueba_clicked()
@@ -253,7 +276,6 @@ void MainWindow::on_pushButtonIniciarPrueba_clicked()
     abrirPuertoSerial();
     ui->stackedWidget->setCurrentWidget(ui->widgetTest);
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
-
 }
 
 void MainWindow::on_pushButtonReiniciarPrueba_clicked()
@@ -266,23 +288,29 @@ void MainWindow::on_pushButtonDetenerPrueba_clicked()
 {
     cerrarPuertoSerial();
     mostrarBotones();
-
 }
 
 void MainWindow::on_pushButtonRegresarInicio_clicked()
 {
-    QMessageBox messageBox(QMessageBox::Question,
-                tr("¿Volver a Pagina Principal?"),
-                tr("¿Seguro que desea volver a Inicio\nTodos los resultados no guardados se perderán?"),
-                QMessageBox::Yes | QMessageBox::No,
-                this);
-    messageBox.setButtonText(QMessageBox::Yes, tr("Si"));
-    messageBox.setButtonText(QMessageBox::No, tr("No"));
+    if(ui->stackedWidget->currentWidget()!=ui->widgetWelcome){
+        QMessageBox messageBox(QMessageBox::Question,
+                    tr("¿Volver a Pagina Principal?"),
+                    tr("¿Seguro que desea volver a Inicio\nTodos los resultados no guardados se perderán?"),
+                    QMessageBox::Yes | QMessageBox::No,
+                    this);
+        messageBox.setButtonText(QMessageBox::Yes, tr("Si"));
+        messageBox.setButtonText(QMessageBox::No, tr("No"));
 
-    if (messageBox.exec() == QMessageBox::Yes) {
-        ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-        cerrarPuertoSerial();
+        if (messageBox.exec() == QMessageBox::Yes){
+            ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
+            cerrarPuertoSerial();
+        }
     }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 }
 
 void MainWindow::on_pushButtonResultados_clicked()

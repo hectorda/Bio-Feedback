@@ -14,5 +14,9 @@
         <file>images/repeat.png</file>
         <file>images/config.png</file>
         <file>images/stop.png</file>
+        <file>images/back-arrow.png</file>
+        <file>images/qt-icon.png</file>
+        <file>images/play.png</file>
+        <file>images/usb-icon.png</file>
     </qresource>
 </RCC>

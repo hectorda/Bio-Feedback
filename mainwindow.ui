@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Pagina Principal</string>
+   <string>Biofeed-Back</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
@@ -20,85 +20,12 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonRegresarInicio">
-        <property name="maximumSize">
-         <size>
-          <width>64</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Volver a la Pagina Principal</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton {
-    padding: 10px 16px;
-    border: 5px solid #aba7a5;
-    border-radius: 10px;
-}
-
-QPushButton:hover {
-    border: 5px solid;	
-	background-color: rgb(247, 183, 19)
-}
-
-</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/home.png</normaloff>:/images/home.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>64</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="flat">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_11">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="styleSheet">
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -198,7 +125,38 @@ QPushButton:hover {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <spacer name="horizontalSpacer_5">
+           <widget class="QPushButton" name="pushButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+    padding: 10px 16px;
+    border: 5px solid #aba7a5;
+    border-radius: 10px;
+}
+
+QPushButton:hover {
+    border: 5px solid;	
+	background-color: rgb(247, 183, 19)
+}
+
+</string>
+            </property>
+            <property name="text">
+             <string>Volver</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/back-arrow.png</normaloff>:/images/back-arrow.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>48</width>
+              <height>48</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -210,6 +168,84 @@ QPushButton:hover {
             </property>
            </spacer>
           </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string>Datos del Paciente</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QFormLayout" name="formLayout_3">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <property name="rowWrapPolicy">
+            <enum>QFormLayout::DontWrapRows</enum>
+           </property>
+           <property name="formAlignment">
+            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           </property>
+           <property name="horizontalSpacing">
+            <number>55</number>
+           </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Nombre Paciente</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEditNombrPaciente"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Edad Paciente</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="spinBoxEdad">
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="maximum">
+              <number>150</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <widget class="QLabel" name="label_3">
             <property name="font">
@@ -223,11 +259,11 @@ QPushButton:hover {
              <string>Tiempo que durara la Prueba seleccionada</string>
             </property>
             <property name="text">
-             <string>Tiempo</string>
+             <string>Tiempo Prueba</string>
             </property>
            </widget>
           </item>
-          <item alignment="Qt::AlignHCenter">
+          <item>
            <widget class="QSpinBox" name="spinBoxTiempoPrueba">
             <property name="minimumSize">
              <size>
@@ -263,68 +299,6 @@ QPushButton:hover {
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Datos del Paciente</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QFormLayout" name="formLayout_3">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Nombre</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEditNombrPaciente"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Edad</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_2"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -339,8 +313,16 @@ QPushButton:hover {
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonIniciarPrueba">
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Iniciar la Prueba</string>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">QPushButton{
@@ -348,9 +330,7 @@ color : white;
 background-color: #5cb85c;
 border: 3px solid #4cae4c;
 border-radius: 15px;
-font-size: 25px;
 padding: 10px 20px 10px 20px;
-min-width: 80px;
 }
 
 QPushButton:hover {
@@ -367,20 +347,17 @@ border: 3px solid #398439;
             <property name="text">
              <string>Iniciar Test</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
             </property>
-            <property name="sizeHint" stdset="0">
+            <property name="iconSize">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>64</width>
+              <height>64</height>
              </size>
             </property>
-           </spacer>
+           </widget>
           </item>
          </layout>
         </item>
@@ -782,21 +759,45 @@ QPushButton:hover {
     <addaction name="actionConfigurar_Serial"/>
     <addaction name="actionConfigurar_Sensores"/>
    </widget>
+   <widget class="QMenu" name="menuArchivo">
+    <property name="title">
+     <string>Archivo</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionSalir"/>
+   </widget>
+   <widget class="QMenu" name="menuAcerca_de">
+    <property name="title">
+     <string>Acerca</string>
+    </property>
+    <addaction name="actionQT"/>
+   </widget>
+   <addaction name="menuArchivo"/>
    <addaction name="menuAjustes"/>
+   <addaction name="menuAcerca_de"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionInicio"/>
+   <addaction name="actionConfigurar_Serial"/>
+   <addaction name="actionConfigurar_Sensores"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionConfigurar_Serial">
    <property name="icon">
     <iconset resource="images.qrc">
-     <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
+     <normaloff>:/images/usb-icon.png</normaloff>:/images/usb-icon.png</iconset>
    </property>
    <property name="text">
     <string>Configurar Serial</string>
@@ -809,6 +810,36 @@ QPushButton:hover {
    </property>
    <property name="text">
     <string>Configurar Sensores</string>
+   </property>
+  </action>
+  <action name="actionSalir">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/application-exit.png</normaloff>:/images/application-exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Salir</string>
+   </property>
+  </action>
+  <action name="actionQT">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/qt-icon.png</normaloff>:/images/qt-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Qt</string>
+   </property>
+  </action>
+  <action name="actionInicio">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/home.png</normaloff>:/images/home.png</iconset>
+   </property>
+   <property name="text">
+    <string>Inicio</string>
+   </property>
+   <property name="toolTip">
+    <string>Ir a Pagina Principal</string>
    </property>
   </action>
  </widget>
