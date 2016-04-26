@@ -92,32 +92,39 @@ void MainWindow::mostrarMensajeBarraEstado(const QString &message)
 
 void MainWindow::leerDatosSerial()
 {
-    if ( temporizador.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
+    if ( cronometro.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
         while (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
             datosLeidosPuertoSerial=QString(serialData);
 
             QStringList linea=datosLeidosPuertoSerial.split(" ");
-            const double AnguloY=QString(linea.at(0)).toDouble();
-            const double AnguloX=QString(linea.at(1)).toDouble();
+            const double AcX=QString(linea.at(0)).toDouble();
+            const double AcY=QString(linea.at(1)).toDouble();
+            const double AcZ=QString(linea.at(2)).toDouble();
+            const double GyX=QString(linea.at(3)).toDouble();
+            const double GyY=QString(linea.at(4)).toDouble();
+            const double GyZ=QString(linea.at(5)).toDouble();
 
             cantidadMuestras+=1;
 
             if(cantidadMuestras==1)//Cuando se agrega el primer dato, se inicia el tiempo.
-                temporizador.start();
+                cronometro.start();
 
-            Dato *dato=new Dato(AnguloX,AnguloY,temporizador.elapsed()/1000.0);
+            const double tiempo=cronometro.elapsed()/1000.0;
+            Dato *dato=new Dato(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
             listaMuestras.append(dato);
 
-            if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-                emit emitdata(dato);
+            //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
+            //    emit emitdata(dato);
 
-            const double porcentaje=(dato->getTiempo()/ui->spinBoxTiempoPrueba->value())*100+0.1;
+
+            const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
             ui->progressBarPrueba->setValue(porcentaje);
 
-            const QString lapso=QString::number(dato->getTiempo(), 'f', 1);
+            const QString lapso=QString::number(tiempo, 'f', 1);
             ui->lcdNumberTiempoTranscurrido->display(lapso);
-            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " X: "+QString::number(dato->getAnguloX(),'f',3)+" Y: "+QString::number(dato->getAnguloY(),'f',3);
+            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(AcX,'f',3)+" AcY: "+QString::number(AcY,'f',3)+" AcZ: "+QString::number(AcZ,'f',3)
+                                + " GyX: "+QString::number(GyX,'f',3)+" GyY: "+QString::number(GyY,'f',3)+" GyZ: "+QString::number(GyZ,'f',3);
             mostrarMensajeBarraEstado(mensaje);
 
             //QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesList.size() << "  X: "<<data->getAngleX()<<" Y: "<< data->getAngleY() <<endl;
@@ -146,10 +153,10 @@ void MainWindow::mostrarBotones()
 
 void MainWindow::slotDatosTiempoReal(Dato *data)
 {
-    lienzo->addData(data->getAnguloX(), data->getAnguloY());
+    lienzo->addData(data->getAcX(), data->getAcY());
 
     ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
-    ui->qCustomPlotGrafico->graph(0)->addData(data->getAnguloX(), data->getAnguloY());
+    ui->qCustomPlotGrafico->graph(0)->addData(data->getAcX(), data->getAcY());
     //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
 
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
@@ -229,7 +236,7 @@ void MainWindow::abrirPuertoSerial()
         //serial->waitForBytesWritten(1000);
         //emit emitEscribirSerial(cadena);
         //serial->waitForBytesWritten(2000);
-        temporizador.start();
+        cronometro.start();
 
         inicializarGrafico(); //Se limpian los graficos
 
@@ -345,14 +352,14 @@ void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
     double q1=0, q2=0, q3=0, q4=0;
 
     foreach (Dato *var, listaMuestras) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
-        if(var->getAnguloX()>0){
-            if(var->getAnguloY()>0)
+        if(var->getAcX()>0){
+            if(var->getAcY()>0)
                 q1+=1;
             else
                 q3+=1;
         }
         else{
-            if(var->getAnguloY()>0)
+            if(var->getAcY()>0)
                 q2+=1;
             else
                 q4+=1;
@@ -471,15 +478,15 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
         QFile file(fileName);
         file.remove();
         if (file.open(QIODevice::Append)) {
-            QTextStream stream(&file);
+            QTextStream stream(&file);            
             foreach (Dato *var, listaMuestras) {
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAnguloX(),'f',3)
-                           << " Y: " << QString::number(var->getAnguloY(),'f',3) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAcX(),'f',3)
+                           << " Y: " << QString::number(var->getAcY(),'f',3) <<  " Z: " << QString::number(var->getAcZ(),'f',3) <<  " X: " << QString::number(var->getGyX(),'f',3) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAnguloX(),'f',3)
-                           <<";" << QString::number(var->getAnguloY(),'f',3) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAcX(),'f',3)
+                           <<";" << QString::number(var->getAcY(),'f',3) << endl;
                 }
             }
             file.flush();

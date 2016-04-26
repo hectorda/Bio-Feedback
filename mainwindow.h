@@ -59,7 +59,7 @@ private:
     QSerialPort *serial;
     AjustesPuertoSerial *ajustesSerial;
     AjustesSensores *ajustesSensores;
-    QElapsedTimer temporizador;
+    QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
     QList<Dato*> listaMuestras;
     QCPCurve *lienzo;
