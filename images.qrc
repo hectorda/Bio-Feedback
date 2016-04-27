@@ -18,5 +18,7 @@
         <file>images/qt-icon.png</file>
         <file>images/play.png</file>
         <file>images/usb-icon.png</file>
+        <file>images/graficos.png</file>
+        <file>images/data-icon.png</file>
     </qresource>
 </RCC>

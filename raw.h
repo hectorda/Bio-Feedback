@@ -1,8 +1,8 @@
-#ifndef DATO_H
-#define DATO_H
+#ifndef RAW_H
+#define RAW_H
 
 
-class Dato
+class Raw
 {
 private:
     double tiempo;
@@ -15,7 +15,7 @@ private:
 
 
 public:
-    Dato(double tiempo,double AcX,double AcY,double AcZ,double GyX,double GyY,double GyZ);
+    Raw(double tiempo,double AcX,double AcY,double AcZ,double GyX,double GyY,double GyZ);
     double getTiempo();
     double getAcX();
     double getAcY();
@@ -26,4 +26,4 @@ public:
 
 };
 
-#endif // DATO_H
+#endif // RAW_H

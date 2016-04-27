@@ -43,7 +43,7 @@ void MainWindow::conexiones()
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
-    connect(this,SIGNAL(emitdata(Dato*)),this,SLOT(slotDatosTiempoReal(Dato*)));
+    connect(this,SIGNAL(emitdata(Raw*)),this,SLOT(slotDatosTiempoReal(Raw*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
@@ -114,10 +114,11 @@ void MainWindow::leerDatosSerial()
                 cronometro.start();
 
             const double tiempo=cronometro.elapsed()/1000.0;
-            Dato *dato=new Dato(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
-            obtenerAngulos(dato);
-            listaMuestras.append(dato);
+            Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
+            if (cantidadMuestras>1)
+                obtenerAngulos(dato);
 
+            listaMuestras.append(dato);
             const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
             ui->progressBarPrueba->setValue(porcentaje);
 
@@ -138,24 +139,23 @@ void MainWindow::leerDatosSerial()
         activarTabs();
         generarGraficoResultados(ui->qCustomPlotResultados_tab);
         generarTablaRaw();
+        generarGraficosRaw();
     }
 }
 
-void MainWindow::obtenerAngulos(Dato *dato)
+void MainWindow::obtenerAngulos(Raw *dato)
 {
-    const double RAD_TO_DEG=57.295779;
+    const double RAD_TO_DEG=57.295779; // 180/PI
     //Se calculan los angulos con la IMU vertical.
     const double angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
     const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-    double dt=0.01;
-    if(cantidadMuestras>1)
-        dt=dato->getTiempo()-listaMuestras.last()->getTiempo();
+    double dt=dato->getTiempo()-listaMuestras.last()->getTiempo();
     //Aplicar el Filtro Complementario
     anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
     anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyZ()*dt) + 0.02*angulo2;
 
     if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-        emit emitdata(new Dato(dato->getTiempo(),-anguloComplementario2,anguloComplementario1,0,0,0,0));
+        emit emitdata(new Raw(dato->getTiempo(),-anguloComplementario2,anguloComplementario1,0,0,0,0));
         //emit emitdata(new Dato(dato->getTiempo(),Angle_compl[0],Angle_compl[1],0,0,0,0));
 
     //QTextStream(stdout)<<"Angulo normal X:"<<QString::number(angulo1,'f',2)<<" Angulo normal Y:"<<QString::number(angulo2,'f',2) <<" Angulo Compl X:"<<QString::number(anguloComplementario1,'f',2)<<" Angulo Compl Y:"<<QString::number(anguloComplementario2,'f',2);
@@ -176,12 +176,14 @@ void MainWindow::desactivarTabs()
 {
     ui->tabWidgetGrafico_Resultados->setTabEnabled(1,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(2,false);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(3,false);
 }
 
 void MainWindow::activarTabs()
 {
     ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(2,true);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(3,true);
 }
 
 void MainWindow::generarTablaRaw()
@@ -207,7 +209,28 @@ void MainWindow::generarTablaRaw()
 
 }
 
-void MainWindow::slotDatosTiempoReal(Dato *data)
+void MainWindow::generarGraficosRaw()
+{
+    QVector<double> Tiempo;
+    QVector<double> DatosAcX;
+    foreach (Raw *var, listaMuestras) {
+        Tiempo.append(var->getTiempo());
+        DatosAcX.append(var->getAcX());
+    }
+    // create graph and assign data to it:
+    ui->qCustomPlotgraficoAcX->addGraph();
+    ui->qCustomPlotgraficoAcX->graph(0)->setData(Tiempo, DatosAcX);
+    // give the axes some labels:
+    ui->qCustomPlotgraficoAcX->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotgraficoAcX->yAxis->setLabel("Aceleracion X");
+    // set axes ranges, so we see all data:
+    ui->qCustomPlotgraficoAcX->xAxis->setRange(-1, 1);
+    ui->qCustomPlotgraficoAcX->yAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotgraficoAcX->replot();
+    ui->qCustomPlotgraficoAcX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+}
+
+void MainWindow::slotDatosTiempoReal(Raw *data)
 {
     lienzo->addData(data->getAcX(), data->getAcY());
 
@@ -407,7 +430,7 @@ void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
     limpiarGrafico(grafico);
     double q1=0, q2=0, q3=0, q4=0;
 
-    foreach (Dato *var, listaMuestras) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
+    foreach (Raw *var, listaMuestras) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
         if(var->getAcX()>0){
             if(var->getAcY()>0)
                 q1+=1;
@@ -535,7 +558,7 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
         file.remove();
         if (file.open(QIODevice::Append)) {
             QTextStream stream(&file);            
-            foreach (Dato *var, listaMuestras) {
+            foreach (Raw *var, listaMuestras) {
                 if(selectedFilter.contains("txt")){
                     stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAcX(),'f',3)
                            << " Y: " << QString::number(var->getAcY(),'f',3) <<  " Z: " << QString::number(var->getAcZ(),'f',3) <<  " X: " << QString::number(var->getGyX(),'f',3) << endl;

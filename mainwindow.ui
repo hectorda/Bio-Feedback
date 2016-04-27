@@ -404,13 +404,13 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>2</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
              </property>
              <property name="movable">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <widget class="QWidget" name="tab_grafico">
               <attribute name="title">
@@ -495,6 +495,10 @@ QPushButton:hover {
               </layout>
              </widget>
              <widget class="QWidget" name="tab_muestras">
+              <attribute name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
+              </attribute>
               <attribute name="title">
                <string>Raw</string>
               </attribute>
@@ -558,6 +562,35 @@ QPushButton:hover {
                   </property>
                  </column>
                 </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_graficosRaw">
+              <attribute name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
+              </attribute>
+              <attribute name="title">
+               <string>Graficos Raw</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="0" column="2">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoAcZ" native="true"/>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCustomPlot" name="qCustomPlotgraficoAcX" native="true"/>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoAcY" native="true"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoGyX" native="true"/>
+               </item>
+               <item row="1" column="1">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoGyY" native="true"/>
+               </item>
+               <item row="1" column="2">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoGyZ" native="true"/>
                </item>
               </layout>
              </widget>

@@ -7,7 +7,7 @@
 #include <ajustespuertoserial.h>
 #include <ajustessensores.h>
 #include <qcustomplot.h>
-#include <dato.h>
+#include <raw.h>
 
 namespace Ui {
 class MainWindow;
@@ -37,7 +37,7 @@ private slots:
     void abrirPuertoSerial();
     void cerrarPuertoSerial();
     void leerDatosSerial();
-    void slotDatosTiempoReal(Dato *data);
+    void slotDatosTiempoReal(Raw *data);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
     void contextMenuRequest(QPoint pos);
@@ -50,7 +50,7 @@ private slots:
     void on_pushButtonVolverInicio_clicked();
 
 signals:
-    void emitdata(Dato*);
+    void emitdata(Raw*);
     void emitEscribirSerial(QString);
 
 private:
@@ -60,7 +60,7 @@ private:
     AjustesSensores *ajustesSensores;
     QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
-    QList<Dato*> listaMuestras;
+    QList<Raw*> listaMuestras;
     QCPCurve *lienzo;
     QLabel *status;
     int cantidadMuestras;
@@ -73,8 +73,9 @@ private:
     void desactivarTabs();
     void activarTabs();
     void generarTablaRaw();
+    void generarGraficosRaw();
     void preguntarRegresarInicio();
-    void obtenerAngulos(Dato* dato);
+    void obtenerAngulos(Raw* dato);
     void mostrarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
     void generarGraficoResultados(QCustomPlot *grafico);

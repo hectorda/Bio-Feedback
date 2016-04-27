@@ -1,6 +1,6 @@
-#include "dato.h"
+#include "raw.h"
 
-Dato::Dato(double tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
+Raw::Raw(double tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
 {
     this->tiempo=tiempo;
     this->AcX=AcX;
@@ -11,37 +11,37 @@ Dato::Dato(double tiempo,double AcX, double AcY, double AcZ, double GyX, double 
     this->GyZ=GyZ;
 }
 
-double Dato::getAcX()
+double Raw::getAcX()
 {
     return this->AcX;
 }
 
-double Dato::getAcY()
+double Raw::getAcY()
 {
     return this->AcY;
 }
 
-double Dato::getAcZ()
+double Raw::getAcZ()
 {
     return this->AcZ;
 }
 
-double Dato::getGyX()
+double Raw::getGyX()
 {
     return this->GyX;
 }
 
-double Dato::getGyY()
+double Raw::getGyY()
 {
     return this->GyY;
 }
 
-double Dato::getGyZ()
+double Raw::getGyZ()
 {
     return this->GyZ;
 }
 
-double Dato::getTiempo()
+double Raw::getTiempo()
 {
     return this->tiempo;
 }

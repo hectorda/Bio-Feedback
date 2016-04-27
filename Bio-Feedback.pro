@@ -15,15 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    dato.cpp \
     ajustespuertoserial.cpp \
-    ajustessensores.cpp
+    ajustessensores.cpp \
+    raw.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    dato.h \
     ajustespuertoserial.h \
-    ajustessensores.h
+    ajustessensores.h \
+    raw.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
