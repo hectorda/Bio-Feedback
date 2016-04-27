@@ -404,7 +404,7 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>3</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -578,7 +578,7 @@ QPushButton:hover {
                 <widget class="QCustomPlot" name="qCustomPlotGraficoAcZ" native="true"/>
                </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotgraficoAcX" native="true"/>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoAcX" native="true"/>
                </item>
                <item row="0" column="1">
                 <widget class="QCustomPlot" name="qCustomPlotGraficoAcY" native="true"/>

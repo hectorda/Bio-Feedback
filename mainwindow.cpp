@@ -213,21 +213,79 @@ void MainWindow::generarGraficosRaw()
 {
     QVector<double> Tiempo;
     QVector<double> DatosAcX;
+    QVector<double> DatosAcY;
+    QVector<double> DatosAcZ;
+    QVector<double> DatosGyX;
+    QVector<double> DatosGyY;
+    QVector<double> DatosGyZ;
     foreach (Raw *var, listaMuestras) {
         Tiempo.append(var->getTiempo());
         DatosAcX.append(var->getAcX());
+        DatosAcY.append(var->getAcY());
+        DatosAcZ.append(var->getAcZ());
+        DatosGyX.append(var->getGyX());
+        DatosGyY.append(var->getGyY());
+        DatosGyZ.append(var->getGyZ());
     }
-    // create graph and assign data to it:
-    ui->qCustomPlotgraficoAcX->addGraph();
-    ui->qCustomPlotgraficoAcX->graph(0)->setData(Tiempo, DatosAcX);
-    // give the axes some labels:
-    ui->qCustomPlotgraficoAcX->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotgraficoAcX->yAxis->setLabel("Aceleracion X");
-    // set axes ranges, so we see all data:
-    ui->qCustomPlotgraficoAcX->xAxis->setRange(-1, 1);
-    ui->qCustomPlotgraficoAcX->yAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotgraficoAcX->replot();
-    ui->qCustomPlotgraficoAcX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    limpiarGrafico(ui->qCustomPlotGraficoAcX);
+    ui->qCustomPlotGraficoAcX->addGraph();
+    ui->qCustomPlotGraficoAcX->graph(0)->setData(Tiempo, DatosAcX);
+    ui->qCustomPlotGraficoAcX->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficoAcX->yAxis->setLabel("Aceleracion X");
+    ui->qCustomPlotGraficoAcX->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficoAcX->yAxis->setRange(-1, 1);
+    ui->qCustomPlotGraficoAcX->replot();
+    ui->qCustomPlotGraficoAcX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+
+    limpiarGrafico(ui->qCustomPlotGraficoAcY);
+    ui->qCustomPlotGraficoAcY->addGraph();
+    ui->qCustomPlotGraficoAcY->graph(0)->setData(Tiempo, DatosAcY);
+    ui->qCustomPlotGraficoAcY->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficoAcY->yAxis->setLabel("Aceleracion Y");
+    ui->qCustomPlotGraficoAcY->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficoAcY->yAxis->setRange(-1, 1);
+    ui->qCustomPlotGraficoAcY->replot();
+    ui->qCustomPlotGraficoAcY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+
+    limpiarGrafico(ui->qCustomPlotGraficoAcZ);
+    ui->qCustomPlotGraficoAcZ->addGraph();
+    ui->qCustomPlotGraficoAcZ->graph(0)->setData(Tiempo, DatosAcZ);
+    ui->qCustomPlotGraficoAcZ->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficoAcZ->yAxis->setLabel("Aceleracion Z");
+    ui->qCustomPlotGraficoAcZ->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficoAcZ->yAxis->setRange(-1, 1);
+    ui->qCustomPlotGraficoAcZ->replot();
+    ui->qCustomPlotGraficoAcZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+
+    limpiarGrafico(ui->qCustomPlotGraficoGyX);
+    ui->qCustomPlotGraficoGyX->addGraph();
+    ui->qCustomPlotGraficoGyX->graph(0)->setData(Tiempo, DatosGyX);
+    ui->qCustomPlotGraficoGyX->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficoGyX->yAxis->setLabel("Rotacion X");
+    ui->qCustomPlotGraficoGyX->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficoGyX->yAxis->setRange(-250, 250);
+    ui->qCustomPlotGraficoGyX->replot();
+    ui->qCustomPlotGraficoGyX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+
+    limpiarGrafico(ui->qCustomPlotGraficoGyY);
+    ui->qCustomPlotGraficoGyY->addGraph();
+    ui->qCustomPlotGraficoGyY->graph(0)->setData(Tiempo, DatosGyY);
+    ui->qCustomPlotGraficoGyY->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficoGyY->yAxis->setLabel("Rotacion Y");
+    ui->qCustomPlotGraficoGyY->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficoGyY->yAxis->setRange(-250, 250);
+    ui->qCustomPlotGraficoGyY->replot();
+    ui->qCustomPlotGraficoGyY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+
+    limpiarGrafico(ui->qCustomPlotGraficoGyZ);
+    ui->qCustomPlotGraficoGyZ->addGraph();
+    ui->qCustomPlotGraficoGyZ->graph(0)->setData(Tiempo, DatosGyZ);
+    ui->qCustomPlotGraficoGyZ->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficoGyZ->yAxis->setLabel("Rotacion Z");
+    ui->qCustomPlotGraficoGyZ->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficoGyZ->yAxis->setRange(-250, 250);
+    ui->qCustomPlotGraficoGyZ->replot();
+    ui->qCustomPlotGraficoGyZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
 void MainWindow::slotDatosTiempoReal(Raw *data)
