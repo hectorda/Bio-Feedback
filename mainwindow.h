@@ -23,7 +23,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
 private slots:
     void on_pushButtonIniciarPrueba_clicked();
     void on_pushButtonResultados_clicked();
@@ -70,6 +69,9 @@ private:
     void conexiones();
     void inicializarGrafico();
     void mostrarBotones();
+    void desactivarTabs();
+    void activarTabs();
+    void generarTablaRaw();
     void mostrarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
     void generarGraficoResultados(QCustomPlot *grafico);

@@ -25,7 +25,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -404,7 +404,7 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -487,6 +487,73 @@ QPushButton:hover {
               <layout class="QGridLayout" name="gridLayout_6">
                <item row="0" column="0">
                 <widget class="QCustomPlot" name="qCustomPlotResultados_tab" native="true"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_muestras">
+              <attribute name="title">
+               <string>Raw</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QTableWidget" name="tableWidgetDatosRaw">
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::NoEditTriggers</set>
+                 </property>
+                 <property name="verticalScrollMode">
+                  <enum>QAbstractItemView::ScrollPerItem</enum>
+                 </property>
+                 <property name="gridStyle">
+                  <enum>Qt::SolidLine</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>97</number>
+                 </attribute>
+                 <attribute name="verticalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>Tiempo</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>AcX</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>AcY</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>AcZ</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>GyX</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>GyY</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>GyZ</string>
+                  </property>
+                 </column>
+                </widget>
                </item>
               </layout>
              </widget>

@@ -33,6 +33,9 @@ void MainWindow::inicializar()
     titulo->setFont(QFont("sans", 10, QFont::Normal));
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0,titulo);
+
+    QHeaderView* header = ui->tableWidgetDatosRaw->horizontalHeader(); //Para que el header de la table se ajuste
+    header->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 void MainWindow::conexiones()
@@ -93,7 +96,7 @@ void MainWindow::mostrarMensajeBarraEstado(const QString &message)
 void MainWindow::leerDatosSerial()
 {
     if ( cronometro.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
-        while (serial->canReadLine()){
+         if (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
             datosLeidosPuertoSerial=QString(serialData);
 
@@ -114,9 +117,8 @@ void MainWindow::leerDatosSerial()
             Dato *dato=new Dato(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
             listaMuestras.append(dato);
 
-            //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-            //    emit emitdata(dato);
-
+            if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
+                emit emitdata(dato);
 
             const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
             ui->progressBarPrueba->setValue(porcentaje);
@@ -127,16 +129,17 @@ void MainWindow::leerDatosSerial()
                                 + " GyX: "+QString::number(GyX,'f',3)+" GyY: "+QString::number(GyY,'f',3)+" GyZ: "+QString::number(GyZ,'f',3);
             mostrarMensajeBarraEstado(mensaje);
 
-            //QTextStream(stdout)<<"Tiempo:"<< timer.elapsed()/1000.0 << " Muestras:"<< samplesList.size() << "  X: "<<data->getAngleX()<<" Y: "<< data->getAngleY() <<endl;
+            QTextStream(stdout)<<mensaje;
+
         }
     }
     else{
         QTextStream(stdout)<<"Muestras x Seg: "<<double(cantidadMuestras)/ui->spinBoxTiempoPrueba->value()<<endl;
         serial->close();
         mostrarBotones();
-        ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
-
-        generarGraficoResultados(ui->qCustomPlotResultados_tab);
+        activarTabs();
+        //generarGraficoResultados(ui->qCustomPlotResultados_tab);
+        //generarTablaRaw();
     }
 }
 
@@ -148,6 +151,40 @@ void MainWindow::mostrarBotones()
     ui->pushButtonGuardarMuestras->show();
     ui->pushButtonConfPrueba->show();
     ui->pushButtonDetenerPrueba->hide();
+}
+
+void MainWindow::desactivarTabs()
+{
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(1,false);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(2,false);
+}
+
+void MainWindow::activarTabs()
+{
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(2,true);
+}
+
+void MainWindow::generarTablaRaw()
+{
+    if (!ui->tableWidgetDatosRaw)
+       return;
+    while (ui->tableWidgetDatosRaw->rowCount() > 0)
+    {
+        ui->tableWidgetDatosRaw->removeRow(0);
+    }
+
+    for (int var = 0; var < cantidadMuestras; ++var) {
+        const int currentRow = ui->tableWidgetDatosRaw->rowCount();
+        ui->tableWidgetDatosRaw->setRowCount(currentRow + 1);
+        ui->tableWidgetDatosRaw->setItem(var,0,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getTiempo())));
+        ui->tableWidgetDatosRaw->setItem(var,1,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcX())));
+        ui->tableWidgetDatosRaw->setItem(var,2,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcY())));
+        ui->tableWidgetDatosRaw->setItem(var,3,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcZ())));
+        ui->tableWidgetDatosRaw->setItem(var,4,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyX())));
+        ui->tableWidgetDatosRaw->setItem(var,5,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyY())));
+        ui->tableWidgetDatosRaw->setItem(var,6,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyZ())));
+    }
 
 }
 
@@ -245,7 +282,7 @@ void MainWindow::abrirPuertoSerial()
         ui->pushButtonResultados->hide();
         ui->pushButtonGuardarImagen->hide();
         ui->pushButtonGuardarMuestras->hide();
-        ui->tabWidgetGrafico_Resultados->setTabEnabled(1,false);
+        desactivarTabs();
 
     } else {
         QMessageBox::critical(this, tr("Error"), serial->errorString());
@@ -486,7 +523,9 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
                 }
                 if(selectedFilter.contains("csv")){
                     stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAcX(),'f',3)
-                           <<";" << QString::number(var->getAcY(),'f',3) << endl;
+                           <<";" << QString::number(var->getAcY(),'f',3) <<";" << QString::number(var->getAcZ(),'f',3)
+                           <<";" << QString::number(var->getGyX(),'f',3) <<";" << QString::number(var->getGyY(),'f',3)
+                           <<";" << QString::number(var->getGyZ(),'f',3) << endl;
                 }
             }
             file.flush();
