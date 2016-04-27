@@ -48,7 +48,7 @@ void MainWindow::conexiones()
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 
-    connect(ui->actionInicio,SIGNAL(triggered(bool)),this,SLOT(regresarInicio()));
+    connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
     connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
 
@@ -96,7 +96,7 @@ void MainWindow::mostrarMensajeBarraEstado(const QString &message)
 void MainWindow::leerDatosSerial()
 {
     if ( cronometro.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
-         if (serial->canReadLine()){
+         while (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
             datosLeidosPuertoSerial=QString(serialData);
 
@@ -115,10 +115,8 @@ void MainWindow::leerDatosSerial()
 
             const double tiempo=cronometro.elapsed()/1000.0;
             Dato *dato=new Dato(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
+            obtenerAngulos(dato);
             listaMuestras.append(dato);
-
-            if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-                emit emitdata(dato);
 
             const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
             ui->progressBarPrueba->setValue(porcentaje);
@@ -128,8 +126,8 @@ void MainWindow::leerDatosSerial()
             const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(AcX,'f',3)+" AcY: "+QString::number(AcY,'f',3)+" AcZ: "+QString::number(AcZ,'f',3)
                                 + " GyX: "+QString::number(GyX,'f',3)+" GyY: "+QString::number(GyY,'f',3)+" GyZ: "+QString::number(GyZ,'f',3);
             mostrarMensajeBarraEstado(mensaje);
-
-            QTextStream(stdout)<<mensaje;
+            //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
+            //QTextStream(stdout)<<mensaje;
 
         }
     }
@@ -138,9 +136,30 @@ void MainWindow::leerDatosSerial()
         serial->close();
         mostrarBotones();
         activarTabs();
-        //generarGraficoResultados(ui->qCustomPlotResultados_tab);
-        //generarTablaRaw();
+        generarGraficoResultados(ui->qCustomPlotResultados_tab);
+        generarTablaRaw();
     }
+}
+
+void MainWindow::obtenerAngulos(Dato *dato)
+{
+    const double RAD_TO_DEG=57.295779;
+    //Se calculan los angulos con la IMU vertical.
+    const double angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+    const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+    double dt=0.01;
+    if(cantidadMuestras>1)
+        dt=dato->getTiempo()-listaMuestras.last()->getTiempo();
+    //Aplicar el Filtro Complementario
+    anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
+    anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyZ()*dt) + 0.02*angulo2;
+
+    if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
+        emit emitdata(new Dato(dato->getTiempo(),-anguloComplementario2,anguloComplementario1,0,0,0,0));
+        //emit emitdata(new Dato(dato->getTiempo(),Angle_compl[0],Angle_compl[1],0,0,0,0));
+
+    //QTextStream(stdout)<<"Angulo normal X:"<<QString::number(angulo1,'f',2)<<" Angulo normal Y:"<<QString::number(angulo2,'f',2) <<" Angulo Compl X:"<<QString::number(anguloComplementario1,'f',2)<<" Angulo Compl Y:"<<QString::number(anguloComplementario2,'f',2);
+
 }
 
 void MainWindow::mostrarBotones()
@@ -334,7 +353,7 @@ void MainWindow::on_pushButtonDetenerPrueba_clicked()
     mostrarBotones();
 }
 
-void MainWindow::on_pushButtonRegresarInicio_clicked()
+void MainWindow::preguntarRegresarInicio()
 {
     if(ui->stackedWidget->currentWidget()!=ui->widgetWelcome){
         QMessageBox messageBox(QMessageBox::Question,
@@ -352,7 +371,7 @@ void MainWindow::on_pushButtonRegresarInicio_clicked()
     }
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButtonVolverInicio_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 }

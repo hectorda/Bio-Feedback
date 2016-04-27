@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSerialPort>
+#include <QtMath>
 #include <ajustespuertoserial.h>
 #include <ajustessensores.h>
 #include <qcustomplot.h>
@@ -29,7 +30,6 @@ private slots:
     void on_pushButtonPrueba1_clicked();
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
-    void on_pushButtonRegresarInicio_clicked();
     void on_pushButtonReiniciarPrueba_clicked();
     void on_pushButtonDetenerPrueba_clicked();
     void on_pushButtonConfPrueba_clicked();
@@ -47,7 +47,7 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
 
-    void on_pushButton_clicked();
+    void on_pushButtonVolverInicio_clicked();
 
 signals:
     void emitdata(Dato*);
@@ -64,6 +64,7 @@ private:
     QCPCurve *lienzo;
     QLabel *status;
     int cantidadMuestras;
+    double anguloComplementario1,anguloComplementario2;
 
     void inicializar();
     void conexiones();
@@ -72,6 +73,8 @@ private:
     void desactivarTabs();
     void activarTabs();
     void generarTablaRaw();
+    void preguntarRegresarInicio();
+    void obtenerAngulos(Dato* dato);
     void mostrarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
     void generarGraficoResultados(QCustomPlot *grafico);

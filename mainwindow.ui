@@ -125,7 +125,7 @@ QPushButton:hover {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pushButtonVolverInicio">
             <property name="styleSheet">
              <string notr="true">QPushButton {
     padding: 10px 16px;
@@ -404,7 +404,7 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>1</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -481,6 +481,10 @@ QPushButton:hover {
               </layout>
              </widget>
              <widget class="QWidget" name="tab_resultados">
+              <attribute name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/results_icon.png</normaloff>:/images/results_icon.png</iconset>
+              </attribute>
               <attribute name="title">
                <string>Resultados</string>
               </attribute>
