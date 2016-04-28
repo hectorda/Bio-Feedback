@@ -65,10 +65,10 @@ QString AjustesSensores::getAjustes() const
 void AjustesSensores::aplicar()
 {
     ajustesactuales.clear();
-    ajustesactuales+="a"+QString::number(ui->comboBoxAscale->currentIndex());
-    ajustesactuales+="g"+QString::number(ui->comboBoxGscale->currentIndex());
+    ajustesactuales.append("g"+QString::number(ui->comboBoxGscale->currentIndex()));
+    ajustesactuales.append("a"+QString::number(ui->comboBoxAscale->currentIndex()));
     ajustesactuales.append("l"+QString::number(ui->spinBoxDLPF->value()));
-    ajustesactuales+="s"+QString::number(ui->spinBoxSampleRate->value());
+    ajustesactuales.append("s"+QString::number(ui->spinBoxSampleRate->value()));
     hide();
 }
 

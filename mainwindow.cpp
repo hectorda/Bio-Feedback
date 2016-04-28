@@ -108,6 +108,9 @@ void MainWindow::leerDatosSerial()
             const double GyY=QString(linea.at(4)).toDouble();
             const double GyZ=QString(linea.at(5)).toDouble();
 
+            if(linea.size()>6)
+                QTextStream(stdout)<<"key: "<<linea.at(6)<<endl;
+
             cantidadMuestras+=1;
 
             if(cantidadMuestras==1)//Cuando se agrega el primer dato, se inicia el tiempo.
@@ -165,11 +168,25 @@ void MainWindow::obtenerAngulos(Raw *dato)
 void MainWindow::mostrarBotones()
 {
     ui->pushButtonReiniciarPrueba->show();
-    ui->pushButtonResultados->show();
     ui->pushButtonGuardarImagen->show();
     ui->pushButtonGuardarMuestras->show();
     ui->pushButtonConfPrueba->show();
     ui->pushButtonDetenerPrueba->hide();
+    ui->pushButtonGuardarImagen->show();
+    ui->labelGuardarImagen->show();
+    ui->pushButtonGuardarMuestras->show();
+    ui->labelGuardarMuestras->show();
+    activarSpacerEntreBotones();
+}
+
+void MainWindow::ocultarBotones()
+{
+    ui->pushButtonDetenerPrueba->show();
+    ui->pushButtonConfPrueba->hide();
+    ui->pushButtonGuardarImagen->hide();
+    ui->pushButtonGuardarMuestras->hide();
+    ui->labelGuardarImagen->hide();
+    ui->labelGuardarMuestras->hide();
 }
 
 void MainWindow::desactivarTabs()
@@ -184,6 +201,17 @@ void MainWindow::activarTabs()
     ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(2,true);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(3,true);
+}
+
+void MainWindow::activarSpacerEntreBotones()
+{
+    ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Expanding);
+    ui->centralWidget->adjustSize();
+}
+
+void MainWindow::desactivarSpacerEntreBotones()
+{
+    ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Ignored);
 }
 
 void MainWindow::generarTablaRaw()
@@ -368,21 +396,16 @@ void MainWindow::abrirPuertoSerial()
         QTextStream(stdout)<<"Cadena de Configuracion: " <<cadena<<endl;
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
-        serial->write(cadena.toLocal8Bit());
+        serial->write("v0"+cadena.toLocal8Bit());
 
-        //serial->waitForBytesWritten(1000);
-        //emit emitEscribirSerial(cadena);
-        //serial->waitForBytesWritten(2000);
         cronometro.start();
 
         inicializarGrafico(); //Se limpian los graficos
 
-        ui->pushButtonDetenerPrueba->show();
-        ui->pushButtonConfPrueba->hide();
-        ui->pushButtonResultados->hide();
-        ui->pushButtonGuardarImagen->hide();
-        ui->pushButtonGuardarMuestras->hide();
         desactivarTabs();
+        desactivarSpacerEntreBotones();
+        ocultarBotones();
+
 
     } else {
         QMessageBox::critical(this, tr("Error"), serial->errorString());
@@ -455,17 +478,6 @@ void MainWindow::preguntarRegresarInicio()
 void MainWindow::on_pushButtonVolverInicio_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-}
-
-void MainWindow::on_pushButtonResultados_clicked()
-{
-    generarGraficoResultados(ui->qCustomPlotResultados);
-    ui->stackedWidget->setCurrentWidget(ui->widgetResults);
-    const QString name=ui->lineEditNombrPaciente->text();
-    if(name=="")
-        ui->labelResultsName->setText(tr("Paciente: %1").arg("Sin Nombre"));
-    else
-        ui->labelResultsName->setText(tr("Paciente: %1").arg(name));
 }
 
 void MainWindow::limpiarGrafico(QCustomPlot *grafico){
@@ -650,4 +662,54 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 {
     if(index==0)
         relacionAspectodelGrafico();//Al cambiar a la pestaña del grafico se reajusta.
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
+    {
+        ui->pushButtonGuardarImagen->show();
+        ui->labelGuardarImagen->setText("Guardar\nGráfico");
+        ui->labelGuardarImagen->show();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nAngulos");
+        ui->labelGuardarMuestras->show();
+
+        activarSpacerEntreBotones();
+    }
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
+    {
+        ui->pushButtonGuardarImagen->show();
+        ui->labelGuardarImagen->setText("Guardar\nGrafico");
+        ui->labelGuardarImagen->show();
+
+        ui->pushButtonGuardarMuestras->hide();
+        ui->labelGuardarMuestras->hide();
+        desactivarSpacerEntreBotones();
+
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_muestras)
+    {
+        ui->pushButtonGuardarImagen->hide();
+        ui->labelGuardarImagen->hide();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nMuestras");
+        ui->labelGuardarMuestras->show();
+
+        desactivarSpacerEntreBotones();
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_graficosRaw)
+    {
+        ui->pushButtonGuardarImagen->show();
+        ui->labelGuardarImagen->setText("Guardar\nGraficos Raw");
+        ui->labelGuardarImagen->show();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nMuestras");
+        ui->labelGuardarMuestras->show();
+
+        activarSpacerEntreBotones();
+    }
+
 }

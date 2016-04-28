@@ -27,13 +27,13 @@ public:
 
 private slots:
     void on_pushButtonIniciarPrueba_clicked();
-    void on_pushButtonResultados_clicked();
     void on_pushButtonPrueba1_clicked();
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
     void on_pushButtonReiniciarPrueba_clicked();
     void on_pushButtonDetenerPrueba_clicked();
     void on_pushButtonConfPrueba_clicked();
+    void on_pushButtonVolverInicio_clicked();
 
     void abrirPuertoSerial();
     void cerrarPuertoSerial();
@@ -48,7 +48,7 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
 
-    void on_pushButtonVolverInicio_clicked();
+
 
 signals:
     void emitAngulo(Angulo*);
@@ -71,6 +71,7 @@ private:
     void conexiones();
     void inicializarGrafico();
     void mostrarBotones();
+    void ocultarBotones();
     void desactivarTabs();
     void activarTabs();
     void generarTablaRaw();
@@ -80,6 +81,8 @@ private:
     void mostrarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
     void generarGraficoResultados(QCustomPlot *grafico);
+    void activarSpacerEntreBotones();
+    void desactivarSpacerEntreBotones();
 };
 
 #endif // MAINWINDOW_H
