@@ -72,13 +72,42 @@ void MainWindow::inicializarGrafico()
     circle->topLeft->setCoords(-r,r);
     circle->bottomRight->setCoords(r,-r);
 
+    int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
+    int distanciaCentro=5;
+    int rObjetivo=1;
+    QList<QPoint*> objetivos;
+
+    for (int var = 0; var < cantidadObjetivos; ++var) {
+        if(ui->checkBoxObjetivosAleatorios->isChecked()){
+            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+           //para los Random
+
+            const int randomx=rObjetivo+qrand()%(rexterior+rObjetivo)+1;
+            const int randomy=rObjetivo+qrand()%(rexterior+rObjetivo)+1;
+            objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
+            objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
+            QTextStream(stdout)<<"xrand:"<<randomx<<" yrand:"<<randomy<<endl;
+            objetivo->setBrush(QBrush(Qt::red));
+        }
+        else{
+            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+            const double angulo=var*((2*M_PI)/cantidadObjetivos); //
+            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
+            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+rObjetivo,qSin(angulo)*distanciaCentro-rObjetivo);
+            objetivo->setBrush(QBrush(Qt::red));
+            objetivos.append(new QPoint(qCos(angulo)*distanciaCentro,qSin(angulo)*distanciaCentro));
+        }
+    }
+
+
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     ui->qCustomPlotGrafico->addPlottable(lienzo);
 
-    ui->qCustomPlotGrafico->addGraph(); // Para el Grafico del punto Rojo
-    ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::red));
+    ui->qCustomPlotGrafico->addGraph(); // Para el Grafico del punto
+    ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::blue));
     ui->qCustomPlotGrafico->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+
 
     //Se configuran los rangos maximos para los ejes X e Y segun el slider.
     const int range=ui->verticalSliderRangeGraphic->value();
@@ -86,6 +115,7 @@ void MainWindow::inicializarGrafico()
     ui->qCustomPlotGrafico->yAxis->setRange(-range,range);
 
     ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom); // Para usar el el Zoom y el Arrastre del grafico.
+
 }
 
 void MainWindow::mostrarMensajeBarraEstado(const QString &message)
@@ -148,7 +178,7 @@ void MainWindow::leerDatosSerial()
 
 void MainWindow::obtenerAngulos(Raw *dato)
 {
-    const double RAD_TO_DEG=57.295779; // 180/PI
+    const double RAD_TO_DEG=180/M_PI;
     //Se calculan los angulos con la IMU vertical.
     const double angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
     const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
