@@ -8,6 +8,7 @@
 #include <ajustessensores.h>
 #include <qcustomplot.h>
 #include <raw.h>
+#include <angulo.h>
 
 namespace Ui {
 class MainWindow;
@@ -37,7 +38,7 @@ private slots:
     void abrirPuertoSerial();
     void cerrarPuertoSerial();
     void leerDatosSerial();
-    void slotDatosTiempoReal(Raw *data);
+    void slotGraficarTiempoReal(Angulo *angulo);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
     void contextMenuRequest(QPoint pos);
@@ -50,7 +51,7 @@ private slots:
     void on_pushButtonVolverInicio_clicked();
 
 signals:
-    void emitdata(Raw*);
+    void emitAngulo(Angulo*);
     void emitEscribirSerial(QString);
 
 private:

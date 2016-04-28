@@ -48,7 +48,7 @@ private:
 private slots:
     void mostrarInformacionPuerto(int idx);
     void aplicar();
-
+    void on_pushButtonRescan_clicked();
 };
 
 #endif // AJUSTESPUERTOSERIAL_H

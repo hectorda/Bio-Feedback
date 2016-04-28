@@ -89,6 +89,18 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
     }
     else{
         mostrarFrecuenciaMuestreo(1000.0/(ui->spinBoxSampleRate->value()+1));
-        mostrarFiltroPasaBajo("Activado");
+        if(arg1==1)
+            mostrarFiltroPasaBajo("Ac:184Hz Gy:188Hz ");
+        if(arg1==2)
+            mostrarFiltroPasaBajo("Ac: 94Hz Gy: 98Hz  ");
+        if(arg1==3)
+            mostrarFiltroPasaBajo("Ac: 44Hz Gy: 42Hz ");
+        if(arg1==4)
+            mostrarFiltroPasaBajo("Ac: 21Hz Gy: 20Hz ");
+        if(arg1==5)
+            mostrarFiltroPasaBajo("Ac: 10Hz Gy: 10Hz ");
+        if(arg1==6)
+            mostrarFiltroPasaBajo("Ac:  5Hz Gy:  5Hz ");
+
     }
 }

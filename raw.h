@@ -5,7 +5,7 @@
 class Raw
 {
 private:
-    double tiempo;
+    double Tiempo;
     double AcX;
     double AcY;
     double AcZ;
@@ -15,7 +15,7 @@ private:
 
 
 public:
-    Raw(double tiempo,double AcX,double AcY,double AcZ,double GyX,double GyY,double GyZ);
+    Raw(double Tiempo,double AcX,double AcY,double AcZ,double GyX,double GyY,double GyZ);
     double getTiempo();
     double getAcX();
     double getAcY();

@@ -43,7 +43,7 @@ void MainWindow::conexiones()
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
-    connect(this,SIGNAL(emitdata(Raw*)),this,SLOT(slotDatosTiempoReal(Raw*)));
+    connect(this,SIGNAL(emitAngulo(Angulo*)),this,SLOT(slotGraficarTiempoReal(Angulo*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
@@ -155,7 +155,7 @@ void MainWindow::obtenerAngulos(Raw *dato)
     anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyZ()*dt) + 0.02*angulo2;
 
     if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-        emit emitdata(new Raw(dato->getTiempo(),-anguloComplementario2,anguloComplementario1,0,0,0,0));
+        emit emitAngulo(new Angulo(dato->getTiempo(),-anguloComplementario2,anguloComplementario1));
         //emit emitdata(new Dato(dato->getTiempo(),Angle_compl[0],Angle_compl[1],0,0,0,0));
 
     //QTextStream(stdout)<<"Angulo normal X:"<<QString::number(angulo1,'f',2)<<" Angulo normal Y:"<<QString::number(angulo2,'f',2) <<" Angulo Compl X:"<<QString::number(anguloComplementario1,'f',2)<<" Angulo Compl Y:"<<QString::number(anguloComplementario2,'f',2);
@@ -288,12 +288,12 @@ void MainWindow::generarGraficosRaw()
     ui->qCustomPlotGraficoGyZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
-void MainWindow::slotDatosTiempoReal(Raw *data)
+void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 {
-    lienzo->addData(data->getAcX(), data->getAcY());
+    lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
 
     ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
-    ui->qCustomPlotGrafico->graph(0)->addData(data->getAcX(), data->getAcY());
+    ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
     //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
 
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico

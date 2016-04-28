@@ -1,8 +1,8 @@
 #include "raw.h"
 
-Raw::Raw(double tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
+Raw::Raw(double Tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
 {
-    this->tiempo=tiempo;
+    this->Tiempo=Tiempo;
     this->AcX=AcX;
     this->AcY=AcY;
     this->AcZ=AcZ;
@@ -43,5 +43,5 @@ double Raw::getGyZ()
 
 double Raw::getTiempo()
 {
-    return this->tiempo;
+    return this->Tiempo;
 }
