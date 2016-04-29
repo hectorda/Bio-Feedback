@@ -62,6 +62,8 @@ private:
     QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
     QList<Raw*> listaMuestras;
+    QList<Angulo*> listaAngulos;
+    QList<QPoint*> listaObjetivos;
     QCPCurve *lienzo;
     QLabel *status;
     int cantidadMuestras;
@@ -83,6 +85,7 @@ private:
     void generarGraficoResultados(QCustomPlot *grafico);
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
+    void generarObjetivos(int rexterior, int rObjetivo, int distanciaCentro);
 };
 
 #endif // MAINWINDOW_H

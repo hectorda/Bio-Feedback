@@ -21,6 +21,12 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <italic>false</italic>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
@@ -252,13 +258,17 @@ QPushButton:hover {
              <widget class="QLabel" name="label_3">
               <property name="font">
                <font>
-                <pointsize>12</pointsize>
+                <pointsize>10</pointsize>
                 <weight>75</weight>
+                <italic>false</italic>
                 <bold>true</bold>
                </font>
               </property>
               <property name="toolTip">
                <string>Tiempo que durara la Prueba seleccionada</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
               </property>
               <property name="text">
                <string>Tiempo Prueba</string>
@@ -269,19 +279,23 @@ QPushButton:hover {
              <widget class="QSpinBox" name="spinBoxTiempoPrueba">
               <property name="minimumSize">
                <size>
-                <width>100</width>
-                <height>30</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
               <property name="font">
                <font>
-                <pointsize>12</pointsize>
+                <pointsize>10</pointsize>
                 <weight>75</weight>
+                <italic>false</italic>
                 <bold>true</bold>
                </font>
               </property>
               <property name="toolTip">
                <string>Tiempo que durara la Prueba seleccionada</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
               </property>
               <property name="styleSheet">
                <string notr="true"/>
@@ -302,6 +316,17 @@ QPushButton:hover {
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
               <property name="text">
                <string>Cantidad objetivos</string>
               </property>
@@ -309,6 +334,17 @@ QPushButton:hover {
             </item>
             <item row="1" column="1">
              <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -319,6 +355,17 @@ QPushButton:hover {
             </item>
             <item row="2" column="1">
              <widget class="QCheckBox" name="checkBoxObjetivosAleatorios">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -326,6 +373,17 @@ QPushButton:hover {
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="label_5">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
               <property name="text">
                <string>¿Aleatorios?</string>
               </property>

@@ -72,52 +72,14 @@ void MainWindow::inicializarGrafico()
     circle->topLeft->setCoords(-r,r);
     circle->bottomRight->setCoords(r,-r);
 
-    int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
-    int distanciaCentro=5;
     int rObjetivo=1;
-    QList<QPoint*> objetivos;
 
-    if(ui->checkBoxObjetivosAleatorios->isChecked()){
-        while(objetivos.size()<cantidadObjetivos){
-           //para los Random
-            const int signox=qrand()%2==1 ? 1: -1;
-            const int signoy=qrand()%2==1 ? 1: -1;
-
-            const int randomx=(qrand()%(rexterior-rObjetivo))*signox;
-            const int randomy=(qrand()%(rexterior-rObjetivo))*signoy;
-            const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
-
-            if(ecuacionCircExt<=qPow((rexterior-rObjetivo),2)){
-                bool noIntersectaOtros=true;
-                foreach (QPoint *P, objetivos){
-                    const double perteneceCirc=qSqrt(qPow((randomx - P->x()),2)+qPow((randomy - P->y()),2));
-                    if( perteneceCirc < 2*rObjetivo + 0.5)
-                        noIntersectaOtros=false;
-                }
-                if(noIntersectaOtros){
-                    QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-                    objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
-                    objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
-                    objetivo->setBrush(QBrush(Qt::red));
-                    objetivos.append(new QPoint(randomx,randomy));
-                }
-            }
-        }
+    foreach (QPoint *P, listaObjetivos) {
+        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+        objetivo->topLeft->setCoords(P->x()-rObjetivo,P->y()+rObjetivo);
+        objetivo->bottomRight->setCoords(P->x()+rObjetivo,P->y()-rObjetivo);
+        objetivo->setBrush(QBrush(Qt::red));
     }
-    else{
-        for (int var = 0; var < cantidadObjetivos; ++var) {
-            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-            const double angulo=var*((2*M_PI)/cantidadObjetivos); //
-            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
-            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+rObjetivo,qSin(angulo)*distanciaCentro-rObjetivo);
-            objetivo->setBrush(QBrush(Qt::red));
-            objetivos.append(new QPoint(qCos(angulo)*distanciaCentro,qSin(angulo)*distanciaCentro));
-        }
-    }
-
-//    foreach (QPoint *P, objetivos) {
-//        QTextStream(stdout)<<P->x()<<P->y()<<endl;
-//    }
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     ui->qCustomPlotGrafico->addPlottable(lienzo);
@@ -261,6 +223,50 @@ void MainWindow::activarSpacerEntreBotones()
 void MainWindow::desactivarSpacerEntreBotones()
 {
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Ignored);
+}
+
+void MainWindow::generarObjetivos(int rexterior=20,int rObjetivo=1,int distanciaCentro=5)
+{
+    listaObjetivos.clear();
+    int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
+
+    if(ui->checkBoxObjetivosAleatorios->isChecked()){
+        while(listaObjetivos.size()<cantidadObjetivos){
+           //para los Random
+            const int signox=qrand()%2==1 ? 1: -1;
+            const int signoy=qrand()%2==1 ? 1: -1;
+
+            const int randomx=(qrand()%(rexterior-rObjetivo))*signox;
+            const int randomy=(qrand()%(rexterior-rObjetivo))*signoy;
+            const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
+
+            if(ecuacionCircExt<=qPow((rexterior-rObjetivo),2)){
+                bool noIntersectaOtros=true;
+                foreach (QPoint *P, listaObjetivos){
+                    const double perteneceCirc=qSqrt(qPow((randomx - P->x()),2)+qPow((randomy - P->y()),2));
+                    if( perteneceCirc < 2*rObjetivo + 0.5)
+                        noIntersectaOtros=false;
+                }
+                if(noIntersectaOtros){
+//                    QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+//                    objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
+//                    objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
+//                    objetivo->setBrush(QBrush(Qt::red));
+                    listaObjetivos.append(new QPoint(randomx,randomy));
+                }
+            }
+        }
+    }
+    else{
+        for (int var = 0; var < cantidadObjetivos; ++var){
+//            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+            const double angulo=var*((2*M_PI)/cantidadObjetivos); //
+//            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
+//            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+rObjetivo,qSin(angulo)*distanciaCentro-rObjetivo);
+//            objetivo->setBrush(QBrush(Qt::red));
+            listaObjetivos.append(new QPoint(qCos(angulo)*distanciaCentro,qSin(angulo)*distanciaCentro));
+        }
+    }
 }
 
 void MainWindow::generarTablaRaw()
@@ -448,7 +454,7 @@ void MainWindow::abrirPuertoSerial()
         serial->write("v0"+cadena.toLocal8Bit());
 
         cronometro.start();
-
+        generarObjetivos();
         inicializarGrafico(); //Se limpian los graficos
 
         desactivarTabs();
