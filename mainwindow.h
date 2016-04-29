@@ -9,6 +9,7 @@
 #include <qcustomplot.h>
 #include <raw.h>
 #include <angulo.h>
+#include <filtro_kalman.h>
 
 namespace Ui {
 class MainWindow;
@@ -83,7 +84,7 @@ private:
     void obtenerAngulos(Raw* dato);
     void mostrarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
-    void generarGraficoResultados(QCustomPlot *grafico);
+    void generarGraficoResultados();
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
     void generarObjetivos(int rexterior, int rObjetivo, int distanciaCentro);

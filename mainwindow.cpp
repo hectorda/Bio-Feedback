@@ -144,7 +144,7 @@ void MainWindow::leerDatosSerial()
         serial->close();
         mostrarBotones();
         activarTabs();
-        generarGraficoResultados(ui->qCustomPlotResultados_tab);
+        generarGraficoResultados();
         generarTablaAngulos();
         generarGraficosAngulos();
         generarTablaRaw();
@@ -154,17 +154,31 @@ void MainWindow::leerDatosSerial()
 
 void MainWindow::obtenerAngulos(Raw *dato)
 {
+
+    //Filtro_Kalman *kalmanX = new Filtro_Kalman(); // Create the Kalman instances
+    //Filtro_Kalman *kalmanY = new Filtro_Kalman();
+
     const double RAD_TO_DEG=180/M_PI;
     //Se calculan los angulos con la IMU vertical.
     const double angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
     const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-    double dt=dato->getTiempo()-listaMuestras.last()->getTiempo();
+    double dt=(dato->getTiempo()-listaMuestras.last()->getTiempo())/ 1000;
     //Aplicar el Filtro Complementario
     anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
     anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyZ()*dt) + 0.02*angulo2;
 
+    //kalmanX->setAngle(angulo1); // Set starting angle
+    //kalmanY->setAngle(angulo2);
+
+    //double kalAngleX = kalmanX->getAngle(angulo1, dato->getGyX(), dt); // Calculate the angle using a Kalman filter
+    //double kalAngleY = kalmanY->getAngle(angulo2, dato->getGyZ(), dt); // Calculate the angle using a Kalman filter
+
+    //QTextStream(stdout)<<kalAngleX<<kalAngleY;
+    //Angulo *angKalman=new Angulo(dato->getTiempo(),kalAngleX,kalAngleY);
+
     Angulo *angulo=new Angulo(dato->getTiempo(),-anguloComplementario2,anguloComplementario1);
     listaAngulos.append(angulo);
+
 
     if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
         emit emitAngulo(angulo);
@@ -612,9 +626,9 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
     grafico->replot();
 }
 
-void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
+void MainWindow::generarGraficoResultados()
 {
-    limpiarGrafico(grafico);
+    limpiarGrafico(ui->qCustomPlotResultados);
     double q1=0, q2=0, q3=0, q4=0;
 
     foreach (Angulo *var, listaAngulos) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
@@ -638,8 +652,8 @@ void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
     q4=q4/listaAngulos.size()*100;
     qDebug()<<"1="<<q1<<"% 2="<<q2<<"% 3="<<q3<<"% 4="<<q4<<"%"<<endl;
 
-    QCPBars *cuadrantes = new QCPBars(grafico->xAxis, grafico->yAxis);
-    grafico->addPlottable(cuadrantes);
+    QCPBars *cuadrantes = new QCPBars(ui->qCustomPlotResultados->xAxis, ui->qCustomPlotResultados->yAxis);
+    ui->qCustomPlotResultados->addPlottable(cuadrantes);
     // set names and colors:
     QPen pen;
     pen.setWidthF(1.2);
@@ -653,27 +667,27 @@ void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
     QVector<QString> labels;
     ticks << 1 << 2 << 3 << 4;
     labels << "Cuadrante 1" << "Cuadrante 2" << "Cuadrante 3" << "Cuadrante 4";
-    grafico->xAxis->setAutoTicks(false);
-    grafico->xAxis->setAutoTickLabels(false);
-    grafico->xAxis->setTickVector(ticks);
-    grafico->xAxis->setTickVectorLabels(labels);
-    grafico->xAxis->setTickLabelRotation(60);
-    grafico->xAxis->setSubTickCount(0);
-    grafico->xAxis->setTickLength(0, 4);
-    grafico->xAxis->grid()->setVisible(true);
-    grafico->xAxis->setRange(0, 5);
+    ui->qCustomPlotResultados->xAxis->setAutoTicks(false);
+    ui->qCustomPlotResultados->xAxis->setAutoTickLabels(false);
+    ui->qCustomPlotResultados->xAxis->setTickVector(ticks);
+    ui->qCustomPlotResultados->xAxis->setTickVectorLabels(labels);
+    ui->qCustomPlotResultados->xAxis->setTickLabelRotation(60);
+    ui->qCustomPlotResultados->xAxis->setSubTickCount(0);
+    ui->qCustomPlotResultados->xAxis->setTickLength(0, 4);
+    ui->qCustomPlotResultados->xAxis->grid()->setVisible(true);
+    ui->qCustomPlotResultados->xAxis->setRange(0, 5);
 
     // prepare y axis:
-    grafico->yAxis->setRange(0, 100);
-    grafico->yAxis->setPadding(5); // a bit more space to the left border
-    grafico->yAxis->setLabel("Porcentaje");
-    grafico->yAxis->grid()->setSubGridVisible(true);
+    ui->qCustomPlotResultados->yAxis->setRange(0, 100);
+    ui->qCustomPlotResultados->yAxis->setPadding(5); // a bit more space to the left border
+    ui->qCustomPlotResultados->yAxis->setLabel("Porcentaje");
+    ui->qCustomPlotResultados->yAxis->grid()->setSubGridVisible(true);
     QPen gridPen;
     gridPen.setStyle(Qt::SolidLine);
     gridPen.setColor(QColor(0, 0, 0, 25));
-    grafico->yAxis->grid()->setPen(gridPen);
+    ui->qCustomPlotResultados->yAxis->grid()->setPen(gridPen);
     gridPen.setStyle(Qt::DotLine);
-    grafico->yAxis->grid()->setSubGridPen(gridPen);
+    ui->qCustomPlotResultados->yAxis->grid()->setSubGridPen(gridPen);
 
     // Add data:
     QVector<double> quadrantData;
@@ -681,17 +695,17 @@ void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
     cuadrantes->setData(ticks, quadrantData);
 
     // setup legend:
-    grafico->legend->setVisible(true);
-    grafico->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    grafico->legend->setBrush(QColor(255, 255, 255, 200));
+    ui->qCustomPlotResultados->legend->setVisible(true);
+    ui->qCustomPlotResultados->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
+    ui->qCustomPlotResultados->legend->setBrush(QColor(255, 255, 255, 200));
     QPen legendPen;
     legendPen.setColor(QColor(130, 130, 130, 200));
-    grafico->legend->setBorderPen(legendPen);
+    ui->qCustomPlotResultados->legend->setBorderPen(legendPen);
     QFont legendFont = font();
     legendFont.setPointSize(10);
-    grafico->legend->setFont(legendFont);
-    grafico->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    grafico->replot();
+    ui->qCustomPlotResultados->legend->setFont(legendFont);
+    ui->qCustomPlotResultados->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->qCustomPlotResultados->replot();
 }
 
 void MainWindow::on_pushButtonPrueba1_clicked()
@@ -714,11 +728,11 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados){
         if(selectedFilter.contains("PNG"))
-            ui->qCustomPlotResultados_tab->savePng(fileName,1000,1000);
+            ui->qCustomPlotResultados->savePng(fileName,1000,1000);
         if(selectedFilter.contains("JPG"))
-            ui->qCustomPlotResultados_tab->saveJpg(fileName,1000,1000);
+            ui->qCustomPlotResultados->saveJpg(fileName,1000,1000);
         if(selectedFilter.contains("PDF"))
-          ui->qCustomPlotResultados_tab->savePdf(fileName,false,1000,1000);
+          ui->qCustomPlotResultados->savePdf(fileName,false,1000,1000);
 
     }
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
