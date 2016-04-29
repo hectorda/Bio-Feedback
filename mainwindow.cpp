@@ -34,8 +34,8 @@ void MainWindow::inicializar()
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0,titulo);
 
-    QHeaderView* header = ui->tableWidgetDatosRaw->horizontalHeader(); //Para que el header de la table se ajuste
-    header->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 void MainWindow::conexiones()
@@ -122,17 +122,17 @@ void MainWindow::leerDatosSerial()
             if(linea.size()>6)
                 QTextStream(stdout)<<"key: "<<linea.at(6)<<endl;
 
-            cantidadMuestras+=1;
-
-            if(cantidadMuestras==1)//Cuando se agrega el primer dato, se inicia el tiempo.
-                cronometro.start();
-
             const double tiempo=cronometro.elapsed()/1000.0;
             Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
-            if (cantidadMuestras>1)
+
+            if (listaMuestras.size()>1)
                 obtenerAngulos(dato);
 
             listaMuestras.append(dato);
+
+            if(listaMuestras.size()==1)//Cuando se agrega el primer dato, se inicia el tiempo.
+                cronometro.start();
+
             const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
             ui->progressBarPrueba->setValue(porcentaje);
 
@@ -147,11 +147,13 @@ void MainWindow::leerDatosSerial()
         }
     }
     else{
-        QTextStream(stdout)<<"Muestras x Seg: "<<double(cantidadMuestras)/ui->spinBoxTiempoPrueba->value()<<endl;
+        QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/ui->spinBoxTiempoPrueba->value()<<endl;
         serial->close();
         mostrarBotones();
         activarTabs();
         generarGraficoResultados(ui->qCustomPlotResultados_tab);
+        generarTablaAngulos();
+        generarGraficosAngulos();
         generarTablaRaw();
         generarGraficosRaw();
     }
@@ -168,8 +170,11 @@ void MainWindow::obtenerAngulos(Raw *dato)
     anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
     anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyZ()*dt) + 0.02*angulo2;
 
-    if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-        emit emitAngulo(new Angulo(dato->getTiempo(),-anguloComplementario2,anguloComplementario1));
+    Angulo *angulo=new Angulo(dato->getTiempo(),-anguloComplementario2,anguloComplementario1);
+    listaAngulos.append(angulo);
+
+    if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
+        emit emitAngulo(angulo);
         //emit emitdata(new Dato(dato->getTiempo(),Angle_compl[0],Angle_compl[1],0,0,0,0));
 
     //QTextStream(stdout)<<"Angulo normal X:"<<QString::number(angulo1,'f',2)<<" Angulo normal Y:"<<QString::number(angulo2,'f',2) <<" Angulo Compl X:"<<QString::number(anguloComplementario1,'f',2)<<" Angulo Compl Y:"<<QString::number(anguloComplementario2,'f',2);
@@ -205,6 +210,8 @@ void MainWindow::desactivarTabs()
     ui->tabWidgetGrafico_Resultados->setTabEnabled(1,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(2,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(3,false);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(4,false);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(5,false);
 }
 
 void MainWindow::activarTabs()
@@ -212,6 +219,8 @@ void MainWindow::activarTabs()
     ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(2,true);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(3,true);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(4,true);
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(5,true);
 }
 
 void MainWindow::activarSpacerEntreBotones()
@@ -269,6 +278,24 @@ void MainWindow::generarObjetivos(int rexterior=20,int rObjetivo=1,int distancia
     }
 }
 
+void MainWindow::generarTablaAngulos()
+{
+    if (!ui->tableWidgetAngulos)
+       return;
+    while (ui->tableWidgetAngulos->rowCount() > 0)
+    {
+        ui->tableWidgetAngulos->removeRow(0);
+    }
+
+    for (int var = 0; var < listaAngulos.size(); ++var) {
+        const int currentRow = ui->tableWidgetAngulos->rowCount();
+        ui->tableWidgetAngulos->setRowCount(currentRow + 1);
+        ui->tableWidgetAngulos->setItem(var,0,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getTiempo())));
+        ui->tableWidgetAngulos->setItem(var,1,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloX())));
+        ui->tableWidgetAngulos->setItem(var,2,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloY())));
+    }
+}
+
 void MainWindow::generarTablaRaw()
 {
     if (!ui->tableWidgetDatosRaw)
@@ -278,7 +305,7 @@ void MainWindow::generarTablaRaw()
         ui->tableWidgetDatosRaw->removeRow(0);
     }
 
-    for (int var = 0; var < cantidadMuestras; ++var) {
+    for (int var = 0; var < listaMuestras.size(); ++var) {
         const int currentRow = ui->tableWidgetDatosRaw->rowCount();
         ui->tableWidgetDatosRaw->setRowCount(currentRow + 1);
         ui->tableWidgetDatosRaw->setItem(var,0,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getTiempo())));
@@ -289,8 +316,35 @@ void MainWindow::generarTablaRaw()
         ui->tableWidgetDatosRaw->setItem(var,5,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyY())));
         ui->tableWidgetDatosRaw->setItem(var,6,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyZ())));
     }
-
 }
+
+void MainWindow::generarGraficosAngulos()
+{
+    QVector<double> Tiempo;
+    QVector<double> DatosAnguloX;
+    QVector<double> DatosAnguloY;
+    foreach (Angulo *var, listaAngulos) {
+        Tiempo.append(var->getTiempo());
+        DatosAnguloX.append(var->getAnguloX());
+        DatosAnguloY.append(var->getAnguloY());
+    }
+    limpiarGrafico(ui->qCustomPlotGraficosAngulos);
+    ui->qCustomPlotGraficosAngulos->addGraph();
+    ui->qCustomPlotGraficosAngulos->graph(0)->setData(Tiempo, DatosAnguloX);
+
+    ui->qCustomPlotGraficosAngulos->addGraph();
+    ui->qCustomPlotGraficosAngulos->graph(1)->setData(Tiempo, DatosAnguloY);
+    ui->qCustomPlotGraficosAngulos->graph(1)->setPen(QPen(Qt::red));
+
+    ui->qCustomPlotGraficosAngulos->xAxis->setLabel("Tiempo");
+    ui->qCustomPlotGraficosAngulos->yAxis->setLabel("Angulos vs Tiempo");
+
+    ui->qCustomPlotGraficosAngulos->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
+    ui->qCustomPlotGraficosAngulos->yAxis->setRange(-20, 20);
+    ui->qCustomPlotGraficosAngulos->replot();
+    ui->qCustomPlotGraficosAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+}
+
 
 void MainWindow::generarGraficosRaw()
 {
@@ -432,8 +486,8 @@ void MainWindow::relacionAspectodelGrafico()
 
 void MainWindow::abrirPuertoSerial()
 {
-    cantidadMuestras=0;
     listaMuestras.clear();
+    listaAngulos.clear();
 
     AjustesPuertoSerial::Ajustes cs=ajustesSerial->getAjustes();
     serial->setPortName(cs.portName);
@@ -555,25 +609,25 @@ void MainWindow::generarGraficoResultados(QCustomPlot *grafico)
     limpiarGrafico(grafico);
     double q1=0, q2=0, q3=0, q4=0;
 
-    foreach (Raw *var, listaMuestras) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
-        if(var->getAcX()>0){
-            if(var->getAcY()>0)
+    foreach (Angulo *var, listaAngulos) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
+        if(var->getAnguloX()>0){
+            if(var->getAnguloY()>0)
                 q1+=1;
             else
                 q3+=1;
         }
         else{
-            if(var->getAcY()>0)
+            if(var->getAnguloY()>0)
                 q2+=1;
             else
                 q4+=1;
         }
     }
 
-    q1=q1/listaMuestras.size()*100;
-    q2=q2/listaMuestras.size()*100;
-    q3=q3/listaMuestras.size()*100;
-    q4=q4/listaMuestras.size()*100;
+    q1=q1/listaAngulos.size()*100;
+    q2=q2/listaAngulos.size()*100;
+    q3=q3/listaAngulos.size()*100;
+    q4=q4/listaAngulos.size()*100;
     qDebug()<<"1="<<q1<<"% 2="<<q2<<"% 3="<<q3<<"% 4="<<q4<<"%"<<endl;
 
     QCPBars *cuadrantes = new QCPBars(grafico->xAxis, grafico->yAxis);
@@ -716,7 +770,7 @@ void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)
 void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 {
     if(index==0)
-        relacionAspectodelGrafico();//Al cambiar a la pestaña del grafico se reajusta.
+        ui->centralWidget->adjustSize();
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
     {
@@ -762,6 +816,31 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
         ui->pushButtonGuardarMuestras->show();
         ui->labelGuardarMuestras->setText("Guardar\nMuestras");
+        ui->labelGuardarMuestras->show();
+
+        activarSpacerEntreBotones();
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
+    {
+        ui->pushButtonGuardarImagen->hide();
+        ui->labelGuardarImagen->hide();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nDatos Angulos");
+        ui->labelGuardarMuestras->show();
+
+        desactivarSpacerEntreBotones();
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_graficosRaw)
+    {
+        ui->pushButtonGuardarImagen->show();
+        ui->labelGuardarImagen->setText("Guardar\nGraficos Angulos");
+        ui->labelGuardarImagen->show();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nDatos Angulos");
         ui->labelGuardarMuestras->show();
 
         activarSpacerEntreBotones();

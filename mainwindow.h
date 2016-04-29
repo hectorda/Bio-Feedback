@@ -66,7 +66,6 @@ private:
     QList<QPoint*> listaObjetivos;
     QCPCurve *lienzo;
     QLabel *status;
-    int cantidadMuestras;
     double anguloComplementario1,anguloComplementario2;
 
     void inicializar();
@@ -76,7 +75,9 @@ private:
     void ocultarBotones();
     void desactivarTabs();
     void activarTabs();
+    void generarTablaAngulos();
     void generarTablaRaw();
+    void generarGraficosAngulos();
     void generarGraficosRaw();
     void preguntarRegresarInicio();
     void obtenerAngulos(Raw* dato);
