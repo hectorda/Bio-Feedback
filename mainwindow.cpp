@@ -77,19 +77,35 @@ void MainWindow::inicializarGrafico()
     int rObjetivo=1;
     QList<QPoint*> objetivos;
 
-    for (int var = 0; var < cantidadObjetivos; ++var) {
-        if(ui->checkBoxObjetivosAleatorios->isChecked()){
-            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+    if(ui->checkBoxObjetivosAleatorios->isChecked()){
+        while(objetivos.size()<cantidadObjetivos){
            //para los Random
+            const int signox=qrand()%2==1 ? 1: -1;
+            const int signoy=qrand()%2==1 ? 1: -1;
 
-            const int randomx=rObjetivo+qrand()%(rexterior+rObjetivo)+1;
-            const int randomy=rObjetivo+qrand()%(rexterior+rObjetivo)+1;
-            objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
-            objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
-            QTextStream(stdout)<<"xrand:"<<randomx<<" yrand:"<<randomy<<endl;
-            objetivo->setBrush(QBrush(Qt::red));
+            const int randomx=(qrand()%(rexterior-rObjetivo))*signox;
+            const int randomy=(qrand()%(rexterior-rObjetivo))*signoy;
+            const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
+
+            if(ecuacionCircExt<=qPow((rexterior-rObjetivo),2)){
+                bool noIntersectaOtros=true;
+                foreach (QPoint *P, objetivos){
+                    const double perteneceCirc=qSqrt(qPow((randomx - P->x()),2)+qPow((randomy - P->y()),2));
+                    if( perteneceCirc < 2*rObjetivo + 0.5)
+                        noIntersectaOtros=false;
+                }
+                if(noIntersectaOtros){
+                    QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+                    objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
+                    objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
+                    objetivo->setBrush(QBrush(Qt::red));
+                    objetivos.append(new QPoint(randomx,randomy));
+                }
+            }
         }
-        else{
+    }
+    else{
+        for (int var = 0; var < cantidadObjetivos; ++var) {
             QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
             const double angulo=var*((2*M_PI)/cantidadObjetivos); //
             objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
@@ -99,6 +115,9 @@ void MainWindow::inicializarGrafico()
         }
     }
 
+//    foreach (QPoint *P, objetivos) {
+//        QTextStream(stdout)<<P->x()<<P->y()<<endl;
+//    }
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     ui->qCustomPlotGrafico->addPlottable(lienzo);
