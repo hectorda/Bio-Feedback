@@ -63,7 +63,7 @@ private:
     QString datosLeidosPuertoSerial;
     QList<Raw*> listaMuestras;
     QList<Angulo*> listaAngulos;
-    QList<QPoint*> listaObjetivos;
+    QList<QCPItemEllipse*> listaObjetivos;
     QCPCurve *lienzo;
     QLabel *status;
     double anguloComplementario1,anguloComplementario2;

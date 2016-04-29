@@ -72,14 +72,7 @@ void MainWindow::inicializarGrafico()
     circle->topLeft->setCoords(-r,r);
     circle->bottomRight->setCoords(r,-r);
 
-    int rObjetivo=1;
-
-    foreach (QPoint *P, listaObjetivos) {
-        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-        objetivo->topLeft->setCoords(P->x()-rObjetivo,P->y()+rObjetivo);
-        objetivo->bottomRight->setCoords(P->x()+rObjetivo,P->y()-rObjetivo);
-        objetivo->setBrush(QBrush(Qt::red));
-    }
+    //int rObjetivo=1;
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     ui->qCustomPlotGrafico->addPlottable(lienzo);
@@ -251,29 +244,31 @@ void MainWindow::generarObjetivos(int rexterior=20,int rObjetivo=1,int distancia
 
             if(ecuacionCircExt<=qPow((rexterior-rObjetivo),2)){
                 bool noIntersectaOtros=true;
-                foreach (QPoint *P, listaObjetivos){
-                    const double perteneceCirc=qSqrt(qPow((randomx - P->x()),2)+qPow((randomy - P->y()),2));
+                foreach (QCPItemEllipse *P, listaObjetivos){
+                    const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+rObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-rObjetivo)),2));
+                    //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
                     if( perteneceCirc < 2*rObjetivo + 0.5)
                         noIntersectaOtros=false;
                 }
                 if(noIntersectaOtros){
-//                    QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-//                    objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
-//                    objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
-//                    objetivo->setBrush(QBrush(Qt::red));
-                    listaObjetivos.append(new QPoint(randomx,randomy));
+                    QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+
+                    objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
+                    objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
+                    objetivo->setBrush(QBrush(Qt::red));
+                    listaObjetivos.append(objetivo);
                 }
             }
         }
     }
     else{
         for (int var = 0; var < cantidadObjetivos; ++var){
-//            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-            const double angulo=var*((2*M_PI)/cantidadObjetivos); //
-//            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
-//            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+rObjetivo,qSin(angulo)*distanciaCentro-rObjetivo);
-//            objetivo->setBrush(QBrush(Qt::red));
-            listaObjetivos.append(new QPoint(qCos(angulo)*distanciaCentro,qSin(angulo)*distanciaCentro));
+            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
+            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
+            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+rObjetivo,qSin(angulo)*distanciaCentro-rObjetivo);
+            objetivo->setBrush(QBrush(Qt::red));
+            listaObjetivos.append(objetivo);
         }
     }
 }
@@ -427,6 +422,19 @@ void MainWindow::generarGraficosRaw()
 
 void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 {
+    int rObjetivo=1;
+    for (int var = 0; var < listaObjetivos.size(); ++var){
+        QCPItemEllipse *P=listaObjetivos.at(var);
+        if(P->brush()==QBrush(Qt::red)){
+            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+rObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-rObjetivo)),2));
+            if( perteneceCirc < rObjetivo){
+                P->setBrush(QBrush(Qt::black));
+                listaObjetivos.removeAt(var);
+                QTextStream(stdout)<<listaObjetivos.size()<<endl;
+            }
+        }
+    }
+
     lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
 
     ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
@@ -508,9 +516,9 @@ void MainWindow::abrirPuertoSerial()
         serial->write("v0"+cadena.toLocal8Bit());
 
         cronometro.start();
-        generarObjetivos();
-        inicializarGrafico(); //Se limpian los graficos
 
+        inicializarGrafico(); //Se limpian los graficos
+        generarObjetivos();
         desactivarTabs();
         desactivarSpacerEntreBotones();
         ocultarBotones();
