@@ -10,13 +10,12 @@
 #include <raw.h>
 #include <angulo.h>
 #include <filtro_kalman.h>
+#include <serial.h>
 
 namespace Ui {
 class MainWindow;
 }
 
-class AjustesPuertoSerial;
-class AjustesSensores;
 
 class MainWindow : public QMainWindow
 {
@@ -36,8 +35,7 @@ private slots:
     void on_pushButtonConfPrueba_clicked();
     void on_pushButtonVolverInicio_clicked();
 
-    void abrirPuertoSerial();
-    void cerrarPuertoSerial();
+    void iniciarPrueba();
     void leerDatosSerial();
     void slotGraficarTiempoReal(Angulo *angulo);
     void RangeGraphic(int Range);
@@ -49,8 +47,6 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
 
-
-
 signals:
     void emitAngulo(Angulo*);
     void emitEscribirSerial(QString);
@@ -58,6 +54,7 @@ signals:
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
+    Serial *lecturaSerial;
     AjustesPuertoSerial *ajustesSerial;
     AjustesSensores *ajustesSensores;
     QElapsedTimer cronometro;

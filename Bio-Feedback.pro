@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     ajustessensores.cpp \
     raw.cpp \
     angulo.cpp \
-    filtro_kalman.cpp
+    filtro_kalman.cpp \
+    serial.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     ajustessensores.h \
     raw.h \
     angulo.h \
-    filtro_kalman.h
+    filtro_kalman.h \
+    serial.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \

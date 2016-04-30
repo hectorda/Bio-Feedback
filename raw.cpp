@@ -1,5 +1,10 @@
 #include "raw.h"
 
+Raw::Raw()
+{
+
+}
+
 Raw::Raw(double Tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
 {
     this->Tiempo=Tiempo;

@@ -17,6 +17,7 @@ MainWindow::~MainWindow()
 void MainWindow::inicializar()
 {
     ui->setupUi(this);
+
     serial=new QSerialPort(this);
 
     ajustesSerial= new AjustesPuertoSerial;
@@ -51,7 +52,6 @@ void MainWindow::conexiones()
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
     connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
-
 }
 
 void MainWindow::inicializarGrafico()
@@ -100,7 +100,7 @@ void MainWindow::mostrarMensajeBarraEstado(const QString &message)
 void MainWindow::leerDatosSerial()
 {
     if ( cronometro.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
-         while (serial->canReadLine()){
+        /* while (serial->canReadLine()){
             const QByteArray serialData = serial->readLine();
             datosLeidosPuertoSerial=QString(serialData);
 
@@ -137,6 +137,34 @@ void MainWindow::leerDatosSerial()
             //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
             //QTextStream(stdout)<<mensaje;
 
+        }
+        */
+        while (serial->canReadLine()){
+            const double tiempo=cronometro.elapsed()/1000.0;
+
+            Raw raw=lecturaSerial->leerDatosSerial(serial,tiempo);
+            Raw *dato=new Raw(raw.getTiempo(),raw.getAcX(),raw.getAcY(),raw.getAcZ(),raw.getGyX(),raw.getGyY(),raw.getGyZ());
+            //QTextStream(stdout)<<dato->getTiempo()<<dato->getAcX()<<dato->getAcY();
+
+            if (listaMuestras.size()>1)
+                obtenerAngulos(dato);
+
+            listaMuestras.append(dato);
+
+            if(listaMuestras.size()==1)//Cuando se agrega el primer dato, se inicia el tiempo.
+                cronometro.start();
+
+            const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
+            ui->progressBarPrueba->setValue(porcentaje);
+
+            const QString lapso=QString::number(tiempo, 'f', 1);
+            ui->lcdNumberTiempoTranscurrido->display(lapso);
+
+            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
+                                + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
+            mostrarMensajeBarraEstado(mensaje);
+            //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
+            //QTextStream(stdout)<<mensaje;
         }
     }
     else{
@@ -506,49 +534,17 @@ void MainWindow::relacionAspectodelGrafico()
         ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y()+((h-w)/2),w,w);
 }
 
-void MainWindow::abrirPuertoSerial()
+void MainWindow::iniciarPrueba()
 {
     listaMuestras.clear();
     listaAngulos.clear();
-
-    AjustesPuertoSerial::Ajustes cs=ajustesSerial->getAjustes();
-    serial->setPortName(cs.portName);
-    serial->setBaudRate(cs.baudRate);
-    QTextStream(stdout)<<"Baudios: "<< serial->baudRate()<<endl;
-    QTextStream(stdout)<<"portName"<< serial->portName()<<endl;
-    serial->setStopBits(QSerialPort::OneStop);
-    serial->setDataBits(QSerialPort::Data8);
-    serial->setParity(QSerialPort::NoParity);
-    serial->setFlowControl(QSerialPort::NoFlowControl);
-
-    if (serial->open(QIODevice::ReadWrite)){
-        serial->clear();
-        QString cadena=ajustesSensores->getAjustes();
-        QTextStream(stdout)<<"Cadena de Configuracion: " <<cadena<<endl;
-        //serial->dataTerminalReadyChanged(true);
-        //serial->requestToSendChanged(true);
-        serial->write("v0"+cadena.toLocal8Bit());
-
-        cronometro.start();
-
-        inicializarGrafico(); //Se limpian los graficos
-        generarObjetivos();
-        desactivarTabs();
-        desactivarSpacerEntreBotones();
-        ocultarBotones();
-
-
-    } else {
-        QMessageBox::critical(this, tr("Error"), serial->errorString());
-    }
-}
-
-void MainWindow::cerrarPuertoSerial()
-{
-    if (serial->isOpen()){
-        serial->clear();
-        serial->close();
-    }
+    lecturaSerial->abrirPuertoSerial(serial,ajustesSensores->getAjustes(),ajustesSensores->getAjustes());
+    cronometro.start();
+    inicializarGrafico(); //Se limpian los graficos
+    generarObjetivos();
+    desactivarTabs();
+    desactivarSpacerEntreBotones();
+    ocultarBotones();
 }
 
 void MainWindow::regresarInicio()
@@ -564,27 +560,27 @@ void MainWindow::regresarInicio()
 
           if (messageBox.exec() == QMessageBox::Yes){
               ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-              cerrarPuertoSerial();
+              lecturaSerial->cerrarPuertoSerial(serial);
           }
       }
 }
 
 void MainWindow::on_pushButtonIniciarPrueba_clicked()
 {
-    abrirPuertoSerial();
+    iniciarPrueba();
     ui->stackedWidget->setCurrentWidget(ui->widgetTest);
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
 }
 
 void MainWindow::on_pushButtonReiniciarPrueba_clicked()
 {
-    cerrarPuertoSerial();
-    abrirPuertoSerial();
+    lecturaSerial->cerrarPuertoSerial(serial);
+    iniciarPrueba();
 }
 
 void MainWindow::on_pushButtonDetenerPrueba_clicked()
 {
-    cerrarPuertoSerial();
+    lecturaSerial->cerrarPuertoSerial(serial);
     mostrarBotones();
 }
 
@@ -601,7 +597,7 @@ void MainWindow::preguntarRegresarInicio()
 
         if (messageBox.exec() == QMessageBox::Yes){
             ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-            cerrarPuertoSerial();
+            lecturaSerial->cerrarPuertoSerial(serial);
         }
     }
 }
@@ -780,6 +776,8 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
         }
     }
 }
+
+
 
 void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)
 {
