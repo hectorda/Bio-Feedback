@@ -7,7 +7,6 @@ Serial::Serial(QObject *parent) : QObject(parent)
 
 void Serial::abrirPuertoSerial(QSerialPort *serial, AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores)
 {
-    //AjustesPuertoSerial::Ajustes cs=ajustesSerial->getAjustes();
     serial->setPortName(ajustesSerial.portName);
     serial->setBaudRate(ajustesSerial.baudRate);
     QTextStream(stdout)<<"Baudios: "<< serial->baudRate()<<endl;

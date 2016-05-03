@@ -6,6 +6,7 @@
 #include <QtMath>
 #include <ajustespuertoserial.h>
 #include <ajustessensores.h>
+#include <ajustesgrafico.h>
 #include <qcustomplot.h>
 #include <raw.h>
 #include <angulo.h>
@@ -25,6 +26,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void calibrarDispositivos();
 private slots:
     void on_pushButtonIniciarPrueba_clicked();
     void on_pushButtonPrueba1_clicked();
@@ -57,6 +59,7 @@ private:
     Serial *lecturaSerial;
     AjustesPuertoSerial *ajustesSerial;
     AjustesSensores *ajustesSensores;
+    AjustesGrafico *ajustesGrafico;
     QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
     QList<Raw*> listaMuestras;
@@ -65,10 +68,11 @@ private:
     QCPCurve *lienzo;
     QLabel *status;
     double anguloComplementario1,anguloComplementario2;
+    int rObjetivo;
 
     void inicializar();
     void conexiones();
-    void inicializarGrafico();
+    void inicializarGrafico(const int rInterior, const int rExterior);
     void mostrarBotones();
     void ocultarBotones();
     void desactivarTabs();
@@ -84,7 +88,7 @@ private:
     void generarGraficoResultados();
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
-    void generarObjetivos(int rexterior, int rObjetivo, int distanciaCentro);
+    void generarObjetivos(const int rExterior, const int distanciaCentro);
 };
 
 #endif // MAINWINDOW_H
