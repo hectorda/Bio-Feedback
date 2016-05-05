@@ -1170,7 +1170,7 @@ Gráfico</string>
   <action name="actionConfigurar_Grafico">
    <property name="icon">
     <iconset resource="images.qrc">
-     <normaloff>:/images/application-exit.png</normaloff>:/images/application-exit.png</iconset>
+     <normaloff>:/images/diana.png</normaloff>:/images/diana.png</iconset>
    </property>
    <property name="text">
     <string>Configurar Elementos del Grafico</string>

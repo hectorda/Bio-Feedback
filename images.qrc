@@ -20,5 +20,6 @@
         <file>images/usb-icon.png</file>
         <file>images/graficos.png</file>
         <file>images/data-icon.png</file>
+        <file>images/diana.png</file>
     </qresource>
 </RCC>

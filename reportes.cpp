@@ -112,7 +112,6 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAng
 
 void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras)
 {
-
     // configure axis rect:
     grafico->plotLayout()->clear(); // clear default axis rect so we can start from scratch
     QCPAxisRect *wideAxisRect = new QCPAxisRect(grafico);
@@ -293,26 +292,21 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
 
 void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulos)
 {
-    QVector<double> Tiempo;
-    QVector<double> DatosAnguloX;
-    QVector<double> DatosAnguloY;
-    foreach (Angulo *var, listaAngulos) {
-        Tiempo.append(var->getTiempo());
-        DatosAnguloX.append(var->getAnguloX());
-        DatosAnguloY.append(var->getAnguloY());
-    }
     limpiarGrafico(grafico);
     grafico->addGraph();
-    grafico->graph(0)->setData(Tiempo, DatosAnguloX);
+    grafico->graph(0)->setPen(QPen(Qt::blue));
 
     grafico->addGraph();
-    grafico->graph(1)->setData(Tiempo, DatosAnguloY);
     grafico->graph(1)->setPen(QPen(Qt::red));
 
     grafico->xAxis->setLabel("Tiempo");
     grafico->yAxis->setLabel("Angulos vs Tiempo");
 
-    grafico->xAxis->setRange(0, Tiempo.last());
+    foreach (Angulo *var, listaAngulos){
+        grafico->graph(0)->addData(var->getTiempo(),var->getAnguloX());
+        grafico->graph(1)->addData(var->getTiempo(),var->getAnguloY());
+    }
+
     grafico->rescaleAxes();
     grafico->replot();
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);

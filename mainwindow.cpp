@@ -235,7 +235,7 @@ void MainWindow::activarTabs()
 void MainWindow::activarSpacerEntreBotones()
 {
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Expanding);
-    ui->centralWidget->adjustSize();
+    //ui->centralWidget->adjustSize();
 }
 
 void MainWindow::desactivarSpacerEntreBotones()
