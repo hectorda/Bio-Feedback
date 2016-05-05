@@ -23,6 +23,7 @@ void MainWindow::inicializar()
     ajustesSerial= new AjustesPuertoSerial;
     ajustesSensores = new AjustesSensores;
     ajustesGrafico = new AjustesGrafico;
+    reportes = new Reportes;
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
@@ -93,7 +94,7 @@ void MainWindow::inicializarGrafico(const int rInterior,const int rExterior)
 
 }
 
-void MainWindow::mostrarMensajeBarraEstado(const QString &message)
+void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 {
     status->setText(message);
 }
@@ -101,54 +102,14 @@ void MainWindow::mostrarMensajeBarraEstado(const QString &message)
 void MainWindow::leerDatosSerial()
 {
     if ( cronometro.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
-        /* while (serial->canReadLine()){
-            const QByteArray serialData = serial->readLine();
-            datosLeidosPuertoSerial=QString(serialData);
 
-            QStringList linea=datosLeidosPuertoSerial.split(" ");
-            const double AcX=QString(linea.at(0)).toDouble();
-            const double AcY=QString(linea.at(1)).toDouble();
-            const double AcZ=QString(linea.at(2)).toDouble();
-            const double GyX=QString(linea.at(3)).toDouble();
-            const double GyY=QString(linea.at(4)).toDouble();
-            const double GyZ=QString(linea.at(5)).toDouble();
-
-            if(linea.size()>6)
-                QTextStream(stdout)<<"key: "<<linea.at(6)<<endl;
-
-            const double tiempo=cronometro.elapsed()/1000.0;
-            Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
-
-            if (listaMuestras.size()>1)
-                obtenerAngulos(dato);
-
-            listaMuestras.append(dato);
-
-            if(listaMuestras.size()==1)//Cuando se agrega el primer dato, se inicia el tiempo.
-                cronometro.start();
-
-            const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
-            ui->progressBarPrueba->setValue(porcentaje);
-
-            const QString lapso=QString::number(tiempo, 'f', 1);
-            ui->lcdNumberTiempoTranscurrido->display(lapso);
-            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(AcX,'f',3)+" AcY: "+QString::number(AcY,'f',3)+" AcZ: "+QString::number(AcZ,'f',3)
-                                + " GyX: "+QString::number(GyX,'f',3)+" GyY: "+QString::number(GyY,'f',3)+" GyZ: "+QString::number(GyZ,'f',3);
-            mostrarMensajeBarraEstado(mensaje);
-            //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-            //QTextStream(stdout)<<mensaje;
-
-        }
-        */
         while (serial->canReadLine()){
             const double tiempo=cronometro.elapsed()/1000.0;
 
             Raw raw=lecturaSerial->leerDatosSerial(serial,tiempo);
             Raw *dato=new Raw(raw.getTiempo(),raw.getAcX(),raw.getAcY(),raw.getAcZ(),raw.getGyX(),raw.getGyY(),raw.getGyZ());
-            //QTextStream(stdout)<<dato->getTiempo()<<dato->getAcX()<<dato->getAcY();
 
-            if (listaMuestras.size()>1)
-                obtenerAngulos(dato);
+            obtenerAngulos(dato);
 
             listaMuestras.append(dato);
 
@@ -163,9 +124,7 @@ void MainWindow::leerDatosSerial()
 
             const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
                                 + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
-            mostrarMensajeBarraEstado(mensaje);
-            //if(cantidadMuestras %ui->spinBoxgraphupdate->value()==0)//Mod
-            //QTextStream(stdout)<<mensaje;
+            actualizarMensajeBarraEstado(mensaje);
         }
     }
     else{
@@ -173,48 +132,62 @@ void MainWindow::leerDatosSerial()
         serial->close();
         mostrarBotones();
         activarTabs();
-        generarGraficoResultados();
-        generarTablaAngulos();
-        generarGraficosAngulos();
-        generarTablaRaw();
-        generarGraficosRaw();
+
+        //generarGraficoResultados();
+        reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
+        reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
+        reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
+        reportes->graficarAngulos(ui->qCustomPlotGraficosAngulos,listaAngulos);
+        reportes->graficarMuestras(ui->qCustomPlotGraficoMuestas,listaMuestras);
     }
 }
 
 void MainWindow::obtenerAngulos(Raw *dato)
 {
-
-    //Filtro_Kalman *kalmanX = new Filtro_Kalman(); // Create the Kalman instances
-    //Filtro_Kalman *kalmanY = new Filtro_Kalman();
-
     const double RAD_TO_DEG=180/M_PI;
-    //Se calculan los angulos con la IMU vertical.
-    const double angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-    const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-    double dt=(dato->getTiempo()-listaMuestras.last()->getTiempo())/ 1000;
-    //Aplicar el Filtro Complementario
-    anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
-    anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyZ()*dt) + 0.02*angulo2;
 
-    //kalmanX->setAngle(angulo1); // Set starting angle
-    //kalmanY->setAngle(angulo2);
+    Angulo *angulo;
+    bool IMUVertical = ui->checkBoxImuVertical->isChecked();
+    if(IMUVertical)
+    {
+        //Se calculan los angulos con la IMU vertical.
+        const double angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+        const double angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
 
-    //double kalAngleX = kalmanX->getAngle(angulo1, dato->getGyX(), dt); // Calculate the angle using a Kalman filter
-    //double kalAngleY = kalmanY->getAngle(angulo2, dato->getGyZ(), dt); // Calculate the angle using a Kalman filter
+        //Aplicar el Filtro Complementario
+        if(listaAngulos.size()>0){
+            const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+            anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyZ()*dt) + 0.02*angulo1;
+            anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyX()*dt) + 0.02*angulo2;
+        }
+        else{
+            anguloComplementario1=angulo1;
+            anguloComplementario2=angulo2;
+        }
+        angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
+    }
+    else
+    {
+        //Se calculan los angulos con la IMU horizontal.
+        const double angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+        const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
 
-    //QTextStream(stdout)<<kalAngleX<<kalAngleY;
-    //Angulo *angKalman=new Angulo(dato->getTiempo(),kalAngleX,kalAngleY);
+        //Aplicar el Filtro Complementario
+        if(listaAngulos.size()>0){
+            const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+            anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
+            anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyY()*dt) + 0.02*angulo2;
+        }
+        else{
+            anguloComplementario1=angulo1;
+            anguloComplementario2=angulo2;
+        }
+        angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
+    }
 
-    Angulo *angulo=new Angulo(dato->getTiempo(),-anguloComplementario2,anguloComplementario1);
     listaAngulos.append(angulo);
-
-
     if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
         emit emitAngulo(angulo);
-        //emit emitdata(new Dato(dato->getTiempo(),Angle_compl[0],Angle_compl[1],0,0,0,0));
-
-    //QTextStream(stdout)<<"Angulo normal X:"<<QString::number(angulo1,'f',2)<<" Angulo normal Y:"<<QString::number(angulo2,'f',2) <<" Angulo Compl X:"<<QString::number(anguloComplementario1,'f',2)<<" Angulo Compl Y:"<<QString::number(anguloComplementario2,'f',2);
-
 }
 
 void MainWindow::mostrarBotones()
@@ -286,7 +259,7 @@ void MainWindow::generarObjetivos(const int rExterior,const int distanciaCentro=
             const int randomy=(qrand()%(rExterior-rObjetivo))*signoy;
             const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
 
-            if(ecuacionCircExt<=qPow((rExterior-rObjetivo),2)){//Si es que no se sale del radio exterior
+            if(ecuacionCircExt<=qPow(double(rExterior-rObjetivo),2)){//Si es que no se sale del radio exterior
                 bool noIntersectaOtros=true;
                 foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
                     const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+rObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-rObjetivo)),2));
@@ -319,153 +292,6 @@ void MainWindow::generarObjetivos(const int rExterior,const int distanciaCentro=
             listaObjetivos.append(objetivo);
         }
     }
-}
-
-void MainWindow::generarTablaAngulos()
-{
-    if (!ui->tableWidgetAngulos)
-       return;
-    while (ui->tableWidgetAngulos->rowCount() > 0)
-    {
-        ui->tableWidgetAngulos->removeRow(0);
-    }
-
-    for (int var = 0; var < listaAngulos.size(); ++var) {
-        const int currentRow = ui->tableWidgetAngulos->rowCount();
-        ui->tableWidgetAngulos->setRowCount(currentRow + 1);
-        ui->tableWidgetAngulos->setItem(var,0,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getTiempo())));
-        ui->tableWidgetAngulos->setItem(var,1,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloX())));
-        ui->tableWidgetAngulos->setItem(var,2,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloY())));
-    }
-}
-
-void MainWindow::generarTablaRaw()
-{
-    if (!ui->tableWidgetDatosRaw)
-       return;
-    while (ui->tableWidgetDatosRaw->rowCount() > 0)
-    {
-        ui->tableWidgetDatosRaw->removeRow(0);
-    }
-
-    for (int var = 0; var < listaMuestras.size(); ++var) {
-        const int currentRow = ui->tableWidgetDatosRaw->rowCount();
-        ui->tableWidgetDatosRaw->setRowCount(currentRow + 1);
-        ui->tableWidgetDatosRaw->setItem(var,0,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getTiempo())));
-        ui->tableWidgetDatosRaw->setItem(var,1,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcX())));
-        ui->tableWidgetDatosRaw->setItem(var,2,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcY())));
-        ui->tableWidgetDatosRaw->setItem(var,3,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcZ())));
-        ui->tableWidgetDatosRaw->setItem(var,4,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyX())));
-        ui->tableWidgetDatosRaw->setItem(var,5,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyY())));
-        ui->tableWidgetDatosRaw->setItem(var,6,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyZ())));
-    }
-}
-
-void MainWindow::generarGraficosAngulos()
-{
-    QVector<double> Tiempo;
-    QVector<double> DatosAnguloX;
-    QVector<double> DatosAnguloY;
-    foreach (Angulo *var, listaAngulos) {
-        Tiempo.append(var->getTiempo());
-        DatosAnguloX.append(var->getAnguloX());
-        DatosAnguloY.append(var->getAnguloY());
-    }
-    limpiarGrafico(ui->qCustomPlotGraficosAngulos);
-    ui->qCustomPlotGraficosAngulos->addGraph();
-    ui->qCustomPlotGraficosAngulos->graph(0)->setData(Tiempo, DatosAnguloX);
-
-    ui->qCustomPlotGraficosAngulos->addGraph();
-    ui->qCustomPlotGraficosAngulos->graph(1)->setData(Tiempo, DatosAnguloY);
-    ui->qCustomPlotGraficosAngulos->graph(1)->setPen(QPen(Qt::red));
-
-    ui->qCustomPlotGraficosAngulos->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficosAngulos->yAxis->setLabel("Angulos vs Tiempo");
-
-    ui->qCustomPlotGraficosAngulos->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficosAngulos->yAxis->setRange(-20, 20);
-    ui->qCustomPlotGraficosAngulos->replot();
-    ui->qCustomPlotGraficosAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-}
-
-
-void MainWindow::generarGraficosRaw()
-{
-    QVector<double> Tiempo;
-    QVector<double> DatosAcX;
-    QVector<double> DatosAcY;
-    QVector<double> DatosAcZ;
-    QVector<double> DatosGyX;
-    QVector<double> DatosGyY;
-    QVector<double> DatosGyZ;
-    foreach (Raw *var, listaMuestras) {
-        Tiempo.append(var->getTiempo());
-        DatosAcX.append(var->getAcX());
-        DatosAcY.append(var->getAcY());
-        DatosAcZ.append(var->getAcZ());
-        DatosGyX.append(var->getGyX());
-        DatosGyY.append(var->getGyY());
-        DatosGyZ.append(var->getGyZ());
-    }
-    limpiarGrafico(ui->qCustomPlotGraficoAcX);
-    ui->qCustomPlotGraficoAcX->addGraph();
-    ui->qCustomPlotGraficoAcX->graph(0)->setData(Tiempo, DatosAcX);
-    ui->qCustomPlotGraficoAcX->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoAcX->yAxis->setLabel("Aceleracion X");
-    ui->qCustomPlotGraficoAcX->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoAcX->yAxis->setRange(-1, 1);
-    ui->qCustomPlotGraficoAcX->replot();
-    ui->qCustomPlotGraficoAcX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoAcY);
-    ui->qCustomPlotGraficoAcY->addGraph();
-    ui->qCustomPlotGraficoAcY->graph(0)->setData(Tiempo, DatosAcY);
-    ui->qCustomPlotGraficoAcY->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoAcY->yAxis->setLabel("Aceleracion Y");
-    ui->qCustomPlotGraficoAcY->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoAcY->yAxis->setRange(-1, 1);
-    ui->qCustomPlotGraficoAcY->replot();
-    ui->qCustomPlotGraficoAcY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoAcZ);
-    ui->qCustomPlotGraficoAcZ->addGraph();
-    ui->qCustomPlotGraficoAcZ->graph(0)->setData(Tiempo, DatosAcZ);
-    ui->qCustomPlotGraficoAcZ->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoAcZ->yAxis->setLabel("Aceleracion Z");
-    ui->qCustomPlotGraficoAcZ->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoAcZ->yAxis->setRange(-1, 1);
-    ui->qCustomPlotGraficoAcZ->replot();
-    ui->qCustomPlotGraficoAcZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoGyX);
-    ui->qCustomPlotGraficoGyX->addGraph();
-    ui->qCustomPlotGraficoGyX->graph(0)->setData(Tiempo, DatosGyX);
-    ui->qCustomPlotGraficoGyX->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoGyX->yAxis->setLabel("Rotacion X");
-    ui->qCustomPlotGraficoGyX->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoGyX->yAxis->setRange(-250, 250);
-    ui->qCustomPlotGraficoGyX->replot();
-    ui->qCustomPlotGraficoGyX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoGyY);
-    ui->qCustomPlotGraficoGyY->addGraph();
-    ui->qCustomPlotGraficoGyY->graph(0)->setData(Tiempo, DatosGyY);
-    ui->qCustomPlotGraficoGyY->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoGyY->yAxis->setLabel("Rotacion Y");
-    ui->qCustomPlotGraficoGyY->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoGyY->yAxis->setRange(-250, 250);
-    ui->qCustomPlotGraficoGyY->replot();
-    ui->qCustomPlotGraficoGyY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoGyZ);
-    ui->qCustomPlotGraficoGyZ->addGraph();
-    ui->qCustomPlotGraficoGyZ->graph(0)->setData(Tiempo, DatosGyZ);
-    ui->qCustomPlotGraficoGyZ->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoGyZ->yAxis->setLabel("Rotacion Z");
-    ui->qCustomPlotGraficoGyZ->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoGyZ->yAxis->setRange(-250, 250);
-    ui->qCustomPlotGraficoGyZ->replot();
-    ui->qCustomPlotGraficoGyZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
 void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
@@ -631,88 +457,6 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
     grafico->yAxis->setLabel("");
     grafico->rescaleAxes();
     grafico->replot();
-}
-
-void MainWindow::generarGraficoResultados()
-{
-    limpiarGrafico(ui->qCustomPlotResultados);
-    double q1=0, q2=0, q3=0, q4=0;
-
-    foreach (Angulo *var, listaAngulos) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
-        if(var->getAnguloX()>0){
-            if(var->getAnguloY()>0)
-                q1+=1;
-            else
-                q3+=1;
-        }
-        else{
-            if(var->getAnguloY()>0)
-                q2+=1;
-            else
-                q4+=1;
-        }
-    }
-
-    q1=q1/listaAngulos.size()*100;
-    q2=q2/listaAngulos.size()*100;
-    q3=q3/listaAngulos.size()*100;
-    q4=q4/listaAngulos.size()*100;
-    qDebug()<<"1="<<q1<<"% 2="<<q2<<"% 3="<<q3<<"% 4="<<q4<<"%"<<endl;
-
-    QCPBars *cuadrantes = new QCPBars(ui->qCustomPlotResultados->xAxis, ui->qCustomPlotResultados->yAxis);
-    ui->qCustomPlotResultados->addPlottable(cuadrantes);
-    // set names and colors:
-    QPen pen;
-    pen.setWidthF(1.2);
-    cuadrantes->setName("Porcentaje en cada cuadrante");
-    pen.setColor(QColor(255, 131, 0));
-    cuadrantes->setPen(pen);
-    cuadrantes->setBrush(QColor(255, 131, 0, 50));
-
-    // prepare x axis with country labels:
-    QVector<double> ticks;
-    QVector<QString> labels;
-    ticks << 1 << 2 << 3 << 4;
-    labels << "Cuadrante 1" << "Cuadrante 2" << "Cuadrante 3" << "Cuadrante 4";
-    ui->qCustomPlotResultados->xAxis->setAutoTicks(false);
-    ui->qCustomPlotResultados->xAxis->setAutoTickLabels(false);
-    ui->qCustomPlotResultados->xAxis->setTickVector(ticks);
-    ui->qCustomPlotResultados->xAxis->setTickVectorLabels(labels);
-    ui->qCustomPlotResultados->xAxis->setTickLabelRotation(60);
-    ui->qCustomPlotResultados->xAxis->setSubTickCount(0);
-    ui->qCustomPlotResultados->xAxis->setTickLength(0, 4);
-    ui->qCustomPlotResultados->xAxis->grid()->setVisible(true);
-    ui->qCustomPlotResultados->xAxis->setRange(0, 5);
-
-    // prepare y axis:
-    ui->qCustomPlotResultados->yAxis->setRange(0, 100);
-    ui->qCustomPlotResultados->yAxis->setPadding(5); // a bit more space to the left border
-    ui->qCustomPlotResultados->yAxis->setLabel("Porcentaje");
-    ui->qCustomPlotResultados->yAxis->grid()->setSubGridVisible(true);
-    QPen gridPen;
-    gridPen.setStyle(Qt::SolidLine);
-    gridPen.setColor(QColor(0, 0, 0, 25));
-    ui->qCustomPlotResultados->yAxis->grid()->setPen(gridPen);
-    gridPen.setStyle(Qt::DotLine);
-    ui->qCustomPlotResultados->yAxis->grid()->setSubGridPen(gridPen);
-
-    // Add data:
-    QVector<double> quadrantData;
-    quadrantData  << q1 << q2 << q3 << q4;
-    cuadrantes->setData(ticks, quadrantData);
-
-    // setup legend:
-    ui->qCustomPlotResultados->legend->setVisible(true);
-    ui->qCustomPlotResultados->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    ui->qCustomPlotResultados->legend->setBrush(QColor(255, 255, 255, 200));
-    QPen legendPen;
-    legendPen.setColor(QColor(130, 130, 130, 200));
-    ui->qCustomPlotResultados->legend->setBorderPen(legendPen);
-    QFont legendFont = font();
-    legendFont.setPointSize(10);
-    ui->qCustomPlotResultados->legend->setFont(legendFont);
-    ui->qCustomPlotResultados->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    ui->qCustomPlotResultados->replot();
 }
 
 void MainWindow::on_pushButtonPrueba1_clicked()

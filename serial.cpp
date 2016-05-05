@@ -21,7 +21,7 @@ void Serial::abrirPuertoSerial(QSerialPort *serial, AjustesPuertoSerial::Ajustes
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
         QTextStream(stdout)<<"Cadena de Configuracion: " <<ajustesSensores<<endl;
-        serial->write(ajustesSensores.toLocal8Bit());
+        serial->write("v0"+ajustesSensores.toLocal8Bit());
 
     } else {
         QMessageBox::critical(0, tr("Error"), serial->errorString());

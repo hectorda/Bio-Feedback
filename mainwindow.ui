@@ -31,7 +31,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -395,6 +395,16 @@ QPushButton:hover {
               </property>
              </widget>
             </item>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="checkBoxImuVertical">
+              <property name="text">
+               <string>IMU Vertical?</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -502,7 +512,7 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -766,23 +776,8 @@ QPushButton:hover {
                <string>Graficos Raw</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_7">
-               <item row="0" column="2">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAcZ" native="true"/>
-               </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAcX" native="true"/>
-               </item>
-               <item row="0" column="1">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAcY" native="true"/>
-               </item>
-               <item row="1" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoGyX" native="true"/>
-               </item>
-               <item row="1" column="1">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoGyY" native="true"/>
-               </item>
-               <item row="1" column="2">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoGyZ" native="true"/>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestas" native="true"/>
                </item>
               </layout>
              </widget>

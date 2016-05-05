@@ -28,6 +28,8 @@ private:
     Ui::AjustesGrafico *ui;
     AjustesGrafico::Ajustes ajustesActuales;
     QCPItemEllipse *objetivo;
+    QCPItemEllipse *circuloExterior;
+    QCPItemEllipse *circuloInterior;
     void inicializar();
     void conexiones();
     void graficarObjetivo(const int rObjetivo);

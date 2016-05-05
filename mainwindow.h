@@ -12,6 +12,7 @@
 #include <angulo.h>
 #include <filtro_kalman.h>
 #include <serial.h>
+#include <reportes.h>
 
 namespace Ui {
 class MainWindow;
@@ -64,6 +65,7 @@ private:
     QString datosLeidosPuertoSerial;
     QList<Raw*> listaMuestras;
     QList<Angulo*> listaAngulos;
+    Reportes *reportes;
     QList<QCPItemEllipse*> listaObjetivos;
     QCPCurve *lienzo;
     QLabel *status;
@@ -77,15 +79,10 @@ private:
     void ocultarBotones();
     void desactivarTabs();
     void activarTabs();
-    void generarTablaAngulos();
-    void generarTablaRaw();
-    void generarGraficosAngulos();
-    void generarGraficosRaw();
     void preguntarRegresarInicio();
     void obtenerAngulos(Raw* dato);
-    void mostrarMensajeBarraEstado(const QString &message);
+    void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
-    void generarGraficoResultados();
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
     void generarObjetivos(const int rExterior, const int distanciaCentro);

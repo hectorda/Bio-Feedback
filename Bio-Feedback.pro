@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     angulo.cpp \
     filtro_kalman.cpp \
     serial.cpp \
-    ajustesgrafico.cpp
+    ajustesgrafico.cpp \
+    reportes.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     angulo.h \
     filtro_kalman.h \
     serial.h \
-    ajustesgrafico.h
+    ajustesgrafico.h \
+    reportes.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \

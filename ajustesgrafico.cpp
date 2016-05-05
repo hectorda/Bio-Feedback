@@ -27,6 +27,8 @@ void AjustesGrafico::inicializar()
 {
     ui->setupUi(this);
     objetivo=new QCPItemEllipse(ui->qCustomPlotObjetivo);
+    circuloExterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
+    circuloInterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
 }
 
 void AjustesGrafico::conexiones()
@@ -71,14 +73,14 @@ void AjustesGrafico::relacionAspecto(QCustomPlot *grafico)
 
 void AjustesGrafico::graficarRepresentacionGrafico(const int rInterior,const int rExterior)
 {
-    QCPItemEllipse *circuloExterior;
-    circuloExterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
+    ui->qCustomRepresentacionGrafico->clearFocus();
+    ui->qCustomRepresentacionGrafico->clearGraphs();
+    ui->qCustomRepresentacionGrafico->clearItems();
+    ui->qCustomRepresentacionGrafico->clearPlottables();
     circuloExterior->topLeft->setCoords(-rExterior,rExterior);
     circuloExterior->bottomRight->setCoords(rExterior,-rExterior);
     circuloExterior->setBrush(QBrush(Qt::yellow));
 
-    QCPItemEllipse *circuloInterior;
-    circuloInterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
     circuloInterior->topLeft->setCoords(-rInterior,rInterior);
     circuloInterior->bottomRight->setCoords(rInterior,-rInterior);
 

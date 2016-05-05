@@ -30,7 +30,6 @@ private:
     void llenarParametros();
     void mostrarFrecuenciaMuestreo(double SampleRate);
     void mostrarFiltroPasaBajo(const QString DLPF);
-
 };
 
 #endif // AJUSTESSENSORES_H
