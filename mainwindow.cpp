@@ -311,7 +311,7 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 
     lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
 
-    ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto rojo.
+    ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
     ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
     //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
 

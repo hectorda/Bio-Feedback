@@ -112,6 +112,106 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAng
 
 void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras)
 {
+
+    // configure axis rect:
+    grafico->plotLayout()->clear(); // clear default axis rect so we can start from scratch
+    QCPAxisRect *wideAxisRect = new QCPAxisRect(grafico);
+    wideAxisRect->setupFullAxesBox(true);
+    wideAxisRect->axis(QCPAxis::atRight, 0)->setTickLabels(true);
+    wideAxisRect->addAxis(QCPAxis::atLeft)->setTickLabelColor(QColor("#6050F8")); // add an extra axis on the left and color its numbers
+    QCPLayoutGrid *subLayout = new QCPLayoutGrid;
+    grafico->plotLayout()->addElement(0, 0, wideAxisRect); // insert axis rect in first row
+    grafico->plotLayout()->addElement(1, 0, subLayout); // sub layout in second row (grid layout will grow accordingly)
+    //customPlot->plotLayout()->setRowStretchFactor(1, 2);
+    // prepare axis rects that will be placed in the sublayout:
+    QCPAxisRect *subRectLeft = new QCPAxisRect(grafico, false); // false means to not setup default axes
+    QCPAxisRect *subRectRight = new QCPAxisRect(grafico, false);
+    subLayout->addElement(0, 0, subRectLeft);
+    subLayout->addElement(0, 1, subRectRight);
+    subRectRight->setMaximumSize(150, 150); // make bottom right axis rect size fixed 150x150
+    subRectRight->setMinimumSize(150, 150); // make bottom right axis rect size fixed 150x150
+    // setup axes in sub layout axis rects:
+    subRectLeft->addAxes(QCPAxis::atBottom | QCPAxis::atLeft);
+    subRectRight->addAxes(QCPAxis::atBottom | QCPAxis::atRight);
+    subRectLeft->axis(QCPAxis::atLeft)->setAutoTickCount(2);
+    subRectRight->axis(QCPAxis::atRight)->setAutoTickCount(2);
+    subRectRight->axis(QCPAxis::atBottom)->setAutoTickCount(2);
+    subRectLeft->axis(QCPAxis::atBottom)->grid()->setVisible(true);
+    // synchronize the left and right margins of the top and bottom axis rects:
+    QCPMarginGroup *marginGroup = new QCPMarginGroup(grafico);
+    subRectLeft->setMarginGroup(QCP::msLeft, marginGroup);
+    subRectRight->setMarginGroup(QCP::msRight, marginGroup);
+    wideAxisRect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
+    // move newly created axes on "axes" layer and grids on "grid" layer:
+    foreach (QCPAxisRect *rect, grafico->axisRects())
+    {
+      foreach (QCPAxis *axis, rect->axes())
+      {
+        axis->setLayer("axes");
+        axis->grid()->setLayer("grid");
+      }
+    }
+
+    // prepare data:
+    QVector<double> x1a(20), y1a(20);
+    QVector<double> x1b(50), y1b(50);
+    QVector<double> x2(100), y2(100);
+    QVector<double> x3, y3;
+    qsrand(3);
+    for (int i=0; i<x1a.size(); ++i)
+    {
+      x1a[i] = i/(double)(x1a.size()-1)*10-5.0;
+      y1a[i] = qCos(x1a[i]);
+    }
+    for (int i=0; i<x1b.size(); ++i)
+    {
+      x1b[i] = i/(double)x1b.size()*10-5.0;
+      y1b[i] = qExp(-x1b[i]*x1b[i]*0.2)*1000;
+    }
+    for (int i=0; i<x2.size(); ++i)
+    {
+      x2[i] = i/(double)x2.size()*10;
+      y2[i] = qrand()/(double)RAND_MAX-0.5+y2[qAbs(i-1)];
+    }
+    x3 << 1 << 2 << 3 << 4;
+    y3 << 2 << 2.5 << 4 << 1.5;
+
+    // create and configure plottables:
+    QCPGraph *mainGraph1 = grafico->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft));
+    mainGraph1->setData(x1a, y1a);
+    mainGraph1->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::black), QBrush(Qt::white), 6));
+    mainGraph1->setPen(QPen(QColor(120, 120, 120), 2));
+    QCPGraph *mainGraph2 = grafico->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft, 1));
+    mainGraph2->setData(x1b, y1b);
+    mainGraph2->setPen(QPen(QColor("#8070B8"), 2));
+    mainGraph2->setBrush(QColor(110, 170, 110, 30));
+    mainGraph1->setChannelFillGraph(mainGraph2);
+    mainGraph1->setBrush(QColor(255, 161, 0, 50));
+
+    QCPGraph *graph2 = grafico->addGraph(subRectLeft->axis(QCPAxis::atBottom), subRectLeft->axis(QCPAxis::atLeft));
+    graph2->setData(x2, y2);
+    graph2->setLineStyle(QCPGraph::lsImpulse);
+    graph2->setPen(QPen(QColor("#FFA100"), 1.5));
+
+    QCPBars *bars1 = new QCPBars(subRectRight->axis(QCPAxis::atBottom), subRectRight->axis(QCPAxis::atRight));
+    grafico->addPlottable(bars1);
+    bars1->setWidth(3/(double)x3.size());
+    bars1->setData(x3, y3);
+    bars1->setPen(QPen(Qt::black));
+    bars1->setAntialiased(false);
+    bars1->setAntialiasedFill(false);
+    bars1->setBrush(QColor("#705BE8"));
+    bars1->keyAxis()->setAutoTicks(false);
+    bars1->keyAxis()->setTickVector(x3);
+    bars1->keyAxis()->setSubTickCount(0);
+
+    // rescale axes according to graph's data:
+    mainGraph1->rescaleAxes();
+    mainGraph2->rescaleAxes();
+    graph2->rescaleAxes();
+    bars1->rescaleAxes();
+    wideAxisRect->axis(QCPAxis::atLeft, 1)->setRangeLower(0);
+    /*
     QVector<double> Tiempo;
     QVector<double> DatosAcX;
     QVector<double> DatosAcY;
@@ -137,7 +237,7 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
     grafico->yAxis->setRange(-1, 1);
     grafico->replot();
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-/*
+
     limpiarGrafico(ui->qCustomPlotGraficoAcY);
 
     ui->qCustomPlotGraficoAcY->addGraph();
@@ -213,10 +313,9 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
     grafico->yAxis->setLabel("Angulos vs Tiempo");
 
     grafico->xAxis->setRange(0, Tiempo.last());
-    grafico->yAxis->setRange(-20, 20);
+    grafico->rescaleAxes();
     grafico->replot();
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
 }
 
 void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw *> listaMuestras)
