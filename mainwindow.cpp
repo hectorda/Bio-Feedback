@@ -58,23 +58,23 @@ void MainWindow::conexiones()
     connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
 }
 
-void MainWindow::inicializarGrafico(const int rInterior,const int rExterior)
+void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
 
     QCPItemEllipse *circuloExterior;
     circuloExterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
-    circuloExterior->topLeft->setCoords(-rExterior,rExterior);
-    circuloExterior->bottomRight->setCoords(rExterior,-rExterior);
+    circuloExterior->topLeft->setCoords(-radios.RadioExterior,radios.RadioExterior);
+    circuloExterior->bottomRight->setCoords(radios.RadioExterior,-radios.RadioExterior);
     circuloExterior->setBrush(QBrush(Qt::yellow));
 
     QCPItemEllipse *circuloInterior;
     circuloInterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
 
-    circuloInterior->topLeft->setCoords(-rInterior,rInterior);
-    circuloInterior->bottomRight->setCoords(rInterior,-rInterior);
+    circuloInterior->topLeft->setCoords(-radios.RadioInterior,radios.RadioInterior);
+    circuloInterior->bottomRight->setCoords(radios.RadioInterior,-radios.RadioInterior);
 
-    //int rObjetivo=1;
+    //int radios.RadioObjetivo=1;
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     ui->qCustomPlotGrafico->addPlottable(lienzo);
@@ -243,7 +243,7 @@ void MainWindow::desactivarSpacerEntreBotones()
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Ignored);
 }
 
-void MainWindow::generarObjetivos(const int rExterior,const int distanciaCentro=5)
+void MainWindow::generarObjetivos(const int distanciaCentro=5)
 {
     listaObjetivos.clear();
     int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
@@ -255,23 +255,23 @@ void MainWindow::generarObjetivos(const int rExterior,const int distanciaCentro=
             const int signox=qrand()%2==1 ? 1: -1;
             const int signoy=qrand()%2==1 ? 1: -1;
 
-            const int randomx=(qrand()%(rExterior-rObjetivo))*signox;
-            const int randomy=(qrand()%(rExterior-rObjetivo))*signoy;
+            const int randomx=(qrand()%(radios.RadioExterior-radios.RadioObjetivo))*signox;
+            const int randomy=(qrand()%(radios.RadioExterior-radios.RadioObjetivo))*signoy;
             const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
 
-            if(ecuacionCircExt<=qPow(double(rExterior-rObjetivo),2)){//Si es que no se sale del radio exterior
+            if(ecuacionCircExt<=qPow(double(radios.RadioExterior-radios.RadioObjetivo),2)){//Si es que no se sale del radio exterior
                 bool noIntersectaOtros=true;
                 foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
-                    const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+rObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-rObjetivo)),2));
+                    const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+radios.RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-radios.RadioObjetivo)),2));
                     //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
-                    if( perteneceCirc < 2*rObjetivo + 0.5)
+                    if( perteneceCirc < 2*radios.RadioObjetivo + 0.5)
                         noIntersectaOtros=false;
                 }
                 if(noIntersectaOtros){
                     QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
 
-                    objetivo->topLeft->setCoords(randomx-rObjetivo,randomy+rObjetivo);
-                    objetivo->bottomRight->setCoords(randomx+rObjetivo,randomy-rObjetivo);
+                    objetivo->topLeft->setCoords(randomx-radios.RadioObjetivo,randomy+radios.RadioObjetivo);
+                    objetivo->bottomRight->setCoords(randomx+radios.RadioObjetivo,randomy-radios.RadioObjetivo);
                     objetivo->setBrush(QBrush(Qt::red));
                     listaObjetivos.append(objetivo);
                     cantidadintentos=0;
@@ -286,8 +286,8 @@ void MainWindow::generarObjetivos(const int rExterior,const int distanciaCentro=
         for (int var = 0; var < cantidadObjetivos; ++var){
             QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
             const double angulo=2*var*((M_PI)/cantidadObjetivos); //
-            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-rObjetivo,qSin(angulo)*distanciaCentro+rObjetivo);
-            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+rObjetivo,qSin(angulo)*distanciaCentro-rObjetivo);
+            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-radios.RadioObjetivo,qSin(angulo)*distanciaCentro+radios.RadioObjetivo);
+            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+radios.RadioObjetivo,qSin(angulo)*distanciaCentro-radios.RadioObjetivo);
             objetivo->setBrush(QBrush(Qt::red));
             listaObjetivos.append(objetivo);
         }
@@ -299,8 +299,8 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
     for (int var = 0; var < listaObjetivos.size(); ++var){
         QCPItemEllipse *P=listaObjetivos.at(var);
         if(P->brush()==QBrush(Qt::red)){
-            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+rObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-rObjetivo)),2));
-            if( perteneceCirc < rObjetivo){
+            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+radios.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-radios.RadioObjetivo)),2));
+            if( perteneceCirc < radios.RadioObjetivo){
                 P->setBrush(QBrush(Qt::green));
                 listaObjetivos.removeAt(var);
                 ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
@@ -309,11 +309,15 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
         }
     }
 
-    lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
-
-    ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
-    ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
-    //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
+    const double inclRecta=atan(angulo->getAnguloY()/angulo->getAnguloX());
+    QTextStream(stdout)<<"Inclinacion: "<<inclRecta*180/M_PI<<endl;
+    const double ecuacionCircExt=qPow(angulo->getAnguloX(),2)+qPow(angulo->getAnguloY(),2);
+    if(ecuacionCircExt<=qPow(double(radios.RadioExterior),2)){//Si es que no se sale del radio exterior
+        lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
+        ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
+        ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
+        //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
+    }
 
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
@@ -372,10 +376,10 @@ void MainWindow::iniciarPrueba()
     listaAngulos.clear();
     lecturaSerial->abrirPuertoSerial(serial,ajustesSerial->getAjustes(),ajustesSensores->getAjustes());
     cronometro.start();
-    AjustesGrafico::Ajustes radios=ajustesGrafico->getAjustes();
-    inicializarGrafico(radios.RadioInterior,radios.RadioExterior); //Se limpian los graficos
-    rObjetivo=radios.RadioObjetivo;
-    generarObjetivos(radios.RadioExterior);
+    radios=ajustesGrafico->getAjustes();
+    inicializarGrafico(); //Se limpian los graficos
+    radios.RadioObjetivo=radios.RadioObjetivo;
+    generarObjetivos();
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
     desactivarTabs();

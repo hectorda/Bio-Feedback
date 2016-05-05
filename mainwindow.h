@@ -70,11 +70,11 @@ private:
     QCPCurve *lienzo;
     QLabel *status;
     double anguloComplementario1,anguloComplementario2;
-    int rObjetivo;
+    AjustesGrafico::Ajustes radios;
 
     void inicializar();
     void conexiones();
-    void inicializarGrafico(const int rInterior, const int rExterior);
+    void inicializarGrafico();
     void mostrarBotones();
     void ocultarBotones();
     void desactivarTabs();
@@ -85,7 +85,7 @@ private:
     void limpiarGrafico(QCustomPlot *grafico);
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
-    void generarObjetivos(const int rExterior, const int distanciaCentro);
+    void generarObjetivos(const int distanciaCentro);
 };
 
 #endif // MAINWINDOW_H
