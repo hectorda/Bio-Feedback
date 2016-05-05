@@ -309,14 +309,41 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
         }
     }
 
-    const double inclRecta=atan(angulo->getAnguloY()/angulo->getAnguloX());
-    QTextStream(stdout)<<"Inclinacion: "<<inclRecta*180/M_PI<<endl;
-    const double ecuacionCircExt=qPow(angulo->getAnguloX(),2)+qPow(angulo->getAnguloY(),2);
-    if(ecuacionCircExt<=qPow(double(radios.RadioExterior),2)){//Si es que no se sale del radio exterior
+    if(ui->checkBoxLimitarGrafico->isChecked())
+    {
+        const double ecuacionCircExt=qPow(angulo->getAnguloX(),2)+qPow(angulo->getAnguloY(),2);
+        if(ecuacionCircExt<=qPow(double(radios.RadioExterior),2)){//Si es que no se sale del radio exterior
+            lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
+            ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
+            ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
+            //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
+        }
+        else{
+            const double pendiente=angulo->getAnguloY()/angulo->getAnguloX();
+            double inclRecta=qAtan(pendiente)*180/M_PI;
+
+            if(angulo->getAnguloX()>0){
+                if(angulo->getAnguloY()>0)//Cuadrante 1
+                    inclRecta=inclRecta;
+                else //Cuadrante 4
+                    inclRecta+=360;
+            }
+            else  //Cuadrante 2 y Cuadrante 3
+                inclRecta+=180;
+
+            const double aX=radios.RadioExterior*qCos(qDegreesToRadians(inclRecta));
+            const double aY=radios.RadioExterior*qSin(qDegreesToRadians(inclRecta));
+            //QTextStream(stdout)<<"Grados Inclinacion Recta: "<<inclRecta<<" Ax:"<<aX<<" aY:"<<aY<<endl;
+            lienzo->addData(aX, aY);
+            ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
+            ui->qCustomPlotGrafico->graph(0)->addData(aX, aY);
+
+        }
+    }
+    else{
         lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
         ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
         ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
-        //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
     }
 
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico

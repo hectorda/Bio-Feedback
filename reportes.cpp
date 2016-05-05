@@ -35,16 +35,16 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAng
 
     foreach (Angulo *var, listaAngulos) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
         if(var->getAnguloX()>0){
-            if(var->getAnguloY()>0)
+            if(var->getAnguloY()>0)//Cuadrante 1
                 q1+=1;
-            else
-                q3+=1;
+            else //Cuadrante 4
+                q4+=1;
         }
         else{
-            if(var->getAnguloY()>0)
+            if(var->getAnguloY()>0) //Cuadrante 2
                 q2+=1;
-            else
-                q4+=1;
+            else //Cuadrante 3
+                q3+=1;
         }
     }
 

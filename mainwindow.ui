@@ -356,6 +356,24 @@ QPushButton:hover {
               </property>
              </widget>
             </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="text">
+               <string>¿Aleatorios?</string>
+              </property>
+             </widget>
+            </item>
             <item row="2" column="1">
              <widget class="QCheckBox" name="checkBoxObjetivosAleatorios">
               <property name="font">
@@ -377,31 +395,34 @@ QPushButton:hover {
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <italic>false</italic>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="text">
-               <string>¿Aleatorios?</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0">
-             <widget class="QCheckBox" name="checkBoxImuVertical">
+             <widget class="QLabel" name="label_8">
               <property name="text">
                <string>IMU Vertical?</string>
               </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="checkBoxImuVertical">
+              <property name="text">
+               <string/>
+              </property>
               <property name="checked">
                <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Limitar Grafico?</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QCheckBox" name="checkBoxLimitarGrafico">
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
