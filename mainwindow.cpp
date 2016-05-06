@@ -133,7 +133,6 @@ void MainWindow::leerDatosSerial()
         mostrarBotones();
         activarTabs();
 
-        //generarGraficoResultados();
         reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
         reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
         reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);

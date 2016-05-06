@@ -52,7 +52,6 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAng
     q2=q2/listaAngulos.size()*100;
     q3=q3/listaAngulos.size()*100;
     q4=q4/listaAngulos.size()*100;
-    qDebug()<<"1="<<q1<<"% 2="<<q2<<"% 3="<<q3<<"% 4="<<q4<<"%"<<endl;
 
     QCPBars *cuadrantes = new QCPBars(grafico->xAxis, grafico->yAxis);
     grafico->addPlottable(cuadrantes);
@@ -112,105 +111,43 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAng
 
 void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras)
 {
-    // configure axis rect:
-    grafico->plotLayout()->clear(); // clear default axis rect so we can start from scratch
-    QCPAxisRect *wideAxisRect = new QCPAxisRect(grafico);
-    wideAxisRect->setupFullAxesBox(true);
-    wideAxisRect->axis(QCPAxis::atRight, 0)->setTickLabels(true);
-    wideAxisRect->addAxis(QCPAxis::atLeft)->setTickLabelColor(QColor("#6050F8")); // add an extra axis on the left and color its numbers
-    QCPLayoutGrid *subLayout = new QCPLayoutGrid;
-    grafico->plotLayout()->addElement(0, 0, wideAxisRect); // insert axis rect in first row
-    grafico->plotLayout()->addElement(1, 0, subLayout); // sub layout in second row (grid layout will grow accordingly)
-    //customPlot->plotLayout()->setRowStretchFactor(1, 2);
-    // prepare axis rects that will be placed in the sublayout:
-    QCPAxisRect *subRectLeft = new QCPAxisRect(grafico, false); // false means to not setup default axes
-    QCPAxisRect *subRectRight = new QCPAxisRect(grafico, false);
-    subLayout->addElement(0, 0, subRectLeft);
-    subLayout->addElement(0, 1, subRectRight);
-    subRectRight->setMaximumSize(150, 150); // make bottom right axis rect size fixed 150x150
-    subRectRight->setMinimumSize(150, 150); // make bottom right axis rect size fixed 150x150
-    // setup axes in sub layout axis rects:
-    subRectLeft->addAxes(QCPAxis::atBottom | QCPAxis::atLeft);
-    subRectRight->addAxes(QCPAxis::atBottom | QCPAxis::atRight);
-    subRectLeft->axis(QCPAxis::atLeft)->setAutoTickCount(2);
-    subRectRight->axis(QCPAxis::atRight)->setAutoTickCount(2);
-    subRectRight->axis(QCPAxis::atBottom)->setAutoTickCount(2);
-    subRectLeft->axis(QCPAxis::atBottom)->grid()->setVisible(true);
-    // synchronize the left and right margins of the top and bottom axis rects:
-    QCPMarginGroup *marginGroup = new QCPMarginGroup(grafico);
-    subRectLeft->setMarginGroup(QCP::msLeft, marginGroup);
-    subRectRight->setMarginGroup(QCP::msRight, marginGroup);
-    wideAxisRect->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
-    // move newly created axes on "axes" layer and grids on "grid" layer:
-    foreach (QCPAxisRect *rect, grafico->axisRects())
-    {
-      foreach (QCPAxis *axis, rect->axes())
-      {
-        axis->setLayer("axes");
-        axis->grid()->setLayer("grid");
-      }
-    }
 
-    // prepare data:
-    QVector<double> x1a(20), y1a(20);
-    QVector<double> x1b(50), y1b(50);
-    QVector<double> x2(100), y2(100);
-    QVector<double> x3, y3;
-    qsrand(3);
-    for (int i=0; i<x1a.size(); ++i)
-    {
-      x1a[i] = i/(double)(x1a.size()-1)*10-5.0;
-      y1a[i] = qCos(x1a[i]);
-    }
-    for (int i=0; i<x1b.size(); ++i)
-    {
-      x1b[i] = i/(double)x1b.size()*10-5.0;
-      y1b[i] = qExp(-x1b[i]*x1b[i]*0.2)*1000;
-    }
-    for (int i=0; i<x2.size(); ++i)
-    {
-      x2[i] = i/(double)x2.size()*10;
-      y2[i] = qrand()/(double)RAND_MAX-0.5+y2[qAbs(i-1)];
-    }
-    x3 << 1 << 2 << 3 << 4;
-    y3 << 2 << 2.5 << 4 << 1.5;
+    grafico->plotLayout()->clear(); // let's start from scratch and remove the default axis rect
 
-    // create and configure plottables:
-    QCPGraph *mainGraph1 = grafico->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft));
-    mainGraph1->setData(x1a, y1a);
-    mainGraph1->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::black), QBrush(Qt::white), 6));
-    mainGraph1->setPen(QPen(QColor(120, 120, 120), 2));
-    QCPGraph *mainGraph2 = grafico->addGraph(wideAxisRect->axis(QCPAxis::atBottom), wideAxisRect->axis(QCPAxis::atLeft, 1));
-    mainGraph2->setData(x1b, y1b);
-    mainGraph2->setPen(QPen(QColor("#8070B8"), 2));
-    mainGraph2->setBrush(QColor(110, 170, 110, 30));
-    mainGraph1->setChannelFillGraph(mainGraph2);
-    mainGraph1->setBrush(QColor(255, 161, 0, 50));
+    // create a sub layout that we'll place in first row:
 
-    QCPGraph *graph2 = grafico->addGraph(subRectLeft->axis(QCPAxis::atBottom), subRectLeft->axis(QCPAxis::atLeft));
-    graph2->setData(x2, y2);
-    graph2->setLineStyle(QCPGraph::lsImpulse);
-    graph2->setPen(QPen(QColor("#FFA100"), 1.5));
+    QCPLayoutGrid *layoutAcelerometro = new QCPLayoutGrid;
 
-    QCPBars *bars1 = new QCPBars(subRectRight->axis(QCPAxis::atBottom), subRectRight->axis(QCPAxis::atRight));
-    grafico->addPlottable(bars1);
-    bars1->setWidth(3/(double)x3.size());
-    bars1->setData(x3, y3);
-    bars1->setPen(QPen(Qt::black));
-    bars1->setAntialiased(false);
-    bars1->setAntialiasedFill(false);
-    bars1->setBrush(QColor("#705BE8"));
-    bars1->keyAxis()->setAutoTicks(false);
-    bars1->keyAxis()->setTickVector(x3);
-    bars1->keyAxis()->setSubTickCount(0);
+    grafico->plotLayout()->addElement(0, 0, layoutAcelerometro);
+    // add two axis rects in the sub layout next to each other:
+    QCPAxisRect *leftAxisRectAcelerometro = new QCPAxisRect(grafico);
+    QCPAxisRect *centerAxisRectAcelerometro = new QCPAxisRect(grafico);
+    QCPAxisRect *rightAxisRectAcelerometro = new QCPAxisRect(grafico);
+    layoutAcelerometro->addElement(0, 0, leftAxisRectAcelerometro);
+    layoutAcelerometro->addElement(0, 1, centerAxisRectAcelerometro);
+    layoutAcelerometro->addElement(0, 2, rightAxisRectAcelerometro);
 
-    // rescale axes according to graph's data:
-    mainGraph1->rescaleAxes();
-    mainGraph2->rescaleAxes();
-    graph2->rescaleAxes();
-    bars1->rescaleAxes();
-    wideAxisRect->axis(QCPAxis::atLeft, 1)->setRangeLower(0);
-    /*
+    QCPLayoutGrid *layoutGiroscopio = new QCPLayoutGrid;
+    grafico->plotLayout()->addElement(1, 0 , layoutGiroscopio);
+
+    QCPAxisRect *leftAxisRectGiroscopio = new QCPAxisRect(grafico);
+    QCPAxisRect *centerAxisRectGiroscopio = new QCPAxisRect(grafico);
+    QCPAxisRect *rightAxisRectGiroscopio = new QCPAxisRect(grafico);
+    layoutGiroscopio->addElement(0, 0, leftAxisRectGiroscopio);
+    layoutGiroscopio->addElement(0, 1, centerAxisRectGiroscopio);
+    layoutGiroscopio->addElement(0, 2, rightAxisRectGiroscopio);
+
+    // create and configure plottables: Acelerometro
+    QCPGraph *graficoAcX = grafico->addGraph(leftAxisRectAcelerometro->axis(QCPAxis::atBottom), leftAxisRectAcelerometro->axis(QCPAxis::atLeft));
+    QCPGraph *graficoAcY = grafico->addGraph(centerAxisRectAcelerometro->axis(QCPAxis::atBottom), centerAxisRectAcelerometro->axis(QCPAxis::atLeft));
+    QCPGraph *graficoAcZ = grafico->addGraph(rightAxisRectAcelerometro->axis(QCPAxis::atBottom), rightAxisRectAcelerometro->axis(QCPAxis::atLeft));
+
+    // create and configure plottables: Giroscopio
+    QCPGraph *graficoGyX = grafico->addGraph(leftAxisRectGiroscopio->axis(QCPAxis::atBottom), leftAxisRectGiroscopio->axis(QCPAxis::atLeft));
+    QCPGraph *graficoGyY = grafico->addGraph(centerAxisRectGiroscopio->axis(QCPAxis::atBottom), centerAxisRectGiroscopio->axis(QCPAxis::atLeft));
+    QCPGraph *graficoGyZ = grafico->addGraph(rightAxisRectGiroscopio->axis(QCPAxis::atBottom), rightAxisRectGiroscopio->axis(QCPAxis::atLeft));
+
+
     QVector<double> Tiempo;
     QVector<double> DatosAcX;
     QVector<double> DatosAcY;
@@ -227,71 +164,69 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
         DatosGyY.append(var->getGyY());
         DatosGyZ.append(var->getGyZ());
     }
-    limpiarGrafico(grafico);
-    grafico->addGraph();
-    grafico->graph(0)->setData(Tiempo, DatosAcX);
-    grafico->xAxis->setLabel("Tiempo");
-    grafico->yAxis->setLabel("Aceleracion X");
-    grafico->xAxis->setRange(0, Tiempo.last());
-    grafico->yAxis->setRange(-1, 1);
-    grafico->replot();
+
+    graficoAcX->setData(Tiempo,DatosAcX);
+    graficoAcY->setData(Tiempo,DatosAcY);
+    graficoAcZ->setData(Tiempo,DatosAcZ);
+
+    graficoGyX->setData(Tiempo,DatosGyX);
+    graficoGyY->setData(Tiempo,DatosGyY);
+    graficoGyZ->setData(Tiempo,DatosGyZ);
+
+    graficoAcX->setPen(QPen(Qt::blue));
+    graficoAcY->setPen(QPen(Qt::blue));
+    graficoAcZ->setPen(QPen(Qt::blue));
+
+    graficoGyX->setPen(QPen(Qt::red));
+    graficoGyY->setPen(QPen(Qt::red));
+    graficoGyZ->setPen(QPen(Qt::red));
+
+    // rescale axes according to graph's data:
+    graficoAcX->rescaleAxes();
+    graficoAcY->rescaleAxes();
+    graficoAcZ->rescaleAxes();
+
+    graficoGyX->rescaleAxes();
+    graficoGyY->rescaleAxes();
+    graficoGyZ->rescaleAxes();
+
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 
-    limpiarGrafico(ui->qCustomPlotGraficoAcY);
-
-    ui->qCustomPlotGraficoAcY->addGraph();
-    ui->qCustomPlotGraficoAcY->graph(0)->setData(Tiempo, DatosAcY);
-    ui->qCustomPlotGraficoAcY->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoAcY->yAxis->setLabel("Aceleracion Y");
-    ui->qCustomPlotGraficoAcY->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoAcY->yAxis->setRange(-1, 1);
-    ui->qCustomPlotGraficoAcY->replot();
-    ui->qCustomPlotGraficoAcY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoAcZ);
-    ui->qCustomPlotGraficoAcZ->addGraph();
-    ui->qCustomPlotGraficoAcZ->graph(0)->setData(Tiempo, DatosAcZ);
-    ui->qCustomPlotGraficoAcZ->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoAcZ->yAxis->setLabel("Aceleracion Z");
-    ui->qCustomPlotGraficoAcZ->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoAcZ->yAxis->setRange(-1, 1);
-    ui->qCustomPlotGraficoAcZ->replot();
-    ui->qCustomPlotGraficoAcZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoGyX);
-    ui->qCustomPlotGraficoGyX->addGraph();
-    ui->qCustomPlotGraficoGyX->graph(0)->setData(Tiempo, DatosGyX);
-    ui->qCustomPlotGraficoGyX->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoGyX->yAxis->setLabel("Rotacion X");
-    ui->qCustomPlotGraficoGyX->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoGyX->yAxis->setRange(-250, 250);
-    ui->qCustomPlotGraficoGyX->replot();
-    ui->qCustomPlotGraficoGyX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoGyY);
-    ui->qCustomPlotGraficoGyY->addGraph();
-    ui->qCustomPlotGraficoGyY->graph(0)->setData(Tiempo, DatosGyY);
-    ui->qCustomPlotGraficoGyY->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoGyY->yAxis->setLabel("Rotacion Y");
-    ui->qCustomPlotGraficoGyY->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoGyY->yAxis->setRange(-250, 250);
-    ui->qCustomPlotGraficoGyY->replot();
-    ui->qCustomPlotGraficoGyY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-
-    limpiarGrafico(ui->qCustomPlotGraficoGyZ);
-    ui->qCustomPlotGraficoGyZ->addGraph();
-    ui->qCustomPlotGraficoGyZ->graph(0)->setData(Tiempo, DatosGyZ);
-    ui->qCustomPlotGraficoGyZ->xAxis->setLabel("Tiempo");
-    ui->qCustomPlotGraficoGyZ->yAxis->setLabel("Rotacion Z");
-    ui->qCustomPlotGraficoGyZ->xAxis->setRange(0, ui->spinBoxTiempoPrueba->value());
-    ui->qCustomPlotGraficoGyZ->yAxis->setRange(-250, 250);
-    ui->qCustomPlotGraficoGyZ->replot();
-    ui->qCustomPlotGraficoGyZ->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-    */
 }
 
 void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulos)
 {
+    grafico->plotLayout()->clear();
+
+    QCPAxisRect *topAxisRect = new QCPAxisRect(grafico);
+    grafico->plotLayout()->addElement(0, 0, topAxisRect);
+
+    QCPAxisRect *bottomAxisRect = new QCPAxisRect(grafico);
+    grafico->plotLayout()->addElement(1, 0, bottomAxisRect);
+
+    // create and configure plottables:
+    QCPGraph *graficoAnguloX = grafico->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    QCPGraph *graficoAnguloY = grafico->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+
+    foreach (Angulo *var, listaAngulos){
+        graficoAnguloX->addData(var->getTiempo(),  var->getAnguloX());
+        graficoAnguloY->addData(var->getTiempo() , var->getAnguloY());
+    }
+
+    graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
+    graficoAnguloY->setPen(QPen(QColor(153, 102, 51), 2));
+    //graficoAnguloY->setBrush(QColor(110, 170, 110, 30));
+    //graficoAnguloX->setChannelFillGraph(graficoAnguloX);
+    //graficoAnguloX->setBrush(QColor(255, 161, 0, 50));
+
+
+    // rescale axes according to graph's data:
+    graficoAnguloX->rescaleAxes();
+    graficoAnguloY->rescaleAxes();
+
+    grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    /*
     limpiarGrafico(grafico);
     grafico->addGraph();
     grafico->graph(0)->setPen(QPen(Qt::blue));
@@ -302,14 +237,8 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
     grafico->xAxis->setLabel("Tiempo");
     grafico->yAxis->setLabel("Angulos vs Tiempo");
 
-    foreach (Angulo *var, listaAngulos){
-        grafico->graph(0)->addData(var->getTiempo(),var->getAnguloX());
-        grafico->graph(1)->addData(var->getTiempo(),var->getAnguloY());
-    }
 
-    grafico->rescaleAxes();
-    grafico->replot();
-    grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    */
 }
 
 void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw *> listaMuestras)
