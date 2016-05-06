@@ -548,7 +548,7 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>3</number>
+              <number>5</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -725,7 +725,7 @@ QPushButton:hover {
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_muestras">
+             <widget class="QWidget" name="tab_TablaMuestras">
               <attribute name="icon">
                <iconset resource="images.qrc">
                 <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
@@ -796,7 +796,7 @@ QPushButton:hover {
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_graficosRaw">
+             <widget class="QWidget" name="tab_GraficoMuestras">
               <attribute name="icon">
                <iconset resource="images.qrc">
                 <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
@@ -806,7 +806,7 @@ QPushButton:hover {
               </attribute>
               <layout class="QGridLayout" name="gridLayout_7">
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestas" native="true"/>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
                </item>
               </layout>
              </widget>

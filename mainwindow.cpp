@@ -134,7 +134,7 @@ void MainWindow::leerDatosSerial()
         reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
         reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
         reportes->graficarAngulos(ui->qCustomPlotGraficosAngulos,listaAngulos);
-        reportes->graficarMuestras(ui->qCustomPlotGraficoMuestas,listaMuestras);
+        reportes->graficarMuestras(ui->qCustomPlotGraficoMuestras,listaMuestras);
 
         mostrarBotones();
         activarTabs();
@@ -516,6 +516,7 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
           ui->qCustomPlotResultados->savePdf(fileName,false,1000,1000);
 
     }
+
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
     {
         if(selectedFilter.contains("PNG"))
@@ -524,6 +525,26 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
             ui->qCustomPlotGrafico->saveJpg(fileName,1000,1000);
         if(selectedFilter.contains("PDF"))
           ui->qCustomPlotGrafico->savePdf(fileName,false,1000,1000);
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
+    {
+        if(selectedFilter.contains("PNG"))
+            ui->qCustomPlotGraficosAngulos->savePng(fileName,1000,1000);
+        if(selectedFilter.contains("JPG"))
+            ui->qCustomPlotGraficosAngulos->saveJpg(fileName,1000,1000);
+        if(selectedFilter.contains("PDF"))
+          ui->qCustomPlotGraficosAngulos->savePdf(fileName,false,1000,1000);
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
+    {
+        if(selectedFilter.contains("PNG"))
+            ui->qCustomPlotGraficoMuestras->savePng(fileName,1000,1000);
+        if(selectedFilter.contains("JPG"))
+            ui->qCustomPlotGraficoMuestras->saveJpg(fileName,1000,1000);
+        if(selectedFilter.contains("PDF"))
+          ui->qCustomPlotGraficoMuestras->savePdf(fileName,false,1000,1000);
     }
 }
 
@@ -539,7 +560,7 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
         QFile file(fileName);
         file.remove();
         if (file.open(QIODevice::Append)) {
-            QTextStream stream(&file);            
+            QTextStream stream(&file);
             foreach (Raw *var, listaMuestras) {
                 if(selectedFilter.contains("txt")){
                     stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAcX(),'f',3)
@@ -592,39 +613,14 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
     {
         ui->pushButtonGuardarImagen->show();
-        ui->labelGuardarImagen->setText("Guardar\nGrafico");
+        ui->labelGuardarImagen->setText("Guardar\nGrafico\nResultados");
         ui->labelGuardarImagen->show();
 
         ui->pushButtonGuardarMuestras->hide();
         ui->labelGuardarMuestras->hide();
         desactivarSpacerEntreBotones();
-
     }
 
-    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_muestras)
-    {
-        ui->pushButtonGuardarImagen->hide();
-        ui->labelGuardarImagen->hide();
-
-        ui->pushButtonGuardarMuestras->show();
-        ui->labelGuardarMuestras->setText("Guardar\nMuestras");
-        ui->labelGuardarMuestras->show();
-
-        desactivarSpacerEntreBotones();
-    }
-
-    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_graficosRaw)
-    {
-        ui->pushButtonGuardarImagen->show();
-        ui->labelGuardarImagen->setText("Guardar\nGraficos Raw");
-        ui->labelGuardarImagen->show();
-
-        ui->pushButtonGuardarMuestras->show();
-        ui->labelGuardarMuestras->setText("Guardar\nMuestras");
-        ui->labelGuardarMuestras->show();
-
-        activarSpacerEntreBotones();
-    }
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
     {
@@ -632,20 +628,45 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
         ui->labelGuardarImagen->hide();
 
         ui->pushButtonGuardarMuestras->show();
-        ui->labelGuardarMuestras->setText("Guardar\nDatos Angulos");
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
         ui->labelGuardarMuestras->show();
 
         desactivarSpacerEntreBotones();
     }
 
-    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_graficosRaw)
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
+    {
+        ui->pushButtonGuardarImagen->hide();
+        ui->labelGuardarImagen->hide();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nMuestras");
+        ui->labelGuardarMuestras->show();
+
+        desactivarSpacerEntreBotones();
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
     {
         ui->pushButtonGuardarImagen->show();
-        ui->labelGuardarImagen->setText("Guardar\nGraficos Angulos");
+        ui->labelGuardarImagen->setText("Guardar\nGraficos\nAngulos");
         ui->labelGuardarImagen->show();
 
         ui->pushButtonGuardarMuestras->show();
-        ui->labelGuardarMuestras->setText("Guardar\nDatos Angulos");
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
+        ui->labelGuardarMuestras->show();
+
+        activarSpacerEntreBotones();
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
+    {
+        ui->pushButtonGuardarImagen->show();
+        ui->labelGuardarImagen->setText("Guardar\nGraficos\nMuestras");
+        ui->labelGuardarImagen->show();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nMuestras");
         ui->labelGuardarMuestras->show();
 
         activarSpacerEntreBotones();
