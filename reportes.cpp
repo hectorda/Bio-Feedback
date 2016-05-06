@@ -161,31 +161,16 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
     QCPGraph *graficoGyY = grafico->addGraph(centerAxisRectGiroscopio->axis(QCPAxis::atBottom), centerAxisRectGiroscopio->axis(QCPAxis::atLeft));
     QCPGraph *graficoGyZ = grafico->addGraph(rightAxisRectGiroscopio->axis(QCPAxis::atBottom), rightAxisRectGiroscopio->axis(QCPAxis::atLeft));
 
-    QVector<double> Tiempo;
-    QVector<double> DatosAcX;
-    QVector<double> DatosAcY;
-    QVector<double> DatosAcZ;
-    QVector<double> DatosGyX;
-    QVector<double> DatosGyY;
-    QVector<double> DatosGyZ;
-    foreach (Raw *var, listaMuestras) {
-        Tiempo.append(var->getTiempo());
-        DatosAcX.append(var->getAcX());
-        DatosAcY.append(var->getAcY());
-        DatosAcZ.append(var->getAcZ());
-        DatosGyX.append(var->getGyX());
-        DatosGyY.append(var->getGyY());
-        DatosGyZ.append(var->getGyZ());
-    }
-
     //Se rellenar los datos de los graficos
-    graficoAcX->setData(Tiempo,DatosAcX);
-    graficoAcY->setData(Tiempo,DatosAcY);
-    graficoAcZ->setData(Tiempo,DatosAcZ);
+    foreach (Raw *var, listaMuestras) {        
+        graficoAcX->addData(var->getTiempo(), var->getAcX());
+        graficoAcY->addData(var->getTiempo(), var->getAcY());
+        graficoAcZ->addData(var->getTiempo(), var->getAcZ());
 
-    graficoGyX->setData(Tiempo,DatosGyX);
-    graficoGyY->setData(Tiempo,DatosGyY);
-    graficoGyZ->setData(Tiempo,DatosGyZ);
+        graficoGyX->addData(var->getTiempo(), var->getGyX());
+        graficoGyY->addData(var->getTiempo(), var->getGyZ());
+        graficoGyZ->addData(var->getTiempo(), var->getGyZ());
+    }
 
     //Estilo del lapiz para la linea
     graficoAcX->setPen(QPen(Qt::blue));
@@ -227,6 +212,7 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
 
     //Agregamos interactividad
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    grafico->replot(); //Se redibuja para actualizar la vista
 }
 
 void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulos)
@@ -253,10 +239,14 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
     QCPGraph *graficoAnguloX = grafico->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
     QCPGraph *graficoAnguloY = grafico->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-    foreach (Angulo *var, listaAngulos){
-        graficoAnguloX->addData(var->getTiempo(),  var->getAnguloX());
+
+    //Se agregan los datos al grafico
+    foreach (Angulo *var, listaAngulos) {
+        graficoAnguloX->addData(var->getTiempo() , var->getAnguloX());
         graficoAnguloY->addData(var->getTiempo() , var->getAnguloY());
+        QTextStream(stdout)<<"Tiempo:"<<var->getTiempo()<<" X:"<<var->getAnguloX()<<" Y:"<<var->getAnguloY()<<endl;
     }
+
     //Colores de la Line
     graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
     graficoAnguloY->setPen(QPen(QColor(153, 102, 51), 2));
@@ -272,6 +262,7 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
     graficoAnguloY->rescaleAxes();
 
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    grafico->replot(); //Se redibuja para actualizar para actualizar la vista
 
 
 }
@@ -347,7 +338,7 @@ void Reportes::guardarMuestrasEnArchivo(QList<Raw *> listaMuestras)
             file.close();
         }
         else {
-            //QMessageBox::critical(this, tr("Error"), tr("No se pudo guardar el archivo"));
+            QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
             return;
         }
     }
@@ -378,7 +369,7 @@ void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
             file.close();
         }
         else {
-            //QMessageBox::critical(this, tr("Error"), tr("No se pudo guardar el archivo"));
+            QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
             return;
         }
     }

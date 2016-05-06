@@ -61,6 +61,7 @@ void MainWindow::conexiones()
 void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
+    //ui->qCustomPlotGrafico->plotLayout()->clear();
 
     QCPItemEllipse *circuloExterior;
     circuloExterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
@@ -73,8 +74,6 @@ void MainWindow::inicializarGrafico()
 
     circuloInterior->topLeft->setCoords(-radios.RadioInterior,radios.RadioInterior);
     circuloInterior->bottomRight->setCoords(radios.RadioInterior,-radios.RadioInterior);
-
-    //int radios.RadioObjetivo=1;
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     ui->qCustomPlotGrafico->addPlottable(lienzo);
@@ -348,7 +347,6 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
 
-
 void MainWindow::RangeGraphic(int Range)
 {
     ui->qCustomPlotGrafico->xAxis->setRange(-Range,Range);
@@ -403,6 +401,7 @@ void MainWindow::iniciarPrueba()
     lecturaSerial->abrirPuertoSerial(serial,ajustesSerial->getAjustes(),ajustesSensores->getAjustes());
     cronometro.start();
     radios=ajustesGrafico->getAjustes();
+    ui->verticalSliderRangeGraphic->setValue(radios.RadioExterior+5);//Se actualiza el slider
     inicializarGrafico(); //Se limpian los graficos
     radios.RadioObjetivo=radios.RadioObjetivo;
     generarObjetivos();
@@ -517,6 +516,9 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
 
 void MainWindow::on_pushButtonGuardarMuestras_clicked()
 {    
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
+        reportes->guardarAngulosEnArchivo(listaAngulos);
+
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
         reportes->guardarAngulosEnArchivo(listaAngulos);
 

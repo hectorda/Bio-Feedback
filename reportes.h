@@ -6,6 +6,7 @@
 #include <angulo.h>
 #include <qcustomplot.h>
 #include <QFileDialog>
+#include <QMessageBox>
 
 class Reportes : public QObject
 {

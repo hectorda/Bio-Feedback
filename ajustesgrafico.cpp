@@ -50,10 +50,6 @@ void AjustesGrafico::graficarObjetivo(const int rObjetivo){
     objetivo->topLeft->setCoords(-rObjetivo,rObjetivo);
     objetivo->bottomRight->setCoords(rObjetivo,-rObjetivo);
     objetivo->setBrush(QBrush(Qt::red));
-    ui->qCustomPlotObjetivo->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-    const int range=rObjetivo*1.5;
-    ui->qCustomPlotObjetivo->xAxis->setRange(-range,range);
-    ui->qCustomPlotObjetivo->yAxis->setRange(-range,range);
     ui->qCustomPlotObjetivo->replot();
 
 }
@@ -87,8 +83,11 @@ void AjustesGrafico::graficarRepresentacionGrafico(const int rInterior,const int
     const int range=rExterior+10;
     ui->qCustomRepresentacionGrafico->xAxis->setRange(-range,range);
     ui->qCustomRepresentacionGrafico->yAxis->setRange(-range,range);
+    //Para que sea representado en los mismos rangos el grafico del objetivo
+    ui->qCustomPlotObjetivo->xAxis->setRange(-range,range);
+    ui->qCustomPlotObjetivo->yAxis->setRange(-range,range);
+    ui->qCustomPlotObjetivo->replot();
 
-    ui->qCustomRepresentacionGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom); // Para usar el el Zoom y el Arrastre del grafico.
     ui->qCustomRepresentacionGrafico->replot();
 }
 
