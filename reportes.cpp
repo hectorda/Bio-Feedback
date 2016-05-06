@@ -305,3 +305,82 @@ void Reportes::tablaAngulos(QTableWidget *tabla, QList<Angulo *> listaAngulos)
     }
 }
 
+void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)
+{
+    QString filters("Imagen PNG (*.png);;Imagen JPG (*.jpg);;Archivo PDF (*.pdf)");
+    QString selectedFilter;
+    QString fileName = QFileDialog::getSaveFileName(0, "Guardar Imagen","",filters,&selectedFilter);
+
+    if(selectedFilter.contains("PNG"))
+        grafico->savePng(fileName,ancho,alto);
+    if(selectedFilter.contains("JPG"))
+       grafico->saveJpg(fileName,ancho,alto);
+    if(selectedFilter.contains("PDF"))
+      grafico->savePdf(fileName,false,ancho,alto);
+
+}
+
+void Reportes::guardarMuestrasEnArchivo(QList<Raw *> listaMuestras)
+{
+    QString selectedFilter;
+    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
+
+    if (fileName != ""){
+        QFile file(fileName);
+        file.remove();
+        if (file.open(QIODevice::Append)){
+            QTextStream stream(&file);
+            foreach (Raw *var, listaMuestras){
+                if(selectedFilter.contains("txt")){
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAcX(),'f',3)
+                           << " Y: " << QString::number(var->getAcY(),'f',3) <<  " Z: " << QString::number(var->getAcZ(),'f',3) <<  " X: " << QString::number(var->getGyX(),'f',3) << endl;
+                }
+                if(selectedFilter.contains("csv")){
+                    stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAcX(),'f',3)
+                           <<";" << QString::number(var->getAcY(),'f',3) <<";" << QString::number(var->getAcZ(),'f',3)
+                           <<";" << QString::number(var->getGyX(),'f',3) <<";" << QString::number(var->getGyY(),'f',3)
+                           <<";" << QString::number(var->getGyZ(),'f',3) << endl;
+                }
+            }
+            file.flush();
+            file.close();
+        }
+        else {
+            //QMessageBox::critical(this, tr("Error"), tr("No se pudo guardar el archivo"));
+            return;
+        }
+    }
+}
+
+void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
+{
+    QString selectedFilter;
+    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
+
+    if (fileName != ""){
+        QFile file(fileName);
+        file.remove();
+        if (file.open(QIODevice::Append)){
+            QTextStream stream(&file);
+            foreach (Angulo *var, listaAngulos){
+                if(selectedFilter.contains("txt")){
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAnguloX(),'f',3)
+                           << " Y: " << QString::number(var->getAnguloY(),'f',3) << endl;
+                }
+                if(selectedFilter.contains("csv")){
+                    stream <<QString::number(var->getTiempo(),'f',3) << ";" << QString::number(var->getAnguloX(),'f',3)
+                           <<";" << QString::number(var->getAnguloY(),'f',3) << endl;
+                }
+            }
+            file.flush();
+            file.close();
+        }
+        else {
+            //QMessageBox::critical(this, tr("Error"), tr("No se pudo guardar el archivo"));
+            return;
+        }
+    }
+}
+

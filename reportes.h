@@ -5,6 +5,7 @@
 #include <raw.h>
 #include <angulo.h>
 #include <qcustomplot.h>
+#include <QFileDialog>
 
 class Reportes : public QObject
 {
@@ -16,6 +17,9 @@ public:
     void graficarAngulos(QCustomPlot *grafico, QList<Angulo*> listaAngulos);
     void tablaMuestras(QTableWidget *tabla,QList<Raw*> listaMuestras);
     void tablaAngulos(QTableWidget *tabla,QList<Angulo*> listaAngulos);
+    void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
+    void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
+    void guardarAngulosEnArchivo(QList<Angulo*> listaAngulos);
 
 private:
     void limpiarGrafico(QCustomPlot *grafico);

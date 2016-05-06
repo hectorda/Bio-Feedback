@@ -501,86 +501,34 @@ void MainWindow::on_pushButtonConfPrueba_clicked()
 
 void MainWindow::on_pushButtonGuardarImagen_clicked()
 {
-    QString filters("Imagen PNG (*.png);;Imagen JPG (*.jpg);;Archivo PDF (*.pdf)");
-    QString selectedFilter;
-    QString fileName = QFileDialog::getSaveFileName(this, "Guardar Imagen","",filters,&selectedFilter);
-    ui->qCustomPlotGrafico->xAxis->setRange(-30,30);
-    ui->qCustomPlotGrafico->yAxis->setRange(-30,30);
-
-    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados){
-        if(selectedFilter.contains("PNG"))
-            ui->qCustomPlotResultados->savePng(fileName,1000,1000);
-        if(selectedFilter.contains("JPG"))
-            ui->qCustomPlotResultados->saveJpg(fileName,1000,1000);
-        if(selectedFilter.contains("PDF"))
-          ui->qCustomPlotResultados->savePdf(fileName,false,1000,1000);
-
-    }
-
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
-    {
-        if(selectedFilter.contains("PNG"))
-            ui->qCustomPlotGrafico->savePng(fileName,1000,1000);
-        if(selectedFilter.contains("JPG"))
-            ui->qCustomPlotGrafico->saveJpg(fileName,1000,1000);
-        if(selectedFilter.contains("PDF"))
-          ui->qCustomPlotGrafico->savePdf(fileName,false,1000,1000);
-    }
+        reportes->guardarImagenGrafico(ui->qCustomPlotGrafico,1000,1000);
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
+        reportes->guardarImagenGrafico(ui->qCustomPlotResultados,1000,1000);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
-    {
-        if(selectedFilter.contains("PNG"))
-            ui->qCustomPlotGraficosAngulos->savePng(fileName,1000,1000);
-        if(selectedFilter.contains("JPG"))
-            ui->qCustomPlotGraficosAngulos->saveJpg(fileName,1000,1000);
-        if(selectedFilter.contains("PDF"))
-          ui->qCustomPlotGraficosAngulos->savePdf(fileName,false,1000,1000);
-    }
+        reportes->guardarImagenGrafico(ui->qCustomPlotGraficosAngulos,1920,1080);
+
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
-    {
-        if(selectedFilter.contains("PNG"))
-            ui->qCustomPlotGraficoMuestras->savePng(fileName,1000,1000);
-        if(selectedFilter.contains("JPG"))
-            ui->qCustomPlotGraficoMuestras->saveJpg(fileName,1000,1000);
-        if(selectedFilter.contains("PDF"))
-          ui->qCustomPlotGraficoMuestras->savePdf(fileName,false,1000,1000);
-    }
+        reportes->guardarImagenGrafico(ui->qCustomPlotGraficoMuestras,1920,1080);
 }
 
 void MainWindow::on_pushButtonGuardarMuestras_clicked()
-{
-    QString selectedFilter;
-    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar el Archivo"), "",
-                                                    filters,&selectedFilter);
+{    
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
+        reportes->guardarAngulosEnArchivo(listaAngulos);
 
-    //qDebug()<<selectedFilter;
-    if (fileName != "") {
-        QFile file(fileName);
-        file.remove();
-        if (file.open(QIODevice::Append)) {
-            QTextStream stream(&file);
-            foreach (Raw *var, listaMuestras) {
-                if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAcX(),'f',3)
-                           << " Y: " << QString::number(var->getAcY(),'f',3) <<  " Z: " << QString::number(var->getAcZ(),'f',3) <<  " X: " << QString::number(var->getGyX(),'f',3) << endl;
-                }
-                if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAcX(),'f',3)
-                           <<";" << QString::number(var->getAcY(),'f',3) <<";" << QString::number(var->getAcZ(),'f',3)
-                           <<";" << QString::number(var->getGyX(),'f',3) <<";" << QString::number(var->getGyY(),'f',3)
-                           <<";" << QString::number(var->getGyZ(),'f',3) << endl;
-                }
-            }
-            file.flush();
-            file.close();
-        }
-        else {
-            QMessageBox::critical(this, tr("Error"), tr("No se pudo guardar el archivo"));
-            return;
-        }
-    }
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
+        reportes->guardarAngulosEnArchivo(listaAngulos);
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
+        reportes->guardarMuestrasEnArchivo(listaMuestras);
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
+        reportes->guardarMuestrasEnArchivo(listaMuestras);
+
 }
 
 
