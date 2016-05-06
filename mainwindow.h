@@ -3,17 +3,21 @@
 
 #include <QMainWindow>
 #include <QtSerialPort>
+#include <QtMath>
 #include <ajustespuertoserial.h>
 #include <ajustessensores.h>
+#include <ajustesgrafico.h>
 #include <qcustomplot.h>
-#include <dato.h>
+#include <raw.h>
+#include <angulo.h>
+#include <filtro_kalman.h>
+#include <serial.h>
+#include <reportes.h>
 
 namespace Ui {
 class MainWindow;
 }
 
-class AjustesPuertoSerial;
-class AjustesSensores;
 
 class MainWindow : public QMainWindow
 {
@@ -23,22 +27,20 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
+    void calibrarDispositivos();
 private slots:
     void on_pushButtonIniciarPrueba_clicked();
-    void on_pushButtonResultados_clicked();
     void on_pushButtonPrueba1_clicked();
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
-    void on_pushButtonRegresarInicio_clicked();
     void on_pushButtonReiniciarPrueba_clicked();
     void on_pushButtonDetenerPrueba_clicked();
     void on_pushButtonConfPrueba_clicked();
+    void on_pushButtonVolverInicio_clicked();
 
-    void abrirPuertoSerial();
-    void cerrarPuertoSerial();
+    void iniciarPrueba();
     void leerDatosSerial();
-    void slotDatosTiempoReal(Dato *data);
+    void slotGraficarTiempoReal(Angulo *angulo);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
     void contextMenuRequest(QPoint pos);
@@ -48,31 +50,42 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
 
-    void on_pushButton_clicked();
-
 signals:
-    void emitdata(Dato*);
+    void emitAngulo(Angulo*);
     void emitEscribirSerial(QString);
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *serial;
+    Serial *lecturaSerial;
     AjustesPuertoSerial *ajustesSerial;
     AjustesSensores *ajustesSensores;
-    QElapsedTimer temporizador;
+    AjustesGrafico *ajustesGrafico;
+    QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
-    QList<Dato*> listaMuestras;
+    QList<Raw*> listaMuestras;
+    QList<Angulo*> listaAngulos;
+    Reportes *reportes;
+    QList<QCPItemEllipse*> listaObjetivos;
     QCPCurve *lienzo;
     QLabel *status;
-    int cantidadMuestras;
+    double anguloComplementario1,anguloComplementario2;
+    AjustesGrafico::Ajustes radios;
 
     void inicializar();
     void conexiones();
     void inicializarGrafico();
     void mostrarBotones();
-    void mostrarMensajeBarraEstado(const QString &message);
+    void ocultarBotones();
+    void desactivarTabs();
+    void activarTabs();
+    void preguntarRegresarInicio();
+    void obtenerAngulos(Raw* dato);
+    void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
-    void generarGraficoResultados(QCustomPlot *grafico);
+    void activarSpacerEntreBotones();
+    void desactivarSpacerEntreBotones();
+    void generarObjetivos(const int distanciaCentro);
 };
 
 #endif // MAINWINDOW_H

@@ -148,3 +148,9 @@ void AjustesPuertoSerial::actualizarAjustes()
     ajustesActuales.stringFlowControl = ui->comboBoxFlowControl->currentText();
 
 }
+
+void AjustesPuertoSerial::on_pushButtonRescan_clicked()
+{
+    informacionPuertos();
+    mostrarInformacionPuerto(0);
+}

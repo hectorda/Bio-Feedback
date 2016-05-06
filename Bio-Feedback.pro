@@ -15,19 +15,30 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    dato.cpp \
     ajustespuertoserial.cpp \
-    ajustessensores.cpp
+    ajustessensores.cpp \
+    raw.cpp \
+    angulo.cpp \
+    filtro_kalman.cpp \
+    serial.cpp \
+    ajustesgrafico.cpp \
+    reportes.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    dato.h \
     ajustespuertoserial.h \
-    ajustessensores.h
+    ajustessensores.h \
+    raw.h \
+    angulo.h \
+    filtro_kalman.h \
+    serial.h \
+    ajustesgrafico.h \
+    reportes.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
-    ajustessensores.ui
+    ajustessensores.ui \
+    ajustesgrafico.ui
 
 
 RESOURCES += \
