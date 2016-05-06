@@ -113,26 +113,40 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
 {
 
     grafico->plotLayout()->clear(); // let's start from scratch and remove the default axis rect
+    grafico->clearItems();
+    grafico->clearGraphs();
 
-    // create a sub layout that we'll place in first row:
-
+    //Se crean los LAYOUTS principales
     QCPLayoutGrid *layoutAcelerometro = new QCPLayoutGrid;
+    QCPLayoutGrid *layoutGiroscopio = new QCPLayoutGrid;
 
-    grafico->plotLayout()->addElement(0, 0, layoutAcelerometro);
-    // add two axis rects in the sub layout next to each other:
+    //Se crean los titulos
+    QCPPlotTitle *tituloAcelerometro = new QCPPlotTitle(grafico, "Gráficos Aceleración X Y Z vs Tiempo");
+    QCPPlotTitle *tituloGiroscopio = new QCPPlotTitle(grafico, "Gráficos Velocidad Angular X Y Z vs Tiempo");
+
+    //Se añaden los layouts principales y los titulos
+    grafico->plotLayout()->addElement(0, 0, tituloAcelerometro);
+    grafico->plotLayout()->addElement(1, 0, layoutAcelerometro);
+    grafico->plotLayout()->addElement(2, 0, tituloGiroscopio);
+    grafico->plotLayout()->addElement(3, 0, layoutGiroscopio);
+
+    // Se crean los sublayouts del acelerometro
     QCPAxisRect *leftAxisRectAcelerometro = new QCPAxisRect(grafico);
     QCPAxisRect *centerAxisRectAcelerometro = new QCPAxisRect(grafico);
     QCPAxisRect *rightAxisRectAcelerometro = new QCPAxisRect(grafico);
+
+
+    //Se agregan al layout principal
     layoutAcelerometro->addElement(0, 0, leftAxisRectAcelerometro);
     layoutAcelerometro->addElement(0, 1, centerAxisRectAcelerometro);
     layoutAcelerometro->addElement(0, 2, rightAxisRectAcelerometro);
 
-    QCPLayoutGrid *layoutGiroscopio = new QCPLayoutGrid;
-    grafico->plotLayout()->addElement(1, 0 , layoutGiroscopio);
-
+    //Se crean los sublayouts del giroscopio
     QCPAxisRect *leftAxisRectGiroscopio = new QCPAxisRect(grafico);
     QCPAxisRect *centerAxisRectGiroscopio = new QCPAxisRect(grafico);
     QCPAxisRect *rightAxisRectGiroscopio = new QCPAxisRect(grafico);
+
+    //Se agregan al layout principal
     layoutGiroscopio->addElement(0, 0, leftAxisRectGiroscopio);
     layoutGiroscopio->addElement(0, 1, centerAxisRectGiroscopio);
     layoutGiroscopio->addElement(0, 2, rightAxisRectGiroscopio);
@@ -146,7 +160,6 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
     QCPGraph *graficoGyX = grafico->addGraph(leftAxisRectGiroscopio->axis(QCPAxis::atBottom), leftAxisRectGiroscopio->axis(QCPAxis::atLeft));
     QCPGraph *graficoGyY = grafico->addGraph(centerAxisRectGiroscopio->axis(QCPAxis::atBottom), centerAxisRectGiroscopio->axis(QCPAxis::atLeft));
     QCPGraph *graficoGyZ = grafico->addGraph(rightAxisRectGiroscopio->axis(QCPAxis::atBottom), rightAxisRectGiroscopio->axis(QCPAxis::atLeft));
-
 
     QVector<double> Tiempo;
     QVector<double> DatosAcX;
@@ -165,6 +178,7 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
         DatosGyZ.append(var->getGyZ());
     }
 
+    //Se rellenar los datos de los graficos
     graficoAcX->setData(Tiempo,DatosAcX);
     graficoAcY->setData(Tiempo,DatosAcY);
     graficoAcZ->setData(Tiempo,DatosAcZ);
@@ -173,6 +187,7 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
     graficoGyY->setData(Tiempo,DatosGyY);
     graficoGyZ->setData(Tiempo,DatosGyZ);
 
+    //Estilo del lapiz para la linea
     graficoAcX->setPen(QPen(Qt::blue));
     graficoAcY->setPen(QPen(Qt::blue));
     graficoAcZ->setPen(QPen(Qt::blue));
@@ -190,55 +205,75 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
     graficoGyY->rescaleAxes();
     graficoGyZ->rescaleAxes();
 
-    grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    //Labels de los ejes: Acelerometro
+    leftAxisRectAcelerometro->axis(QCPAxis::atLeft)->setLabel("Aceleracion Eje X (G)");
+    leftAxisRectAcelerometro->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
 
+    centerAxisRectAcelerometro->axis(QCPAxis::atLeft)->setLabel("Aceleracion Eje Y (G)");
+    centerAxisRectAcelerometro->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    rightAxisRectAcelerometro->axis(QCPAxis::atLeft)->setLabel("Aceleracion Eje Z (G)");
+    rightAxisRectAcelerometro->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    //Labels de los ejes: Giroscopio
+    leftAxisRectGiroscopio->axis(QCPAxis::atLeft)->setLabel("Velocidad Angular Eje X (º/segundos)");
+    leftAxisRectGiroscopio->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    centerAxisRectGiroscopio->axis(QCPAxis::atLeft)->setLabel("Velocidad Angular Eje Y (º/segundos)");
+    centerAxisRectGiroscopio->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    rightAxisRectGiroscopio->axis(QCPAxis::atLeft)->setLabel("Velocaidad Angular Eje Z (º/segundos)");
+    rightAxisRectGiroscopio->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    //Agregamos interactividad
+    grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
 void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulos)
 {
     grafico->plotLayout()->clear();
+    grafico->clearItems();
+    grafico->clearGraphs();
 
+    //Elementos del grafico
     QCPAxisRect *topAxisRect = new QCPAxisRect(grafico);
-    grafico->plotLayout()->addElement(0, 0, topAxisRect);
-
     QCPAxisRect *bottomAxisRect = new QCPAxisRect(grafico);
-    grafico->plotLayout()->addElement(1, 0, bottomAxisRect);
+
+    QCPPlotTitle *tituloX=new QCPPlotTitle(grafico,"Grafico Angulo X vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(grafico,"Grafico Angulo Y vs Tiempo");
+
+    //Se posicionan los layouts
+    grafico->plotLayout()->addElement(0, 0, tituloX);
+    grafico->plotLayout()->addElement(1, 0, topAxisRect);
+
+    grafico->plotLayout()->addElement(2, 0, tituloY);
+    grafico->plotLayout()->addElement(3, 0, bottomAxisRect);
 
     // create and configure plottables:
     QCPGraph *graficoAnguloX = grafico->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
     QCPGraph *graficoAnguloY = grafico->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-
     foreach (Angulo *var, listaAngulos){
         graficoAnguloX->addData(var->getTiempo(),  var->getAnguloX());
         graficoAnguloY->addData(var->getTiempo() , var->getAnguloY());
     }
-
+    //Colores de la Line
     graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
     graficoAnguloY->setPen(QPen(QColor(153, 102, 51), 2));
-    //graficoAnguloY->setBrush(QColor(110, 170, 110, 30));
-    //graficoAnguloX->setChannelFillGraph(graficoAnguloX);
-    //graficoAnguloX->setBrush(QColor(255, 161, 0, 50));
 
+    //Labels de los ejes
+    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
+    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
+    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
 
-    // rescale axes according to graph's data:
+    //Se rescalan los ejes para el autoajuste
     graficoAnguloX->rescaleAxes();
     graficoAnguloY->rescaleAxes();
 
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-    /*
-    limpiarGrafico(grafico);
-    grafico->addGraph();
-    grafico->graph(0)->setPen(QPen(Qt::blue));
-
-    grafico->addGraph();
-    grafico->graph(1)->setPen(QPen(Qt::red));
-
-    grafico->xAxis->setLabel("Tiempo");
-    grafico->yAxis->setLabel("Angulos vs Tiempo");
 
 
-    */
 }
 
 void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw *> listaMuestras)

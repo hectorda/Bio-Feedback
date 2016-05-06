@@ -130,14 +130,14 @@ void MainWindow::leerDatosSerial()
     else{
         QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/ui->spinBoxTiempoPrueba->value()<<endl;
         serial->close();
-        mostrarBotones();
-        activarTabs();
-
         reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
         reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
         reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
         reportes->graficarAngulos(ui->qCustomPlotGraficosAngulos,listaAngulos);
         reportes->graficarMuestras(ui->qCustomPlotGraficoMuestas,listaMuestras);
+
+        mostrarBotones();
+        activarTabs();
     }
 }
 
