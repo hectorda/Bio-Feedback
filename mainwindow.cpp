@@ -40,6 +40,9 @@ void MainWindow::inicializar()
 
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    db = new SQL;
+    db->consulta();
+
 }
 
 void MainWindow::conexiones()

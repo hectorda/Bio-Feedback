@@ -13,6 +13,7 @@
 #include <filtro_kalman.h>
 #include <serial.h>
 #include <reportes.h>
+#include <sql.h>
 
 namespace Ui {
 class MainWindow;
@@ -71,6 +72,7 @@ private:
     QLabel *status;
     double anguloComplementario1,anguloComplementario2;
     AjustesGrafico::Ajustes radios;
+    SQL *db;
 
     void inicializar();
     void conexiones();

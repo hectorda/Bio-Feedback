@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport printsupport
+QT       += core gui serialport sql printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     filtro_kalman.cpp \
     serial.cpp \
     ajustesgrafico.cpp \
-    reportes.cpp
+    reportes.cpp \
+    sql.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     filtro_kalman.h \
     serial.h \
     ajustesgrafico.h \
-    reportes.h
+    reportes.h \
+    sql.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
