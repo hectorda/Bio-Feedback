@@ -1125,8 +1125,15 @@ Gráfico</string>
     </property>
     <addaction name="actionQT"/>
    </widget>
+   <widget class="QMenu" name="menuBase_de_Datos">
+    <property name="title">
+     <string>Base de Datos</string>
+    </property>
+    <addaction name="actionSQL"/>
+   </widget>
    <addaction name="menuArchivo"/>
    <addaction name="menuAjustes"/>
+   <addaction name="menuBase_de_Datos"/>
    <addaction name="menuAcerca_de"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1203,6 +1210,15 @@ Gráfico</string>
    </property>
    <property name="text">
     <string>Configurar Elementos del Grafico</string>
+   </property>
+  </action>
+  <action name="actionSQL">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/database.png</normaloff>:/images/database.png</iconset>
+   </property>
+   <property name="text">
+    <string>SQL</string>
    </property>
   </action>
  </widget>

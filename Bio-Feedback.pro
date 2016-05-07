@@ -40,7 +40,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
     ajustessensores.ui \
-    ajustesgrafico.ui
+    ajustesgrafico.ui \
+    sql.ui
 
 
 RESOURCES += \

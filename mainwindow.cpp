@@ -41,20 +41,24 @@ void MainWindow::inicializar()
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     db = new SQL;
+    db->llenarTabla();
     db->consulta();
-
 }
 
 void MainWindow::conexiones()
 {
-    connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
-    connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
-    connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(show()));
     connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
     connect(this,SIGNAL(emitAngulo(Angulo*)),this,SLOT(slotGraficarTiempoReal(Angulo*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+
+    //Connect de actions
+    connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
+    connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
+    connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(show()));
+
+    connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
 
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -297,9 +301,9 @@ void MainWindow::generarObjetivos(const int distanciaCentro=5)
 
 void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 {
-    for (int var = 0; var < listaObjetivos.size(); ++var){
+    for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
         QCPItemEllipse *P=listaObjetivos.at(var);
-        if(P->brush()==QBrush(Qt::red)){
+        if(P->brush()==QBrush(Qt::red)){ //Si aun sigue con el color por defecto.
             const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+radios.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-radios.RadioObjetivo)),2));
             if( perteneceCirc < radios.RadioObjetivo){
                 P->setBrush(QBrush(Qt::green));
@@ -501,7 +505,7 @@ void MainWindow::on_pushButtonConfPrueba_clicked()
      ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
 }
 
-void MainWindow::on_pushButtonGuardarImagen_clicked()
+void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los Graficos
 {
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
         reportes->guardarImagenGrafico(ui->qCustomPlotGrafico,1000,1000);
@@ -517,7 +521,7 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()
         reportes->guardarImagenGrafico(ui->qCustomPlotGraficoMuestras,1920,1080);
 }
 
-void MainWindow::on_pushButtonGuardarMuestras_clicked()
+void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la informacion de muestras o angulos.
 {    
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
         reportes->guardarAngulosEnArchivo(listaAngulos);
@@ -536,14 +540,10 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()
 
 }
 
-
-
-void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)
+void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)//Si el grafico esta flotando o dejo de flotar.
 {
-   relacionAspectodelGrafico();
-   if(topLevel){
-       QTextStream(stdout)<<"flotando";
-   }
+    (void) topLevel;
+    relacionAspectodelGrafico();
 }
 
 void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
@@ -563,6 +563,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
         activarSpacerEntreBotones();
     }
+
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
     {
         ui->pushButtonGuardarImagen->show();
@@ -571,9 +572,9 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
         ui->pushButtonGuardarMuestras->hide();
         ui->labelGuardarMuestras->hide();
+
         desactivarSpacerEntreBotones();
     }
-
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
     {

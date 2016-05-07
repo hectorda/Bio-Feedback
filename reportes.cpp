@@ -239,12 +239,11 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
     QCPGraph *graficoAnguloX = grafico->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
     QCPGraph *graficoAnguloY = grafico->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-
     //Se agregan los datos al grafico
     foreach (Angulo *var, listaAngulos) {
         graficoAnguloX->addData(var->getTiempo() , var->getAnguloX());
         graficoAnguloY->addData(var->getTiempo() , var->getAnguloY());
-        QTextStream(stdout)<<"Tiempo:"<<var->getTiempo()<<" X:"<<var->getAnguloX()<<" Y:"<<var->getAnguloY()<<endl;
+        //QTextStream(stdout)<<"Tiempo:"<<var->getTiempo()<<" X:"<<var->getAnguloX()<<" Y:"<<var->getAnguloY()<<endl;
     }
 
     //Colores de la Line
@@ -263,7 +262,6 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
 
     grafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     grafico->replot(); //Se redibuja para actualizar para actualizar la vista
-
 
 }
 
