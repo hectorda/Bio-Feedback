@@ -19,6 +19,8 @@ void SQL::inicializar()
     ui->setupUi(this);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     this->conectar();
+    ui->tabWidget->setCurrentWidget(ui->tab_tablaPacientes);
+    llenarTabla();
 }
 
 void SQL::conexiones()
@@ -33,7 +35,11 @@ bool SQL::conectar() //Se intenta conectar y crear la base de datos en caso de q
         db = QSqlDatabase::addDatabase("QSQLITE"); //Definimos que se usara SQLITE como driver
         db.setDatabaseName(QDir::homePath()+QDir::separator()+"BaseDatosBioFeedBack.sqlite"); //Nuestra db en nuestro Home.
         bool db_ok = db.open(); //Creamos una bandera para ver si se puedo abrir la DB
+        QSqlQuery query;
+        query.exec("CREATE TABLE IF NOT EXISTS admins (id integer primary key autoincrement, user text, passwd varchar[8])"); // Crea Tabla ADMINS solo si no existe.
+        query.exec("CREATE TABLE IF NOT EXISTS pacientes (id integer primary key autoincrement, nombre text,apellido text, edad integer,sexo varchar[15])"); // Crea Tabla ADMINS solo si no existe.
         return db_ok;  //Retornamos true al metodo.
+
     }
     else
         qDebug() << "Driver no Disponible";
@@ -46,8 +52,6 @@ void SQL::consulta()
     if(db.isOpen())
     {
         QSqlQuery query;
-        query.exec("CREATE TABLE IF NOT EXISTS admins (id integer primary key autoincrement, user text, passwd varchar[8])"); // Crea Tabla ADMINS solo si no existe.
-        query.exec("CREATE TABLE IF NOT EXISTS pacientes (id integer primary key autoincrement, nombre text,apellido text, edad integer,sexo varchar[15])"); // Crea Tabla ADMINS solo si no existe.
         QString user="admin";
         query.prepare("SELECT id FROM admins WHERE user= (:user)");
         query.bindValue(":user", user);
@@ -69,7 +73,6 @@ void SQL::consulta()
                 QTextStream stdout  << " paswd: " << query.value(2).toString()<<endl;
             }
         }
-
         db.close();
     }
 }
@@ -95,7 +98,7 @@ void SQL::llenarTabla()
 
 bool SQL::agregarPaciente(const QString nombre, const QString apellido, const int edad)
 {
-    bool query_ok;
+    bool query_ok=false;
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
@@ -103,7 +106,7 @@ bool SQL::agregarPaciente(const QString nombre, const QString apellido, const in
                    "VALUES(:nombre,:apellido,:edad)");
         query.bindValue(":nombre", nombre);
         query.bindValue(":apellido", apellido);
-        query.bindValue("(:edad)",edad);
+        query.bindValue(":edad",edad);
         if(query.exec())
             query_ok=true;
         else
@@ -124,4 +127,11 @@ void SQL::on_pushButtonAgregar_clicked()
     else
         QMessageBox::critical(0,"Error al agregar","No se pudo agregar el paciente");
 
+}
+
+void SQL::on_tabWidget_currentChanged(int index)
+{
+    (void) index;
+    if(ui->tabWidget->currentWidget()==ui->tab_tablaPacientes)
+        llenarTabla();
 }

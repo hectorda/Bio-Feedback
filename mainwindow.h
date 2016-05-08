@@ -27,19 +27,23 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
     void calibrarDispositivos();
+
 private slots:
-    void on_pushButtonIniciarPrueba_clicked();
     void on_pushButtonPrueba1_clicked();
-    void on_pushButtonGuardarImagen_clicked();
-    void on_pushButtonGuardarMuestras_clicked();
+    void on_pushButtonPrueba2_clicked();
+    void on_pushButtonPrueba3_clicked();
+    void on_pushButtonPrueba4_clicked();
+    void on_pushButtonIniciarPrueba_clicked();
     void on_pushButtonReiniciarPrueba_clicked();
     void on_pushButtonDetenerPrueba_clicked();
     void on_pushButtonConfPrueba_clicked();
     void on_pushButtonVolverInicio_clicked();
+    void on_pushButtonGuardarImagen_clicked();
+    void on_pushButtonGuardarMuestras_clicked();
 
     void iniciarPrueba();
+    void mostrarResultados();
     void leerDatosSerial();
     void slotGraficarTiempoReal(Angulo *angulo);
     void RangeGraphic(int Range);
@@ -71,6 +75,7 @@ private:
     QCPCurve *lienzo;
     QLabel *status;
     double anguloComplementario1,anguloComplementario2;
+    int pruebaNumero;
     AjustesGrafico::Ajustes radios;
     SQL *db;
 

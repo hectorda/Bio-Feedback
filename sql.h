@@ -32,6 +32,7 @@ public slots:
 
 private slots:
     void on_pushButtonAgregar_clicked();
+    void on_tabWidget_currentChanged(int index);
 };
 
 #endif // SQL_H

@@ -41,7 +41,6 @@ void MainWindow::inicializar()
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     db = new SQL;
-    db->llenarTabla();
     db->consulta();
 }
 
@@ -107,7 +106,8 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::leerDatosSerial()
 {
-    if ( cronometro.elapsed()/1000.0 <= ui->spinBoxTiempoPrueba->value()){
+    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value();
+    if ( cronometro.elapsed()/1000.0 <=tiempoPrueba){
 
         while (serial->canReadLine()){
             const double tiempo=cronometro.elapsed()/1000.0;
@@ -134,17 +134,22 @@ void MainWindow::leerDatosSerial()
         }
     }
     else{
-        QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/ui->spinBoxTiempoPrueba->value()<<endl;
-        serial->close();
-        reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
-        reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
-        reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
-        reportes->graficarAngulos(ui->qCustomPlotGraficosAngulos,listaAngulos);
-        reportes->graficarMuestras(ui->qCustomPlotGraficoMuestras,listaMuestras);
-
-        mostrarBotones();
-        activarTabs();
+        mostrarResultados();
     }
+}
+
+void MainWindow::mostrarResultados()
+{
+    QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/ui->spinBoxTiempoPrueba->value()<<endl;
+    lecturaSerial->cerrarPuertoSerial(serial);
+    reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
+    reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
+    reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
+    reportes->graficarAngulos(ui->qCustomPlotGraficosAngulos,listaAngulos);
+    reportes->graficarMuestras(ui->qCustomPlotGraficoMuestras,listaMuestras);
+
+    mostrarBotones();
+    activarTabs();
 }
 
 void MainWindow::obtenerAngulos(Raw *dato)
@@ -152,7 +157,8 @@ void MainWindow::obtenerAngulos(Raw *dato)
     const double RAD_TO_DEG=180/M_PI;
 
     Angulo *angulo;
-    bool IMUVertical = ui->checkBoxImuVertical->isChecked();
+    const bool IMUVertical = ui->radioButtonIMUVertical->isChecked();
+    const bool IMUHorizontal = ui->radioButtonIMUHorizonal->isChecked();
     if(IMUVertical)
     {
         //Se calculan los angulos con la IMU vertical.
@@ -171,7 +177,8 @@ void MainWindow::obtenerAngulos(Raw *dato)
         }
         angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
     }
-    else
+
+    if(IMUHorizontal)
     {
         //Se calculan los angulos con la IMU horizontal.
         const double angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
@@ -452,9 +459,8 @@ void MainWindow::on_pushButtonReiniciarPrueba_clicked()
 }
 
 void MainWindow::on_pushButtonDetenerPrueba_clicked()
-{
-    lecturaSerial->cerrarPuertoSerial(serial);
-    mostrarBotones();
+{    
+    mostrarResultados();
 }
 
 void MainWindow::preguntarRegresarInicio()
@@ -498,9 +504,44 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
 void MainWindow::on_pushButtonPrueba1_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
+    pruebaNumero=1;
+    ui->labelNombrePrueba->setText("Modo Libre");
+    QTextStream stdout <<pruebaNumero<<endl;
+    ui->progressBarPrueba->hide();
+    ui->labelTiempoPrueba->hide();
+    ui->spinBoxTiempoPrueba->hide();
 }
 
-void MainWindow::on_pushButtonConfPrueba_clicked()
+void MainWindow::on_pushButtonPrueba2_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
+    pruebaNumero=2;
+    ui->labelNombrePrueba->setText("Prueba 2");
+    QTextStream stdout <<pruebaNumero<<endl;
+    ui->progressBarPrueba->show();
+    ui->labelTiempoPrueba->show();
+    ui->spinBoxTiempoPrueba->show();
+}
+
+void MainWindow::on_pushButtonPrueba3_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
+    ui->labelNombrePrueba->setText("Prueba 3");
+    ui->progressBarPrueba->show();
+    ui->labelTiempoPrueba->show();
+    ui->spinBoxTiempoPrueba->show();
+}
+
+void MainWindow::on_pushButtonPrueba4_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
+    ui->labelNombrePrueba->setText("Prueba 4");
+    ui->progressBarPrueba->show();
+    ui->labelTiempoPrueba->show();
+    ui->spinBoxTiempoPrueba->show();
+}
+
+void MainWindow::on_pushButtonConfPrueba_clicked() //Permite volver a configurar la prueba
 {
      ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
 }
@@ -627,3 +668,4 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     }
 
 }
+

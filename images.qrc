@@ -22,5 +22,6 @@
         <file>images/data-icon.png</file>
         <file>images/diana.png</file>
         <file>images/database.png</file>
+        <file>images/IMUVertical.jpg</file>
     </qresource>
 </RCC>
