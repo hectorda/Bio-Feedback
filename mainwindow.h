@@ -55,6 +55,7 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
 
+
 signals:
     void emitAngulo(Angulo*);
     void emitEscribirSerial(QString);
@@ -72,11 +73,11 @@ private:
     QList<Angulo*> listaAngulos;
     Reportes *reportes;
     QList<QCPItemEllipse*> listaObjetivos;
-    QCPCurve *lienzo;
     QLabel *status;
-    double anguloComplementario1,anguloComplementario2;
     int pruebaNumero;
+    QCPCurve *lienzo;
     AjustesGrafico::Ajustes radios;
+    QCPItemEllipse *circuloExterior,*circuloInterior;
     SQL *db;
 
     void inicializar();
@@ -92,7 +93,7 @@ private:
     void limpiarGrafico(QCustomPlot *grafico);
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
-    void generarObjetivos(const int distanciaCentro);
+    void generarObjetivos();
 };
 
 #endif // MAINWINDOW_H

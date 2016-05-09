@@ -22,8 +22,7 @@ void MainWindow::inicializar()
 
     ajustesSerial= new AjustesPuertoSerial;
     ajustesSensores = new AjustesSensores;
-    ajustesGrafico = new AjustesGrafico;
-    reportes = new Reportes;
+    ajustesGrafico = new AjustesGrafico;    
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
@@ -37,6 +36,9 @@ void MainWindow::inicializar()
     titulo->setFont(QFont("sans", 10, QFont::Normal));
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0,titulo);
+
+    circuloExterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
+    circuloInterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
 
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -68,28 +70,25 @@ void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
     //ui->qCustomPlotGrafico->plotLayout()->clear();
-
-    QCPItemEllipse *circuloExterior;
-    circuloExterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
+    ui->qCustomPlotGrafico->clearPlottables();
+    ui->qCustomPlotGrafico->clearItems();
+    ui->qCustomPlotGrafico->repaint();
     circuloExterior->topLeft->setCoords(-radios.RadioExterior,radios.RadioExterior);
     circuloExterior->bottomRight->setCoords(radios.RadioExterior,-radios.RadioExterior);
     circuloExterior->setBrush(QBrush(Qt::yellow));
 
-    QCPItemEllipse *circuloInterior;
-    circuloInterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
-
     circuloInterior->topLeft->setCoords(-radios.RadioInterior,radios.RadioInterior);
     circuloInterior->bottomRight->setCoords(radios.RadioInterior,-radios.RadioInterior);
 
-    lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
-    ui->qCustomPlotGrafico->addPlottable(lienzo);
+    generarObjetivos();
 
     ui->qCustomPlotGrafico->addGraph(); // Para el Grafico del punto
     ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::blue));
     ui->qCustomPlotGrafico->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
 
-
+    lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
+    ui->qCustomPlotGrafico->addPlottable(lienzo);
     //Se configuran los rangos maximos para los ejes X e Y segun el slider.
     const int range=ui->verticalSliderRangeGraphic->value();
     ui->qCustomPlotGrafico->xAxis->setRange(-range,range);
@@ -106,10 +105,14 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::leerDatosSerial()
 {
-    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
+    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido    
     if ( cronometro.elapsed()/1000.0 <=tiempoPrueba ){
 
         while (serial->canReadLine()){
+
+            if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
+                cronometro.start();
+
             const double tiempo=cronometro.elapsed()/1000.0;
 
             Raw raw=lecturaSerial->leerDatosSerial(serial,tiempo);
@@ -118,9 +121,6 @@ void MainWindow::leerDatosSerial()
             obtenerAngulos(dato);
 
             listaMuestras.append(dato);
-
-            if(listaMuestras.size()==1)//Cuando se agrega el primer dato, se inicia el tiempo.
-                cronometro.start();
 
             if(tiempoPrueba!=qInf()){ //Si el tiempo es distinto de infinito se calcula el porcentaje
                 const double porcentaje=(tiempo/tiempoPrueba)*100+0.1;
@@ -143,8 +143,9 @@ void MainWindow::leerDatosSerial()
 
 void MainWindow::mostrarResultados()
 {
-    QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/ui->spinBoxTiempoPrueba->value()<<endl;
+    QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/listaMuestras.last()->getTiempo()<<endl;
     lecturaSerial->cerrarPuertoSerial(serial);
+    reportes = new Reportes;
     reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
     reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
     reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
@@ -159,48 +160,52 @@ void MainWindow::obtenerAngulos(Raw *dato)
 {
     const double RAD_TO_DEG=180/M_PI;
 
-    Angulo *angulo;
     const bool IMUVertical = ui->radioButtonIMUVertical->isChecked();
     const bool IMUHorizontal = ui->radioButtonIMUHorizonal->isChecked();
+    double anguloComplementario1,anguloComplementario2;
+    double angulo1,angulo2;
+
     if(IMUVertical)
     {
         //Se calculan los angulos con la IMU vertical.
-        const double angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-        const double angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+        angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+        angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
 
         //Aplicar el Filtro Complementario
         if(listaAngulos.size()>0){
+            Angulo *lastAngulo=listaAngulos.last();
             const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-            anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyZ()*dt) + 0.02*angulo1;
-            anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyX()*dt) + 0.02*angulo2;
+            anguloComplementario1 = 0.98 *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + 0.02*angulo1;
+            anguloComplementario2 = 0.98 *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + 0.02*angulo2;
         }
         else{
             anguloComplementario1=angulo1;
             anguloComplementario2=angulo2;
         }
-        angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
     }
 
     if(IMUHorizontal)
     {
         //Se calculan los angulos con la IMU horizontal.
-        const double angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-        const double angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+        angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+        angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
 
         //Aplicar el Filtro Complementario
         if(listaAngulos.size()>0){
+            Angulo *lastAngulo=listaAngulos.last();
             const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-            anguloComplementario1 = 0.98 *(anguloComplementario1+dato->getGyX()*dt) + 0.02*angulo1;
-            anguloComplementario2 = 0.98 *(anguloComplementario2+dato->getGyY()*dt) + 0.02*angulo2;
+            anguloComplementario1 = 0.98 *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + 0.02*angulo1;
+            anguloComplementario2 = 0.98 *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + 0.02*angulo2;
         }
         else{
             anguloComplementario1=angulo1;
             anguloComplementario2=angulo2;
         }
-        angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
     }
 
+    Angulo *angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
     listaAngulos.append(angulo);
+
     if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
         emit emitAngulo(angulo);
 }
@@ -258,9 +263,8 @@ void MainWindow::desactivarSpacerEntreBotones()
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Ignored);
 }
 
-void MainWindow::generarObjetivos(const int distanciaCentro=5)
+void MainWindow::generarObjetivos()
 {
-    listaObjetivos.clear();
     int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
 
     if(ui->checkBoxObjetivosAleatorios->isChecked()){
@@ -284,11 +288,13 @@ void MainWindow::generarObjetivos(const int distanciaCentro=5)
                 }
                 if(noIntersectaOtros){
                     QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+                    ui->qCustomPlotGrafico->addItem(objetivo);
 
                     objetivo->topLeft->setCoords(randomx-radios.RadioObjetivo,randomy+radios.RadioObjetivo);
                     objetivo->bottomRight->setCoords(randomx+radios.RadioObjetivo,randomy-radios.RadioObjetivo);
                     objetivo->setBrush(QBrush(Qt::red));
                     listaObjetivos.append(objetivo);
+
                     cantidadintentos=0;
                 }
                 else
@@ -298,14 +304,15 @@ void MainWindow::generarObjetivos(const int distanciaCentro=5)
         QTextStream(stdout)<<"Objetivos Puestos"<<listaObjetivos.size()<<endl;
     }
     else{
-        for (int var = 0; var < cantidadObjetivos; ++var){
-            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
-            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-radios.RadioObjetivo,qSin(angulo)*distanciaCentro+radios.RadioObjetivo);
-            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+radios.RadioObjetivo,qSin(angulo)*distanciaCentro-radios.RadioObjetivo);
-            objetivo->setBrush(QBrush(Qt::red));
-            listaObjetivos.append(objetivo);
-        }
+//        for (int var = 0; var < cantidadObjetivos; ++var){
+//            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+//            ui->qCustomPlotGrafico->addItem(objetivo);
+//            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
+//            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-radios.RadioObjetivo,qSin(angulo)*distanciaCentro+radios.RadioObjetivo);
+//            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+radios.RadioObjetivo,qSin(angulo)*distanciaCentro-radios.RadioObjetivo);
+//            objetivo->setBrush(QBrush(Qt::red));
+//            listaObjetivos.append(objetivo);
+//        }
     }
 }
 
@@ -415,13 +422,14 @@ void MainWindow::iniciarPrueba()
 {
     listaMuestras.clear();
     listaAngulos.clear();
+    listaObjetivos.clear();
     lecturaSerial->abrirPuertoSerial(serial,ajustesSerial->getAjustes(),ajustesSensores->getAjustes());
     cronometro.start();
     radios=ajustesGrafico->getAjustes();
     ui->verticalSliderRangeGraphic->setValue(radios.RadioExterior+5);//Se actualiza el slider
     inicializarGrafico(); //Se limpian los graficos
     radios.RadioObjetivo=radios.RadioObjetivo;
-    generarObjetivos();
+
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
     desactivarTabs();

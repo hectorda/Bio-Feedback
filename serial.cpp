@@ -17,9 +17,10 @@ void Serial::abrirPuertoSerial(QSerialPort *serial, AjustesPuertoSerial::Ajustes
     serial->setFlowControl(QSerialPort::NoFlowControl);
 
     if (serial->open(QIODevice::ReadWrite)){
-        serial->clear();
+
         //serial->dataTerminalReadyChanged(true);
         //serial->requestToSendChanged(true);
+        serial->clear();
         QTextStream(stdout)<<"Cadena de Configuracion: " <<ajustesSensores<<endl;
         serial->write("v0"+ajustesSensores.toLocal8Bit());
 
@@ -49,6 +50,3 @@ Raw Serial::leerDatosSerial(QSerialPort *serial, const double tiempo)
 
     return dato;
 }
-
-
-

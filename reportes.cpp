@@ -1,9 +1,35 @@
 #include "reportes.h"
 
+//class hiloGraficarMuestras :public QThread {
+//    QCustomPlot *grafico;
+//    QList<Raw*> listaMuestras;
+//    Reportes *reporte;
+
+
+//public:
+//    hiloGraficarMuestras(){
+
+//    }
+
+//    hiloGraficarMuestras(QCustomPlot *grafico,QList<Raw*> listaMuestras)
+//    {
+//        this->grafico=grafico;
+//        this->listaMuestras=listaMuestras;
+//    }
+
+//    void run()override
+//    {
+
+//    }
+//};
+
+
 Reportes::Reportes(QObject *parent) : QObject(parent)
 {
 
+
 }
+
 
 void Reportes::limpiarGrafico(QCustomPlot *grafico){
 
@@ -111,7 +137,6 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo*> listaAngu
 
 void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw*> listaMuestras)
 {
-
     grafico->plotLayout()->clear(); // let's start from scratch and remove the default axis rect
     grafico->clearItems();
     grafico->clearGraphs();
@@ -162,7 +187,7 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw*> listaMuestras)
     QCPGraph *graficoGyZ = grafico->addGraph(rightAxisRectGiroscopio->axis(QCPAxis::atBottom), rightAxisRectGiroscopio->axis(QCPAxis::atLeft));
 
     //Se rellenar los datos de los graficos
-    foreach (Raw *var, listaMuestras) {        
+    foreach (Raw *var, listaMuestras) {
         graficoAcX->addData(var->getTiempo(), var->getAcX());
         graficoAcY->addData(var->getTiempo(), var->getAcY());
         graficoAcZ->addData(var->getTiempo(), var->getAcZ());
@@ -243,7 +268,6 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo*> listaAngulos
     foreach (Angulo *var, listaAngulos) {
         graficoAnguloX->addData(var->getTiempo() , var->getAnguloX());
         graficoAnguloY->addData(var->getTiempo() , var->getAnguloY());
-        //QTextStream(stdout)<<"Tiempo:"<<var->getTiempo()<<" X:"<<var->getAnguloX()<<" Y:"<<var->getAnguloY()<<endl;
     }
 
     //Colores de la Line
