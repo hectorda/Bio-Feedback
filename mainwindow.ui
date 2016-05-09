@@ -31,7 +31,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1130,6 +1130,21 @@ Gráfico</string>
             <property name="toolTip">
              <string>Segundos Transcurridos</string>
             </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="midLineWidth">
+             <number>0</number>
+            </property>
+            <property name="digitCount">
+             <number>9</number>
+            </property>
+            <property name="segmentStyle">
+             <enum>QLCDNumber::Flat</enum>
+            </property>
            </widget>
           </item>
           <item>
@@ -1138,7 +1153,19 @@ Gráfico</string>
              <string>Porcentaje completado de la prueba</string>
             </property>
             <property name="value">
-             <number>1</number>
+             <number>0</number>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="textVisible">
+             <bool>true</bool>
+            </property>
+            <property name="invertedAppearance">
+             <bool>false</bool>
+            </property>
+            <property name="textDirection">
+             <enum>QProgressBar::TopToBottom</enum>
             </property>
            </widget>
           </item>

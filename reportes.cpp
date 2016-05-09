@@ -28,7 +28,7 @@ void Reportes::limpiarTabla(QTableWidget *tabla)
     }
 }
 
-void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAngulos)
+void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo*> listaAngulos)
 {
     limpiarGrafico(grafico);
     double q1=0, q2=0, q3=0, q4=0;
@@ -109,7 +109,7 @@ void Reportes::graficarResultados(QCustomPlot *grafico, QList<Angulo *> listaAng
     grafico->replot();
 }
 
-void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras)
+void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw*> listaMuestras)
 {
 
     grafico->plotLayout()->clear(); // let's start from scratch and remove the default axis rect
@@ -215,7 +215,7 @@ void Reportes::graficarMuestras(QCustomPlot *grafico, QList<Raw *> listaMuestras
     grafico->replot(); //Se redibuja para actualizar la vista
 }
 
-void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulos)
+void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo*> listaAngulos)
 {
     grafico->plotLayout()->clear();
     grafico->clearItems();
@@ -265,7 +265,7 @@ void Reportes::graficarAngulos(QCustomPlot *grafico, QList<Angulo *> listaAngulo
 
 }
 
-void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw *> listaMuestras)
+void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw*> listaMuestras)
 {
     limpiarTabla(tabla);
     for (int var = 0; var < listaMuestras.size(); ++var) {
@@ -281,7 +281,7 @@ void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw *> listaMuestras)
     }
 }
 
-void Reportes::tablaAngulos(QTableWidget *tabla, QList<Angulo *> listaAngulos)
+void Reportes::tablaAngulos(QTableWidget *tabla, QList<Angulo*> listaAngulos)
 {
     limpiarTabla(tabla);
 
@@ -309,7 +309,7 @@ void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)
 
 }
 
-void Reportes::guardarMuestrasEnArchivo(QList<Raw *> listaMuestras)
+void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
 {
     QString selectedFilter;
     QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));

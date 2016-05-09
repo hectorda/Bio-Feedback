@@ -106,8 +106,8 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::leerDatosSerial()
 {
-    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value();
-    if ( cronometro.elapsed()/1000.0 <=tiempoPrueba){
+    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
+    if ( cronometro.elapsed()/1000.0 <=tiempoPrueba ){
 
         while (serial->canReadLine()){
             const double tiempo=cronometro.elapsed()/1000.0;
@@ -122,10 +122,13 @@ void MainWindow::leerDatosSerial()
             if(listaMuestras.size()==1)//Cuando se agrega el primer dato, se inicia el tiempo.
                 cronometro.start();
 
-            const double porcentaje=(tiempo/ui->spinBoxTiempoPrueba->value())*100+0.1;
-            ui->progressBarPrueba->setValue(porcentaje);
+            if(tiempoPrueba!=qInf()){ //Si el tiempo es distinto de infinito se calcula el porcentaje
+                const double porcentaje=(tiempo/tiempoPrueba)*100+0.1;
+                ui->progressBarPrueba->setValue(porcentaje);
+            }
 
             const QString lapso=QString::number(tiempo, 'f', 1);
+
             ui->lcdNumberTiempoTranscurrido->display(lapso);
 
             const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
