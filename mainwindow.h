@@ -44,7 +44,6 @@ private slots:
 
     void iniciarPrueba();
     void mostrarResultados();
-    void leerDatosSerial();
     void slotGraficarTiempoReal(Angulo *angulo);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
@@ -54,6 +53,7 @@ private slots:
     void on_dockWidget_topLevelChanged(bool topLevel);
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
+    void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
 
 signals:
@@ -62,8 +62,7 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    QSerialPort *serial;
-    Serial *lecturaSerial;
+    Serial *lectorSerial;
     AjustesPuertoSerial *ajustesSerial;
     AjustesSensores *ajustesSensores;
     AjustesGrafico *ajustesGrafico;

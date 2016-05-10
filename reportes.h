@@ -21,6 +21,7 @@ public:
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
     void guardarAngulosEnArchivo(QList<Angulo*> listaAngulos);
+    int presicion;
 
 private:
     void limpiarGrafico(QCustomPlot *grafico);

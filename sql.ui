@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_tablaPacientes">
       <attribute name="title">
@@ -127,6 +127,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditNombre</tabstop>
+  <tabstop>lineEditApellido</tabstop>
+  <tabstop>spinBoxEdad</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEditAltura</tabstop>
+  <tabstop>pushButtonAgregar</tabstop>
+  <tabstop>tableView</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>pushButtonActualizarTabla</tabstop>
+ </tabstops>
  <resources>
   <include location="images.qrc"/>
  </resources>

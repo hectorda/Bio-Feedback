@@ -18,12 +18,10 @@ void MainWindow::inicializar()
 {
     ui->setupUi(this);
 
-    serial=new QSerialPort(this);
-
     ajustesSerial= new AjustesPuertoSerial;
     ajustesSensores = new AjustesSensores;
-    ajustesGrafico = new AjustesGrafico;    
-
+    ajustesGrafico = new AjustesGrafico;
+    lectorSerial = new Serial(0, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
     status = new QLabel;
@@ -48,19 +46,17 @@ void MainWindow::inicializar()
 
 void MainWindow::conexiones()
 {
-    connect(serial, SIGNAL(readyRead()), this, SLOT(leerDatosSerial()));
     connect(this,SIGNAL(emitAngulo(Angulo*)),this,SLOT(slotGraficarTiempoReal(Angulo*)));
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+    connect(lectorSerial,SIGNAL(datosLeidos(double,double,double,double,double,double)),this,SLOT(obtenerRaw(double,double,double,double,double,double)));
 
     //Connect de actions
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(show()));
-
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
-
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
     connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
@@ -103,48 +99,10 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
     status->setText(message);
 }
 
-void MainWindow::leerDatosSerial()
-{
-    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido    
-    if ( cronometro.elapsed()/1000.0 <=tiempoPrueba ){
-
-        while (serial->canReadLine()){
-
-            if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
-                cronometro.start();
-
-            const double tiempo=cronometro.elapsed()/1000.0;
-
-            Raw raw=lecturaSerial->leerDatosSerial(serial,tiempo);
-            Raw *dato=new Raw(raw.getTiempo(),raw.getAcX(),raw.getAcY(),raw.getAcZ(),raw.getGyX(),raw.getGyY(),raw.getGyZ());
-
-            obtenerAngulos(dato);
-
-            listaMuestras.append(dato);
-
-            if(tiempoPrueba!=qInf()){ //Si el tiempo es distinto de infinito se calcula el porcentaje
-                const double porcentaje=(tiempo/tiempoPrueba)*100+0.1;
-                ui->progressBarPrueba->setValue(porcentaje);
-            }
-
-            const QString lapso=QString::number(tiempo, 'f', 1);
-
-            ui->lcdNumberTiempoTranscurrido->display(lapso);
-
-            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
-                                + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
-            actualizarMensajeBarraEstado(mensaje);
-        }
-    }
-    else{
-        mostrarResultados();
-    }
-}
-
 void MainWindow::mostrarResultados()
 {
     QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/listaMuestras.last()->getTiempo()<<endl;
-    lecturaSerial->cerrarPuertoSerial(serial);
+    lectorSerial->cerrarPuertoSerial();
     reportes = new Reportes;
     reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
     reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
@@ -162,52 +120,59 @@ void MainWindow::obtenerAngulos(Raw *dato)
 
     const bool IMUVertical = ui->radioButtonIMUVertical->isChecked();
     const bool IMUHorizontal = ui->radioButtonIMUHorizonal->isChecked();
-    double anguloComplementario1,anguloComplementario2;
+    double anguloComplementario1=0,anguloComplementario2=0;
     double angulo1,angulo2;
+    double alpha=0.02;
+    bool filtroComplementario=true;
 
-    if(IMUVertical)
-    {
-        //Se calculan los angulos con la IMU vertical.
-        angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-        angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+    if(filtroComplementario){
 
-        //Aplicar el Filtro Complementario
-        if(listaAngulos.size()>0){
-            Angulo *lastAngulo=listaAngulos.last();
-            const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-            anguloComplementario1 = 0.98 *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + 0.02*angulo1;
-            anguloComplementario2 = 0.98 *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + 0.02*angulo2;
+        if(IMUVertical)
+        {
+            //Se calculan los angulos con la IMU vertical.
+            angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+            angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+
+            //Aplicar el Filtro Complementario
+            if(listaAngulos.size()>0){
+                Angulo *lastAngulo=listaAngulos.last();
+                const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
+                anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
+            }
+            else{
+                anguloComplementario1=angulo1;
+                anguloComplementario2=angulo2;
+            }
         }
-        else{
-            anguloComplementario1=angulo1;
-            anguloComplementario2=angulo2;
+
+        if(IMUHorizontal)
+        {
+            //Se calculan los angulos con la IMU horizontal.
+            angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+            angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+            //angulo1 = qAtan2((double)dato->getAcY() , (double)dato->getAcZ())*RAD_TO_DEG;
+            //angulo2 = qAtan2((double)dato->getAcX() , (double)dato->getAcZ())*RAD_TO_DEG;
+
+            //Aplicar el Filtro Complementario
+            if(listaAngulos.size()>0){
+                Angulo *lastAngulo=listaAngulos.last();
+                const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + alpha*angulo1;
+                anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + alpha*angulo2;
+            }
+            else{
+                anguloComplementario1=angulo1;
+                anguloComplementario2=angulo2;
+            }
         }
+
+        Angulo *angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
+        listaAngulos.append(angulo);
+
+        if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
+            emit emitAngulo(angulo);
     }
-
-    if(IMUHorizontal)
-    {
-        //Se calculan los angulos con la IMU horizontal.
-        angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-        angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-
-        //Aplicar el Filtro Complementario
-        if(listaAngulos.size()>0){
-            Angulo *lastAngulo=listaAngulos.last();
-            const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-            anguloComplementario1 = 0.98 *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + 0.02*angulo1;
-            anguloComplementario2 = 0.98 *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + 0.02*angulo2;
-        }
-        else{
-            anguloComplementario1=angulo1;
-            anguloComplementario2=angulo2;
-        }
-    }
-
-    Angulo *angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
-    listaAngulos.append(angulo);
-
-    if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
-        emit emitAngulo(angulo);
 }
 
 void MainWindow::mostrarBotones()
@@ -420,18 +385,21 @@ void MainWindow::relacionAspectodelGrafico()
 
 void MainWindow::iniciarPrueba()
 {
+    //Limpieza de listas
     listaMuestras.clear();
     listaAngulos.clear();
     listaObjetivos.clear();
-    lecturaSerial->abrirPuertoSerial(serial,ajustesSerial->getAjustes(),ajustesSensores->getAjustes());
+
+    lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes(),ajustesSensores->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
     cronometro.start();
     radios=ajustesGrafico->getAjustes();
-    ui->verticalSliderRangeGraphic->setValue(radios.RadioExterior+5);//Se actualiza el slider
+    ui->verticalSliderRangeGraphic->setValue(radios.RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian los graficos
     radios.RadioObjetivo=radios.RadioObjetivo;
 
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+
     desactivarTabs();
     desactivarSpacerEntreBotones();
     ocultarBotones();
@@ -451,8 +419,42 @@ void MainWindow::regresarInicio()
 
           if (messageBox.exec() == QMessageBox::Yes){
               ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-              lecturaSerial->cerrarPuertoSerial(serial);
+              lectorSerial->cerrarPuertoSerial();
           }
+    }
+}
+
+void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
+{
+    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
+    if ( cronometro.elapsed()/1000.0 <=tiempoPrueba ){
+
+        if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
+           cronometro.start();
+
+        const double tiempo=cronometro.elapsed()/1000.0;
+
+        Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
+
+        obtenerAngulos(dato);
+
+        listaMuestras.append(dato);
+
+        if(tiempoPrueba!=qInf()){ //Si el tiempo es distinto de infinito se calcula el porcentaje
+           const double porcentaje=(tiempo/tiempoPrueba)*100+0.1;
+           ui->progressBarPrueba->setValue(porcentaje);
+        }
+        const QString lapso=QString::number(tiempo, 'f', 1);
+
+        ui->lcdNumberTiempoTranscurrido->display(lapso);
+
+        const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
+                          + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
+        actualizarMensajeBarraEstado(mensaje);
+    }
+    else{
+        QTextStream stdout <<"a expìrado?"<<cronometro.hasExpired(tiempoPrueba/1000.0)<<endl;
+        mostrarResultados();
     }
 }
 
@@ -465,7 +467,7 @@ void MainWindow::on_pushButtonIniciarPrueba_clicked()
 
 void MainWindow::on_pushButtonReiniciarPrueba_clicked()
 {
-    lecturaSerial->cerrarPuertoSerial(serial);
+    lectorSerial->cerrarPuertoSerial();
     iniciarPrueba();
 }
 
@@ -487,7 +489,7 @@ void MainWindow::preguntarRegresarInicio()
 
         if (messageBox.exec() == QMessageBox::Yes){
             ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-            lecturaSerial->cerrarPuertoSerial(serial);
+            lectorSerial->cerrarPuertoSerial();
         }
     }
 }

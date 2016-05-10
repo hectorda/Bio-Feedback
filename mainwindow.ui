@@ -31,7 +31,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -59,7 +59,8 @@ QPushButton:hover {
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Prueba 1</string>
+             <string>Prueba 1
+Modo Libre</string>
             </property>
            </widget>
           </item>
@@ -79,7 +80,8 @@ QPushButton:hover {
           <item row="1" column="2">
            <widget class="QPushButton" name="pushButtonPrueba2">
             <property name="text">
-             <string>Prueba 2</string>
+             <string>Prueba 2
+Con Tiempo</string>
             </property>
            </widget>
           </item>
@@ -634,7 +636,7 @@ QPushButton:hover {
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>4</number>
+              <number>0</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -968,7 +970,7 @@ QPushButton:hover {
                 </size>
                </property>
                <property name="toolTip">
-                <string>Guardar Imagen del Grafico Actual</string>
+                <string>Guardar Imagen del Grafico Actual en PNG,JPG o PDF</string>
                </property>
                <property name="text">
                 <string/>

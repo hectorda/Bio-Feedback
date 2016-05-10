@@ -2,10 +2,26 @@
 
 Serial::Serial(QObject *parent) : QObject(parent)
 {
+    conexiones();
+}
+
+Serial::Serial(QObject *parent, QSerialPort *serial) : QObject(parent),serial(serial)
+{
+    conexiones();
+}
+
+void Serial::inicializar()
+{
 
 }
 
-void Serial::abrirPuertoSerial(QSerialPort *serial, AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores)
+void Serial::conexiones()
+{
+    connect(serial,SIGNAL(readyRead()),this,SLOT(leerDatosSerial()));
+}
+
+
+void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores)
 {
     serial->setPortName(ajustesSerial.portName);
     serial->setBaudRate(ajustesSerial.baudRate);
@@ -29,24 +45,24 @@ void Serial::abrirPuertoSerial(QSerialPort *serial, AjustesPuertoSerial::Ajustes
     }
 }
 
-void Serial::cerrarPuertoSerial(QSerialPort *serial)
+void Serial::cerrarPuertoSerial()
 {
     if(serial->isOpen())
         serial->close();
 }
 
-Raw Serial::leerDatosSerial(QSerialPort *serial, const double tiempo)
+void Serial::leerDatosSerial()
 {
-    const QByteArray datosSerial = serial->readLine();
-    QStringList linea=QString(datosSerial).split(" ");
+    while (serial->canReadLine()){
+        const QByteArray datosSerial = serial->readLine();
+        QStringList linea=QString(datosSerial).split(" ");
 
-    const double AcX=QString(linea.at(0)).toDouble();
-    const double AcY=QString(linea.at(1)).toDouble();
-    const double AcZ=QString(linea.at(2)).toDouble();
-    const double GyX=QString(linea.at(3)).toDouble();
-    const double GyY=QString(linea.at(4)).toDouble();
-    const double GyZ=QString(linea.at(5)).toDouble();
-    Raw dato=Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
-
-    return dato;
+        const double AcX=QString(linea.at(0)).toDouble();
+        const double AcY=QString(linea.at(1)).toDouble();
+        const double AcZ=QString(linea.at(2)).toDouble();
+        const double GyX=QString(linea.at(3)).toDouble();
+        const double GyY=QString(linea.at(4)).toDouble();
+        const double GyZ=QString(linea.at(5)).toDouble();
+        emit datosLeidos(AcX,AcY,AcZ,GyX,GyY,GyZ);
+    }
 }

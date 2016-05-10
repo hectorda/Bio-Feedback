@@ -14,13 +14,19 @@ class Serial : public QObject
 public:
     QSerialPort *serial;
     explicit Serial(QObject *parent = 0);
-    void abrirPuertoSerial(QSerialPort *serial,AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores);
-    void cerrarPuertoSerial(QSerialPort *serial);
-    Raw leerDatosSerial(QSerialPort *serial,const double tiempo);
+    Serial(QObject *parent,QSerialPort *serial);
+    void abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores);
+    void cerrarPuertoSerial();
+
+private:
+    void inicializar();
+    void conexiones();
 
 signals:
+    void datosLeidos(double,double,double,double,double,double);
 
 public slots:
+    void leerDatosSerial();
 };
 
 #endif // SERIAL_H

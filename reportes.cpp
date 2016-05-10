@@ -26,7 +26,7 @@
 
 Reportes::Reportes(QObject *parent) : QObject(parent)
 {
-
+    this->presicion=4;
 
 }
 
@@ -295,13 +295,13 @@ void Reportes::tablaMuestras(QTableWidget *tabla, QList<Raw*> listaMuestras)
     for (int var = 0; var < listaMuestras.size(); ++var) {
         const int currentRow = tabla->rowCount();
         tabla->setRowCount(currentRow + 1);
-        tabla->setItem(var,0,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getTiempo())));
-        tabla->setItem(var,1,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcX())));
-        tabla->setItem(var,2,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcY())));
-        tabla->setItem(var,3,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcZ())));
-        tabla->setItem(var,4,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyX())));
-        tabla->setItem(var,5,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyY())));
-        tabla->setItem(var,6,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyZ())));
+        tabla->setItem(var,0,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getTiempo(),'f',presicion)));
+        tabla->setItem(var,1,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcX(),'f',presicion)));
+        tabla->setItem(var,2,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcY(),'f',presicion)));
+        tabla->setItem(var,3,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getAcZ(),'f',presicion)));
+        tabla->setItem(var,4,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyX(),'f',presicion)));
+        tabla->setItem(var,5,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyY(),'f',presicion)));
+        tabla->setItem(var,6,new QTableWidgetItem(QString::number(listaMuestras.at(var)->getGyZ(),'f',presicion)));
     }
 }
 
@@ -312,9 +312,9 @@ void Reportes::tablaAngulos(QTableWidget *tabla, QList<Angulo*> listaAngulos)
     for (int var = 0; var < listaAngulos.size(); ++var) {
         const int currentRow = tabla->rowCount();
         tabla->setRowCount(currentRow + 1);
-        tabla->setItem(var,0,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getTiempo())));
-        tabla->setItem(var,1,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloX())));
-        tabla->setItem(var,2,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloY())));
+        tabla->setItem(var,0,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getTiempo(),'f',presicion)));
+        tabla->setItem(var,1,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloX(),'f',presicion)));
+        tabla->setItem(var,2,new QTableWidgetItem(QString::number(listaAngulos.at(var)->getAnguloY(),'f',presicion)));
     }
 }
 
@@ -346,14 +346,14 @@ void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
             QTextStream stream(&file);
             foreach (Raw *var, listaMuestras){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAcX(),'f',3)
-                           << " Y: " << QString::number(var->getAcY(),'f',3) <<  " Z: " << QString::number(var->getAcZ(),'f',3) <<  " X: " << QString::number(var->getGyX(),'f',3) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',presicion) << " X: " << QString::number(var->getAcX(),'f',presicion)
+                           << " Y: " << QString::number(var->getAcY(),'f',presicion) <<  " Z: " << QString::number(var->getAcZ(),'f',presicion) <<  " X: " << QString::number(var->getGyX(),'f',presicion) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',3) << ";" <<QString::number(var->getAcX(),'f',3)
-                           <<";" << QString::number(var->getAcY(),'f',3) <<";" << QString::number(var->getAcZ(),'f',3)
-                           <<";" << QString::number(var->getGyX(),'f',3) <<";" << QString::number(var->getGyY(),'f',3)
-                           <<";" << QString::number(var->getGyZ(),'f',3) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << ";" <<QString::number(var->getAcX(),'f',presicion)
+                           <<";" << QString::number(var->getAcY(),'f',presicion) <<";" << QString::number(var->getAcZ(),'f',presicion)
+                           <<";" << QString::number(var->getGyX(),'f',presicion) <<";" << QString::number(var->getGyY(),'f',presicion)
+                           <<";" << QString::number(var->getGyZ(),'f',presicion) << endl;
                 }
             }
             file.flush();
@@ -379,12 +379,12 @@ void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
             QTextStream stream(&file);
             foreach (Angulo *var, listaAngulos){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',3) << " X: " << QString::number(var->getAnguloX(),'f',3)
-                           << " Y: " << QString::number(var->getAnguloY(),'f',3) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',presicion) << " X: " << QString::number(var->getAnguloX(),'f',presicion)
+                           << " Y: " << QString::number(var->getAnguloY(),'f',presicion) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',3) << ";" << QString::number(var->getAnguloX(),'f',3)
-                           <<";" << QString::number(var->getAnguloY(),'f',3) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << ";" << QString::number(var->getAnguloX(),'f',presicion)
+                           <<";" << QString::number(var->getAnguloY(),'f',presicion) << endl;
                 }
             }
             file.flush();
