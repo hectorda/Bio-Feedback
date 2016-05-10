@@ -177,11 +177,6 @@ bool AjustesGrafico::eventFilter(QObject *obj, QEvent *event)
             const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
             graficarObjetivo(ui->spinBoxRObjetivo->value(),sinMarcar);
         }
-
-
     }
-
-
-
     return QWidget::eventFilter(obj, event);
 }

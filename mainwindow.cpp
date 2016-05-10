@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -18,10 +19,26 @@ void MainWindow::inicializar()
 {
     ui->setupUi(this);
 
-    ajustesSerial= new AjustesPuertoSerial;
-    ajustesSensores = new AjustesSensores;
-    ajustesGrafico = new AjustesGrafico;
+    ajustesSerial= new AjustesPuertoSerial(this);
+    ajustesSensores = new AjustesSensores(this);
+    ajustesGrafico = new AjustesGrafico(this);
     lectorSerial = new Serial(0, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
+
+//    Reportes *reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficosAngulos,ui->qCustomPlotGraficoMuestras,
+//                                     ui->tableWidgetAngulos,ui->tableWidgetDatosRaw,listaAngulos,listaMuestras);
+
+//    QThread *hiloReportes = new QThread(this);
+////    Reportes *reportes= new Reportes();
+//    reportes->moveToThread(hiloReportes);
+
+//    connect(this,SIGNAL(emitGraficarResultados()),reportes,SLOT(graficarResultados()));
+//    connect(this,SIGNAL(emitGraficarMuestras()),reportes,SLOT(graficarMuestras()));
+////    connect(this,SIGNAL(emitGraficarAngulos(QCustomPlot*,QList<Angulo*>)),reportes,SLOT(graficarAngulos(QCustomPlot*,QList<Angulo*>)));
+////    connect(this,SIGNAL(emitGraficarMuestras(QCustomPlot*,QList<Raw*>)),reportes,SLOT(graficarMuestras(QCustomPlot*,QList<Raw*>)));
+//    connect(hiloReportes, SIGNAL(destroyed()), reportes, SLOT(deleteLater()));
+
+//    //updater->newLabel("h:/test.png");
+
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
     status = new QLabel;
@@ -281,17 +298,37 @@ void MainWindow::generarObjetivos()
 
 void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 {
-    for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
-        QCPItemEllipse *P=listaObjetivos.at(var);
-        if(P->brush()==QBrush(elementosdelGrafico.colorObjetivoSinMarcar)){ //Si aun sigue con el color por defecto.
-            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
-            if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
-                P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
-                listaObjetivos.removeAt(var);
-                ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
-                QTextStream(stdout)<<listaObjetivos.size()<<endl;
+    if(!ui->checkBoxOrdenObjetivos->isChecked()){
+        for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
+            QCPItemEllipse *P=listaObjetivos.at(var);
+            if(P->brush()==QBrush(elementosdelGrafico.colorObjetivoSinMarcar)){ //Si aun sigue con el color por defecto.
+                const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+                if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
+                    P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
+                    listaObjetivos.removeAt(var);
+                    ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+                    QTextStream(stdout)<<listaObjetivos.size()<<endl;
+                }
             }
         }
+    }
+    else
+    {
+       if(listaObjetivos.size()>0)
+       {
+           QCPItemEllipse *P=listaObjetivos.at(0);
+           if((int)angulo->getTiempo()%2==0)
+                P->setBrush(QBrush(Qt::white));
+           else
+               P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+           const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+           if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
+               P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
+               listaObjetivos.removeAt(0);
+               ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+               QTextStream(stdout)<<listaObjetivos.size()<<endl;
+           }
+       }
     }
 
     if(ui->checkBoxLimitarGrafico->isChecked())

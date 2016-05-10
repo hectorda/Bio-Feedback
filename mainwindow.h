@@ -59,6 +59,11 @@ private slots:
 signals:
     void emitAngulo(Angulo*);
     void emitEscribirSerial(QString);
+//    void emitGraficarResultados();
+//    void emitGraficarMuestras();
+//    void emitGraficarAngulos();
+////    void emitGraficarAngulos(QCustomPlot*,QList<Angulo*>);
+//    void emitGraficarMuestras(QCustomPlot*,QList<Raw*>);
 
 private:
     Ui::MainWindow *ui;

@@ -344,24 +344,16 @@ QPushButton:hover {
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelTiempoPrueba">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
               <property name="font">
                <font>
-                <pointsize>10</pointsize>
                 <weight>75</weight>
-                <italic>false</italic>
                 <bold>true</bold>
                </font>
               </property>
-              <property name="toolTip">
-               <string>Tiempo que durara la Prueba seleccionada</string>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
               <property name="text">
-               <string>Tiempo Prueba</string>
+               <string>Limitar Grafico?</string>
               </property>
              </widget>
             </item>
@@ -389,16 +381,24 @@ QPushButton:hover {
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_9">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelTiempoPrueba">
               <property name="font">
                <font>
+                <pointsize>10</pointsize>
                 <weight>75</weight>
+                <italic>false</italic>
                 <bold>true</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>Tiempo que durara la Prueba seleccionada</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
               <property name="text">
-               <string>Limitar Grafico?</string>
+               <string>Tiempo Prueba</string>
               </property>
              </widget>
             </item>
@@ -528,6 +528,23 @@ QPushButton:hover {
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Objetivos en Orden</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QCheckBox" name="checkBoxOrdenObjetivos">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
