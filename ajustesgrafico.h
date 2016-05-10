@@ -25,8 +25,8 @@ public:
     ~AjustesGrafico();
 
     AjustesGrafico::Ajustes getAjustes();
-
     void llenarParametrosComboBox();
+
 private:
     Ui::AjustesGrafico *ui;
     AjustesGrafico::Ajustes ajustesActuales;
@@ -46,6 +46,7 @@ private slots:
     void on_spinBoxRExterior_valueChanged(int arg1);
     void on_spinBoxRInterior_valueChanged(int arg1);
     void on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int index);
+    bool eventFilter(QObject *obj, QEvent *event);
 
 };
 

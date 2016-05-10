@@ -29,6 +29,7 @@ void AjustesGrafico::inicializar()
     objetivo=new QCPItemEllipse(ui->qCustomPlotObjetivo);
     circuloExterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
     circuloInterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
+    ui->qCustomPlotObjetivo->installEventFilter(this);
 }
 
 void AjustesGrafico::conexiones()
@@ -155,4 +156,32 @@ void AjustesGrafico::on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int 
 {
     const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(index, Qt::DecorationRole));
     graficarObjetivo(ui->spinBoxRObjetivo->value(),sinMarcar);
+}
+
+bool AjustesGrafico::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseMove && obj == ui->qCustomPlotObjetivo)
+    {
+        QMouseEvent *mouseEvent = (QMouseEvent *)event;
+        int x = this->ui->qCustomPlotObjetivo->xAxis->pixelToCoord(mouseEvent->pos().x());
+        int y = this->ui->qCustomPlotObjetivo->yAxis->pixelToCoord(mouseEvent->pos().y());
+        const double distancia=qSqrt(qPow(x,2)+qPow(y,2));
+
+        if(distancia<=ui->spinBoxRObjetivo->value())
+        {
+            const QColor marcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));
+            graficarObjetivo(ui->spinBoxRObjetivo->value(),marcado);
+        }
+        else
+        {
+            const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
+            graficarObjetivo(ui->spinBoxRObjetivo->value(),sinMarcar);
+        }
+
+
+    }
+
+
+
+    return QWidget::eventFilter(obj, event);
 }
