@@ -66,15 +66,12 @@ void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
     //ui->qCustomPlotGrafico->plotLayout()->clear();
-    ui->qCustomPlotGrafico->clearPlottables();
-    ui->qCustomPlotGrafico->clearItems();
-    ui->qCustomPlotGrafico->repaint();
-    circuloExterior->topLeft->setCoords(-radios.RadioExterior,radios.RadioExterior);
-    circuloExterior->bottomRight->setCoords(radios.RadioExterior,-radios.RadioExterior);
+    circuloExterior->topLeft->setCoords(-elementosdelGrafico.RadioExterior,elementosdelGrafico.RadioExterior);
+    circuloExterior->bottomRight->setCoords(elementosdelGrafico.RadioExterior,-elementosdelGrafico.RadioExterior);
     circuloExterior->setBrush(QBrush(Qt::yellow));
 
-    circuloInterior->topLeft->setCoords(-radios.RadioInterior,radios.RadioInterior);
-    circuloInterior->bottomRight->setCoords(radios.RadioInterior,-radios.RadioInterior);
+    circuloInterior->topLeft->setCoords(-elementosdelGrafico.RadioInterior,elementosdelGrafico.RadioInterior);
+    circuloInterior->bottomRight->setCoords(elementosdelGrafico.RadioInterior,-elementosdelGrafico.RadioInterior);
 
     generarObjetivos();
 
@@ -84,6 +81,7 @@ void MainWindow::inicializarGrafico()
     ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
+    lienzo->setPen(QPen(Qt::blue, 1));
     ui->qCustomPlotGrafico->addPlottable(lienzo);
     //Se configuran los rangos maximos para los ejes X e Y segun el slider.
     const int range=ui->verticalSliderRangeGraphic->value();
@@ -239,25 +237,25 @@ void MainWindow::generarObjetivos()
             const int signox=qrand()%2==1 ? 1: -1;
             const int signoy=qrand()%2==1 ? 1: -1;
 
-            const int randomx=(qrand()%(radios.RadioExterior-radios.RadioObjetivo))*signox;
-            const int randomy=(qrand()%(radios.RadioExterior-radios.RadioObjetivo))*signoy;
+            const int randomx=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signox;
+            const int randomy=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signoy;
             const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
 
-            if(ecuacionCircExt<=qPow(double(radios.RadioExterior-radios.RadioObjetivo),2)){//Si es que no se sale del radio exterior
+            if(ecuacionCircExt<=qPow(double(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo),2)){//Si es que no se sale del radio exterior
                 bool noIntersectaOtros=true;
                 foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
-                    const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+radios.RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-radios.RadioObjetivo)),2));
+                    const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
                     //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
-                    if( perteneceCirc < 2*radios.RadioObjetivo + 0.5)
+                    if( perteneceCirc < 2*elementosdelGrafico.RadioObjetivo + 0.5)
                         noIntersectaOtros=false;
                 }
                 if(noIntersectaOtros){
                     QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
                     ui->qCustomPlotGrafico->addItem(objetivo);
 
-                    objetivo->topLeft->setCoords(randomx-radios.RadioObjetivo,randomy+radios.RadioObjetivo);
-                    objetivo->bottomRight->setCoords(randomx+radios.RadioObjetivo,randomy-radios.RadioObjetivo);
-                    objetivo->setBrush(QBrush(Qt::red));
+                    objetivo->topLeft->setCoords(randomx-elementosdelGrafico.RadioObjetivo,randomy+elementosdelGrafico.RadioObjetivo);
+                    objetivo->bottomRight->setCoords(randomx+elementosdelGrafico.RadioObjetivo,randomy-elementosdelGrafico.RadioObjetivo);
+                    objetivo->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
                     listaObjetivos.append(objetivo);
 
                     cantidadintentos=0;
@@ -285,10 +283,10 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 {
     for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
         QCPItemEllipse *P=listaObjetivos.at(var);
-        if(P->brush()==QBrush(Qt::red)){ //Si aun sigue con el color por defecto.
-            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+radios.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-radios.RadioObjetivo)),2));
-            if( perteneceCirc < radios.RadioObjetivo){
-                P->setBrush(QBrush(Qt::green));
+        if(P->brush()==QBrush(elementosdelGrafico.colorObjetivoSinMarcar)){ //Si aun sigue con el color por defecto.
+            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+            if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
+                P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
                 listaObjetivos.removeAt(var);
                 ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
                 QTextStream(stdout)<<listaObjetivos.size()<<endl;
@@ -299,7 +297,7 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
     if(ui->checkBoxLimitarGrafico->isChecked())
     {
         const double ecuacionCircExt=qPow(angulo->getAnguloX(),2)+qPow(angulo->getAnguloY(),2);
-        if(ecuacionCircExt<=qPow(double(radios.RadioExterior),2)){//Si es que no se sale del radio exterior
+        if(ecuacionCircExt<=qPow(double(elementosdelGrafico.RadioExterior),2)){//Si es que no se sale del radio exterior
             lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
             ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
@@ -318,8 +316,8 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
             else  //Cuadrante 2 y Cuadrante 3
                 inclRecta+=180;
 
-            const double aX=radios.RadioExterior*qCos(qDegreesToRadians(inclRecta));
-            const double aY=radios.RadioExterior*qSin(qDegreesToRadians(inclRecta));
+            const double aX=elementosdelGrafico.RadioExterior*qCos(qDegreesToRadians(inclRecta));
+            const double aY=elementosdelGrafico.RadioExterior*qSin(qDegreesToRadians(inclRecta));
             //QTextStream(stdout)<<"Grados Inclinacion Recta: "<<inclRecta<<" Ax:"<<aX<<" aY:"<<aY<<endl;
             lienzo->addData(aX, aY);
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
@@ -392,10 +390,10 @@ void MainWindow::iniciarPrueba()
 
     lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes(),ajustesSensores->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
     cronometro.start();
-    radios=ajustesGrafico->getAjustes();
-    ui->verticalSliderRangeGraphic->setValue(radios.RadioExterior+5);//Se actualiza el slider del Rango
+    elementosdelGrafico=ajustesGrafico->getAjustes();
+    ui->verticalSliderRangeGraphic->setValue(elementosdelGrafico.RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian los graficos
-    radios.RadioObjetivo=radios.RadioObjetivo;
+    elementosdelGrafico.RadioObjetivo=elementosdelGrafico.RadioObjetivo;
 
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
@@ -508,6 +506,7 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
     grafico->legend->setVisible(false);
     grafico->clearGraphs();
     grafico->clearPlottables();
+    grafico->clearItems();
     grafico->xAxis->setLabel("");
     grafico->yAxis->setLabel("");
     grafico->rescaleAxes();

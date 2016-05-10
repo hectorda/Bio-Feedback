@@ -7,10 +7,10 @@ AjustesGrafico::AjustesGrafico(QWidget *parent) :
 {
     inicializar();
     conexiones();
+    llenarParametrosComboBox();
     aplicar();
-    graficarObjetivo(ajustesActuales.RadioObjetivo);
+    graficarObjetivo(ajustesActuales.RadioObjetivo,ajustesActuales.colorObjetivoSinMarcar);
     graficarRepresentacionGrafico(ajustesActuales.RadioInterior,ajustesActuales.RadioExterior);
-
 }
 
 AjustesGrafico::~AjustesGrafico()
@@ -37,19 +37,46 @@ void AjustesGrafico::conexiones()
     connect(ui->pushButtonOK,SIGNAL(clicked()),this,SLOT(aplicar()));
 }
 
-void AjustesGrafico::aplicar()
+void AjustesGrafico::llenarParametrosComboBox()
 {
-    ajustesActuales.RadioInterior=ui->spinBoxRInterior->value();
-    ajustesActuales.RadioExterior=ui->spinBoxRExterior->value();
-    ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
-    hide();
+    QStringList colorNames = QColor::colorNames();
+
+      for (int i = 0; i < colorNames.size(); ++i) {
+          QColor color(colorNames[i]);
+
+          ui->comboBoxColorObjetivosSinMarcar->insertItem(i, colorNames[i]);
+          ui->comboBoxColorObjetivosSinMarcar->setItemData(i, color, Qt::DecorationRole);
+
+          ui->comboBoxColorObjetivosMarcados->insertItem(i, colorNames[i]);
+          ui->comboBoxColorObjetivosMarcados->setItemData(i, color, Qt::DecorationRole);
+      }
+      ui->comboBoxColorObjetivosSinMarcar->setCurrentIndex(119); //Se setea el color rojo
+      ui->comboBoxColorObjetivosMarcados->setCurrentIndex(54);   //Se setea el color verde
 }
 
-void AjustesGrafico::graficarObjetivo(const int rObjetivo){
+void AjustesGrafico::aplicar()
+{
+    if(ui->comboBoxColorObjetivosMarcados->currentIndex()!=ui->comboBoxColorObjetivosSinMarcar->currentIndex()){
+        ajustesActuales.RadioInterior=ui->spinBoxRInterior->value();
+        ajustesActuales.RadioExterior=ui->spinBoxRExterior->value();
+        ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
+        hide();
+        const QColor colorSinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
+        const QColor colorMarcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));
+        ajustesActuales.colorObjetivoSinMarcar = colorSinMarcar;
+        ajustesActuales.colorObjetivoMarcado = colorMarcado;
+
+        //QTextStream stdout <<ui->comboBoxColorObjetivosSinMarcar->currentIndex()<<sinMarcar.name()<<" "<<ui->comboBoxColorObjetivosMarcados->currentIndex()<<marcado.name()<<endl;
+    }
+    else
+        QMessageBox::critical(0,"Error al seleccionar Colores","Debe seleccionar colores diferentes para los objetivos");
+}
+
+void AjustesGrafico::graficarObjetivo(const int rObjetivo,const QColor color){
 
     objetivo->topLeft->setCoords(-rObjetivo,rObjetivo);
     objetivo->bottomRight->setCoords(rObjetivo,-rObjetivo);
-    objetivo->setBrush(QBrush(Qt::red));
+    objetivo->setBrush(QBrush(color));
     ui->qCustomPlotObjetivo->replot();
 
 }
@@ -108,7 +135,8 @@ bool AjustesGrafico::event(QEvent *event)
 
 void AjustesGrafico::on_spinBoxRObjetivo_valueChanged(int arg1)
 {
-    graficarObjetivo(arg1);
+    const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
+    graficarObjetivo(arg1,sinMarcar);
 }
 
 void AjustesGrafico::on_spinBoxRExterior_valueChanged(int arg1)
@@ -121,4 +149,10 @@ void AjustesGrafico::on_spinBoxRInterior_valueChanged(int arg1)
 {
     const int rEnterior=ui->spinBoxRExterior->value();
     graficarRepresentacionGrafico(arg1,rEnterior);
+}
+
+void AjustesGrafico::on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int index)
+{
+    const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(index, Qt::DecorationRole));
+    graficarObjetivo(ui->spinBoxRObjetivo->value(),sinMarcar);
 }

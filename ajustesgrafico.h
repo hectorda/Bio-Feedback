@@ -17,6 +17,8 @@ public:
         int RadioInterior;
         int RadioExterior;
         int RadioObjetivo;
+        QColor colorObjetivoSinMarcar;
+        QColor colorObjetivoMarcado;
     };
 
     explicit AjustesGrafico(QWidget *parent = 0);
@@ -24,6 +26,7 @@ public:
 
     AjustesGrafico::Ajustes getAjustes();
 
+    void llenarParametrosComboBox();
 private:
     Ui::AjustesGrafico *ui;
     AjustesGrafico::Ajustes ajustesActuales;
@@ -32,7 +35,7 @@ private:
     QCPItemEllipse *circuloInterior;
     void inicializar();
     void conexiones();
-    void graficarObjetivo(const int rObjetivo);
+    void graficarObjetivo(const int rObjetivo, const QColor color);
     void relacionAspecto(QCustomPlot *grafico);
     void graficarRepresentacionGrafico(const int rInterior, const int rExterior);
     bool event(QEvent *event);
@@ -40,9 +43,10 @@ private:
 private slots:
     void aplicar();
     void on_spinBoxRObjetivo_valueChanged(int arg1);
-
     void on_spinBoxRExterior_valueChanged(int arg1);
     void on_spinBoxRInterior_valueChanged(int arg1);
+    void on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int index);
+
 };
 
 #endif // AJUSTESGRAFICO_H

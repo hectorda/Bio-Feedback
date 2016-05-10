@@ -75,7 +75,7 @@ private:
     QLabel *status;
     int pruebaNumero;
     QCPCurve *lienzo;
-    AjustesGrafico::Ajustes radios;
+    AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;
     SQL *db;
 
