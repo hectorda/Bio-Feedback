@@ -79,6 +79,16 @@ void MainWindow::inicializarGrafico()
     //ui->qCustomPlotGrafico->plotLayout()->clear();
     circuloExterior->topLeft->setCoords(-elementosdelGrafico.RadioExterior,elementosdelGrafico.RadioExterior);
     circuloExterior->bottomRight->setCoords(elementosdelGrafico.RadioExterior,-elementosdelGrafico.RadioExterior);
+
+//    QPoint pos=ui->qCustomPlotGrafico->mapToGlobal(QPoint(0,0));
+
+//    QRadialGradient rg(pos.x(), pos.y(), pos.x(), pos.y()+20, pos.y()+20);
+//    rg.setColorAt(0, Qt::red);
+//    rg.setColorAt(0.2, Qt::green);
+//    rg.setColorAt(0.4,Qt::black);
+//    rg.setColorAt(1, Qt::white);
+    //,QPixmap("\radial.jpg")
+
     circuloExterior->setBrush(QBrush(Qt::yellow));
 
     circuloInterior->topLeft->setCoords(-elementosdelGrafico.RadioInterior,elementosdelGrafico.RadioInterior);
@@ -93,6 +103,7 @@ void MainWindow::inicializarGrafico()
 
     lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
     lienzo->setPen(QPen(Qt::blue, 1));
+
     ui->qCustomPlotGrafico->addPlottable(lienzo);
     //Se configuran los rangos maximos para los ejes X e Y segun el slider.
     const int range=ui->verticalSliderRangeGraphic->value();
@@ -100,7 +111,6 @@ void MainWindow::inicializarGrafico()
     ui->qCustomPlotGrafico->yAxis->setRange(-range,range);
 
     ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom); // Para usar el el Zoom y el Arrastre del grafico.
-
 }
 
 void MainWindow::actualizarMensajeBarraEstado(const QString &message)

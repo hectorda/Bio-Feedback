@@ -199,10 +199,16 @@ void Reportes::inicializarGraficoMuestras()
 
 }
 
+void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
+{
+    //Se agregan los datos al grafico de Angulos
+    graficoAnguloX->addData(angulo->getTiempo() , angulo->getAnguloX());
+    graficoAnguloY->addData(angulo->getTiempo() , angulo->getAnguloY());
+}
+
 void Reportes::agregarDatosGraficoMuestras(Raw *datos)
 {
     //Se rellenar los datos de los graficos de las Muestras
-
     graficoAcX->addData(datos->getTiempo(), datos->getAcX());
     graficoAcY->addData(datos->getTiempo(), datos->getAcY());
     graficoAcZ->addData(datos->getTiempo(), datos->getAcZ());
@@ -211,13 +217,6 @@ void Reportes::agregarDatosGraficoMuestras(Raw *datos)
     graficoGyY->addData(datos->getTiempo(), datos->getGyZ());
     graficoGyZ->addData(datos->getTiempo(), datos->getGyZ());
 
-}
-
-void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
-{
-    //Se agregan los datos al grafico de Angulos
-    graficoAnguloX->addData(angulo->getTiempo() , angulo->getAnguloX());
-    graficoAnguloY->addData(angulo->getTiempo() , angulo->getAnguloY());
 }
 
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
@@ -336,7 +335,6 @@ void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)
        grafico->saveJpg(fileName,ancho,alto);
     if(selectedFilter.contains("PDF"))
       grafico->savePdf(fileName,false,ancho,alto);
-
 }
 
 void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
