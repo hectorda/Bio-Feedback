@@ -22,22 +22,8 @@ void MainWindow::inicializar()
     ajustesSerial= new AjustesPuertoSerial(this);
     ajustesSensores = new AjustesSensores(this);
     ajustesGrafico = new AjustesGrafico(this);
-    lectorSerial = new Serial(0, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
-
-//    Reportes *reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficosAngulos,ui->qCustomPlotGraficoMuestras,
-//                                     ui->tableWidgetAngulos,ui->tableWidgetDatosRaw,listaAngulos,listaMuestras);
-
-//    QThread *hiloReportes = new QThread(this);
-////    Reportes *reportes= new Reportes();
-//    reportes->moveToThread(hiloReportes);
-
-//    connect(this,SIGNAL(emitGraficarResultados()),reportes,SLOT(graficarResultados()));
-//    connect(this,SIGNAL(emitGraficarMuestras()),reportes,SLOT(graficarMuestras()));
-////    connect(this,SIGNAL(emitGraficarAngulos(QCustomPlot*,QList<Angulo*>)),reportes,SLOT(graficarAngulos(QCustomPlot*,QList<Angulo*>)));
-////    connect(this,SIGNAL(emitGraficarMuestras(QCustomPlot*,QList<Raw*>)),reportes,SLOT(graficarMuestras(QCustomPlot*,QList<Raw*>)));
-//    connect(hiloReportes, SIGNAL(destroyed()), reportes, SLOT(deleteLater()));
-
-//    //updater->newLabel("h:/test.png");
+    lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
+    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficosAngulos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
@@ -63,7 +49,15 @@ void MainWindow::inicializar()
 
 void MainWindow::conexiones()
 {
-    connect(this,SIGNAL(emitAngulo(Angulo*)),this,SLOT(slotGraficarTiempoReal(Angulo*)));
+    //Se envia el dato para graficar en tiempo Real
+    connect(this,SIGNAL(emitAnguloGraficoTiempoReal(Angulo*)),this,SLOT(slotGraficarTiempoReal(Angulo*)));
+
+    //Conjunto de connects para enviar datos a los graficos de Reportes
+    connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarDatosGraficoAngulos(Angulo*)));
+    connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarFilaTablaAngulos(Angulo*)));
+    connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarDatosGraficoMuestras(Raw*)));
+    connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarFilaTablaMuestras(Raw*)));
+
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
@@ -118,13 +112,7 @@ void MainWindow::mostrarResultados()
 {
     QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
-    reportes = new Reportes;
-    reportes->graficarResultados(ui->qCustomPlotResultados,listaAngulos);
-    reportes->tablaAngulos(ui->tableWidgetAngulos,listaAngulos);
-    reportes->tablaMuestras(ui->tableWidgetDatosRaw,listaMuestras);
-    reportes->graficarAngulos(ui->qCustomPlotGraficosAngulos,listaAngulos);
-    reportes->graficarMuestras(ui->qCustomPlotGraficoMuestras,listaMuestras);
-
+    reportes->graficarResultados(listaAngulos);
     mostrarBotones();
     activarTabs();
 }
@@ -185,8 +173,10 @@ void MainWindow::obtenerAngulos(Raw *dato)
         Angulo *angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
         listaAngulos.append(angulo);
 
+        emit emitAnguloReporte(angulo);
+
         if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
-            emit emitAngulo(angulo);
+            emit emitAnguloGraficoTiempoReal(angulo);
     }
 }
 
@@ -424,6 +414,8 @@ void MainWindow::iniciarPrueba()
     listaMuestras.clear();
     listaAngulos.clear();
     listaObjetivos.clear();
+    reportes->vaciarTablas();
+    reportes->vaciarGraficos();
 
     lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes(),ajustesSensores->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
     cronometro.start();
@@ -474,6 +466,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         obtenerAngulos(dato);
 
         listaMuestras.append(dato);
+        emit emitRawReporte(dato);
 
         if(tiempoPrueba!=qInf()){ //Si el tiempo es distinto de infinito se calcula el porcentaje
            const double porcentaje=(tiempo/tiempoPrueba)*100+0.1;
@@ -692,6 +685,9 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
     {
+        ui->qCustomPlotGraficosAngulos->rescaleAxes();
+        ui->qCustomPlotGraficosAngulos->replot();
+
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGraficos\nAngulos");
         ui->labelGuardarImagen->show();
@@ -705,6 +701,9 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
     {
+        ui->qCustomPlotGraficoMuestras->rescaleAxes();
+        ui->qCustomPlotGraficoMuestras->replot();
+
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGraficos\nMuestras");
         ui->labelGuardarImagen->show();

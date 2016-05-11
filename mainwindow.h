@@ -57,8 +57,10 @@ private slots:
 
 
 signals:
-    void emitAngulo(Angulo*);
+    void emitAnguloGraficoTiempoReal(Angulo*);
     void emitEscribirSerial(QString);
+    void emitRawReporte(Raw*);
+    void emitAnguloReporte(Angulo*);
 //    void emitGraficarResultados();
 //    void emitGraficarMuestras();
 //    void emitGraficarAngulos();
