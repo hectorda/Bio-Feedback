@@ -61,7 +61,7 @@ signals:
     void emitEscribirSerial(QString);
     void emitRawReporte(Raw*);
     void emitAnguloReporte(Angulo*);
-//    void emitGraficarResultados();
+    void emitGraficarResultados(QList<Angulo*>);
 //    void emitGraficarMuestras();
 //    void emitGraficarAngulos();
 ////    void emitGraficarAngulos(QCustomPlot*,QList<Angulo*>);

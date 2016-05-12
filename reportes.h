@@ -15,8 +15,6 @@ public:
     explicit Reportes(QObject *parent = 0);
     Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras);
 
-    void graficarResultados(QList<Angulo*> listaAngulos);
-
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
     void guardarAngulosEnArchivo(QList<Angulo*> listaAngulos);
@@ -32,6 +30,9 @@ private:
     QTableWidget *tablaAngulos;
     QTableWidget *tablaMuestras;
 
+    //Plotables del Rrafico Resultado
+    QCPBars *cuadrantes;
+
     //Plotables de los Graficos del Angulo
     QCPGraph *graficoAnguloX;
     QCPGraph *graficoAnguloY;
@@ -45,13 +46,12 @@ private:
     QCPGraph *graficoGyZ;
 
     //Funciones donde se crean los layouts y elementos de los graficos del reporte
+    void inicializarGraficoResultados();
     void inicializarGraficoAngulos();
     void inicializarGraficoMuestras();
 
-    //Se
-    void limpiarGrafico(QCustomPlot *grafico);
+    //Para vaciar las tablas
     void limpiarTabla(QTableWidget *tabla);
-
 
 signals:
 
@@ -61,6 +61,7 @@ public slots:
     void agregarDatosGraficoAngulos(Angulo *angulo);
     void agregarFilaTablaAngulos(Angulo *angulo);
     void agregarFilaTablaMuestras(Raw *datos);
+    void graficarResultados(QList<Angulo*> listaAngulos);
 
 };
 

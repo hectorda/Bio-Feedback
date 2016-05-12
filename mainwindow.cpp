@@ -57,6 +57,7 @@ void MainWindow::conexiones()
     connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarFilaTablaAngulos(Angulo*)));
     connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarDatosGraficoMuestras(Raw*)));
     connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarFilaTablaMuestras(Raw*)));
+    connect(this,SIGNAL(emitGraficarResultados(QList<Angulo*>)),reportes,SLOT(graficarResultados(QList<Angulo*>)));
 
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
@@ -122,7 +123,7 @@ void MainWindow::mostrarResultados()
 {
     QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
-    reportes->graficarResultados(listaAngulos);
+    emit emitGraficarResultados(listaAngulos);
     mostrarBotones();
     activarTabs();
 }
@@ -659,6 +660,9 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
     {
+        ui->qCustomPlotResultados->rescaleAxes();
+        ui->qCustomPlotResultados->replot();
+
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGrafico\nResultados");
         ui->labelGuardarImagen->show();

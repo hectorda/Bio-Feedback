@@ -13,24 +13,9 @@ Reportes::Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *g
     this->graficoMuestras = graficoMuestras;
     this->tablaAngulos = tablaAngulos;
     this->tablaMuestras = tablaMuestras;
+    inicializarGraficoResultados();
     inicializarGraficoAngulos();
     inicializarGraficoMuestras();
-}
-
-void Reportes::limpiarGrafico(QCustomPlot *grafico){
-
-    if(grafico->plotLayout()->hasElement(0,1))
-        grafico->plotLayout()->remove(grafico->plotLayout()->element(0,1));
-
-    grafico->legend->clear();
-    grafico->legend->setVisible(false);
-    grafico->clearGraphs();
-    grafico->clearPlottables();
-    grafico->clearItems();
-    grafico->xAxis->setLabel("");
-    grafico->yAxis->setLabel("");
-    grafico->rescaleAxes();
-    grafico->replot();
 }
 
 void Reportes::limpiarTabla(QTableWidget *tabla)
@@ -49,6 +34,8 @@ void Reportes::vaciarTablas()
 
 void Reportes::vaciarGraficos()
 {
+    cuadrantes->clearData();
+
     graficoAnguloX->clearData();
     graficoAnguloY->clearData();
 
@@ -58,6 +45,60 @@ void Reportes::vaciarGraficos()
     graficoGyX->clearData();
     graficoGyY->clearData();
     graficoGyZ->clearData();
+}
+
+void Reportes::inicializarGraficoResultados()
+{
+    cuadrantes = new QCPBars(graficoResultados->xAxis, graficoResultados->yAxis);
+    graficoResultados->addPlottable(cuadrantes);
+    // set names and colors:
+    QPen pen;
+    pen.setWidthF(1.2);
+    cuadrantes->setName("Porcentaje en cada cuadrante");
+    pen.setColor(QColor(255, 131, 0));
+    cuadrantes->setPen(pen);
+    cuadrantes->setBrush(QColor(255, 131, 0, 50));
+
+    // prepare x axis with country labels:
+    QVector<double> ticks;
+    QVector<QString> labels;
+    ticks << 1 << 2 << 3 << 4;
+    labels << "Cuadrante 1" << "Cuadrante 2" << "Cuadrante 3" << "Cuadrante 4";
+    graficoResultados->xAxis->setAutoTicks(false);
+    graficoResultados->xAxis->setAutoTickLabels(false);
+    graficoResultados->xAxis->setTickVector(ticks);
+    graficoResultados->xAxis->setTickVectorLabels(labels);
+    graficoResultados->xAxis->setTickLabelRotation(60);
+    graficoResultados->xAxis->setSubTickCount(0);
+    graficoResultados->xAxis->setTickLength(0, 4);
+    graficoResultados->xAxis->grid()->setVisible(true);
+    graficoResultados->xAxis->setRange(0, 5);
+
+    // prepare y axis:
+    graficoResultados->yAxis->setRange(0, 100);
+    graficoResultados->yAxis->setPadding(5); // a bit more space to the left border
+    graficoResultados->yAxis->setLabel("Porcentaje");
+    graficoResultados->yAxis->grid()->setSubGridVisible(true);
+    QPen gridPen;
+    gridPen.setStyle(Qt::SolidLine);
+    gridPen.setColor(QColor(0, 0, 0, 25));
+    graficoResultados->yAxis->grid()->setPen(gridPen);
+    gridPen.setStyle(Qt::DotLine);
+    graficoResultados->yAxis->grid()->setSubGridPen(gridPen);
+
+    // setup legend:
+    graficoResultados->legend->setVisible(true);
+    graficoResultados->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
+    graficoResultados->legend->setBrush(QColor(255, 255, 255, 200));
+    QPen legendPen;
+    legendPen.setColor(QColor(130, 130, 130, 200));
+    graficoResultados->legend->setBorderPen(legendPen);
+//    QFont legendFont = font();
+//    legendFont.setPointSize(10);
+//    graficoResultados->legend->setFont(legendFont);
+    graficoResultados->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    //graficoResultados->replot();
+
 }
 
 void Reportes::inicializarGraficoAngulos()
@@ -244,8 +285,13 @@ void Reportes::agregarFilaTablaMuestras(Raw *datos)
 
 void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
 {
-    limpiarGrafico(graficoResultados);
+    // Add data:
+    QVector<double> quadrantData;
+    QVector<double> ticks;
+
     double q1=0, q2=0, q3=0, q4=0;
+
+    ticks << 1 << 2 << 3 << 4;
 
     foreach (Angulo *var, listaAngulos) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
         if(var->getAnguloX()>0){
@@ -267,60 +313,10 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     q3=q3/listaAngulos.size()*100;
     q4=q4/listaAngulos.size()*100;
 
-    QCPBars *cuadrantes = new QCPBars(graficoResultados->xAxis, graficoResultados->yAxis);
-    graficoResultados->addPlottable(cuadrantes);
-    // set names and colors:
-    QPen pen;
-    pen.setWidthF(1.2);
-    cuadrantes->setName("Porcentaje en cada cuadrante");
-    pen.setColor(QColor(255, 131, 0));
-    cuadrantes->setPen(pen);
-    cuadrantes->setBrush(QColor(255, 131, 0, 50));
-
-    // prepare x axis with country labels:
-    QVector<double> ticks;
-    QVector<QString> labels;
-    ticks << 1 << 2 << 3 << 4;
-    labels << "Cuadrante 1" << "Cuadrante 2" << "Cuadrante 3" << "Cuadrante 4";
-    graficoResultados->xAxis->setAutoTicks(false);
-    graficoResultados->xAxis->setAutoTickLabels(false);
-    graficoResultados->xAxis->setTickVector(ticks);
-    graficoResultados->xAxis->setTickVectorLabels(labels);
-    graficoResultados->xAxis->setTickLabelRotation(60);
-    graficoResultados->xAxis->setSubTickCount(0);
-    graficoResultados->xAxis->setTickLength(0, 4);
-    graficoResultados->xAxis->grid()->setVisible(true);
-    graficoResultados->xAxis->setRange(0, 5);
-
-    // prepare y axis:
-    graficoResultados->yAxis->setRange(0, 100);
-    graficoResultados->yAxis->setPadding(5); // a bit more space to the left border
-    graficoResultados->yAxis->setLabel("Porcentaje");
-    graficoResultados->yAxis->grid()->setSubGridVisible(true);
-    QPen gridPen;
-    gridPen.setStyle(Qt::SolidLine);
-    gridPen.setColor(QColor(0, 0, 0, 25));
-    graficoResultados->yAxis->grid()->setPen(gridPen);
-    gridPen.setStyle(Qt::DotLine);
-    graficoResultados->yAxis->grid()->setSubGridPen(gridPen);
-
-    // Add data:
-    QVector<double> quadrantData;
     quadrantData  << q1 << q2 << q3 << q4;
-    cuadrantes->setData(ticks, quadrantData);
 
-    // setup legend:
-    graficoResultados->legend->setVisible(true);
-    graficoResultados->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    graficoResultados->legend->setBrush(QColor(255, 255, 255, 200));
-    QPen legendPen;
-    legendPen.setColor(QColor(130, 130, 130, 200));
-    graficoResultados->legend->setBorderPen(legendPen);
-//    QFont legendFont = font();
-//    legendFont.setPointSize(10);
-//    graficoResultados->legend->setFont(legendFont);
-    graficoResultados->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    graficoResultados->replot();
+    cuadrantes->setData(ticks, quadrantData);
+    QTextStream stdout<< "Grafico??: q1:"<<q1<<" q2:"<<q2<<" q3:"<<q3<<"q4:"<<q4<<endl;
 }
 
 void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)
