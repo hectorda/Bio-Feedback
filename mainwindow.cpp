@@ -64,7 +64,7 @@ void MainWindow::conexiones()
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
     connect(lectorSerial,SIGNAL(datosLeidos(double,double,double,double,double,double)),this,SLOT(obtenerRaw(double,double,double,double,double,double)));
 
-    //Connect de actions
+      //Connect de actions
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(show()));
@@ -731,3 +731,8 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
 }
 
+
+void MainWindow::on_pushButtonEscribirSerial_clicked()
+{
+    lectorSerial->escribirDatosSerial(ajustesSensores->getAjustes());
+}

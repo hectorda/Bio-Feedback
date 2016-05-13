@@ -56,6 +56,8 @@ private slots:
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
 
+    void on_pushButtonEscribirSerial_clicked();
+
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);
     void emitEscribirSerial(QString);

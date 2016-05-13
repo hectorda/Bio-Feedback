@@ -18,6 +18,8 @@ void Serial::inicializar()
 void Serial::conexiones()
 {
     connect(serial,SIGNAL(readyRead()),this,SLOT(leerDatosSerial()));
+    connect(this,SIGNAL(emitEscribirSerial(QString)),this,SLOT(escribirDatosSerial(QString)));
+
 }
 
 
@@ -33,12 +35,11 @@ void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial, QStri
     serial->setFlowControl(QSerialPort::NoFlowControl);
 
     if (serial->open(QIODevice::ReadWrite)){
-
-        //serial->dataTerminalReadyChanged(true);
-        //serial->requestToSendChanged(true);
         serial->clear();
+        serial->setDataTerminalReady(true);
+       serial->setRequestToSend(true);
         QTextStream(stdout)<<"Cadena de Configuracion: " <<ajustesSensores<<endl;
-        serial->write("v0"+ajustesSensores.toLocal8Bit());
+        emit emitEscribirSerial(ajustesSensores);
 
     } else {
         QMessageBox::critical(0, tr("Error"), serial->errorString());
@@ -56,13 +57,20 @@ void Serial::leerDatosSerial()
     while (serial->canReadLine()){
         const QByteArray datosSerial = serial->readLine();
         QStringList linea=QString(datosSerial).split(" ");
-
-        const double AcX=QString(linea.at(0)).toDouble();
-        const double AcY=QString(linea.at(1)).toDouble();
-        const double AcZ=QString(linea.at(2)).toDouble();
-        const double GyX=QString(linea.at(3)).toDouble();
-        const double GyY=QString(linea.at(4)).toDouble();
-        const double GyZ=QString(linea.at(5)).toDouble();
-        emit datosLeidos(AcX,AcY,AcZ,GyX,GyY,GyZ);
+        QTextStream stdout << datosSerial<<endl;
+        if(linea.size()==6){
+            const double AcX=QString(linea.at(0)).toDouble();
+            const double AcY=QString(linea.at(1)).toDouble();
+            const double AcZ=QString(linea.at(2)).toDouble();
+            const double GyX=QString(linea.at(3)).toDouble();
+            const double GyY=QString(linea.at(4)).toDouble();
+            const double GyZ=QString(linea.at(5)).toDouble();
+            emit datosLeidos(AcX,AcY,AcZ,GyX,GyY,GyZ);
+        }
     }
+}
+
+void Serial::escribirDatosSerial(QString cadena)
+{
+    serial->write(cadena.toLocal8Bit());
 }

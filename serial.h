@@ -24,9 +24,11 @@ private:
 
 signals:
     void datosLeidos(double,double,double,double,double,double);
+    void emitEscribirSerial(QString);
 
 public slots:
     void leerDatosSerial();
+    void escribirDatosSerial(QString cadena);
 };
 
 #endif // SERIAL_H

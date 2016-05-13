@@ -260,29 +260,6 @@ void Reportes::agregarDatosGraficoMuestras(Raw *datos)
 
 }
 
-void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
-{
-    //Se agrega una nueva fila a la tabla
-    const int currentRow = tablaAngulos->rowCount();
-    tablaAngulos->setRowCount(currentRow + 1);
-    tablaAngulos->setItem(currentRow,0,new QTableWidgetItem(QString::number(angulo->getTiempo(),'f',presicion)));
-    tablaAngulos->setItem(currentRow,1,new QTableWidgetItem(QString::number(angulo->getAnguloX(),'f',presicion)));
-    tablaAngulos->setItem(currentRow,2,new QTableWidgetItem(QString::number(angulo->getAnguloY(),'f',presicion)));
-}
-
-void Reportes::agregarFilaTablaMuestras(Raw *datos)
-{
-    const int currentRow = tablaMuestras->rowCount();
-    tablaMuestras->setRowCount(currentRow + 1);
-    tablaMuestras->setItem(currentRow,0,new QTableWidgetItem(QString::number(datos->getTiempo(),'f',presicion)));
-    tablaMuestras->setItem(currentRow,1,new QTableWidgetItem(QString::number(datos->getAcX(),'f',presicion)));
-    tablaMuestras->setItem(currentRow,2,new QTableWidgetItem(QString::number(datos->getAcY(),'f',presicion)));
-    tablaMuestras->setItem(currentRow,3,new QTableWidgetItem(QString::number(datos->getAcZ(),'f',presicion)));
-    tablaMuestras->setItem(currentRow,4,new QTableWidgetItem(QString::number(datos->getGyX(),'f',presicion)));
-    tablaMuestras->setItem(currentRow,5,new QTableWidgetItem(QString::number(datos->getGyY(),'f',presicion)));
-    tablaMuestras->setItem(currentRow,6,new QTableWidgetItem(QString::number(datos->getGyZ(),'f',presicion)));
-}
-
 void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
 {
     // Add data:
@@ -316,7 +293,29 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     quadrantData  << q1 << q2 << q3 << q4;
 
     cuadrantes->setData(ticks, quadrantData);
-    QTextStream stdout<< "Grafico??: q1:"<<q1<<" q2:"<<q2<<" q3:"<<q3<<"q4:"<<q4<<endl;
+}
+
+void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
+{
+    //Se agrega una nueva fila a la tabla
+    const int currentRow = tablaAngulos->rowCount();
+    tablaAngulos->setRowCount(currentRow + 1);
+    tablaAngulos->setItem(currentRow,0,new QTableWidgetItem(QString::number(angulo->getTiempo(),'f',presicion)));
+    tablaAngulos->setItem(currentRow,1,new QTableWidgetItem(QString::number(angulo->getAnguloX(),'f',presicion)));
+    tablaAngulos->setItem(currentRow,2,new QTableWidgetItem(QString::number(angulo->getAnguloY(),'f',presicion)));
+}
+
+void Reportes::agregarFilaTablaMuestras(Raw *datos)
+{
+    const int currentRow = tablaMuestras->rowCount();
+    tablaMuestras->setRowCount(currentRow + 1);
+    tablaMuestras->setItem(currentRow,0,new QTableWidgetItem(QString::number(datos->getTiempo(),'f',presicion)));
+    tablaMuestras->setItem(currentRow,1,new QTableWidgetItem(QString::number(datos->getAcX(),'f',presicion)));
+    tablaMuestras->setItem(currentRow,2,new QTableWidgetItem(QString::number(datos->getAcY(),'f',presicion)));
+    tablaMuestras->setItem(currentRow,3,new QTableWidgetItem(QString::number(datos->getAcZ(),'f',presicion)));
+    tablaMuestras->setItem(currentRow,4,new QTableWidgetItem(QString::number(datos->getGyX(),'f',presicion)));
+    tablaMuestras->setItem(currentRow,5,new QTableWidgetItem(QString::number(datos->getGyY(),'f',presicion)));
+    tablaMuestras->setItem(currentRow,6,new QTableWidgetItem(QString::number(datos->getGyZ(),'f',presicion)));
 }
 
 void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)

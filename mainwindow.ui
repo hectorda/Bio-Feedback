@@ -1202,6 +1202,13 @@ Gráfico</string>
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButtonEscribirSerial">
+            <property name="text">
+             <string>reenviar Config</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_8">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
