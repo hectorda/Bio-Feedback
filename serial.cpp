@@ -1,4 +1,5 @@
 #include "serial.h"
+#include <QTimer>
 
 Serial::Serial(QObject *parent) : QObject(parent)
 {
@@ -18,12 +19,10 @@ void Serial::inicializar()
 void Serial::conexiones()
 {
     connect(serial,SIGNAL(readyRead()),this,SLOT(leerDatosSerial()));
-    connect(this,SIGNAL(emitEscribirSerial(QString)),this,SLOT(escribirDatosSerial(QString)));
-
 }
 
 
-void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores)
+void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial)
 {
     serial->setPortName(ajustesSerial.portName);
     serial->setBaudRate(ajustesSerial.baudRate);
@@ -33,14 +32,10 @@ void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial, QStri
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
     serial->setFlowControl(QSerialPort::NoFlowControl);
-
     if (serial->open(QIODevice::ReadWrite)){
         serial->clear();
         serial->setDataTerminalReady(true);
-       serial->setRequestToSend(true);
-        QTextStream(stdout)<<"Cadena de Configuracion: " <<ajustesSensores<<endl;
-        emit emitEscribirSerial(ajustesSensores);
-
+        serial->setRequestToSend(true);
     } else {
         QMessageBox::critical(0, tr("Error"), serial->errorString());
     }
@@ -57,7 +52,6 @@ void Serial::leerDatosSerial()
     while (serial->canReadLine()){
         const QByteArray datosSerial = serial->readLine();
         QStringList linea=QString(datosSerial).split(" ");
-        QTextStream stdout << datosSerial<<endl;
         if(linea.size()==6){
             const double AcX=QString(linea.at(0)).toDouble();
             const double AcY=QString(linea.at(1)).toDouble();
@@ -70,7 +64,10 @@ void Serial::leerDatosSerial()
     }
 }
 
+
 void Serial::escribirDatosSerial(QString cadena)
 {
+    serial->clear();
     serial->write(cadena.toLocal8Bit());
+
 }

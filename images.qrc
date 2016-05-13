@@ -23,5 +23,6 @@
         <file>images/diana.png</file>
         <file>images/database.png</file>
         <file>images/IMUVertical.jpg</file>
+        <file>images/Loading.gif</file>
     </qresource>
 </RCC>

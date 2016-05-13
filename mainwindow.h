@@ -55,19 +55,11 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
-
-    void on_pushButtonEscribirSerial_clicked();
-
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);
-    void emitEscribirSerial(QString);
     void emitRawReporte(Raw*);
     void emitAnguloReporte(Angulo*);
     void emitGraficarResultados(QList<Angulo*>);
-//    void emitGraficarMuestras();
-//    void emitGraficarAngulos();
-////    void emitGraficarAngulos(QCustomPlot*,QList<Angulo*>);
-//    void emitGraficarMuestras(QCustomPlot*,QList<Raw*>);
 
 private:
     Ui::MainWindow *ui;
@@ -90,6 +82,7 @@ private:
 
     void inicializar();
     void conexiones();
+    void configurarArduino();
     void inicializarGrafico();
     void mostrarBotones();
     void ocultarBotones();

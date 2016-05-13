@@ -18,7 +18,6 @@ MainWindow::~MainWindow()
 void MainWindow::inicializar()
 {
     ui->setupUi(this);
-
     ajustesSerial= new AjustesPuertoSerial(this);
     ajustesSensores = new AjustesSensores(this);
     ajustesGrafico = new AjustesGrafico(this);
@@ -37,6 +36,9 @@ void MainWindow::inicializar()
     titulo->setFont(QFont("sans", 10, QFont::Normal));
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0,titulo);
+
+    ui->labelConfigurandoSensores->hide();
+    ui->labelQMovie->hide();
 
     circuloExterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
     circuloInterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
@@ -419,6 +421,26 @@ void MainWindow::relacionAspectodelGrafico()
         ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y()+((h-w)/2),w,w);
 }
 
+void MainWindow::configurarArduino()
+{
+    lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
+    ui->labelConfigurandoSensores->show();
+
+    QMovie *movie = new QMovie(":/images/Loading.gif");
+    movie->setScaledSize(QSize(50,50));
+    ui->labelQMovie->setMovie(movie);
+    movie->start();
+    ui->labelQMovie->show();
+
+    QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
+    timer->setSingleShot(true);
+    connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustes()); });
+    connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
+    connect(timer, QTimer::timeout, [=]() { ui->labelConfigurandoSensores->hide(); });
+    connect(timer, QTimer::timeout, [=]() { ui->labelQMovie->hide(); });
+    timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
+}
+
 void MainWindow::iniciarPrueba()
 {
     //Limpieza de listas
@@ -428,15 +450,18 @@ void MainWindow::iniciarPrueba()
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
 
-    lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes(),ajustesSensores->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
     cronometro.start();
     elementosdelGrafico=ajustesGrafico->getAjustes();
+
     ui->verticalSliderRangeGraphic->setValue(elementosdelGrafico.RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian los graficos
     elementosdelGrafico.RadioObjetivo=elementosdelGrafico.RadioObjetivo;
 
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+
+    ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+    ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
 
     desactivarTabs();
     desactivarSpacerEntreBotones();
@@ -492,22 +517,22 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         actualizarMensajeBarraEstado(mensaje);
     }
     else{
-        QTextStream stdout <<"a expìrado?"<<cronometro.hasExpired(tiempoPrueba/1000.0)<<endl;
         mostrarResultados();
     }
 }
 
 void MainWindow::on_pushButtonIniciarPrueba_clicked()
 {
-    iniciarPrueba();
-    ui->stackedWidget->setCurrentWidget(ui->widgetTest);
-    ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
+    configurarArduino();
+
 }
 
 void MainWindow::on_pushButtonReiniciarPrueba_clicked()
 {
     lectorSerial->cerrarPuertoSerial();
-    iniciarPrueba();
+    limpiarGrafico(ui->qCustomPlotGrafico);
+    ui->qCustomPlotGrafico->replot();
+    configurarArduino();
 }
 
 void MainWindow::on_pushButtonDetenerPrueba_clicked()
@@ -729,10 +754,4 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
         activarSpacerEntreBotones();
     }
 
-}
-
-
-void MainWindow::on_pushButtonEscribirSerial_clicked()
-{
-    lectorSerial->escribirDatosSerial(ajustesSensores->getAjustes());
 }

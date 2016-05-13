@@ -562,20 +562,22 @@ QPushButton:hover {
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonIniciarPrueba">
-            <property name="font">
-             <font>
-              <pointsize>15</pointsize>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>Iniciar la Prueba</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton{
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QPushButton" name="pushButtonIniciarPrueba">
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Iniciar la Prueba</string>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
 color : white;
 background-color: #5cb85c;
 border: 3px solid #4cae4c;
@@ -593,21 +595,44 @@ QPushButton:pressed {
 border: 3px solid #398439;
 }
 </string>
-            </property>
-            <property name="text">
-             <string>Ir Pagina Test</string>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>64</width>
-              <height>64</height>
-             </size>
-            </property>
-           </widget>
+              </property>
+              <property name="text">
+               <string>Ir Pagina Test</string>
+              </property>
+              <property name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/play.png</normaloff>:/images/play.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>64</width>
+                <height>64</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayoutConfigurandoSensores">
+              <item>
+               <widget class="QLabel" name="labelConfigurandoSensores">
+                <property name="text">
+                 <string>Configurando Sensores</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelQMovie">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -1198,13 +1223,6 @@ Gráfico</string>
             </property>
             <property name="value">
              <number>5</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonEscribirSerial">
-            <property name="text">
-             <string>reenviar Config</string>
             </property>
            </widget>
           </item>

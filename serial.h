@@ -15,16 +15,16 @@ public:
     QSerialPort *serial;
     explicit Serial(QObject *parent = 0);
     Serial(QObject *parent,QSerialPort *serial);
-    void abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial, QString ajustesSensores);
+    void abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial);
     void cerrarPuertoSerial();
 
 private:
     void inicializar();
     void conexiones();
+    QByteArray buffer;
 
 signals:
     void datosLeidos(double,double,double,double,double,double);
-    void emitEscribirSerial(QString);
 
 public slots:
     void leerDatosSerial();
