@@ -75,6 +75,7 @@ private:
     QList<QCPItemEllipse*> listaObjetivos;
     QLabel *status;
     int pruebaNumero;
+    double frecuenciaMuestreo;
     QCPCurve *lienzo;
     AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;

@@ -62,6 +62,21 @@ QString AjustesSensores::getAjustes() const
     return ajustesactuales;
 }
 
+double AjustesSensores::obtenerFrecuenciaMuestreo()
+{
+    if(ui->spinBoxDLPF->value()==0){
+        frecuenciaMuestreo=8000.0/(ui->spinBoxSampleRate->value()+1);
+    }
+
+    else
+    {
+        frecuenciaMuestreo=(1000.0/(ui->spinBoxSampleRate->value())+1);
+    }
+
+    return frecuenciaMuestreo;
+
+}
+
 void AjustesSensores::aplicar()
 {
     ajustesactuales.clear();
@@ -79,6 +94,7 @@ void AjustesSensores::on_spinBoxSampleRate_valueChanged(int arg1)
 
     else
         mostrarFrecuenciaMuestreo(1000.0/(arg1+1));
+
 }
 
 void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)

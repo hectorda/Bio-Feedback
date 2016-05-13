@@ -123,7 +123,7 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::mostrarResultados()
 {
-    QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/listaMuestras.last()->getTiempo()<<endl;
+    QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/frecuenciaMuestreo<<endl;
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(listaAngulos);
     mostrarBotones();
@@ -287,15 +287,16 @@ void MainWindow::generarObjetivos()
         QTextStream(stdout)<<"Objetivos Puestos"<<listaObjetivos.size()<<endl;
     }
     else{
-//        for (int var = 0; var < cantidadObjetivos; ++var){
-//            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-//            ui->qCustomPlotGrafico->addItem(objetivo);
-//            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
-//            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-radios.RadioObjetivo,qSin(angulo)*distanciaCentro+radios.RadioObjetivo);
-//            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+radios.RadioObjetivo,qSin(angulo)*distanciaCentro-radios.RadioObjetivo);
-//            objetivo->setBrush(QBrush(Qt::red));
-//            listaObjetivos.append(objetivo);
-//        }
+        int distanciaCentro=10;
+        for (int var = 0; var < cantidadObjetivos; ++var){
+            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+            ui->qCustomPlotGrafico->addItem(objetivo);
+            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
+            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo);
+            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo);
+            objetivo->setBrush(QBrush(Qt::red));
+            listaObjetivos.append(objetivo);
+        }
     }
 }
 
@@ -431,7 +432,7 @@ void MainWindow::configurarArduino()
     ui->labelQMovie->setMovie(movie);
     movie->start();
     ui->labelQMovie->show();
-
+    frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
     QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
     timer->setSingleShot(true);
     connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustes()); });
@@ -491,13 +492,13 @@ void MainWindow::regresarInicio()
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
     const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
-    if ( cronometro.elapsed()/1000.0 <=tiempoPrueba ){
+    if (listaMuestras.size() <tiempoPrueba*frecuenciaMuestreo){
 
-        if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
-           cronometro.start();
+//        if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
+//           cronometro.start();
 
         //const double inter=0.005*listaMuestras.size();
-        const double tiempo=cronometro.elapsed()/double(1000);
+        const double tiempo=(1/frecuenciaMuestreo)*listaMuestras.size();
 
         Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
 

@@ -19,7 +19,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
-background-color: rgb(136, 255, 0);
+background-color:rgb(221, 221, 221)
 };</string>
   </property>
   <widget class="QWidget" name="centralWidget">

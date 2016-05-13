@@ -16,7 +16,10 @@ public:
     explicit AjustesSensores(QWidget *parent = 0);
     ~AjustesSensores();
     QString ajustesactuales;
+    double frecuenciaMuestreo;
     QString getAjustes() const;
+    double obtenerFrecuenciaMuestreo();
+
 
 private slots:
     void on_spinBoxDLPF_valueChanged(int arg1);
