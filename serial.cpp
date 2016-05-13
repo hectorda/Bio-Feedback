@@ -33,7 +33,7 @@ void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial)
     serial->setParity(QSerialPort::NoParity);
     serial->setFlowControl(QSerialPort::NoFlowControl);
     if (serial->open(QIODevice::ReadWrite)){
-        serial->clear();
+        //serial->clear();
         serial->setDataTerminalReady(true);
         serial->setRequestToSend(true);
     } else {

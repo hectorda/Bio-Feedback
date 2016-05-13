@@ -437,8 +437,9 @@ void MainWindow::configurarArduino()
     connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustes()); });
     connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
     connect(timer, QTimer::timeout, [=]() { ui->labelConfigurandoSensores->hide(); });
-    connect(timer, QTimer::timeout, [=]() { ui->labelQMovie->hide(); });
+    connect(timer, QTimer::timeout, [=]() { ui->labelQMovie->hide(); movie->stop();});
     timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
+
 }
 
 void MainWindow::iniciarPrueba()
@@ -495,7 +496,8 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
            cronometro.start();
 
-        const double tiempo=cronometro.elapsed()/1000.0;
+        //const double inter=0.005*listaMuestras.size();
+        const double tiempo=cronometro.elapsed()/double(1000);
 
         Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
 

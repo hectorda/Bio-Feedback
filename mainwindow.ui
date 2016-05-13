@@ -17,6 +17,11 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/home.png</normaloff>:/images/home.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+background-color: rgb(136, 255, 0);
+};</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
