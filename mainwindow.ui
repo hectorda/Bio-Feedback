@@ -36,7 +36,7 @@ background-color:rgb(221, 221, 221)
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -615,27 +615,6 @@ border: 3px solid #398439;
                </size>
               </property>
              </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayoutConfigurandoSensores">
-              <item>
-               <widget class="QLabel" name="labelConfigurandoSensores">
-                <property name="text">
-                 <string>Configurando Sensores</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="labelQMovie">
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </item>
            </layout>
           </item>
@@ -1249,6 +1228,27 @@ Gráfico</string>
        </layout>
       </widget>
      </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayoutConfigurandoSensores">
+      <item>
+       <widget class="QLabel" name="labelConfigurandoSensores">
+        <property name="text">
+         <string>Configurando Sensores</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelQMovie">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

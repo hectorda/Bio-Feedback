@@ -123,7 +123,7 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::mostrarResultados()
 {
-    QTextStream(stdout)<<"Muestras x Seg: "<<double(listaMuestras.size())/frecuenciaMuestreo<<endl;
+    QTextStream(stdout)<<"Muestras x Seg: "<< listaMuestras.size()/listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(listaAngulos);
     mostrarBotones();
@@ -391,7 +391,6 @@ void MainWindow::ZoomGraphic(QWheelEvent *event)
     ui->qCustomPlotGrafico->yAxis->setRange(range);
 
     ui->verticalSliderRangeGraphic->setValue(range.upper);
-
 }
 
 void MainWindow::contextMenuRequest(QPoint pos)
@@ -426,7 +425,7 @@ void MainWindow::configurarArduino()
 {
     lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
     ui->labelConfigurandoSensores->show();
-
+    QTextStream stdout<<"Cadena Ajustes:"<<ajustesSensores->getAjustesSensores()<<endl;
     QMovie *movie = new QMovie(":/images/Loading.gif");
     movie->setScaledSize(QSize(50,50));
     ui->labelQMovie->setMovie(movie);
@@ -435,12 +434,11 @@ void MainWindow::configurarArduino()
     frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
     QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
     timer->setSingleShot(true);
-    connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustes()); });
+    connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
     connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
     connect(timer, QTimer::timeout, [=]() { ui->labelConfigurandoSensores->hide(); });
     connect(timer, QTimer::timeout, [=]() { ui->labelQMovie->hide(); movie->stop();});
     timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
-
 }
 
 void MainWindow::iniciarPrueba()
@@ -492,10 +490,10 @@ void MainWindow::regresarInicio()
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
     const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
-    if (listaMuestras.size() <tiempoPrueba*frecuenciaMuestreo){
+    if ( listaMuestras.size() < tiempoPrueba*frecuenciaMuestreo){
 
-//        if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
-//           cronometro.start();
+        if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
+           cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
         //const double inter=0.005*listaMuestras.size();
         const double tiempo=(1/frecuenciaMuestreo)*listaMuestras.size();
@@ -513,13 +511,14 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         }
         const QString lapso=QString::number(tiempo, 'f', 1);
 
-        ui->lcdNumberTiempoTranscurrido->display(lapso);
+        ui->lcdNumberTiempoTranscurrido->display(QString::number(cronometro.elapsed()/1000.0, 'f', 1));
 
         const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
                           + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
         actualizarMensajeBarraEstado(mensaje);
     }
     else{
+        cronometro.invalidate();
         mostrarResultados();
     }
 }
