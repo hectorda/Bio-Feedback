@@ -37,9 +37,6 @@ void MainWindow::inicializar()
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0,titulo);
 
-    ui->labelConfigurandoSensores->hide();
-    ui->labelQMovie->hide();
-
     circuloExterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
     circuloInterior= new QCPItemEllipse(ui->qCustomPlotGrafico);
 
@@ -424,20 +421,28 @@ void MainWindow::relacionAspectodelGrafico()
 void MainWindow::configurarArduino()
 {
     lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
-    ui->labelConfigurandoSensores->show();
     QTextStream stdout<<"Cadena Ajustes:"<<ajustesSensores->getAjustesSensores()<<endl;
+    frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
+
+    //Qdialog de ventana de carga configuracion sensores.
+    QDialog *QdialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
+    QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
+    QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nFrecuencia Muestreo: %1 Hz").arg(frecuenciaMuestreo));
+    layoutBarraCarga->addWidget(labelCarga);
+    QLabel *labelQMovie= new QLabel;
+    layoutBarraCarga->addWidget(labelQMovie);
     QMovie *movie = new QMovie(":/images/Loading.gif");
     movie->setScaledSize(QSize(50,50));
-    ui->labelQMovie->setMovie(movie);
+    labelQMovie->setMovie(movie);
     movie->start();
-    ui->labelQMovie->show();
-    frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
+    QdialogCarga->setLayout(layoutBarraCarga);
+    QdialogCarga->show();
+
     QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
     timer->setSingleShot(true);
     connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
     connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
-    connect(timer, QTimer::timeout, [=]() { ui->labelConfigurandoSensores->hide(); });
-    connect(timer, QTimer::timeout, [=]() { ui->labelQMovie->hide(); movie->stop();});
+    connect(timer, QTimer::timeout, [=]() { delete QdialogCarga; delete movie;});
     timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
 }
 
@@ -489,14 +494,17 @@ void MainWindow::regresarInicio()
 
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
+    const double a1=frecuenciaMuestreo<275 ? listaMuestras.size() : cronometro.elapsed()/1000.0;
+    const double a2=frecuenciaMuestreo<275 ? ui->spinBoxTiempoPrueba->value()*frecuenciaMuestreo : ui->spinBoxTiempoPrueba->value();
+
     const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
-    if ( listaMuestras.size() < tiempoPrueba*frecuenciaMuestreo){
+    if ( a1 < a2){
 
         if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
            cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
         //const double inter=0.005*listaMuestras.size();
-        const double tiempo=(1/frecuenciaMuestreo)*listaMuestras.size();
+        const double tiempo=frecuenciaMuestreo<275 ? (1/frecuenciaMuestreo)*listaMuestras.size(): cronometro.elapsed()/1000.0;
 
         Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
 

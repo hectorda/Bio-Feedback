@@ -88,6 +88,11 @@ double AjustesSensores::obtenerFrecuenciaMuestreo()
 
 void AjustesSensores::aplicar()
 {
+    if(ui->comboBoxFrecuenciaMuestreo->currentText().toDouble()>275)
+        QMessageBox::warning(this,"Frecuencia de Muestreo Alta",
+                             "Advertencia, el usar una frecuencia de muestreo no garantiza el correcto funcionamiento.\nUsela bajo su responsabilidad",
+                             QMessageBox::Ok);
+
     ajustesactuales.configuracionGiroscopio=ui->comboBoxGscale->currentIndex();
     ajustesactuales.configuracionAcelerometro=ui->comboBoxAscale->currentIndex();
     ajustesactuales.filtroPasaBajo = ui->spinBoxDLPF->value();
