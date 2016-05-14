@@ -10,6 +10,12 @@
     <height>641</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Biofeed-Back</string>
   </property>
@@ -36,7 +42,7 @@ background-color:rgb(221, 221, 221)
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1158,6 +1164,18 @@ Gráfico</string>
           </item>
           <item>
            <widget class="QLCDNumber" name="lcdNumberTiempoTranscurrido">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>5</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Segundos Transcurridos</string>
             </property>
@@ -1197,16 +1215,6 @@ Gráfico</string>
             </property>
             <property name="textDirection">
              <enum>QProgressBar::TopToBottom</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBoxgraphupdate">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="value">
-             <number>5</number>
             </property>
            </widget>
           </item>

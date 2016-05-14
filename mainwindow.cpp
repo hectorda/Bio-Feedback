@@ -185,8 +185,9 @@ void MainWindow::obtenerAngulos(Raw *dato)
 
         emit emitAnguloReporte(angulo);
 
-        if(listaAngulos.size() %ui->spinBoxgraphupdate->value()==0)//Mod
+        if(listaMuestras.size()%divisorFPS==0)//Mod
             emit emitAnguloGraficoTiempoReal(angulo);
+
     }
 }
 
@@ -235,7 +236,7 @@ void MainWindow::activarTabs()
 void MainWindow::activarSpacerEntreBotones()
 {
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Expanding);
-    //ui->centralWidget->adjustSize();
+    ui->centralWidget->adjustSize();
 }
 
 void MainWindow::desactivarSpacerEntreBotones()
@@ -457,6 +458,8 @@ void MainWindow::iniciarPrueba()
 
     cronometro.start();
     elementosdelGrafico=ajustesGrafico->getAjustes();
+    divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
+                                           (int)(275/elementosdelGrafico.FPS);
 
     ui->verticalSliderRangeGraphic->setValue(elementosdelGrafico.RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian los graficos

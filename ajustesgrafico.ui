@@ -22,37 +22,14 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Color Objetivos Sin Marcar</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Color Objetivos Marcados</string>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="1">
-      <widget class="QComboBox" name="comboBoxColorObjetivosMarcados"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="spinBoxRExterior">
-       <property name="minimum">
-        <number>10</number>
-       </property>
-       <property name="maximum">
-        <number>90</number>
-       </property>
-       <property name="value">
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
       <widget class="QComboBox" name="comboBoxColorObjetivosSinMarcar"/>
      </item>
      <item row="0" column="1">
@@ -68,24 +45,26 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Radio Circulo Exterior</string>
+     <item row="5" column="1">
+      <widget class="QComboBox" name="comboBoxColorObjetivosMarcados"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spinBoxRExterior">
+       <property name="minimum">
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <number>90</number>
+       </property>
+       <property name="value">
+        <number>20</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Radio Circulo Interior</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Radio de Objetivos</string>
+        <string>Color Objetivos Marcados</string>
        </property>
       </widget>
      </item>
@@ -101,6 +80,37 @@
         <number>2</number>
        </property>
       </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Radio Circulo Exterior</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Radio de Objetivos</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Radio Circulo Interior</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>FPS</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="comboBoxFPS"/>
      </item>
     </layout>
    </item>
@@ -131,20 +141,26 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <widget class="QPushButton" name="pushButtonOK">
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+color : white;
+background-color: #5cb85c;
+border: 2px solid #4cae4c;
+border-radius: 3px;
+padding: 5px;
+min-width: 80px;
+}
+
+QPushButton:hover {
+background-color: #47a447;
+border: 2px solid #398439;
+}
+
+QPushButton:pressed {
+border: 3px solid #398439;
+}</string>
+       </property>
        <property name="text">
         <string>Aceptar</string>
        </property>
@@ -152,23 +168,29 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonCancelar">
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+color : white;
+background-color: rgb(255, 0, 0);
+border: 2px solid;
+border-radius: 3px;
+padding: 5px;
+min-width: 80px;
+}
+
+QPushButton:hover {
+background-color: rgb(170, 0, 0);
+border: 2px solid ;
+}
+
+QPushButton:pressed {
+border: 3px solid rgb(102, 0, 0);
+}</string>
+       </property>
        <property name="text">
         <string>Cancelar</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>

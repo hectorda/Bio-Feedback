@@ -25,9 +25,10 @@ AjustesPuertoSerial::~AjustesPuertoSerial()
 void AjustesPuertoSerial::inicializar(){
     ui->setupUi(this);
 
-    foreach (QSerialPortInfo info, QSerialPortInfo::availablePorts()) {
+    foreach (QSerialPortInfo info, QSerialPortInfo::availablePorts())
         ui->comboBoxPortList->addItem(info.portName());
-    }
+
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 void AjustesPuertoSerial::conexiones()

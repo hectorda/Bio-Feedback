@@ -17,6 +17,7 @@ public:
         int RadioInterior;
         int RadioExterior;
         int RadioObjetivo;
+        int FPS;
         QColor colorObjetivoSinMarcar;
         QColor colorObjetivoMarcado;
     };

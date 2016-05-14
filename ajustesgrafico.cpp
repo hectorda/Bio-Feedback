@@ -30,6 +30,7 @@ void AjustesGrafico::inicializar()
     circuloExterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
     circuloInterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
     ui->qCustomPlotObjetivo->installEventFilter(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 void AjustesGrafico::conexiones()
@@ -42,17 +43,23 @@ void AjustesGrafico::llenarParametrosComboBox()
 {
     QStringList colorNames = QColor::colorNames();
 
-      for (int i = 0; i < colorNames.size(); ++i) {
-          QColor color(colorNames[i]);
+    for (int i = 0; i < colorNames.size(); ++i) {
+        QColor color(colorNames[i]);
 
-          ui->comboBoxColorObjetivosSinMarcar->insertItem(i, colorNames[i]);
-          ui->comboBoxColorObjetivosSinMarcar->setItemData(i, color, Qt::DecorationRole);
+        ui->comboBoxColorObjetivosSinMarcar->insertItem(i, colorNames[i]);
+        ui->comboBoxColorObjetivosSinMarcar->setItemData(i, color, Qt::DecorationRole);
 
-          ui->comboBoxColorObjetivosMarcados->insertItem(i, colorNames[i]);
-          ui->comboBoxColorObjetivosMarcados->setItemData(i, color, Qt::DecorationRole);
-      }
-      ui->comboBoxColorObjetivosSinMarcar->setCurrentIndex(119); //Se setea el color rojo
-      ui->comboBoxColorObjetivosMarcados->setCurrentIndex(54);   //Se setea el color verde
+        ui->comboBoxColorObjetivosMarcados->insertItem(i, colorNames[i]);
+        ui->comboBoxColorObjetivosMarcados->setItemData(i, color, Qt::DecorationRole);
+    }
+    ui->comboBoxColorObjetivosSinMarcar->setCurrentIndex(119); //Se setea el color rojo
+    ui->comboBoxColorObjetivosMarcados->setCurrentIndex(54);   //Se setea el color verde
+
+    for (int var = 0; var < 5; ++var) {
+        ui->comboBoxFPS->addItem(QString::number(12*(var+1)),var);
+    }
+    ui->comboBoxFPS->setCurrentIndex(3);
+
 }
 
 void AjustesGrafico::aplicar()
@@ -61,12 +68,13 @@ void AjustesGrafico::aplicar()
         ajustesActuales.RadioInterior=ui->spinBoxRInterior->value();
         ajustesActuales.RadioExterior=ui->spinBoxRExterior->value();
         ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
-        hide();
+        ajustesActuales.FPS=ui->comboBoxFPS->currentText().toDouble();
+
         const QColor colorSinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
         const QColor colorMarcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));
         ajustesActuales.colorObjetivoSinMarcar = colorSinMarcar;
         ajustesActuales.colorObjetivoMarcado = colorMarcado;
-
+        hide();
         //QTextStream stdout <<ui->comboBoxColorObjetivosSinMarcar->currentIndex()<<sinMarcar.name()<<" "<<ui->comboBoxColorObjetivosMarcados->currentIndex()<<marcado.name()<<endl;
     }
     else

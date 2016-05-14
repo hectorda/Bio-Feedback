@@ -18,6 +18,7 @@ AjustesSensores::~AjustesSensores()
 
 void AjustesSensores::inicializar(){
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 void AjustesSensores::conexiones()
@@ -28,10 +29,9 @@ void AjustesSensores::conexiones()
 
 void AjustesSensores::llenarParametros()
 {
-
-    for (int var = 0; var < 256; ++var) {
+    for (int var = 0; var < 256; ++var)
         ui->comboBoxFrecuenciaMuestreo->addItem(QString::number(8000.0/(var+1),'f',2),var);
-    }
+
     ui->comboBoxFrecuenciaMuestreo->setCurrentIndex(39);
 
     ui->comboBoxAscale->addItem(QStringLiteral("±2G"), 0);
@@ -76,28 +76,45 @@ QString AjustesSensores::getAjustesSensores() const
 
 double AjustesSensores::obtenerFrecuenciaMuestreo()
 {
-    if(ajustesactuales.filtroPasaBajo==0){
+    if(ajustesactuales.filtroPasaBajo==0)
         frecuenciaMuestreo=8000.0/(ajustesactuales.divisorFrecuenciaMuestreo+1);
-    }
+
     else
-    {
         frecuenciaMuestreo=(1000.0/(ajustesactuales.divisorFrecuenciaMuestreo+1));
-    }
+
     return frecuenciaMuestreo;
 }
 
 void AjustesSensores::aplicar()
 {
-    if(ui->comboBoxFrecuenciaMuestreo->currentText().toDouble()>275)
-        QMessageBox::warning(this,"Frecuencia de Muestreo Alta",
-                             "Advertencia, el usar una frecuencia de muestreo no garantiza el correcto funcionamiento.\nUsela bajo su responsabilidad",
-                             QMessageBox::Ok);
+    if(ui->comboBoxFrecuenciaMuestreo->currentText().toDouble()>275){
+        QMessageBox messageBox(QMessageBox::Warning,
+                    "Frecuencia de Muestreo muy alta?",
+                    "Advertencia, el usar una frecuencia de muestreo superior a 275"
+                       "\n no garantiza el correcto funcionamiento."
+                       "\n¿Desea configurarla de todos modos?",
+                    QMessageBox::Yes | QMessageBox::No,
+                    this);
 
-    ajustesactuales.configuracionGiroscopio=ui->comboBoxGscale->currentIndex();
-    ajustesactuales.configuracionAcelerometro=ui->comboBoxAscale->currentIndex();
-    ajustesactuales.filtroPasaBajo = ui->spinBoxDLPF->value();
-    ajustesactuales.divisorFrecuenciaMuestreo = ui->comboBoxFrecuenciaMuestreo->currentIndex();
-    hide();
+        messageBox.setButtonText(QMessageBox::Yes, tr("Aceptar"));
+        messageBox.setButtonText(QMessageBox::No, tr("Cancelar"));
+
+        if (messageBox.exec() == QMessageBox::Yes){
+            ajustesactuales.configuracionGiroscopio=ui->comboBoxGscale->currentIndex();
+            ajustesactuales.configuracionAcelerometro=ui->comboBoxAscale->currentIndex();
+            ajustesactuales.filtroPasaBajo = ui->spinBoxDLPF->value();
+            ajustesactuales.divisorFrecuenciaMuestreo = ui->comboBoxFrecuenciaMuestreo->currentIndex();
+            hide();
+
+        }
+    }
+    else{
+        ajustesactuales.configuracionGiroscopio=ui->comboBoxGscale->currentIndex();
+        ajustesactuales.configuracionAcelerometro=ui->comboBoxAscale->currentIndex();
+        ajustesactuales.filtroPasaBajo = ui->spinBoxDLPF->value();
+        ajustesactuales.divisorFrecuenciaMuestreo = ui->comboBoxFrecuenciaMuestreo->currentIndex();
+        hide();
+    }
 }
 
 void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
@@ -105,18 +122,18 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
     const int indiceCBFrecuenciaMuestreo=ui->comboBoxFrecuenciaMuestreo->currentIndex();
     if(arg1==0){
         ui->comboBoxFrecuenciaMuestreo->clear();
-        for (int var = 0; var < 256; ++var) {
+        for (int var = 0; var < 256; ++var)
             ui->comboBoxFrecuenciaMuestreo->addItem(QString::number(8000.0/(var+1),'f',2),var);
-        }
+
         ui->comboBoxFrecuenciaMuestreo->setCurrentIndex(indiceCBFrecuenciaMuestreo);
         mostrarFrecuenciaMuestreo(ui->comboBoxFrecuenciaMuestreo->currentText());
         mostrarFiltroPasaBajo("Desactivado");
     }
     else{
         ui->comboBoxFrecuenciaMuestreo->clear();
-        for (int var = 0; var < 256; ++var) {
+        for (int var = 0; var < 256; ++var)
             ui->comboBoxFrecuenciaMuestreo->addItem(QString::number(1000.0/(var+1),'f',2),var);
-        }
+
         ui->comboBoxFrecuenciaMuestreo->setCurrentIndex(indiceCBFrecuenciaMuestreo);
         mostrarFrecuenciaMuestreo(ui->comboBoxFrecuenciaMuestreo->currentText());
         if(arg1==1)
@@ -131,12 +148,10 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
             mostrarFiltroPasaBajo("Ac: 10Hz Gy: 10Hz ");
         if(arg1==6)
             mostrarFiltroPasaBajo("Ac:  5Hz Gy:  5Hz ");
-
     }
 }
 
 void AjustesSensores::on_comboBoxFrecuenciaMuestreo_currentIndexChanged(const QString &arg1)
 {
     mostrarFrecuenciaMuestreo(arg1);
-
 }
