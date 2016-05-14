@@ -22,7 +22,7 @@ void Serial::conexiones()
 }
 
 
-void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial)
+bool Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial)
 {
     serial->setPortName(ajustesSerial.portName);
     serial->setBaudRate(ajustesSerial.baudRate);
@@ -36,9 +36,12 @@ void Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial)
         //serial->clear();
         serial->setDataTerminalReady(true);
         serial->setRequestToSend(true);
+        return true;
     } else {
-        QMessageBox::critical(0, tr("Error"), serial->errorString());
+        //QMessageBox::critical(0, tr("Error"), serial->errorString());
+        return false;
     }
+    return false;
 }
 
 void Serial::cerrarPuertoSerial()

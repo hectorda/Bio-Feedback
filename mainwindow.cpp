@@ -421,30 +421,34 @@ void MainWindow::relacionAspectodelGrafico()
 
 void MainWindow::configurarArduino()
 {
-    lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes());//Se abre el puerto serial con sus ajustes respectivos
-    QTextStream stdout<<"Cadena Ajustes:"<<ajustesSensores->getAjustesSensores()<<endl;
-    frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
+    if(lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes()))//Se abre el puerto serial con sus ajustes respectivos
+    {
+        QTextStream stdout<<"Cadena Ajustes:"<<ajustesSensores->getAjustesSensores()<<endl;
+        frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
 
-    //Qdialog de ventana de carga configuracion sensores.
-    QDialog *QdialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
-    QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-    QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nFrecuencia Muestreo: %1 Hz").arg(frecuenciaMuestreo));
-    layoutBarraCarga->addWidget(labelCarga);
-    QLabel *labelQMovie= new QLabel;
-    layoutBarraCarga->addWidget(labelQMovie);
-    QMovie *movie = new QMovie(":/images/Loading.gif");
-    movie->setScaledSize(QSize(50,50));
-    labelQMovie->setMovie(movie);
-    movie->start();
-    QdialogCarga->setLayout(layoutBarraCarga);
-    QdialogCarga->show();
+        //Qdialog de ventana de carga configuracion sensores.
+        QDialog *QdialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
+        QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
+        QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nFrecuencia Muestreo: %1 Hz").arg(frecuenciaMuestreo));
+        layoutBarraCarga->addWidget(labelCarga);
+        QLabel *labelQMovie= new QLabel;
+        layoutBarraCarga->addWidget(labelQMovie);
+        QMovie *movie = new QMovie(":/images/Loading.gif");
+        movie->setScaledSize(QSize(50,50));
+        labelQMovie->setMovie(movie);
+        movie->start();
+        QdialogCarga->setLayout(layoutBarraCarga);
+        QdialogCarga->show();
 
-    QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
-    timer->setSingleShot(true);
-    connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
-    connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
-    connect(timer, QTimer::timeout, [=]() { delete QdialogCarga; delete movie;});
-    timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
+        QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
+        timer->setSingleShot(true);
+        connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
+        connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
+        connect(timer, QTimer::timeout, [=]() { delete QdialogCarga; delete movie;});
+        timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
+    }
+    else
+        QMessageBox::warning(this,"Error","Error Abriendo el Puerto Serial",QMessageBox::Ok);
 }
 
 void MainWindow::iniciarPrueba()
