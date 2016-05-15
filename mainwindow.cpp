@@ -501,11 +501,11 @@ void MainWindow::regresarInicio()
 
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
-    const double a1=frecuenciaMuestreo<275 ? listaMuestras.size() : cronometro.elapsed()/1000.0;
-    const double a2=frecuenciaMuestreo<275 ? ui->spinBoxTiempoPrueba->value()*frecuenciaMuestreo : ui->spinBoxTiempoPrueba->value();
 
+    //const double a2=frecuenciaMuestreo<275 ? ui->spinBoxTiempoPrueba->value()*frecuenciaMuestreo : ui->spinBoxTiempoPrueba->value();
+    const double a1=frecuenciaMuestreo<275 ? listaMuestras.size()*(1/frecuenciaMuestreo) : cronometro.elapsed()/1000.0;
     const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
-    if ( a1 < a2){
+    if ( a1 < tiempoPrueba){
 
         if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
            cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)

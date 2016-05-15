@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <qcustomplot.h>
+#include <QMessageBox>
 
 namespace Ui {
 class AjustesGrafico;
@@ -40,6 +41,7 @@ private:
     void relacionAspecto(QCustomPlot *grafico);
     void graficarRepresentacionGrafico(const int rInterior, const int rExterior);
     bool event(QEvent *event);
+    bool validar();
 
 private slots:
     void aplicar();
@@ -48,7 +50,7 @@ private slots:
     void on_spinBoxRInterior_valueChanged(int arg1);
     void on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int index);
     bool eventFilter(QObject *obj, QEvent *event);
-
+    void on_comboBoxColorObjetivosMarcados_currentIndexChanged(int index);
 };
 
 #endif // AJUSTESGRAFICO_H

@@ -6,8 +6,8 @@ AjustesGrafico::AjustesGrafico(QWidget *parent) :
     ui(new Ui::AjustesGrafico)
 {
     inicializar();
-    conexiones();
     llenarParametrosComboBox();
+    conexiones();
     aplicar();
     graficarObjetivo(ajustesActuales.RadioObjetivo,ajustesActuales.colorObjetivoSinMarcar);
     graficarRepresentacionGrafico(ajustesActuales.RadioInterior,ajustesActuales.RadioExterior);
@@ -41,6 +41,8 @@ void AjustesGrafico::conexiones()
 
 void AjustesGrafico::llenarParametrosComboBox()
 {
+    ui->comboBoxColorObjetivosMarcados->blockSignals(true);
+    ui->comboBoxColorObjetivosSinMarcar->blockSignals(true);
     QStringList colorNames = QColor::colorNames();
 
     for (int i = 0; i < colorNames.size(); ++i) {
@@ -59,12 +61,14 @@ void AjustesGrafico::llenarParametrosComboBox()
         ui->comboBoxFPS->addItem(QString::number(12*(var+1)),var);
     }
     ui->comboBoxFPS->setCurrentIndex(3);
+    ui->comboBoxColorObjetivosMarcados->blockSignals(false);
+    ui->comboBoxColorObjetivosSinMarcar->blockSignals(false);
 
 }
 
 void AjustesGrafico::aplicar()
 {
-    if(ui->comboBoxColorObjetivosMarcados->currentIndex()!=ui->comboBoxColorObjetivosSinMarcar->currentIndex()){
+    if(validar()){
         ajustesActuales.RadioInterior=ui->spinBoxRInterior->value();
         ajustesActuales.RadioExterior=ui->spinBoxRExterior->value();
         ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
@@ -77,8 +81,6 @@ void AjustesGrafico::aplicar()
         hide();
         //QTextStream stdout <<ui->comboBoxColorObjetivosSinMarcar->currentIndex()<<sinMarcar.name()<<" "<<ui->comboBoxColorObjetivosMarcados->currentIndex()<<marcado.name()<<endl;
     }
-    else
-        QMessageBox::critical(0,"Error al seleccionar Colores","Debe seleccionar colores diferentes para los objetivos");
 }
 
 void AjustesGrafico::graficarObjetivo(const int rObjetivo,const QColor color){
@@ -142,28 +144,66 @@ bool AjustesGrafico::event(QEvent *event)
     return QWidget::event(event);
 }
 
+bool AjustesGrafico::validar()
+{
+    const int RadioExterior=ui->spinBoxRExterior->value();
+    const int RadioInterior=ui->spinBoxRInterior->value();
+    const int RadioObjetivo=ui->spinBoxRObjetivo->value();
+    bool val=true;
+    if(RadioExterior < RadioInterior){
+        QMessageBox::warning(this,"Radio Exterior muy Pequeño","Radio Exterior debe ser debe ser mayor al Radio Interior");
+        val=false;
+    }
+    if(RadioObjetivo>=RadioExterior){
+        QMessageBox::warning(this,"Radio Objetivo muy grande","Radio Objetivo debe ser menor al Radio Exterior");
+        val=false;
+    }
+    if(ui->comboBoxColorObjetivosMarcados->currentIndex()==ui->comboBoxColorObjetivosSinMarcar->currentIndex()){
+        QMessageBox::warning(this,"Colores iguales","Se deben seleccionar colores distintos para los estados de los objetivos");
+        val=false;
+    }
+    return val;
+}
+
 void AjustesGrafico::on_spinBoxRObjetivo_valueChanged(int arg1)
 {
-    const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
-    graficarObjetivo(arg1,sinMarcar);
+    if(validar())
+    {
+        const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
+        graficarObjetivo(arg1,sinMarcar);
+    }
 }
 
 void AjustesGrafico::on_spinBoxRExterior_valueChanged(int arg1)
 {
-    const int rInterior=ui->spinBoxRInterior->value();
-    graficarRepresentacionGrafico(rInterior,arg1);
+    if(validar())
+    {
+        const int rInterior=ui->spinBoxRInterior->value();
+        graficarRepresentacionGrafico(rInterior,arg1);
+    }
 }
 
 void AjustesGrafico::on_spinBoxRInterior_valueChanged(int arg1)
 {
-    const int rEnterior=ui->spinBoxRExterior->value();
-    graficarRepresentacionGrafico(arg1,rEnterior);
+    if(validar())
+    {
+        const int rEnterior=ui->spinBoxRExterior->value();
+        graficarRepresentacionGrafico(arg1,rEnterior);
+    }
 }
 
 void AjustesGrafico::on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int index)
 {
-    const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(index, Qt::DecorationRole));
-    graficarObjetivo(ui->spinBoxRObjetivo->value(),sinMarcar);
+    if(validar()){
+        const QColor sinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(index, Qt::DecorationRole));
+        graficarObjetivo(ui->spinBoxRObjetivo->value(),sinMarcar);
+     }
+}
+
+void AjustesGrafico::on_comboBoxColorObjetivosMarcados_currentIndexChanged(int index)
+{
+    (void) index;
+    validar();
 }
 
 bool AjustesGrafico::eventFilter(QObject *obj, QEvent *event)

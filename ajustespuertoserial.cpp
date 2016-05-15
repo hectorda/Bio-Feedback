@@ -50,9 +50,9 @@ void AjustesPuertoSerial::mostrarInformacionPuerto(int idx)
         return;
 
     QStringList list = ui->comboBoxPortList->itemData(idx).toStringList();
-    ui->labelDescription->setText(tr("Description: %1").arg(list.count() > 1 ? list.at(1) : tr(blankString)));
-    ui->labelManufacturer->setText(tr("Manufacturer: %1").arg(list.count() > 2 ? list.at(2) : tr(blankString)));
-    ui->labelSerialNumber->setText(tr("Serial number: %1").arg(list.count() > 3 ? list.at(3) : tr(blankString)));
+    ui->labelDescription->setText(tr("Descripcion: %1").arg(list.count() > 1 ? list.at(1) : tr(blankString)));
+    ui->labelManufacturer->setText(tr("Manufacturador: %1").arg(list.count() > 2 ? list.at(2) : tr(blankString)));
+    ui->labelSerialNumber->setText(tr("Numero de Serie: %1").arg(list.count() > 3 ? list.at(3) : tr(blankString)));
 //    ui->locationLabel->setText(tr("Location: %1").arg(list.count() > 4 ? list.at(4) : tr(blankString)));
 //    ui->vidLabel->setText(tr("Vendor Identifier: %1").arg(list.count() > 5 ? list.at(5) : tr(blankString)));
 //    ui->pidLabel->setText(tr("Product Identifier: %1").arg(list.count() > 6 ? list.at(6) : tr(blankString)));
@@ -103,6 +103,10 @@ void AjustesPuertoSerial::informacionPuertos()
     QString description;
     QString manufacturer;
     QString serialNumber;
+    if(QSerialPortInfo::availablePorts().isEmpty()){
+        QMessageBox::warning(this,"No hay dispositivos conectados","No hay dispotivos conectados",QMessageBox::Ok);
+        show();
+    }
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
         description = info.description();
@@ -118,6 +122,9 @@ void AjustesPuertoSerial::informacionPuertos()
 
         ui->comboBoxPortList->addItem(list.first(), list);
     }
+    //Se selecciona el Ultimo puerto de la lista
+    ui->comboBoxPortList->setCurrentIndex(QSerialPortInfo::availablePorts().size()-1);
+    mostrarInformacionPuerto(QSerialPortInfo::availablePorts().size()-1);
 }
 
 void AjustesPuertoSerial::actualizarAjustes()
@@ -153,5 +160,4 @@ void AjustesPuertoSerial::actualizarAjustes()
 void AjustesPuertoSerial::on_pushButtonRescan_clicked()
 {
     informacionPuertos();
-    mostrarInformacionPuerto(0);
 }

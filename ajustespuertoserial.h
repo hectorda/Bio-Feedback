@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QSerialPort>
+#include <QMessageBox>
 
 namespace Ui {
 class AjustesPuertoSerial;

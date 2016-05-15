@@ -72,8 +72,35 @@
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonRescan">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+color : white;
+background: #0994f0;
+border: 2px solid #0e6699;
+border-radius: 3px;
+padding: 5px;
+min-width: 80px;
+}
+
+QPushButton:hover {
+background: #1077b3;
+border: 2px solid #005A81;
+}
+
+QPushButton:pressed {
+background: #0323FF;
+border: 3px solid #0000FF;
+}</string>
+          </property>
           <property name="text">
            <string>Actualizar Puertos</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/update.png</normaloff>:/images/update.png</iconset>
           </property>
          </widget>
         </item>
