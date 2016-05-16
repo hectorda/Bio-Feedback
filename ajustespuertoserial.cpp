@@ -105,7 +105,7 @@ void AjustesPuertoSerial::informacionPuertos()
     QString serialNumber;
     if(QSerialPortInfo::availablePorts().isEmpty()){
         QMessageBox::warning(this,"No hay dispositivos conectados","No hay dispotivos conectados",QMessageBox::Ok);
-        show();
+        exec();
     }
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;

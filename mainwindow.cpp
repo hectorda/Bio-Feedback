@@ -64,9 +64,9 @@ void MainWindow::conexiones()
     connect(lectorSerial,SIGNAL(datosLeidos(double,double,double,double,double,double)),this,SLOT(obtenerRaw(double,double,double,double,double,double)));
 
       //Connect de actions
-    connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(show()));
-    connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(show()));
-    connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(show()));
+    connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
+    connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(exec()));
+    connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(exec()));
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -375,7 +375,6 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
         ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
         ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
     }
-
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
 
@@ -383,6 +382,8 @@ void MainWindow::RangeGraphic(int Range)
 {
     ui->qCustomPlotGrafico->xAxis->setRange(-Range,Range);
     ui->qCustomPlotGrafico->yAxis->setRange(-Range,Range);
+    ui->qCustomPlotGrafico->xAxis2->setRange(-Range,Range);
+    ui->qCustomPlotGrafico->yAxis2->setRange(-Range,Range);
     ui->qCustomPlotGrafico->replot();
 }
 
@@ -393,6 +394,8 @@ void MainWindow::ZoomGraphic(QWheelEvent *event)
 
     ui->qCustomPlotGrafico->xAxis->setRange(range);
     ui->qCustomPlotGrafico->yAxis->setRange(range);
+    ui->qCustomPlotGrafico->xAxis2->setRange(range);
+    ui->qCustomPlotGrafico->yAxis2->setRange(range);
 
     ui->verticalSliderRangeGraphic->setValue(range.upper);
     ui->qCustomPlotGrafico->replot();
@@ -446,15 +449,17 @@ void MainWindow::configurarArduino()
         labelQMovie->setMovie(movie);
         movie->start();
         QdialogCarga->setLayout(layoutBarraCarga);
-        QdialogCarga->show();
 
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
         connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
-        connect(timer, QTimer::timeout, [=]() { delete QdialogCarga; delete movie;});
+        connect(timer, QTimer::timeout, [=]() { QdialogCarga->close(); delete movie;});
+        connect(timer, QTimer::timeout, [=]() { timer->stop();});
+
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
+        QdialogCarga->exec();
     }
     else
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
@@ -469,7 +474,6 @@ void MainWindow::iniciarPrueba()
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
 
-    //cronometro.start();
     elementosdelGrafico=ajustesGrafico->getAjustes();
     divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
                                            (int)(275/elementosdelGrafico.FPS);
@@ -509,15 +513,15 @@ void MainWindow::regresarInicio()
 }
 
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
-{
+{    //const double a2=frecuenciaMuestreo<275 ? ui->spinBoxTiempoPrueba->value()*frecuenciaMuestreo : ui->spinBoxTiempoPrueba->value();
 
-    //const double a2=frecuenciaMuestreo<275 ? ui->spinBoxTiempoPrueba->value()*frecuenciaMuestreo : ui->spinBoxTiempoPrueba->value();
+
+    if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
+       cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
+
     const double a1=frecuenciaMuestreo<275 ? listaMuestras.size()*(1/frecuenciaMuestreo) : cronometro.elapsed()/1000.0;
     const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
     if ( a1 < tiempoPrueba){
-
-        if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
-           cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
         //const double inter=0.005*listaMuestras.size();
         const double tiempo=frecuenciaMuestreo<275 ? (1/frecuenciaMuestreo)*listaMuestras.size(): cronometro.elapsed()/1000.0;
@@ -781,3 +785,4 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     }
 
 }
+

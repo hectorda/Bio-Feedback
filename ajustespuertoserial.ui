@@ -110,8 +110,8 @@ border: 3px solid #0000FF;
        <zorder>labelDescription</zorder>
        <zorder>labelSerialNumber</zorder>
        <zorder>labelManufacturer</zorder>
-       <zorder>verticalSpacer</zorder>
        <zorder>pushButtonRescan</zorder>
+       <zorder>verticalSpacer</zorder>
       </widget>
      </item>
      <item>
