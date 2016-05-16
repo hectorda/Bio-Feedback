@@ -31,6 +31,11 @@ void AjustesGrafico::inicializar()
     circuloInterior= new QCPItemEllipse(ui->qCustomRepresentacionGrafico);
     ui->qCustomPlotObjetivo->installEventFilter(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    // activate top and right axes, which are invisible by default:
+    ui->qCustomPlotObjetivo->xAxis2->setVisible(true);
+    ui->qCustomPlotObjetivo->yAxis2->setVisible(true);
+    ui->qCustomRepresentacionGrafico->xAxis2->setVisible(true);
+    ui->qCustomRepresentacionGrafico->yAxis2->setVisible(true);
 }
 
 void AjustesGrafico::conexiones()
@@ -121,9 +126,13 @@ void AjustesGrafico::graficarRepresentacionGrafico(const int rInterior,const int
     const int range=rExterior+10;
     ui->qCustomRepresentacionGrafico->xAxis->setRange(-range,range);
     ui->qCustomRepresentacionGrafico->yAxis->setRange(-range,range);
+    ui->qCustomRepresentacionGrafico->xAxis2->setRange(-range,range);
+    ui->qCustomRepresentacionGrafico->yAxis2->setRange(-range,range);
     //Para que sea representado en los mismos rangos el grafico del objetivo
     ui->qCustomPlotObjetivo->xAxis->setRange(-range,range);
     ui->qCustomPlotObjetivo->yAxis->setRange(-range,range);
+    ui->qCustomPlotObjetivo->xAxis2->setRange(-range,range);
+    ui->qCustomPlotObjetivo->yAxis2->setRange(-range,range);
     ui->qCustomPlotObjetivo->replot();
 
     ui->qCustomRepresentacionGrafico->replot();

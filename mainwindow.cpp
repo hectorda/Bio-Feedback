@@ -29,8 +29,8 @@ void MainWindow::inicializar()
     status = new QLabel;
     ui->statusBar->addWidget(status);
     ui->dockWidget->installEventFilter(this);
-    ui->qCustomPlotGrafico->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    ui->qCustomPlotGrafico->setContextMenuPolicy(Qt::CustomContextMenu);
     QCPPlotTitle *titulo = new QCPPlotTitle(ui->qCustomPlotGrafico);
     titulo->setText("Grafico Angulos Antero-Posterior y Medio Lateral");
     titulo->setFont(QFont("sans", 10, QFont::Normal));
@@ -105,10 +105,16 @@ void MainWindow::inicializarGrafico()
     lienzo->setPen(QPen(Qt::blue, 1));
 
     ui->qCustomPlotGrafico->addPlottable(lienzo);
+
+    ui->qCustomPlotGrafico->xAxis2->setVisible(true);
+    ui->qCustomPlotGrafico->yAxis2->setVisible(true);
+
     //Se configuran los rangos maximos para los ejes X e Y segun el slider.
     const int range=ui->verticalSliderRangeGraphic->value();
     ui->qCustomPlotGrafico->xAxis->setRange(-range,range);
     ui->qCustomPlotGrafico->yAxis->setRange(-range,range);
+    ui->qCustomPlotGrafico->xAxis2->setRange(-range,range);
+    ui->qCustomPlotGrafico->yAxis2->setRange(-range,range);
 
     ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom); // Para usar el el Zoom y el Arrastre del grafico.
 }
@@ -323,6 +329,7 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
                 P->setBrush(QBrush(Qt::white));
            else
                P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+
            const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
            if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
                P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
@@ -340,7 +347,6 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
             lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
             ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
-            //ui->qCustomPlotGrafico->graph(0)->rescaleValueAxis(true);
         }
         else{
             const double pendiente=angulo->getAnguloY()/angulo->getAnguloX();
@@ -389,6 +395,7 @@ void MainWindow::ZoomGraphic(QWheelEvent *event)
     ui->qCustomPlotGrafico->yAxis->setRange(range);
 
     ui->verticalSliderRangeGraphic->setValue(range.upper);
+    ui->qCustomPlotGrafico->replot();
 }
 
 void MainWindow::contextMenuRequest(QPoint pos)
@@ -404,6 +411,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::Resize && obj == ui->dockWidget)
         relacionAspectodelGrafico();
+
     return QWidget::eventFilter(obj, event);
 }
 
@@ -429,7 +437,7 @@ void MainWindow::configurarArduino()
         //Qdialog de ventana de carga configuracion sensores.
         QDialog *QdialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
         QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-        QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nFrecuencia Muestreo: %1 Hz").arg(frecuenciaMuestreo));
+        QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(frecuenciaMuestreo));
         layoutBarraCarga->addWidget(labelCarga);
         QLabel *labelQMovie= new QLabel;
         layoutBarraCarga->addWidget(labelQMovie);
@@ -442,13 +450,14 @@ void MainWindow::configurarArduino()
 
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
+
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
         connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
         connect(timer, QTimer::timeout, [=]() { delete QdialogCarga; delete movie;});
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
     }
     else
-        QMessageBox::warning(this,"Error","Error Abriendo el Puerto Serial",QMessageBox::Ok);
+        QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
 }
 
 void MainWindow::iniciarPrueba()
@@ -460,7 +469,7 @@ void MainWindow::iniciarPrueba()
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
 
-    cronometro.start();
+    //cronometro.start();
     elementosdelGrafico=ajustesGrafico->getAjustes();
     divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
                                            (int)(275/elementosdelGrafico.FPS);

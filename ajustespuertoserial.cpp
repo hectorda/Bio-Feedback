@@ -122,9 +122,8 @@ void AjustesPuertoSerial::informacionPuertos()
 
         ui->comboBoxPortList->addItem(list.first(), list);
     }
-    //Se selecciona el Ultimo puerto de la lista
-    ui->comboBoxPortList->setCurrentIndex(QSerialPortInfo::availablePorts().size()-1);
-    mostrarInformacionPuerto(QSerialPortInfo::availablePorts().size()-1);
+    //Se selecciona el primer puerto de la lista
+    mostrarInformacionPuerto(0);
 }
 
 void AjustesPuertoSerial::actualizarAjustes()
