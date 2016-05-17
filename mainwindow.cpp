@@ -42,6 +42,10 @@ void MainWindow::inicializar()
 
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    ui->radioButtonHorizontalAbajo->hide();
+    ui->radioButtonHorizontalArriba->hide();
+
     db = new SQL;
     db->consulta();
 }
@@ -136,53 +140,136 @@ void MainWindow::mostrarResultados()
 void MainWindow::obtenerAngulos(Raw *dato)
 {
     const double RAD_TO_DEG=180/M_PI;
-
-    const bool IMUVertical = ui->radioButtonIMUVertical->isChecked();
-    const bool IMUHorizontal = ui->radioButtonIMUHorizonal->isChecked();
     double anguloComplementario1=0,anguloComplementario2=0;
     double angulo1,angulo2;
     double alpha=0.02;
     bool filtroComplementario=true;
+    QString orientacion=ui->comboBoxOrientacion->currentText().toLower();
 
     if(filtroComplementario){
 
-        if(IMUVertical)
+        if(orientacion.contains("vertical"))
         {
-            //Se calculan los angulos con la IMU vertical.
-            angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-            angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+            if(ui->radioButtonVerticalAtras->isChecked()){
 
-            //Aplicar el Filtro Complementario
-            if(listaAngulos.size()>0){
-                Angulo *lastAngulo=listaAngulos.last();
-                const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
-                anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
+                //Se calculan los angulos con la IMU vertical.
+                angulo1 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+                angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+
+                //Aplicar el Filtro Complementario
+                if(listaAngulos.size()>0){
+                    Angulo *lastAngulo=listaAngulos.last();
+                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
+                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
+                }
+                else{
+                    anguloComplementario1=angulo1;
+                    anguloComplementario2=angulo2;
+                }
             }
-            else{
-                anguloComplementario1=angulo1;
-                anguloComplementario2=angulo2;
+
+            if(ui->radioButtonVerticalFrente->isChecked()){
+
+                //Se calculan los angulos con la IMU vertical.
+                angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+                angulo2 = qAtan(-dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+
+                //Aplicar el Filtro Complementario
+                if(listaAngulos.size()>0){
+                    Angulo *lastAngulo=listaAngulos.last();
+                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
+                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
+                }
+                else{
+                    anguloComplementario1=angulo1;
+                    anguloComplementario2=angulo2;
+                }
             }
+
+            if(ui->radioButtonVerticalDerecha->isChecked()){
+
+                //Se calculan los angulos con la IMU vertical.
+                angulo1 = qAtan(-dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+                angulo2 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+
+                //Aplicar el Filtro Complementario
+                if(listaAngulos.size()>0){
+                    Angulo *lastAngulo=listaAngulos.last();
+                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
+                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
+                }
+                else{
+                    anguloComplementario1=angulo1;
+                    anguloComplementario2=angulo2;
+                }
+            }
+
+            if(ui->radioButtonVerticalIzquierda->isChecked()){
+
+                //Se calculan los angulos con la IMU vertical.
+                angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+                angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
+
+                //Aplicar el Filtro Complementario
+                if(listaAngulos.size()>0){
+                    Angulo *lastAngulo=listaAngulos.last();
+                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
+                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
+                }
+                else{
+                    anguloComplementario1=angulo1;
+                    anguloComplementario2=angulo2;
+                }
+            }
+
         }
 
-        if(IMUHorizontal)
+        else
         {
-            //Se calculan los angulos con la IMU horizontal.
-            angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-            angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-            //angulo1 = qAtan2((double)dato->getAcY() , (double)dato->getAcZ())*RAD_TO_DEG;
-            //angulo2 = qAtan2((double)dato->getAcX() , (double)dato->getAcZ())*RAD_TO_DEG;
+            if(ui->radioButtonHorizontalArriba->isChecked())
+            {
+                //Se calculan los angulos con la IMU horizontal.
+                angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+                angulo2 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+                //angulo1 = qAtan2((double)dato->getAcY() , (double)dato->getAcZ())*RAD_TO_DEG;
+                //angulo2 = qAtan2((double)dato->getAcX() , (double)dato->getAcZ())*RAD_TO_DEG;
 
-            //Aplicar el Filtro Complementario
-            if(listaAngulos.size()>0){
-                Angulo *lastAngulo=listaAngulos.last();
-                const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + alpha*angulo1;
-                anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + alpha*angulo2;
+                //Aplicar el Filtro Complementario
+                if(listaAngulos.size()>0){
+                    Angulo *lastAngulo=listaAngulos.last();
+                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + alpha*angulo1;
+                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + alpha*angulo2;
+                }
+                else{
+                    anguloComplementario1=angulo1;
+                    anguloComplementario2=angulo2;
+                }
             }
-            else{
-                anguloComplementario1=angulo1;
-                anguloComplementario2=angulo2;
+
+            if(ui->radioButtonHorizontalAbajo->isChecked())
+            {
+                //Se calculan los angulos con la IMU horizontal.
+                angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+                angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
+                //angulo1 = qAtan2((double)dato->getAcY() , (double)dato->getAcZ())*RAD_TO_DEG;
+                //angulo2 = qAtan2((double)dato->getAcX() , (double)dato->getAcZ())*RAD_TO_DEG;
+
+                //Aplicar el Filtro Complementario
+                if(listaAngulos.size()>0){
+                    Angulo *lastAngulo=listaAngulos.last();
+                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
+                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + alpha*angulo1;
+                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + alpha*angulo2;
+                }
+                else{
+                    anguloComplementario1=angulo1;
+                    anguloComplementario2=angulo2;
+                }
             }
         }
 
@@ -786,3 +873,34 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
 }
 
+void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
+{
+    if(arg1.toLower().contains("vertical"))
+    {
+        if (!ui->radioButtonVerticalAtras->isChecked() && !ui->radioButtonVerticalFrente->isChecked() &&
+            !ui->radioButtonVerticalIzquierda->isChecked() && !ui->radioButtonVerticalDerecha->isChecked())
+            ui->radioButtonVerticalAtras->setChecked(true);
+
+        ui->radioButtonVerticalAtras->show();
+        ui->radioButtonVerticalFrente->show();
+        ui->radioButtonVerticalDerecha->show();
+        ui->radioButtonVerticalIzquierda->show();
+
+        ui->radioButtonHorizontalAbajo->hide();
+        ui->radioButtonHorizontalArriba->hide();
+    }
+    else
+    {
+        if(!ui->radioButtonHorizontalAbajo->isChecked() && !ui->radioButtonHorizontalArriba->isChecked())
+            ui->radioButtonHorizontalArriba->setChecked(true);
+
+        ui->radioButtonHorizontalAbajo->show();
+        ui->radioButtonHorizontalArriba->show();
+
+        ui->radioButtonVerticalAtras->hide();
+        ui->radioButtonVerticalFrente->hide();
+        ui->radioButtonVerticalDerecha->hide();
+        ui->radioButtonVerticalIzquierda->hide();
+    }
+
+}

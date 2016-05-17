@@ -55,6 +55,8 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
+    void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);
+
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);
     void emitRawReporte(Raw*);

@@ -7,7 +7,6 @@
         <file>images/settings.png</file>
         <file>images/home.png</file>
         <file>images/save.png</file>
-        <file>images/IMU.png</file>
         <file>images/csv_icon.png</file>
         <file>images/png.png</file>
         <file>images/results_icon.png</file>
@@ -22,8 +21,16 @@
         <file>images/data-icon.png</file>
         <file>images/diana.png</file>
         <file>images/database.png</file>
-        <file>images/IMUVertical.jpg</file>
         <file>images/Loading.gif</file>
         <file>images/update.png</file>
+        <file>images/IMU.png</file>
+        <file>images/IMU/verticalatras.png</file>
+        <file>images/IMU/IMUHorizontal.png</file>
+        <file>images/IMU/IMUVertical.png</file>
+        <file>images/IMU/verticalfrente.png</file>
+        <file>images/IMU/horizontalabajo.png</file>
+        <file>images/IMU/horizontalarriba.png</file>
+        <file>images/IMU/verticalderecha.png</file>
+        <file>images/IMU/verticalizquierda.png</file>
     </qresource>
 </RCC>
