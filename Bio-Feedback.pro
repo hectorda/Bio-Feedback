@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     serial.cpp \
     ajustesgrafico.cpp \
     reportes.cpp \
-    sql.cpp
+    sql.cpp \
+    analisisgraficos.cpp \
+    qxtspanslider.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -35,13 +37,17 @@ HEADERS  += mainwindow.h \
     serial.h \
     ajustesgrafico.h \
     reportes.h \
-    sql.h
+    sql.h \
+    analisisgraficos.h \
+    qxtspanslider.h \
+    qxtspanslider_p.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
     ajustessensores.ui \
     ajustesgrafico.ui \
-    sql.ui
+    sql.ui \
+    analisisgraficos.ui
 
 
 RESOURCES += \

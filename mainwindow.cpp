@@ -23,7 +23,6 @@ void MainWindow::inicializar()
     ajustesGrafico = new AjustesGrafico(this);
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
     reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficosAngulos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
-
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
     status = new QLabel;
@@ -293,6 +292,7 @@ void MainWindow::mostrarBotones()
     ui->labelGuardarImagen->show();
     ui->pushButtonGuardarMuestras->show();
     ui->labelGuardarMuestras->show();
+    ui->pushButtonAnalizarGraficos->show();
     activarSpacerEntreBotones();
 }
 
@@ -304,6 +304,7 @@ void MainWindow::ocultarBotones()
     ui->pushButtonGuardarMuestras->hide();
     ui->labelGuardarImagen->hide();
     ui->labelGuardarMuestras->hide();
+    ui->pushButtonAnalizarGraficos->hide();
 }
 
 void MainWindow::desactivarTabs()
@@ -337,54 +338,66 @@ void MainWindow::desactivarSpacerEntreBotones()
 
 void MainWindow::generarObjetivos()
 {
-    int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
 
-    if(ui->checkBoxObjetivosAleatorios->isChecked()){
-        int cantidadintentos=0;
-        while(listaObjetivos.size()<cantidadObjetivos && cantidadintentos<10000){
-           //para los Random
-            const int signox=qrand()%2==1 ? 1: -1;
-            const int signoy=qrand()%2==1 ? 1: -1;
+    if(pruebaNumero==3)
+    {
+        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+        ui->qCustomPlotGrafico->addItem(objetivo);
+        objetivo->topLeft->setCoords(-elementosdelGrafico.RadioObjetivo,elementosdelGrafico.RadioObjetivo);
+        objetivo->bottomRight->setCoords(elementosdelGrafico.RadioObjetivo,-elementosdelGrafico.RadioObjetivo);
+        objetivo->setBrush(QBrush(Qt::red));
+        listaObjetivos.append(objetivo);
 
-            const int randomx=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signox;
-            const int randomy=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signoy;
-            const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
-
-            if(ecuacionCircExt<=qPow(double(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo),2)){//Si es que no se sale del radio exterior
-                bool noIntersectaOtros=true;
-                foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
-                    const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
-                    //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
-                    if( perteneceCirc < 2*elementosdelGrafico.RadioObjetivo + 0.5)
-                        noIntersectaOtros=false;
-                }
-                if(noIntersectaOtros){
-                    QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-                    ui->qCustomPlotGrafico->addItem(objetivo);
-
-                    objetivo->topLeft->setCoords(randomx-elementosdelGrafico.RadioObjetivo,randomy+elementosdelGrafico.RadioObjetivo);
-                    objetivo->bottomRight->setCoords(randomx+elementosdelGrafico.RadioObjetivo,randomy-elementosdelGrafico.RadioObjetivo);
-                    objetivo->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
-                    listaObjetivos.append(objetivo);
-
-                    cantidadintentos=0;
-                }
-                else
-                    ++cantidadintentos;
-            }
-        }
-        QTextStream(stdout)<<"Objetivos Puestos"<<listaObjetivos.size()<<endl;
-    }
-    else{
         int distanciaCentro=10;
-        for (int var = 0; var < cantidadObjetivos; ++var){
+        for (int var = 0; var < 8; ++var){
             QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
             ui->qCustomPlotGrafico->addItem(objetivo);
-            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
+            const double angulo=2*var*((M_PI)/8); //
             objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo);
             objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo);
             objetivo->setBrush(QBrush(Qt::red));
             listaObjetivos.append(objetivo);
+        }
+    }
+    if(pruebaNumero==1 || pruebaNumero==2 || pruebaNumero==4)
+    {
+        int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
+
+        if(ui->checkBoxObjetivosAleatorios->isChecked()){
+            int cantidadintentos=0;
+            while(listaObjetivos.size()<cantidadObjetivos && cantidadintentos<10000){
+               //para los Random
+                const int signox=qrand()%2==1 ? 1: -1;
+                const int signoy=qrand()%2==1 ? 1: -1;
+
+                const int randomx=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signox;
+                const int randomy=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signoy;
+                const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
+
+                if(ecuacionCircExt<=qPow(double(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo),2)){//Si es que no se sale del radio exterior
+                    bool noIntersectaOtros=true;
+                    foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
+                        const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+                        //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
+                        if( perteneceCirc < 2*elementosdelGrafico.RadioObjetivo + 0.5)
+                            noIntersectaOtros=false;
+                    }
+                    if(noIntersectaOtros){
+                        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+                        ui->qCustomPlotGrafico->addItem(objetivo);
+
+                        objetivo->topLeft->setCoords(randomx-elementosdelGrafico.RadioObjetivo,randomy+elementosdelGrafico.RadioObjetivo);
+                        objetivo->bottomRight->setCoords(randomx+elementosdelGrafico.RadioObjetivo,randomy-elementosdelGrafico.RadioObjetivo);
+                        objetivo->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+                        listaObjetivos.append(objetivo);
+
+                        cantidadintentos=0;
+                    }
+                    else
+                        ++cantidadintentos;
+                }
+            }
+            QTextStream(stdout)<<"Objetivos Puestos"<<listaObjetivos.size()<<endl;
         }
     }
 }
@@ -703,6 +716,13 @@ void MainWindow::on_pushButtonPrueba1_clicked()
     pruebaNumero=1;
     ui->labelNombrePrueba->setText("Modo Libre");
     QTextStream stdout <<pruebaNumero<<endl;
+
+    ui->labelObjetivosAleatorios->show();
+    ui->checkBoxObjetivosAleatorios->show();
+
+    ui->labelCantidadObjetivos->show();
+    ui->spinBoxCantidadObjetivos->show();
+
     ui->progressBarPrueba->hide();
     ui->labelTiempoPrueba->hide();
     ui->spinBoxTiempoPrueba->hide();
@@ -714,6 +734,13 @@ void MainWindow::on_pushButtonPrueba2_clicked()
     pruebaNumero=2;
     ui->labelNombrePrueba->setText("Prueba 2");
     QTextStream stdout <<pruebaNumero<<endl;
+
+    ui->labelCantidadObjetivos->show();
+    ui->spinBoxCantidadObjetivos->show();
+
+    ui->labelCantidadObjetivos->show();
+    ui->spinBoxCantidadObjetivos->show();
+
     ui->progressBarPrueba->show();
     ui->labelTiempoPrueba->show();
     ui->spinBoxTiempoPrueba->show();
@@ -721,8 +748,16 @@ void MainWindow::on_pushButtonPrueba2_clicked()
 
 void MainWindow::on_pushButtonPrueba3_clicked()
 {
+    pruebaNumero=3;
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
     ui->labelNombrePrueba->setText("Prueba 3");
+
+    ui->labelCantidadObjetivos->hide();
+    ui->spinBoxCantidadObjetivos->hide();
+
+    ui->labelCantidadObjetivos->hide();
+    ui->spinBoxCantidadObjetivos->hide();
+
     ui->progressBarPrueba->show();
     ui->labelTiempoPrueba->show();
     ui->spinBoxTiempoPrueba->show();
@@ -730,8 +765,16 @@ void MainWindow::on_pushButtonPrueba3_clicked()
 
 void MainWindow::on_pushButtonPrueba4_clicked()
 {
+    pruebaNumero=4;
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
     ui->labelNombrePrueba->setText("Prueba 4");
+
+    ui->labelCantidadObjetivos->show();
+    ui->spinBoxCantidadObjetivos->show();
+
+    ui->labelCantidadObjetivos->show();
+    ui->spinBoxCantidadObjetivos->show();
+
     ui->progressBarPrueba->show();
     ui->labelTiempoPrueba->show();
     ui->spinBoxTiempoPrueba->show();
@@ -903,5 +946,12 @@ void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
         ui->radioButtonVerticalDerecha->hide();
         ui->radioButtonVerticalIzquierda->hide();
     }
+
+}
+
+void MainWindow::on_pushButtonAnalizarGraficos_clicked()
+{
+    AnalisisGraficos *analisisGraficos= new AnalisisGraficos(this);
+    analisisGraficos->show();
 
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>781</width>
-    <height>641</height>
+    <height>668</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -292,7 +292,8 @@ Con Tiempo</string>
           <item row="2" column="1">
            <widget class="QPushButton" name="pushButtonPrueba3">
             <property name="text">
-             <string>Prueba 3</string>
+             <string>Prueba 3
+Test ¿Circular?</string>
             </property>
            </widget>
           </item>
@@ -523,7 +524,7 @@ Con Tiempo</string>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="labelCantidadObjetivos">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
@@ -677,7 +678,7 @@ Con Tiempo</string>
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="labelObjetivosAleatorios">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
@@ -1518,6 +1519,13 @@ QProgressBar:hover {
             </property>
             <property name="textDirection">
              <enum>QProgressBar::TopToBottom</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonAnalizarGraficos">
+            <property name="text">
+             <string>Analizar Graficos</string>
             </property>
            </widget>
           </item>

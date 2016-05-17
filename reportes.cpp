@@ -2,7 +2,7 @@
 
 Reportes::Reportes(QObject *parent) : QObject(parent)
 {
-    this->presicion=4;
+    this->presicion = 3;
 }
 
 Reportes::Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras) : QObject(parent)
@@ -16,11 +16,6 @@ Reportes::Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *g
     inicializarGraficoResultados();
     inicializarGraficoAngulos();
     inicializarGraficoMuestras();
-}
-
-void Reportes::limpiarTabla(QTableWidget *tabla)
-{
-   tabla->clearContents();
 }
 
 void Reportes::vaciarTablas()

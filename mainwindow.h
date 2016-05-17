@@ -14,6 +14,7 @@
 #include <serial.h>
 #include <reportes.h>
 #include <sql.h>
+#include <analisisgraficos.h>
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +42,9 @@ private slots:
     void on_pushButtonVolverInicio_clicked();
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
+    void on_pushButtonAnalizarGraficos_clicked();
+    void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);
+
 
     void iniciarPrueba();
     void mostrarResultados();
@@ -54,8 +58,6 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
-
-    void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);
 
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);
