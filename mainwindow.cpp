@@ -402,8 +402,9 @@ void MainWindow::generarObjetivos()
     }
 }
 
-void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
+void MainWindow::marcarObjetivos(Angulo *angulo)
 {
+
     if(!ui->checkBoxOrdenObjetivos->isChecked()){
         for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
             QCPItemEllipse *P=listaObjetivos.at(var);
@@ -437,6 +438,13 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
            }
        }
     }
+
+}
+
+void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
+{
+
+    marcarObjetivos(angulo);
 
     if(ui->checkBoxLimitarGrafico->isChecked())
     {

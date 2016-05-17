@@ -49,6 +49,7 @@ private slots:
     void iniciarPrueba();
     void mostrarResultados();
     void slotGraficarTiempoReal(Angulo *angulo);
+    void marcarObjetivos(Angulo *angulo);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
     void contextMenuRequest(QPoint pos);
