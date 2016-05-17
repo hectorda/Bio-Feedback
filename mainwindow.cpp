@@ -225,9 +225,7 @@ void MainWindow::obtenerAngulos(Raw *dato)
                     anguloComplementario2=angulo2;
                 }
             }
-
         }
-
         else
         {
             if(ui->radioButtonHorizontalArriba->isChecked())
@@ -519,6 +517,7 @@ void MainWindow::relacionAspectodelGrafico()
 
 void MainWindow::configurarArduino()
 {
+
     if(lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes()))//Se abre el puerto serial con sus ajustes respectivos
     {
         QTextStream stdout<<"Cadena Ajustes:"<<ajustesSensores->getAjustesSensores()<<endl;
@@ -542,8 +541,9 @@ void MainWindow::configurarArduino()
 
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
         connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
-        connect(timer, QTimer::timeout, [=]() { QdialogCarga->close(); delete movie;});
+        connect(timer, QTimer::timeout, [=]() { QdialogCarga->close();});
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
+        connect(timer, QTimer::timeout, [=]() { delete timer; delete QdialogCarga; delete movie;});
 
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
         QdialogCarga->exec();
@@ -554,14 +554,16 @@ void MainWindow::configurarArduino()
 
 void MainWindow::iniciarPrueba()
 {
-    //Limpieza de listas
+    //Limpieza de listas y de los elementos de la interfaz
     listaMuestras.clear();
     listaAngulos.clear();
     listaObjetivos.clear();
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
 
-    elementosdelGrafico=ajustesGrafico->getAjustes();
+    elementosdelGrafico=ajustesGrafico->getAjustes();//Se obtienen los ajustes actuales.
+
+    //Si la frecuencia de muestreo es mejor a 275 se calculan el divisor en base a la frecuencia elegida sino en 275.
     divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
                                            (int)(275/elementosdelGrafico.FPS);
 
@@ -579,7 +581,6 @@ void MainWindow::iniciarPrueba()
     desactivarSpacerEntreBotones();
     ocultarBotones();
 }
-
 
 void MainWindow::regresarInicio()
 {

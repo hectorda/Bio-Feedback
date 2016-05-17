@@ -18,6 +18,8 @@ public:
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
     void guardarAngulosEnArchivo(QList<Angulo*> listaAngulos);
+
+    //Para dejar los espacios de reportes sin datos.
     void vaciarTablas();
     void vaciarGraficos();
 
@@ -49,9 +51,6 @@ private:
     void inicializarGraficoResultados();
     void inicializarGraficoAngulos();
     void inicializarGraficoMuestras();
-
-    //Para vaciar las tablas
-    void limpiarTabla(QTableWidget *tabla);
 
 signals:
 

@@ -20,16 +20,13 @@ Reportes::Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *g
 
 void Reportes::limpiarTabla(QTableWidget *tabla)
 {
-    while (tabla->rowCount() > 0)
-    {
-        tabla->removeRow(0);
-    }
+   tabla->clearContents();
 }
 
 void Reportes::vaciarTablas()
 {
-    limpiarTabla(tablaAngulos);
-    limpiarTabla(tablaMuestras);
+    tablaAngulos->clearContents();
+    tablaMuestras->clearContents();
 }
 
 void Reportes::vaciarGraficos()
