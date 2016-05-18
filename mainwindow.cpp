@@ -1003,3 +1003,12 @@ void MainWindow::on_pushButtonAnalizarGraficos_clicked()
     analisisGraficos->show();
 
 }
+
+void MainWindow::on_lineEditRut_textChanged(const QString &arg1)
+{
+    QTextStream stdout <<arg1<<endl;
+    QStringList wordList=db->listarRutPacientes();
+    QCompleter *completer = new QCompleter(wordList, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    ui->lineEditRut->setCompleter(completer);
+}

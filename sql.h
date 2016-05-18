@@ -20,7 +20,9 @@ public:
     bool conectar();
     void consulta();
     QSqlDatabase db;
-    bool agregarPaciente(const QString nombre, const QString apellido, const int edad);
+    bool agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
+    QStringList listarNombresPacientes();
+    QStringList listarRutPacientes();
 
 private:
     Ui::SQL *ui;
@@ -33,6 +35,7 @@ public slots:
 private slots:
     void on_pushButtonAgregar_clicked();
     void on_tabWidget_currentChanged(int index);
+    void on_lineEditRut_editingFinished();
 };
 
 #endif // SQL_H

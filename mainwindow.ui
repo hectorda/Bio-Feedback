@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>781</width>
-    <height>668</height>
+    <height>690</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -448,6 +448,16 @@ Test ¿Circular?</string>
               <number>150</number>
              </property>
             </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Rut</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditRut"/>
            </item>
           </layout>
          </widget>
