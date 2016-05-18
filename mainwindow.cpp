@@ -274,9 +274,10 @@ void MainWindow::obtenerAngulos(Raw *dato)
         listaAngulos.append(angulo);
 
         emit emitAnguloReporte(angulo);
-
         if(listaMuestras.size()%divisorFPS==0)//Mod
             emit emitAnguloGraficoTiempoReal(angulo);
+//        if(listaMuestras.size()%divisorFPS==0)
+//            QTextStream stdout<<listaMuestras.size()<<endl;
 
     }
 }
@@ -625,9 +626,10 @@ void MainWindow::iniciarPrueba()
     elementosdelGrafico=ajustesGrafico->getAjustes();//Se obtienen los ajustes actuales.
 
     //Si la frecuencia de muestreo es mejor a 275 se calculan el divisor en base a la frecuencia elegida sino en 275.
-    divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
+    if(frecuenciaMuestreo>elementosdelGrafico.FPS)
+        divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
                                            (int)(275/elementosdelGrafico.FPS);
-
+    else divisorFPS=1;
     ui->verticalSliderRangeGraphic->setValue(elementosdelGrafico.RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian los graficos
     elementosdelGrafico.RadioObjetivo=elementosdelGrafico.RadioObjetivo;
