@@ -338,16 +338,8 @@ void MainWindow::desactivarSpacerEntreBotones()
 
 void MainWindow::generarObjetivos()
 {
-
     if(pruebaNumero==3)
     {
-        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-        ui->qCustomPlotGrafico->addItem(objetivo);
-        objetivo->topLeft->setCoords(-elementosdelGrafico.RadioObjetivo,elementosdelGrafico.RadioObjetivo);
-        objetivo->bottomRight->setCoords(elementosdelGrafico.RadioObjetivo,-elementosdelGrafico.RadioObjetivo);
-        objetivo->setBrush(QBrush(Qt::red));
-        listaObjetivos.append(objetivo);
-
         int distanciaCentro=10;
         for (int var = 0; var < 8; ++var){
             QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
@@ -358,6 +350,12 @@ void MainWindow::generarObjetivos()
             objetivo->setBrush(QBrush(Qt::red));
             listaObjetivos.append(objetivo);
         }
+        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+        ui->qCustomPlotGrafico->addItem(objetivo);
+        objetivo->topLeft->setCoords(-elementosdelGrafico.RadioObjetivo,elementosdelGrafico.RadioObjetivo);
+        objetivo->bottomRight->setCoords(elementosdelGrafico.RadioObjetivo,-elementosdelGrafico.RadioObjetivo);
+        objetivo->setBrush(QBrush(Qt::red));
+        listaObjetivos.append(objetivo);
     }
     if(pruebaNumero==1 || pruebaNumero==2 || pruebaNumero==4)
     {
@@ -402,49 +400,91 @@ void MainWindow::generarObjetivos()
     }
 }
 
+/*
+*
+*Se analiza segun el tipo de prueba si el objetivo es marcable, y cual es que actualmente esta parpadenado
+*Si se selecciona el modo aleatorios ninguno parpadea.
+*/
 void MainWindow::marcarObjetivos(Angulo *angulo)
 {
-
-    if(!ui->checkBoxOrdenObjetivos->isChecked()){
-        for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
-            QCPItemEllipse *P=listaObjetivos.at(var);
-            if(P->brush()==QBrush(elementosdelGrafico.colorObjetivoSinMarcar)){ //Si aun sigue con el color por defecto.
+    if(pruebaNumero==3){
+        if(listaObjetivos.size()>0)
+        {
+            static bool centro=true;
+            if(centro)
+            {
+                QCPItemEllipse *P=listaObjetivos.last();
+                if((int)angulo->getTiempo()%2==0)
+                     P->setBrush(QBrush(Qt::white));
+                else
+                    P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
                 const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
                 if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
                     P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
-                    listaObjetivos.removeAt(var);
+                    centro=false;
+                }
+            }
+            else{
+                QCPItemEllipse *P=listaObjetivos.at(0);
+                if((int)angulo->getTiempo()%2==0)
+                    P->setBrush(QBrush(Qt::white));
+                else
+                    P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+
+                const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+                if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
+                    P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
+                    listaObjetivos.removeAt(0);
                     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
                     QTextStream(stdout)<<listaObjetivos.size()<<endl;
+                    centro=true;
                 }
             }
         }
     }
-    else
-    {
-       if(listaObjetivos.size()>0)
-       {
-           QCPItemEllipse *P=listaObjetivos.at(0);
-           if((int)angulo->getTiempo()%2==0)
-                P->setBrush(QBrush(Qt::white));
-           else
-               P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+    else{
+        if(!ui->checkBoxOrdenObjetivos->isChecked()){//Si es que se puede ir a cualquier objetivo
+            for (int var = 0; var < listaObjetivos.size(); ++var){ //Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
+                QCPItemEllipse *P=listaObjetivos.at(var);
+                if(P->brush()==QBrush(elementosdelGrafico.colorObjetivoSinMarcar)){ //Si aun sigue con el color por defecto.
+                    const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+                    if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
+                        P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
+                        listaObjetivos.removeAt(var);
+                        ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+                        QTextStream(stdout)<<listaObjetivos.size()<<endl;
+                    }
+                }
+            }
+        }
+        else
+        {
+           if(listaObjetivos.size()>0)
+           {
+               QCPItemEllipse *P=listaObjetivos.at(0);
+               if((int)angulo->getTiempo()%2==0)
+                    P->setBrush(QBrush(Qt::white));
+               else
+                   P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
 
-           const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
-           if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
-               P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
-               listaObjetivos.removeAt(0);
-               ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
-               QTextStream(stdout)<<listaObjetivos.size()<<endl;
+               const double perteneceCirc=qSqrt(qPow((angulo->getAnguloX() - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((angulo->getAnguloY() - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+               if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
+                   P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
+                   listaObjetivos.removeAt(0);
+                   ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+                   QTextStream(stdout)<<listaObjetivos.size()<<endl;
+               }
            }
-       }
+        }
     }
 
+    if(listaObjetivos.isEmpty() && ui->checkBoxDeteneralMarcarObjetivos->isChecked())
+        ui->pushButtonDetenerPrueba->click();
 }
 
 void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 {
-
-    marcarObjetivos(angulo);
+    marcarObjetivos(angulo); // Se hace parpadear o verifica el objetivo segun las configuraciones de la prueba
 
     if(ui->checkBoxLimitarGrafico->isChecked())
     {

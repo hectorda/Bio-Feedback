@@ -17,6 +17,11 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/settings.png</normaloff>:/images/settings.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog{
+background-color:rgb(221, 221, 221)
+};</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -259,7 +264,7 @@ border: 3px solid rgb(102, 0, 0);
 }</string>
        </property>
        <property name="text">
-        <string>Salir</string>
+        <string>Cancelar</string>
        </property>
       </widget>
      </item>

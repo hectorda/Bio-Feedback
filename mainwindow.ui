@@ -499,61 +499,6 @@ Test ¿Circular?</string>
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_9">
-            <item row="8" column="0">
-             <widget class="QRadioButton" name="radioButtonVerticalIzquierda">
-              <property name="text">
-               <string>Izquierda</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/IMU/verticalizquierda.png</normaloff>:/images/IMU/verticalizquierda.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QRadioButton" name="radioButtonVerticalAtras">
-              <property name="text">
-               <string>Atras</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/IMU/verticalatras.png</normaloff>:/images/IMU/verticalatras.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="labelCantidadObjetivos">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <italic>false</italic>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="text">
-               <string>Cantidad objetivos</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="1">
              <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
               <property name="font">
@@ -617,7 +562,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item row="5" column="0">
              <widget class="QLabel" name="label_9">
               <property name="font">
                <font>
@@ -653,7 +598,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
+            <item row="5" column="1">
              <widget class="QCheckBox" name="checkBoxLimitarGrafico">
               <property name="layoutDirection">
                <enum>Qt::RightToLeft</enum>
@@ -666,7 +611,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="0">
+            <item row="11" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_6"/>
             </item>
             <item row="3" column="1">
@@ -708,10 +653,10 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="11" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_7"/>
             </item>
-            <item row="5" column="0">
+            <item row="6" column="0">
              <widget class="QLabel" name="label_3">
               <property name="font">
                <font>
@@ -726,7 +671,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="6" column="1">
              <widget class="QCheckBox" name="checkBoxOrdenObjetivos">
               <property name="layoutDirection">
                <enum>Qt::RightToLeft</enum>
@@ -739,7 +684,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
+            <item row="7" column="1">
              <widget class="QComboBox" name="comboBoxOrientacion">
               <item>
                <property name="text">
@@ -761,7 +706,7 @@ Test ¿Circular?</string>
               </item>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="7" column="0">
              <widget class="QLabel" name="label_8">
               <property name="font">
                <font>
@@ -776,7 +721,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="9" column="1">
              <widget class="QRadioButton" name="radioButtonVerticalDerecha">
               <property name="text">
                <string>Derecha</string>
@@ -793,7 +738,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="8" column="1">
              <widget class="QRadioButton" name="radioButtonVerticalFrente">
               <property name="text">
                <string>Frente</string>
@@ -810,7 +755,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
+            <item row="10" column="0">
              <widget class="QRadioButton" name="radioButtonHorizontalArriba">
               <property name="text">
                <string>Arriba</string>
@@ -830,7 +775,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
+            <item row="10" column="1">
              <widget class="QRadioButton" name="radioButtonHorizontalAbajo">
               <property name="text">
                <string>Abajo</string>
@@ -844,6 +789,88 @@ Test ¿Circular?</string>
                 <width>48</width>
                 <height>48</height>
                </size>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QRadioButton" name="radioButtonVerticalIzquierda">
+              <property name="text">
+               <string>Izquierda</string>
+              </property>
+              <property name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/IMU/verticalizquierda.png</normaloff>:/images/IMU/verticalizquierda.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QRadioButton" name="radioButtonVerticalAtras">
+              <property name="text">
+               <string>Atras</string>
+              </property>
+              <property name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/IMU/verticalatras.png</normaloff>:/images/IMU/verticalatras.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelCantidadObjetivos">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="text">
+               <string>Cantidad objetivos</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>¿Detener al marcar todos?</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QCheckBox" name="checkBoxDeteneralMarcarObjetivos">
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
