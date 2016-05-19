@@ -25,18 +25,22 @@ public:
     QStringList listarRutPacientes();
     QStringList buscarPacienteporRut(const QString rut);
 
+
 private:
     Ui::SQL *ui;
     void inicializar();
     void conexiones();
+    void imprimirDigitoVerificador(QLineEdit *lineEditRut, QLineEdit *lineEditDigito);
 
 public slots:
-    void llenarTabla();
+    void actualizarTablaPacientes();
 
 private slots:
     void on_pushButtonAgregar_clicked();
     void on_tabWidget_currentChanged(int index);
     void on_lineEditRut_editingFinished();
+    void on_pushButtonEditarPaciente_clicked();
+    void on_pushButtonEliminarPaciente_clicked();
 };
 
 #endif // SQL_H

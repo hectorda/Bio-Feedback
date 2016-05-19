@@ -21,12 +21,13 @@ void SQL::inicializar()
     this->conectar();
     ui->tabWidget->setCurrentWidget(ui->tab_tablaPacientes);
     ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
-    llenarTabla();
+    ui->tabWidget->setTabEnabled(2,false);
+    actualizarTablaPacientes();
 }
 
 void SQL::conexiones()
 {
-    connect(ui->pushButtonActualizarTabla,SIGNAL(clicked(bool)),this,SLOT(llenarTabla()));
+    connect(ui->pushButtonActualizarTabla,SIGNAL(clicked(bool)),this,SLOT(actualizarTablaPacientes()));
 }
 
 bool SQL::conectar() //Se intenta conectar y crear la base de datos en caso de que no exista.
@@ -78,7 +79,7 @@ void SQL::consulta()
     }
 }
 
-void SQL::llenarTabla()
+void SQL::actualizarTablaPacientes()
 {
     db.open();
     if(db.isOpen())
@@ -184,10 +185,20 @@ void SQL::on_pushButtonAgregar_clicked()
     const QString nombre=ui->lineEditNombre->text();
     const QString apellido=ui->lineEditApellido->text();
     const int edad=ui->spinBoxEdad->value();
-    if(agregarPaciente(rut,nombre,apellido,edad))
-        QMessageBox::information(0,"Paciente Agregado","El paciente a sido agragado exitosamente");
-    else
-        QMessageBox::critical(0,"Error al agregar","No se pudo agregar el paciente");
+    if (rut.isEmpty()|| nombre.isEmpty() || apellido.isEmpty() || edad==0)
+        QMessageBox::warning(0,"Faltan Ddtos por llenar","Faltan datos por completar.");
+    else{
+
+        if(buscarPacienteporRut(rut).isEmpty()){
+
+            if(agregarPaciente(rut,nombre,apellido,edad))
+                QMessageBox::information(this,"Paciente agregado","El Paciente a sido agragado exitosamente");
+            else
+                QMessageBox::critical(this,"Error al agregar","No se pudo agregar el Paciente");
+        }
+        else
+            QMessageBox::warning(this,"Paciente ya existe",tr("El Paciente con rut %1 ya existe en los registros").arg(rut));
+    }
 
 }
 
@@ -195,19 +206,25 @@ void SQL::on_tabWidget_currentChanged(int index)
 {
     (void) index;
     if(ui->tabWidget->currentWidget()==ui->tab_tablaPacientes)
-        llenarTabla();
+        actualizarTablaPacientes();
 }
 
 void SQL::on_lineEditRut_editingFinished()
+{
+    imprimirDigitoVerificador(ui->lineEditRut,ui->lineEditdigitoVerificador);
+}
+
+void SQL::imprimirDigitoVerificador(QLineEdit *lineEditRut, QLineEdit *lineEditDigito)
 {
     QString rut;
     int suma=0;
     int digito;
 
-    rut=ui->lineEditRut->text();
-
+    rut=lineEditRut->text();
+    QTextStream stdout <<rut<<endl;
     if(rut.isEmpty())
-        ui->lineEditdigitoVerificador->setText("");
+        lineEditDigito->setText("");
+
     else{
         std::reverse(rut.begin(),rut.end());
         QTextStream stdout <<"reverse: "<<rut.size()<<endl;
@@ -219,16 +236,93 @@ void SQL::on_lineEditRut_editingFinished()
                 suma+=rut.at(var).digitValue()*(var-4);
         }
         digito = 11 - suma%11;
-        QTextStream stdout <<"digito: "<<digito<<endl;
         if (digito<10)
-        {
-            ui->lineEditdigitoVerificador->setText(QString::number(digito));
-        }
+            lineEditDigito->setText(QString::number(digito));
+
         else{
             if(digito==11)
-                ui->lineEditdigitoVerificador->setText("0");
+                lineEditDigito->setText("0");
             if (digito==10)
-                ui->lineEditdigitoVerificador->setText("K");
+                lineEditDigito->setText("K");
         }
     }
+}
+
+void SQL::on_pushButtonEditarPaciente_clicked()
+{
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    QModelIndex index = select->currentIndex();
+
+    int row = index.row();
+    QString rut = index.sibling(row, 0).data().toString();
+    db.open();
+    if(db.isOpen()){
+        if(select->hasSelection()){
+
+            QStringList datos=buscarPacienteporRut(rut);
+            ui->tabWidget->setTabEnabled(2,true);
+            ui->tabWidget->setCurrentIndex(2);
+
+            ui->lineEditRut_2->setText(rut);
+            ui->lineEditNombre_2->setText(datos.at(0));
+            ui->lineEditApellido_2->setText(datos.at(1));
+            ui->lineEditAltura_2->setText(datos.at(2));
+            imprimirDigitoVerificador(ui->lineEditRut_2,ui->lineEditdigitoVerificador_2);
+        }
+        else
+            QMessageBox::critical(this, "No ha seleccionado una fila!",
+                                  "Primero debes seleccionar una \nfila de la tabla.",
+                                  QMessageBox::Ok);
+    }
+    else
+        QMessageBox::critical(this, "Error al Conexion!",
+                               "No se pudo conectar con la Base de Datos.",
+                               QMessageBox::Ok);
+
+}
+
+void SQL::on_pushButtonEliminarPaciente_clicked()
+{
+    QItemSelectionModel *select = ui->tableView->selectionModel();
+    QModelIndex index = select->currentIndex();
+
+    int row = index.row();
+    QString rut = index.sibling(row, 0).data().toString();
+    db.open();
+    if(db.isOpen()){
+        if(select->hasSelection()){
+            QMessageBox messageBox(QMessageBox::Question,
+                                   "Confirmar Eliminacion",
+                                   "Está a punto de eliminar un Paciente!\nDesea continuar?",
+                                    QMessageBox::Yes|QMessageBox::No);
+            messageBox.setButtonText(QMessageBox::Yes, tr("Eliminar"));
+            messageBox.setButtonText(QMessageBox::No, tr("No"));
+            if (messageBox.exec() == QMessageBox::Yes) {
+
+                QSqlQuery *query = new QSqlQuery(db);
+                query->prepare("DELETE FROM pacientes WHERE rut= (:rut)");
+                query->bindValue(":rut",rut);
+
+                if(query->exec()){
+                    QMessageBox::information(this, "Aviso",
+                                          "Paciente eliminado Exitosamente!",
+                                          QMessageBox::Ok);
+                    actualizarTablaPacientes();
+
+                }
+                else
+                    QMessageBox::critical(this, "Error! :(",
+                                      "Ocurrió un error al procesar su solicitud.\nVuelva a intentar más tarde.",
+                                      QMessageBox::Ok);
+            }
+        }
+        else
+            QMessageBox::critical(this, "No ha seleccionado una fila!",
+                                  "Primero debes seleccionar una \nfila de la tabla.",
+                                  QMessageBox::Ok);
+    }
+    else
+        QMessageBox::critical(this, "Error al Conexion!",
+                               "No se pudo conectar con la Base de Datos.",
+                               QMessageBox::Ok);
 }
