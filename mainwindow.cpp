@@ -22,7 +22,7 @@ void MainWindow::inicializar()
     ajustesSensores = new AjustesSensores(this);
     ajustesGrafico = new AjustesGrafico(this);
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
-    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficosAngulos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
+    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAnguloX,ui->qCustomPlotGraficoAnguloY,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
     status = new QLabel;
@@ -846,8 +846,7 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
         reportes->guardarImagenGrafico(ui->qCustomPlotResultados,1000,1000);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
-        reportes->guardarImagenGrafico(ui->qCustomPlotGraficosAngulos,1920,1080);
-
+        reportes->guardarImagenGrafico(ui->qCustomPlotGraficoAnguloX,1920,1080);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
         reportes->guardarImagenGrafico(ui->qCustomPlotGraficoMuestras,1920,1080);
@@ -937,8 +936,11 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
     {
-        ui->qCustomPlotGraficosAngulos->rescaleAxes();
-        ui->qCustomPlotGraficosAngulos->replot();
+        ui->qCustomPlotGraficoAnguloX->rescaleAxes();
+        ui->qCustomPlotGraficoAnguloX->replot();
+
+        ui->qCustomPlotGraficoAnguloY->rescaleAxes();
+        ui->qCustomPlotGraficoAnguloY->replot();
 
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGraficos\nAngulos");
@@ -1003,8 +1005,10 @@ void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_pushButtonAnalizarGraficos_clicked()
 {
-    AnalisisGraficos *analisisGraficos= new AnalisisGraficos(this);
-    analisisGraficos->show();
+    int rangoHorizontal=elementosdelGrafico.RadioExterior;
+    reportes->analizarGraficosAngulos(this,rangoHorizontal,ui->lcdNumberTiempoTranscurrido->value());
+    //AnalisisGraficos *analisisGraficos= new AnalisisGraficos(this);
+    //analisisGraficos->show();
 }
 
 void MainWindow::on_lineEditRut_textChanged(const QString &arg1)

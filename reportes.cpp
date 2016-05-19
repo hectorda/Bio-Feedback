@@ -5,11 +5,12 @@ Reportes::Reportes(QObject *parent) : QObject(parent)
     this->presicion = 3;
 }
 
-Reportes::Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras) : QObject(parent)
+Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAnguloX, QCustomPlot *graficoAnguloY, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaMuestras) : QObject(parent)
 {
     this->presicion = 4;
     this->graficoResultados = graficoResultados;
-    this->graficoAngulos = graficoAngulos;
+    this->graficoAnguloX = graficoAnguloX;
+    this->graficoAnguloY = graficoAnguloY;
     this->graficoMuestras = graficoMuestras;
     this->tablaAngulos = tablaAngulos;
     this->tablaMuestras = tablaMuestras;
@@ -28,8 +29,8 @@ void Reportes::vaciarGraficos()
 {
     cuadrantes->clearData();
 
-    graficoAnguloX->clearData();
-    graficoAnguloY->clearData();
+    graficoAnguloX->graph(0)->clearData();
+    graficoAnguloX->graph(0)->clearData();
 
     graficoAcX->clearData();
     graficoAcY->clearData();
@@ -95,43 +96,43 @@ void Reportes::inicializarGraficoResultados()
 
 void Reportes::inicializarGraficoAngulos()
 {
-    graficoAngulos->plotLayout()->clear();
-    graficoAngulos->clearItems();
-    graficoAngulos->clearGraphs();
 
-    //Elementos del grafico
-    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoAngulos);
-    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoAngulos);
+//    //Elementos del grafico
+//    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoAngulos);
+//    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoAngulos);
 
-    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoAngulos,"Grafico Angulo X vs Tiempo");
-    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Y vs Tiempo");
+//    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoAngulos,"Grafico Angulo X vs Tiempo");
+//    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Y vs Tiempo");
 
-    //Se posicionan los layouts
-    graficoAngulos->plotLayout()->addElement(0, 0, tituloX);
-    graficoAngulos->plotLayout()->addElement(1, 0, topAxisRect);
+//    //Se posicionan los layouts
+//    graficoAngulos->plotLayout()->addElement(0, 0, tituloX);
+//    graficoAngulos->plotLayout()->addElement(1, 0, topAxisRect);
 
-    graficoAngulos->plotLayout()->addElement(2, 0, tituloY);
-    graficoAngulos->plotLayout()->addElement(3, 0, bottomAxisRect);
+//    graficoAngulos->plotLayout()->addElement(2, 0, tituloY);
+//    graficoAngulos->plotLayout()->addElement(3, 0, bottomAxisRect);
 
     // create and configure plottables:
-    graficoAnguloX = graficoAngulos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    graficoAnguloY = graficoAngulos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+//    graficoAnguloX->addGraph() = graficoAngulos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+//    graficoAnguloY = graficoAngulos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
+    graficoAnguloX->addGraph();
+    graficoAnguloY->addGraph();
     //Colores de la Line
-    graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
-    graficoAnguloY->setPen(QPen(QColor(153, 102, 51), 2));
+    graficoAnguloX->graph(0)->setPen(QPen(QColor(71, 71, 194), 2));
+    graficoAnguloY->graph(0)->setPen(QPen(QColor(153, 102, 51), 2));
 
-    //Labels de los ejes
-    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
-    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
-    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
-    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+//    //Labels de los ejes
+//    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
+//    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+//    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
+//    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
 
 //    //Se rescalan los ejes para el autoajuste
 //    graficoAnguloX->rescaleAxes();
 //    graficoAnguloY->rescaleAxes();
 
-   graficoAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+   graficoAnguloX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+   graficoAnguloY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 //    grafico->replot(); //Se redibuja para actualizar para actualizar la vista
 
 }
@@ -235,8 +236,8 @@ void Reportes::inicializarGraficoMuestras()
 void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
 {
     //Se agregan los datos al grafico de Angulos
-    graficoAnguloX->addData(angulo->getTiempo() , angulo->getAnguloX());
-    graficoAnguloY->addData(angulo->getTiempo() , angulo->getAnguloY());
+    graficoAnguloX->graph(0)->addData(angulo->getTiempo() , angulo->getAnguloX());
+    graficoAnguloY->graph(0)->addData(angulo->getTiempo() , angulo->getAnguloY());
 }
 
 void Reportes::agregarDatosGraficoMuestras(Raw *datos)
@@ -285,6 +286,72 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     quadrantData  << q1 << q2 << q3 << q4;
 
     cuadrantes->setData(ticks, quadrantData);
+}
+
+
+void Reportes::analizarGraficosAngulos(QWidget *parent, int rangoHorizontal,double tiempoPrueba)
+{
+    QCPItemLine *itemA = new QCPItemLine(graficoAnguloX);
+    graficoAnguloX->addItem(itemA);
+    itemA->setPen(QPen(Qt::red));
+    itemA->start->setCoords(0,-rangoHorizontal);
+    itemA->end->setCoords(0,rangoHorizontal);
+
+    QCPItemLine *itemB = new QCPItemLine(graficoAnguloX);
+    graficoAnguloX->addItem(itemB);
+    itemB->setPen(QPen(Qt::red));
+    itemB->start->setCoords(tiempoPrueba,-rangoHorizontal);
+    itemB->end->setCoords(tiempoPrueba,rangoHorizontal);
+    QTextStream stdout <<tiempoPrueba<<endl;
+    graficoAnguloX->replot();
+
+    //Qdialog de ventana de carga configuracion sensores.
+    QDialog *QDialogAnalisis=new QDialog(parent);
+    QDialogAnalisis->setWindowFlags(QDialogAnalisis->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
+    QLabel *labelCarga= new QLabel("SLIDERS!!");
+    layoutBarraCarga->addWidget(labelCarga);
+
+    QxtSpanSlider *horizontalSlider = new QxtSpanSlider(Qt::Horizontal);
+
+    horizontalSlider->setHandleMovementMode(QxtSpanSlider::NoOverlapping);
+    horizontalSlider->setMaximum(tiempoPrueba*100);
+    horizontalSlider->setLowerValue(0);
+    horizontalSlider->setLowerPosition(0);
+    horizontalSlider->setUpperValue(tiempoPrueba*100);
+    horizontalSlider->setUpperPosition(tiempoPrueba*100);
+
+    layoutBarraCarga->addWidget(horizontalSlider);
+
+    QPushButton *QPushButtonAplicarRangos= new QPushButton("Aplicar");
+    layoutBarraCarga->addWidget(QPushButtonAplicarRangos);
+
+    QDialogAnalisis->setLayout(layoutBarraCarga);
+
+    connect(QPushButtonAplicarRangos,QPushButton::clicked ,[=](){
+        graficoAnguloX->xAxis->setRange(horizontalSlider->lowerValue()/100.0,horizontalSlider->upperValue()/100.0);
+        graficoAnguloX->replot();
+    });
+
+    connect(horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+        itemA->start->setCoords(newValue/100.0,-rangoHorizontal);
+        itemA->end->setCoords(newValue/100.0,rangoHorizontal);
+        graficoAnguloX->replot();
+    });
+
+    connect(horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+        itemB->start->setCoords(newValue/100.0,-rangoHorizontal);
+        itemB->end->setCoords(newValue/100.0,rangoHorizontal);
+        graficoAnguloX->replot();
+    });
+
+    QDialogAnalisis->show();
+
+//    ui->horizontalSlider->setHandleMovementMode(QxtSpanSlider::NoOverlapping);
+//    ui->horizontalSlider->setLowerPosition(0);
+//    ui->horizontalSlider->setLowerValue(0);
+//    ui->horizontalSlider->setUpperValue(100);
+//    ui->horizontalSlider->setUpperValue(100);
 }
 
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)

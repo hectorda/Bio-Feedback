@@ -14,7 +14,6 @@
 #include <serial.h>
 #include <reportes.h>
 #include <sql.h>
-#include <analisisgraficos.h>
 
 namespace Ui {
 class MainWindow;

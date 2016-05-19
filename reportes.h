@@ -7,13 +7,15 @@
 #include <qcustomplot.h>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDialog>
+#include <qxtspanslider.h>
 
 class Reportes : public QObject
 {
     Q_OBJECT
 public:
     explicit Reportes(QObject *parent = 0);
-    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras);
+    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAnguloX,QCustomPlot *graficoAnguloY,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras);
 
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
@@ -23,21 +25,20 @@ public:
     void vaciarTablas();
     void vaciarGraficos();
 
+    void analizarGraficosAngulos(QWidget *parent, int rangoHorizontal, double tiempoPrueba);
+
 private:
     int presicion;
 
     QCustomPlot *graficoResultados;
-    QCustomPlot *graficoAngulos;
+    QCustomPlot *graficoAnguloX;
+    QCustomPlot *graficoAnguloY;
     QCustomPlot *graficoMuestras;
     QTableWidget *tablaAngulos;
     QTableWidget *tablaMuestras;
 
     //Plotables del Rrafico Resultado
     QCPBars *cuadrantes;
-
-    //Plotables de los Graficos del Angulo
-    QCPGraph *graficoAnguloX;
-    QCPGraph *graficoAnguloY;
 
     //Plotables de los Graficos de las Muestras
     QCPGraph *graficoAcX;
