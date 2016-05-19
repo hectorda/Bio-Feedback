@@ -28,7 +28,6 @@ void MainWindow::inicializar()
     status = new QLabel;
     ui->statusBar->addWidget(status);
     ui->dockWidget->installEventFilter(this);
-    ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
 
     ui->qCustomPlotGrafico->setContextMenuPolicy(Qt::CustomContextMenu);
     QCPPlotTitle *titulo = new QCPPlotTitle(ui->qCustomPlotGrafico);
@@ -66,7 +65,6 @@ void MainWindow::conexiones()
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
     connect(lectorSerial,SIGNAL(datosLeidos(double,double,double,double,double,double)),this,SLOT(obtenerRaw(double,double,double,double,double,double)));
-    connect(ui->lineEditRut,SIGNAL(returnPressed()),ui->pushButtonBuscarPaciente,SLOT(click()));
 
       //Connect de actions
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
@@ -1009,38 +1007,8 @@ void MainWindow::on_pushButtonAnalizarGraficos_clicked()
 
 void MainWindow::on_lineEditRut_textChanged(const QString &arg1)
 {
-    (void) arg1;
     QStringList wordList=db->listarRutPacientes();
     QCompleter *completer = new QCompleter(wordList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     ui->lineEditRut->setCompleter(completer);
-}
-
-void MainWindow::on_pushButtonBuscarPaciente_clicked()
-{
-    const QString rut=ui->lineEditRut->text();
-    if (rut.isEmpty())
-        QMessageBox::warning(this,"Datos Vacios","Debe Ingresar un Rut a Buscar");
-    else
-    {
-        QStringList datos=db->buscarPacienteporRut(rut);
-        if(datos.isEmpty()){
-            QMessageBox messageBox(QMessageBox::Question,
-                        tr("El Rut no Existe"),
-                        tr("El Rut no existe en la base de datos, desea agregarlo?"),
-                        QMessageBox::Yes | QMessageBox::No,
-                        this);
-            messageBox.setButtonText(QMessageBox::Yes, tr("Agregar"));
-            messageBox.setButtonText(QMessageBox::No, tr("No"));
-
-            if (messageBox.exec() == QMessageBox::Yes){
-               db->show();
-            }
-        }
-        else{
-            ui->labelNombrePaciente->setText("Nombre: "+datos.at(0));
-            ui->labelApellidoPaciente->setText("Apellido: "+datos.at(1));
-            ui->labelEdadPaciente->setText("Edad: "+datos.at(2));
-        }
-    }
 }

@@ -23,6 +23,7 @@ public:
     bool agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
     QStringList listarNombresPacientes();
     QStringList listarRutPacientes();
+    QStringList buscarPacienteporRut(const QString rut);
 
 private:
     Ui::SQL *ui;

@@ -31,6 +31,7 @@ public:
     void calibrarDispositivos();
 
 private slots:
+    //Slots de Botones
     void on_pushButtonPrueba1_clicked();
     void on_pushButtonPrueba2_clicked();
     void on_pushButtonPrueba3_clicked();
@@ -43,7 +44,13 @@ private slots:
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
     void on_pushButtonAnalizarGraficos_clicked();
-    void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);
+    void on_pushButtonBuscarPaciente_clicked();
+
+    //
+    void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);    
+    void on_lineEditRut_textChanged(const QString &arg1);
+    void on_dockWidget_topLevelChanged(bool topLevel);
+    void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
 
     void iniciarPrueba();
@@ -55,12 +62,9 @@ private slots:
     void contextMenuRequest(QPoint pos);
     void relacionAspectodelGrafico();
     bool eventFilter(QObject *obj, QEvent *event);
-    void on_dockWidget_topLevelChanged(bool topLevel);
-    void on_tabWidgetGrafico_Resultados_currentChanged(int index);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
-    void on_lineEditRut_textChanged(const QString &arg1);
 
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);

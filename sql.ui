@@ -146,6 +146,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -166,7 +169,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lineEditNombre</tabstop>
+  <tabstop>lineEditdigitoVerificador</tabstop>
   <tabstop>lineEditApellido</tabstop>
   <tabstop>spinBoxEdad</tabstop>
   <tabstop>comboBox</tabstop>
@@ -175,6 +178,8 @@
   <tabstop>tableView</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pushButtonActualizarTabla</tabstop>
+  <tabstop>lineEditRut</tabstop>
+  <tabstop>lineEditNombre</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>

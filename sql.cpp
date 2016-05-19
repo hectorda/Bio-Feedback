@@ -20,6 +20,7 @@ void SQL::inicializar()
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     this->conectar();
     ui->tabWidget->setCurrentWidget(ui->tab_tablaPacientes);
+    ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
     llenarTabla();
 }
 
@@ -66,7 +67,7 @@ void SQL::consulta()
 
         if(query.exec("SELECT * FROM admins"))
         {
-        while(query.next())
+            while(query.next())
             {
                 QTextStream stdout  << "id: " << query.value(0).toString();
                 QTextStream stdout  << " user: " << query.value(1).toString();
@@ -95,7 +96,6 @@ void SQL::llenarTabla()
         db.close();
     }
 }
-
 
 QStringList SQL::listarNombresPacientes()
 {
@@ -132,6 +132,28 @@ QStringList SQL::listarRutPacientes()
         db.close();
      }
     return ruts;
+}
+
+QStringList SQL::buscarPacienteporRut(const QString rut)
+{
+    QStringList datos;
+    db.open();
+    if(db.isOpen()){
+        QSqlQuery query;
+        query.prepare("SELECT nombre,apellido,edad FROM pacientes where rut = (:rut)");
+        query.bindValue(":rut",rut);
+        if(query.exec()){
+            while(query.next())
+            {
+                datos.append(query.value(0).toString());
+                datos.append(query.value(1).toString());
+                datos.append(query.value(2).toString());
+            }
+        }
+        db.close();
+     }
+    return datos;
+
 }
 
 bool SQL::agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad)
@@ -178,61 +200,35 @@ void SQL::on_tabWidget_currentChanged(int index)
 
 void SQL::on_lineEditRut_editingFinished()
 {
-    //declaracion de variables
-//    QString rut;
-//    QString rutvalidado;
-//    int total=0;
-//    int a,b,c;
-//    int contador=3;
-//    int acumulador=0;
-//    int resto=0;
-//    int digito=0;
-//    //fin declaracion de variables
+    QString rut;
+    int suma=0;
+    int digito;
 
-//    rut=ui->lineEditRut->text();
-//    total=rut.size();
-//    if(total<=7) {
-//    for(a=0;a<=7;a++) {
-//    if(rut.at(0)==rut[a]) {
-//    rutvalidado.at(0)='0';
-//    rutvalidado.at(a+1)=rut.at(0);
-//    }
-//    else {
-//    rutvalidado.at(a+1)=rut.at(a);
-//    }
-//    }
-//    }
-//    else
-//    {
-//    for(b=0;b<=7;b++) {
-//    rutvalidado.at(b)=rut.at(b);
-//    }
-//    }
-//    for(c=0;c<=7;c++) {
-//    if(contador==2) {
-//    acumulador=acumulador+((rutvalidado.at(c)-48)*contador);
-//    contador=8;
-//    }
-//    else
-//    {
-//    acumulador=acumulador+((rutvalidado.at(c)-48)*contador);
-//    }
-//    contador=contador-1;
-//    }
-//    digito=(11-(acumulador%11));
-//    if(digito>=10){
-//        if(digito==10)
-//            QTextStream stdout <<"\nEl digito verificador de su rut es: K"<<endl;
+    rut=ui->lineEditRut->text();
 
-//        else
-//        {
-//        QTextStream stdout << "\nEl digito verificador de su rut es: 0"<<endl;
-//        }
-//    }
-//    else
-//    {
-//     QTextStream stdout <<"\nEl digito verificador de su rut es: "<< digito<<endl;
-//    }
-//    getchar();
-//    getchar();
+    if(rut.isEmpty())
+        ui->lineEditdigitoVerificador->setText("");
+    else{
+        std::reverse(rut.begin(),rut.end());
+        QTextStream stdout <<"reverse: "<<rut.size()<<endl;
+
+        for (int var = 0; var <rut.size(); ++var) {
+            if(var<6)
+                suma+=rut.at(var).digitValue()*(var+2);
+            else
+                suma+=rut.at(var).digitValue()*(var-4);
+        }
+        digito = 11 - suma%11;
+        QTextStream stdout <<"digito: "<<digito<<endl;
+        if (digito<10)
+        {
+            ui->lineEditdigitoVerificador->setText(QString::number(digito));
+        }
+        else{
+            if(digito==11)
+                ui->lineEditdigitoVerificador->setText("0");
+            if (digito==10)
+                ui->lineEditdigitoVerificador->setText("K");
+        }
+    }
 }
