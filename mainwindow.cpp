@@ -690,12 +690,27 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         emit emitRawReporte(dato);
 
         if(tiempoPrueba!=qInf()){ //Si el tiempo es distinto de infinito se calcula el porcentaje
-           const double porcentaje=(tiempo/tiempoPrueba)*100+0.1;
+           const int porcentaje=qRound((tiempo/tiempoPrueba)*100.0);
            ui->progressBarPrueba->setValue(porcentaje);
         }
+
         const QString lapso=QString::number(tiempo, 'f', 1);
 
-        ui->lcdNumberTiempoTranscurrido->display(QString::number(cronometro.elapsed()/1000.0, 'f', 1));
+        const int elapased=cronometro.elapsed()/1000;
+
+      QString hours = QString::number(qFloor(elapased / 3600));
+      QString minutes = QString::number(qFloor ((elapased % 3600) / 60 ));
+      QString seconds = QString::number(elapased % 60);
+
+      //Anteponiendo un 0 a los minutos si son menos de 10
+      minutes = minutes.toInt() < 10 ? '0' + minutes : minutes;
+
+      //Anteponiendo un 0 a los segundos si son menos de 10
+      seconds = seconds.toInt() < 10 ? '0' + seconds : seconds;
+
+      QString result = hours + ":" + minutes + ":" + seconds;  // 2:41:30
+
+        ui->lcdNumberTiempoTranscurrido->display(result);
 
         const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
                           + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);

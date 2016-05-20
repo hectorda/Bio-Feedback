@@ -16,6 +16,7 @@ AnalisisGrafico::AnalisisGrafico(QWidget *parent,Reportes *reportes):
     ui->setupUi(this);
     this->reportes=reportes;
     ui->horizontalSlider->setHandleMovementMode(QxtSpanSlider::NoOverlapping);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
 void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
@@ -35,7 +36,7 @@ void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
             reportes->moverLineaIzquierdaAngulos(tiempo);
             calcularEstadisticos(newValue,ui->horizontalSlider->upperValue());
             contarDatos(newValue,ui->horizontalSlider->upperValue());
-            ui->labelRangoInf->setText(QString::number(tiempo,'f',3));
+            ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
@@ -43,13 +44,13 @@ void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
             reportes->moverLineaDerechaAngulos(tiempo);
             calcularEstadisticos(ui->horizontalSlider->lowerValue(),newValue);
             contarDatos(ui->horizontalSlider->lowerValue(),newValue);
-            ui->labelRangoSup->setText(QString::number(tiempo,'f',3));
+            ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
             reportes->vaciarGraficoAngulos();
             reportes->moverLineaIzquierdaAngulos(0);
-            reportes->moverLineaDerechaAngulos(listaAngulos.size());
+            reportes->moverLineaDerechaAngulos(listaAngulos.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
             ui->horizontalSlider->setUpperPosition(listaAngulos.size()-1);
 
