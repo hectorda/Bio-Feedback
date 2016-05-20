@@ -72,8 +72,8 @@ public slots:
     void graficarResultados(QList<Angulo*> listaAngulos);
     void vaciarGraficoAngulos();
     void replotGraficoAngulos();
-    void moverLineaIzquierdaAngulos(const int newValue);
-    void moverLineaDerechaAngulos(const int newValue);
+    void moverLineaIzquierdaAngulos(const double newValue);
+    void moverLineaDerechaAngulos(const double newValue);
 
 };
 

@@ -179,8 +179,6 @@ void Reportes::inicializarGraficoAngulos()
     graficoAnguloY->rescaleAxes();
 
     graficoAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-//    grafico->replot(); //Se redibuja para actualizar para actualizar la vista
-
 }
 
 void Reportes::inicializarGraficoMuestras()
@@ -333,21 +331,21 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     cuadrantes->setData(ticks, quadrantData);
 }
 
-void Reportes::moverLineaIzquierdaAngulos(const int newValue)
+void Reportes::moverLineaIzquierdaAngulos(const double newValue)
 {
-    lineaIzq1->end->setCoords(newValue/100.0,5000);
-    lineaIzq1->start->setCoords(newValue/100.0,-5000);
-    lineaIzq2->end->setCoords(newValue/100.0,5000);
-    lineaIzq2->start->setCoords(newValue/100.0,-5000);
+    lineaIzq1->end->setCoords(newValue,5000);
+    lineaIzq1->start->setCoords(newValue,-5000);
+    lineaIzq2->end->setCoords(newValue,5000);
+    lineaIzq2->start->setCoords(newValue,-5000);
     graficoAngulos->replot();
 }
 
-void Reportes::moverLineaDerechaAngulos(const int newValue)
+void Reportes::moverLineaDerechaAngulos(const double newValue)
 {
-    lineaDer1->end->setCoords(newValue/100.0,5000);
-    lineaDer1->start->setCoords(newValue/100.0,-5000);
-    lineaDer2->end->setCoords(newValue/100.0,5000);
-    lineaDer2->start->setCoords(newValue/100.0,-5000);
+    lineaDer1->end->setCoords(newValue,5000);
+    lineaDer1->start->setCoords(newValue,-5000);
+    lineaDer2->end->setCoords(newValue,5000);
+    lineaDer2->start->setCoords(newValue,-5000);
     graficoAngulos->replot();
 }
 
@@ -409,7 +407,7 @@ void Reportes::analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QLi
         graficoAnguloX->graph(0)->clearData();
         graficoAnguloY->graph(0)->clearData();
         foreach (Angulo *var, listaAngulos) {
-            if(var->getTiempo()>=horizontalSlider->lowerValue()/100.0 && var->getTiempo()<=horizontalSlider->upperValue()/100.0){
+            if(var->getTiempo()>=horizontalSlider->lowerValue()/10000.0 && var->getTiempo()<=horizontalSlider->upperValue()/10000.0){
                 graficoAnguloX->graph(0)->addData(var->getTiempo(),var->getAnguloX());
                 graficoAnguloY->graph(0)->addData(var->getTiempo(),var->getAnguloY());
             }
@@ -421,19 +419,19 @@ void Reportes::analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QLi
     });
 
     connect(horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
-        lineaLowerGraficoAnguloX->start->setCoords(newValue/100.0,-rangoHorizontal);
-        lineaLowerGraficoAnguloX->end->setCoords(newValue/100.0,rangoHorizontal);
-        lineaLowerGraficoAnguloY->start->setCoords(newValue/100.0,-rangoHorizontal);
-        lineaLowerGraficoAnguloY->end->setCoords(newValue/100.0,rangoHorizontal);
+        lineaLowerGraficoAnguloX->start->setCoords(newValue/10000.0,-rangoHorizontal);
+        lineaLowerGraficoAnguloX->end->setCoords(newValue/10000.0,rangoHorizontal);
+        lineaLowerGraficoAnguloY->start->setCoords(newValue/10000.0,-rangoHorizontal);
+        lineaLowerGraficoAnguloY->end->setCoords(newValue/10000.0,rangoHorizontal);
         graficoAnguloX->replot();
         graficoAnguloY->replot();
     });
 
     connect(horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
-        lineaUpperGraficoAnguloX->start->setCoords(newValue/100.0,-rangoHorizontal);
-        lineaUpperGraficoAnguloX->end->setCoords(newValue/100.0,rangoHorizontal);
-        lineaUpperGraficoAnguloY->start->setCoords(newValue/100.0,-rangoHorizontal);
-        lineaUpperGraficoAnguloY->end->setCoords(newValue/100.0,rangoHorizontal);
+        lineaUpperGraficoAnguloX->start->setCoords(newValue/10000.0,-rangoHorizontal);
+        lineaUpperGraficoAnguloX->end->setCoords(newValue/10000.0,rangoHorizontal);
+        lineaUpperGraficoAnguloY->start->setCoords(newValue/10000.0,-rangoHorizontal);
+        lineaUpperGraficoAnguloY->end->setCoords(newValue/10000.0,rangoHorizontal);
         graficoAnguloX->replot();
         graficoAnguloY->replot();
     });
@@ -499,14 +497,14 @@ void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
             QTextStream stream(&file);
             foreach (Raw *var, listaMuestras){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',presicion) << " X: " << QString::number(var->getAcX(),'f',presicion)
-                           << " Y: " << QString::number(var->getAcY(),'f',presicion) <<  " Z: " << QString::number(var->getAcZ(),'f',presicion) <<  " X: " << QString::number(var->getGyX(),'f',presicion) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAcX())
+                           << " Y: " << QString::number(var->getAcY()) <<  " Z: " << QString::number(var->getAcZ()) <<  " X: " << QString::number(var->getGyX(),'f',presicion) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << ";" <<QString::number(var->getAcX(),'f',presicion)
-                           <<";" << QString::number(var->getAcY(),'f',presicion) <<";" << QString::number(var->getAcZ(),'f',presicion)
-                           <<";" << QString::number(var->getGyX(),'f',presicion) <<";" << QString::number(var->getGyY(),'f',presicion)
-                           <<";" << QString::number(var->getGyZ(),'f',presicion) << endl;
+                    stream <<QString::number(var->getTiempo()) << "," <<QString::number(var->getAcX())
+                           <<"," << QString::number(var->getAcY()) <<"," << QString::number(var->getAcZ())
+                           <<"," << QString::number(var->getGyX()) <<"," << QString::number(var->getGyY())
+                           <<"," << QString::number(var->getGyZ()) << endl;
                 }
             }
             file.flush();
@@ -532,12 +530,12 @@ void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
             QTextStream stream(&file);
             foreach (Angulo *var, listaAngulos){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo(),'f',presicion) << " X: " << QString::number(var->getAnguloX(),'f',presicion)
-                           << " Y: " << QString::number(var->getAnguloY(),'f',presicion) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
+                           << " Y: " << QString::number(var->getAnguloY()) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << ";" << QString::number(var->getAnguloX(),'f',presicion)
-                           <<";" << QString::number(var->getAnguloY(),'f',presicion) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getAnguloX())
+                           <<"," << QString::number(var->getAnguloY()) << endl;
                 }
             }
             file.flush();

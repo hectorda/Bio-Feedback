@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1255,9 +1255,7 @@ QPushButton:hover {
               </attribute>
               <layout class="QGridLayout" name="gridLayout_7">
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true">
-                 <zorder>widget_2</zorder>
-                </widget>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
                </item>
               </layout>
              </widget>

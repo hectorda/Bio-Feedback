@@ -15,7 +15,42 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QPushButton" name="pushButtonRescalar">
+     <property name="text">
+      <string>Re-ajustar </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelCantidadDatos">
+     <property name="text">
+      <string>Datos</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelMedia">
+     <property name="text">
+      <string>Media:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelDesvEst">
+     <property name="text">
+      <string>Desv Est</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="labelRangoInf">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QxtSpanSlider" name="horizontalSlider">
        <property name="orientation">
@@ -24,9 +59,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="labelRangoSup">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonAplicarRango">
        <property name="text">
-        <string>Aplicar</string>
+        <string>Aplicar Rango</string>
        </property>
       </widget>
      </item>
@@ -35,7 +77,7 @@
    <item>
     <widget class="QPushButton" name="pushButtonRestaurar">
      <property name="text">
-      <string>Restaurar Grafico</string>
+      <string>Restaurar Rango Completo Graficos</string>
      </property>
     </widget>
    </item>

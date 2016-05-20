@@ -18,11 +18,15 @@ public:
     explicit AnalisisGrafico(QWidget *parent = 0);
     AnalisisGrafico(QWidget *parent, Reportes *reportes);
     ~AnalisisGrafico();    
-    void setListaAngulos(QList<Angulo *> listaAngulos);
+    void setListaAngulos(QList<Angulo *> LA);
+    void ajustarRangosGrafico(const int inicio, const int fin);
+    void calcularEstadisticos(const int inicio, const int fin);
+    void contarDatos(const int inicio, const int fin);
 
 private:
     Ui::AnalisisGrafico *ui;
     QList<Angulo*> listaAngulos;
+    Reportes *reportes;
 };
 
 #endif // ANALISISGRAFICO_H
