@@ -17,12 +17,15 @@ Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot 
     inicializarGraficoResultados();
     inicializarGraficoAngulos();
     inicializarGraficoMuestras();
+    QDialogAnalisis=new QDialog;
 }
 
 void Reportes::vaciarTablas()
 {
     tablaAngulos->clearContents();
+    tablaAngulos->setRowCount(0);
     tablaMuestras->clearContents();
+    tablaMuestras->setRowCount(0);
 }
 
 void Reportes::vaciarGraficos()
@@ -30,7 +33,7 @@ void Reportes::vaciarGraficos()
     cuadrantes->clearData();
 
     graficoAnguloX->graph(0)->clearData();
-    graficoAnguloX->graph(0)->clearData();
+    graficoAnguloY->graph(0)->clearData();
 
     graficoAcX->clearData();
     graficoAcY->clearData();
@@ -289,24 +292,38 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
 }
 
 
-void Reportes::analizarGraficosAngulos(QWidget *parent, int rangoHorizontal,double tiempoPrueba)
+void Reportes::analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QList<Angulo *> listaAngulos)
 {
-    QCPItemLine *itemA = new QCPItemLine(graficoAnguloX);
-    graficoAnguloX->addItem(itemA);
-    itemA->setPen(QPen(Qt::red));
-    itemA->start->setCoords(0,-rangoHorizontal);
-    itemA->end->setCoords(0,rangoHorizontal);
+    const int rangoHorizontal=5000;
+    QCPItemLine *lineaLowerGraficoAnguloX = new QCPItemLine(graficoAnguloX);
+    graficoAnguloX->addItem(lineaLowerGraficoAnguloX);
+    lineaLowerGraficoAnguloX->setPen(QPen(Qt::red));
+    lineaLowerGraficoAnguloX->start->setCoords(0,-rangoHorizontal);
+    lineaLowerGraficoAnguloX->end->setCoords(0,rangoHorizontal);
 
-    QCPItemLine *itemB = new QCPItemLine(graficoAnguloX);
-    graficoAnguloX->addItem(itemB);
-    itemB->setPen(QPen(Qt::red));
-    itemB->start->setCoords(tiempoPrueba,-rangoHorizontal);
-    itemB->end->setCoords(tiempoPrueba,rangoHorizontal);
-    QTextStream stdout <<tiempoPrueba<<endl;
+    QCPItemLine *lineaLowerGraficoAnguloY = new QCPItemLine(graficoAnguloY);
+    graficoAnguloY->addItem(lineaLowerGraficoAnguloY);
+    lineaLowerGraficoAnguloY->setPen(QPen(Qt::red));
+    lineaLowerGraficoAnguloY->start->setCoords(0,-rangoHorizontal);
+    lineaLowerGraficoAnguloY->end->setCoords(0,rangoHorizontal);
+
+    QCPItemLine *lineaUpperGraficoAnguloX = new QCPItemLine(graficoAnguloX);
+    graficoAnguloX->addItem(lineaUpperGraficoAnguloX);
+    lineaUpperGraficoAnguloX->setPen(QPen(Qt::red));
+    lineaUpperGraficoAnguloX->start->setCoords(tiempoPrueba,-rangoHorizontal);
+    lineaUpperGraficoAnguloX->end->setCoords(tiempoPrueba,rangoHorizontal);
+
+    QCPItemLine *lineaUpperGraficoAnguloY = new QCPItemLine(graficoAnguloY);
+    graficoAnguloY->addItem(lineaUpperGraficoAnguloY);
+    lineaUpperGraficoAnguloY->setPen(QPen(Qt::red));
+    lineaUpperGraficoAnguloY->start->setCoords(tiempoPrueba,-rangoHorizontal);
+    lineaUpperGraficoAnguloY->end->setCoords(tiempoPrueba,rangoHorizontal);
+
     graficoAnguloX->replot();
+    graficoAnguloY->replot();
 
     //Qdialog de ventana de carga configuracion sensores.
-    QDialog *QDialogAnalisis=new QDialog(parent);
+    QDialogAnalisis= new QDialog(parent);
     QDialogAnalisis->setWindowFlags(QDialogAnalisis->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
     QLabel *labelCarga= new QLabel("SLIDERS!!");
@@ -329,29 +346,54 @@ void Reportes::analizarGraficosAngulos(QWidget *parent, int rangoHorizontal,doub
     QDialogAnalisis->setLayout(layoutBarraCarga);
 
     connect(QPushButtonAplicarRangos,QPushButton::clicked ,[=](){
-        graficoAnguloX->xAxis->setRange(horizontalSlider->lowerValue()/100.0,horizontalSlider->upperValue()/100.0);
+        graficoAnguloX->graph(0)->clearData();
+        graficoAnguloY->graph(0)->clearData();
+        foreach (Angulo *var, listaAngulos) {
+            if(var->getTiempo()>=horizontalSlider->lowerValue()/100.0 && var->getTiempo()<=horizontalSlider->upperValue()/100.0){
+                graficoAnguloX->graph(0)->addData(var->getTiempo(),var->getAnguloX());
+                graficoAnguloY->graph(0)->addData(var->getTiempo(),var->getAnguloY());
+            }
+        }
+        graficoAnguloX->rescaleAxes();
+        graficoAnguloY->rescaleAxes();
         graficoAnguloX->replot();
+        graficoAnguloY->replot();
     });
 
     connect(horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
-        itemA->start->setCoords(newValue/100.0,-rangoHorizontal);
-        itemA->end->setCoords(newValue/100.0,rangoHorizontal);
+        lineaLowerGraficoAnguloX->start->setCoords(newValue/100.0,-rangoHorizontal);
+        lineaLowerGraficoAnguloX->end->setCoords(newValue/100.0,rangoHorizontal);
+        lineaLowerGraficoAnguloY->start->setCoords(newValue/100.0,-rangoHorizontal);
+        lineaLowerGraficoAnguloY->end->setCoords(newValue/100.0,rangoHorizontal);
         graficoAnguloX->replot();
+        graficoAnguloY->replot();
     });
 
     connect(horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
-        itemB->start->setCoords(newValue/100.0,-rangoHorizontal);
-        itemB->end->setCoords(newValue/100.0,rangoHorizontal);
+        lineaUpperGraficoAnguloX->start->setCoords(newValue/100.0,-rangoHorizontal);
+        lineaUpperGraficoAnguloX->end->setCoords(newValue/100.0,rangoHorizontal);
+        lineaUpperGraficoAnguloY->start->setCoords(newValue/100.0,-rangoHorizontal);
+        lineaUpperGraficoAnguloY->end->setCoords(newValue/100.0,rangoHorizontal);
         graficoAnguloX->replot();
+        graficoAnguloY->replot();
+    });
+
+    connect(QDialogAnalisis,QDialog::rejected, [=](){
+        graficoAnguloX->clearItems();
+        graficoAnguloY->clearItems();
+        graficoAnguloX->replot();
+        graficoAnguloY->replot();
     });
 
     QDialogAnalisis->show();
 
-//    ui->horizontalSlider->setHandleMovementMode(QxtSpanSlider::NoOverlapping);
-//    ui->horizontalSlider->setLowerPosition(0);
-//    ui->horizontalSlider->setLowerValue(0);
-//    ui->horizontalSlider->setUpperValue(100);
-//    ui->horizontalSlider->setUpperValue(100);
+}
+
+void Reportes::eliminarDialogAnalisis()
+{
+    graficoAnguloX->clearItems();
+    graficoAnguloY->clearItems();
+    delete QDialogAnalisis;
 }
 
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)

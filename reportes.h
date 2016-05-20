@@ -25,10 +25,12 @@ public:
     void vaciarTablas();
     void vaciarGraficos();
 
-    void analizarGraficosAngulos(QWidget *parent, int rangoHorizontal, double tiempoPrueba);
+    void analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QList<Angulo *> listaAngulos);
+    void eliminarDialogAnalisis();
 
 private:
     int presicion;
+    QDialog *QDialogAnalisis;
 
     QCustomPlot *graficoResultados;
     QCustomPlot *graficoAnguloX;

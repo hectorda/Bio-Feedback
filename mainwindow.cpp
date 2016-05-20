@@ -317,6 +317,7 @@ void MainWindow::desactivarTabs()
     ui->tabWidgetGrafico_Resultados->setTabEnabled(3,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(4,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(5,false);
+    reportes->eliminarDialogAnalisis();
 }
 
 void MainWindow::activarTabs()
@@ -1005,8 +1006,7 @@ void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_pushButtonAnalizarGraficos_clicked()
 {
-    int rangoHorizontal=elementosdelGrafico.RadioExterior;
-    reportes->analizarGraficosAngulos(this,rangoHorizontal,ui->lcdNumberTiempoTranscurrido->value());
+    reportes->analizarGraficosAngulos(this,ui->lcdNumberTiempoTranscurrido->value(),listaAngulos);
     //AnalisisGraficos *analisisGraficos= new AnalisisGraficos(this);
     //analisisGraficos->show();
 }
