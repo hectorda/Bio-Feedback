@@ -1162,7 +1162,7 @@ QPushButton:hover {
                <string>Graficos Angulos</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_8">
-               <item row="2" column="0">
+               <item row="1" column="0">
                 <widget class="QPushButton" name="pushButtonAnalizarGraficos">
                  <property name="text">
                   <string>Analizar Graficos</string>
@@ -1170,10 +1170,7 @@ QPushButton:hover {
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAnguloX" native="true"/>
-               </item>
-               <item row="1" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAnguloY" native="true"/>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true"/>
                </item>
               </layout>
              </widget>

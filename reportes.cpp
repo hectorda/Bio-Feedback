@@ -5,19 +5,17 @@ Reportes::Reportes(QObject *parent) : QObject(parent)
     this->presicion = 3;
 }
 
-Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAnguloX, QCustomPlot *graficoAnguloY, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaMuestras) : QObject(parent)
+Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaMuestras) : QObject(parent)
 {
     this->presicion = 4;
     this->graficoResultados = graficoResultados;
-    this->graficoAnguloX = graficoAnguloX;
-    this->graficoAnguloY = graficoAnguloY;
+    this->graficoAngulos = graficoAngulos;
     this->graficoMuestras = graficoMuestras;
     this->tablaAngulos = tablaAngulos;
     this->tablaMuestras = tablaMuestras;
     inicializarGraficoResultados();
     inicializarGraficoAngulos();
     inicializarGraficoMuestras();
-    QDialogAnalisis=new QDialog;
 }
 
 void Reportes::vaciarTablas()
@@ -32,8 +30,7 @@ void Reportes::vaciarGraficos()
 {
     cuadrantes->clearData();
 
-    graficoAnguloX->graph(0)->clearData();
-    graficoAnguloY->graph(0)->clearData();
+    vaciarGraficoAngulos();
 
     graficoAcX->clearData();
     graficoAcY->clearData();
@@ -41,6 +38,19 @@ void Reportes::vaciarGraficos()
     graficoGyX->clearData();
     graficoGyY->clearData();
     graficoGyZ->clearData();
+}
+
+void Reportes::vaciarGraficoAngulos()
+{
+    graficoAnguloX->clearData();
+    graficoAnguloY->clearData();
+}
+
+void Reportes::replotGraficoAngulos()
+{
+    graficoAnguloX->rescaleAxes();
+    graficoAnguloY->rescaleAxes();
+    graficoAngulos->replot();
 }
 
 void Reportes::inicializarGraficoResultados()
@@ -99,50 +109,82 @@ void Reportes::inicializarGraficoResultados()
 
 void Reportes::inicializarGraficoAngulos()
 {
+    graficoAngulos->plotLayout()->clear();
+    graficoAngulos->clearItems();
+    graficoAngulos->clearGraphs();
 
-//    //Elementos del grafico
-//    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoAngulos);
-//    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoAngulos);
+    //Elementos del grafico
+    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoAngulos);
+    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoAngulos);
 
-//    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoAngulos,"Grafico Angulo X vs Tiempo");
-//    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Y vs Tiempo");
+    bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
+    bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
 
-//    //Se posicionan los layouts
-//    graficoAngulos->plotLayout()->addElement(0, 0, tituloX);
-//    graficoAngulos->plotLayout()->addElement(1, 0, topAxisRect);
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoAngulos,"Grafico Angulo X vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Y vs Tiempo");
 
-//    graficoAngulos->plotLayout()->addElement(2, 0, tituloY);
-//    graficoAngulos->plotLayout()->addElement(3, 0, bottomAxisRect);
+    //Se posicionan los layouts
+    graficoAngulos->plotLayout()->addElement(0, 0, tituloX);
+    graficoAngulos->plotLayout()->addElement(1, 0, topAxisRect);
 
-    // create and configure plottables:
-//    graficoAnguloX->addGraph() = graficoAngulos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-//    graficoAnguloY = graficoAngulos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    graficoAngulos->plotLayout()->addElement(2, 0, tituloY);
+    graficoAngulos->plotLayout()->addElement(3, 0, bottomAxisRect);
 
-    graficoAnguloX->addGraph();
-    graficoAnguloY->addGraph();
+     //create and configure plottables:
+    graficoAnguloX = graficoAngulos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    graficoAnguloY = graficoAngulos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+    graficoAngulos->addLayer("name", 0 , QCustomPlot::limAbove);
+
+    lineaIzq1=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaIzq1);
+    lineaIzq1->setClipAxisRect(topAxisRect);
+    lineaIzq1->setPen(QPen(Qt::red));
+    lineaIzq1->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq1->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+
+    lineaIzq2=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaIzq2);
+    lineaIzq2->setClipAxisRect(bottomAxisRect);
+    lineaIzq2->setPen(QPen(Qt::red));
+    lineaIzq2->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq2->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+    lineaDer1=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaDer1);
+    lineaDer1->setClipAxisRect(topAxisRect);
+    lineaDer1->setPen(QPen(Qt::red));
+    lineaDer1->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaDer1->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+
+    lineaDer2=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaDer2);
+    lineaDer2->setClipAxisRect(bottomAxisRect);
+    lineaDer2->setPen(QPen(Qt::red));
+    lineaDer2->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDer2->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
     //Colores de la Line
-    graficoAnguloX->graph(0)->setPen(QPen(QColor(71, 71, 194), 2));
-    graficoAnguloY->graph(0)->setPen(QPen(QColor(153, 102, 51), 2));
+    graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
+    graficoAnguloY->setPen(QPen(QColor(153, 102, 51), 2));
 
-//    //Labels de los ejes
-//    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
-//    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
-//    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
-//    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+    //Labels de los ejes
+    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
+    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Angulo (grados)");
+    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
 
-//    //Se rescalan los ejes para el autoajuste
-//    graficoAnguloX->rescaleAxes();
-//    graficoAnguloY->rescaleAxes();
+    //Se rescalan los ejes para el autoajuste
+    graficoAnguloX->rescaleAxes();
+    graficoAnguloY->rescaleAxes();
 
-   graficoAnguloX->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
-   graficoAnguloY->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    graficoAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 //    grafico->replot(); //Se redibuja para actualizar para actualizar la vista
 
 }
 
 void Reportes::inicializarGraficoMuestras()
 {
-
     graficoMuestras->plotLayout()->clear(); // let's start from scratch and remove the default axis rect
     graficoMuestras->clearItems();
     graficoMuestras->clearGraphs();
@@ -239,8 +281,8 @@ void Reportes::inicializarGraficoMuestras()
 void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
 {
     //Se agregan los datos al grafico de Angulos
-    graficoAnguloX->graph(0)->addData(angulo->getTiempo() , angulo->getAnguloX());
-    graficoAnguloY->graph(0)->addData(angulo->getTiempo() , angulo->getAnguloY());
+    graficoAnguloX->addData(angulo->getTiempo() , angulo->getAnguloX());
+    graficoAnguloY->addData(angulo->getTiempo() , angulo->getAnguloY());
 }
 
 void Reportes::agregarDatosGraficoMuestras(Raw *datos)
@@ -291,9 +333,27 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     cuadrantes->setData(ticks, quadrantData);
 }
 
+void Reportes::moverLineaIzquierdaAngulos(const int newValue)
+{
+    lineaIzq1->end->setCoords(newValue/100.0,5000);
+    lineaIzq1->start->setCoords(newValue/100.0,-5000);
+    lineaIzq2->end->setCoords(newValue/100.0,5000);
+    lineaIzq2->start->setCoords(newValue/100.0,-5000);
+    graficoAngulos->replot();
+}
+
+void Reportes::moverLineaDerechaAngulos(const int newValue)
+{
+    lineaDer1->end->setCoords(newValue/100.0,5000);
+    lineaDer1->start->setCoords(newValue/100.0,-5000);
+    lineaDer2->end->setCoords(newValue/100.0,5000);
+    lineaDer2->start->setCoords(newValue/100.0,-5000);
+    graficoAngulos->replot();
+}
 
 void Reportes::analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QList<Angulo *> listaAngulos)
 {
+    /*
     const int rangoHorizontal=5000;
     QCPItemLine *lineaLowerGraficoAnguloX = new QCPItemLine(graficoAnguloX);
     graficoAnguloX->addItem(lineaLowerGraficoAnguloX);
@@ -386,14 +446,7 @@ void Reportes::analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QLi
     });
 
     QDialogAnalisis->show();
-
-}
-
-void Reportes::eliminarDialogAnalisis()
-{
-    graficoAnguloX->clearItems();
-    graficoAnguloY->clearItems();
-    delete QDialogAnalisis;
+    */
 }
 
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)

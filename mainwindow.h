@@ -14,6 +14,7 @@
 #include <serial.h>
 #include <reportes.h>
 #include <sql.h>
+#include <analisisgrafico.h>
 
 namespace Ui {
 class MainWindow;
@@ -90,6 +91,7 @@ private:
     QCPCurve *lienzo;
     AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;
+    AnalisisGrafico *analisisGrafico;
     SQL *db;
 
     void inicializar();

@@ -15,7 +15,7 @@ class Reportes : public QObject
     Q_OBJECT
 public:
     explicit Reportes(QObject *parent = 0);
-    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAnguloX,QCustomPlot *graficoAnguloY,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras);
+    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaMuestras);
 
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
@@ -26,21 +26,27 @@ public:
     void vaciarGraficos();
 
     void analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QList<Angulo *> listaAngulos);
-    void eliminarDialogAnalisis();
 
 private:
     int presicion;
-    QDialog *QDialogAnalisis;
-
     QCustomPlot *graficoResultados;
-    QCustomPlot *graficoAnguloX;
-    QCustomPlot *graficoAnguloY;
+    QCustomPlot *graficoAngulos;
     QCustomPlot *graficoMuestras;
     QTableWidget *tablaAngulos;
     QTableWidget *tablaMuestras;
 
     //Plotables del Rrafico Resultado
     QCPBars *cuadrantes;
+
+    //Plotables de los Graficos de Angulos
+    QCPGraph *graficoAnguloX;
+    QCPGraph *graficoAnguloY;
+
+    //Item para el ajuste de los rangos del Grafico Angulos
+    QCPItemLine *lineaIzq1;
+    QCPItemLine *lineaIzq2;
+    QCPItemLine *lineaDer1;
+    QCPItemLine *lineaDer2;
 
     //Plotables de los Graficos de las Muestras
     QCPGraph *graficoAcX;
@@ -64,6 +70,10 @@ public slots:
     void agregarFilaTablaAngulos(Angulo *angulo);
     void agregarFilaTablaMuestras(Raw *datos);
     void graficarResultados(QList<Angulo*> listaAngulos);
+    void vaciarGraficoAngulos();
+    void replotGraficoAngulos();
+    void moverLineaIzquierdaAngulos(const int newValue);
+    void moverLineaDerechaAngulos(const int newValue);
 
 };
 

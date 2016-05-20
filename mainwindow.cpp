@@ -22,7 +22,9 @@ void MainWindow::inicializar()
     ajustesSensores = new AjustesSensores(this);
     ajustesGrafico = new AjustesGrafico(this);
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
-    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAnguloX,ui->qCustomPlotGraficoAnguloY,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
+    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
+    analisisGrafico = new AnalisisGrafico(this,reportes);
+
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
     status = new QLabel;
@@ -134,6 +136,7 @@ void MainWindow::mostrarResultados()
     QTextStream(stdout)<<"Muestras x Seg: "<< listaMuestras.size()/listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(listaAngulos);
+    analisisGrafico->setListaAngulos(listaAngulos);
     mostrarBotones();
     activarTabs();
 }
@@ -317,7 +320,6 @@ void MainWindow::desactivarTabs()
     ui->tabWidgetGrafico_Resultados->setTabEnabled(3,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(4,false);
     ui->tabWidgetGrafico_Resultados->setTabEnabled(5,false);
-    reportes->eliminarDialogAnalisis();
 }
 
 void MainWindow::activarTabs()
@@ -847,7 +849,7 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
         reportes->guardarImagenGrafico(ui->qCustomPlotResultados,1000,1000);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
-        reportes->guardarImagenGrafico(ui->qCustomPlotGraficoAnguloX,1920,1080);
+        reportes->guardarImagenGrafico(ui->qCustomPlotGraficoAngulos,1920,1080);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
         reportes->guardarImagenGrafico(ui->qCustomPlotGraficoMuestras,1920,1080);
@@ -937,11 +939,8 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
     {
-        ui->qCustomPlotGraficoAnguloX->rescaleAxes();
-        ui->qCustomPlotGraficoAnguloX->replot();
-
-        ui->qCustomPlotGraficoAnguloY->rescaleAxes();
-        ui->qCustomPlotGraficoAnguloY->replot();
+        ui->qCustomPlotGraficoAngulos->rescaleAxes();
+        ui->qCustomPlotGraficoAngulos->replot();
 
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGraficos\nAngulos");
@@ -1006,9 +1005,7 @@ void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_pushButtonAnalizarGraficos_clicked()
 {
-    reportes->analizarGraficosAngulos(this,ui->lcdNumberTiempoTranscurrido->value(),listaAngulos);
-    //AnalisisGraficos *analisisGraficos= new AnalisisGraficos(this);
-    //analisisGraficos->show();
+    analisisGrafico->show();
 }
 
 void MainWindow::on_lineEditRut_textChanged(const QString &arg1)
