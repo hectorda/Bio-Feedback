@@ -1497,7 +1497,7 @@ Gráfico</string>
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Segundos Transcurridos</string>
+             <string>Tiempo Transcurrido</string>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>

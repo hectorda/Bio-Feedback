@@ -698,17 +698,17 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 
         const int elapased=cronometro.elapsed()/1000;
 
-      QString hours = QString::number(qFloor(elapased / 3600));
-      QString minutes = QString::number(qFloor ((elapased % 3600) / 60 ));
-      QString seconds = QString::number(elapased % 60);
+        QString hours = QString::number(qFloor(elapased / 3600));
+        QString minutes = QString::number(qFloor ((elapased % 3600) / 60 ));
+        QString seconds = QString::number(elapased % 60);
 
-      //Anteponiendo un 0 a los minutos si son menos de 10
-      minutes = minutes.toInt() < 10 ? '0' + minutes : minutes;
+        //Anteponiendo un 0 a los minutos si son menos de 10
+        minutes = minutes.toInt() < 10 ? '0' + minutes : minutes;
 
-      //Anteponiendo un 0 a los segundos si son menos de 10
-      seconds = seconds.toInt() < 10 ? '0' + seconds : seconds;
+        //Anteponiendo un 0 a los segundos si son menos de 10
+        seconds = seconds.toInt() < 10 ? '0' + seconds : seconds;
 
-      QString result = hours + ":" + minutes + ":" + seconds;  // 2:41:30
+        QString result = hours + ":" + minutes + ":" + seconds;  // 2:41:30
 
         ui->lcdNumberTiempoTranscurrido->display(result);
 
