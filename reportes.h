@@ -71,7 +71,9 @@ public slots:
     void agregarFilaTablaMuestras(Raw *datos);
     void graficarResultados(QList<Angulo*> listaAngulos);
     void vaciarGraficoAngulos();
+    void vaciarGraficoMuestras();
     void replotGraficoAngulos();
+    void replotGraficoMuestras();
     void moverLineaIzquierdaAngulos(const double newValue);
     void moverLineaDerechaAngulos(const double newValue);
 

@@ -31,13 +31,7 @@ void Reportes::vaciarGraficos()
     cuadrantes->clearData();
 
     vaciarGraficoAngulos();
-
-    graficoAcX->clearData();
-    graficoAcY->clearData();
-    graficoAcZ->clearData();
-    graficoGyX->clearData();
-    graficoGyY->clearData();
-    graficoGyZ->clearData();
+    vaciarGraficoMuestras();
 }
 
 void Reportes::vaciarGraficoAngulos()
@@ -46,11 +40,32 @@ void Reportes::vaciarGraficoAngulos()
     graficoAnguloY->clearData();
 }
 
+void Reportes::vaciarGraficoMuestras()
+{
+    graficoAcX->clearData();
+    graficoAcY->clearData();
+    graficoAcZ->clearData();
+    graficoGyX->clearData();
+    graficoGyY->clearData();
+    graficoGyZ->clearData();
+}
+
 void Reportes::replotGraficoAngulos()
 {
     graficoAnguloX->rescaleAxes();
     graficoAnguloY->rescaleAxes();
     graficoAngulos->replot();
+}
+
+void Reportes::replotGraficoMuestras()
+{
+    graficoAcX->rescaleAxes();
+    graficoAcY->rescaleAxes();
+    graficoAcZ->rescaleAxes();
+    graficoGyX->rescaleAxes();
+    graficoGyY->rescaleAxes();
+    graficoGyZ->rescaleAxes();
+    graficoMuestras->replot();
 }
 
 void Reportes::inicializarGraficoResultados()

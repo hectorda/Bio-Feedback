@@ -28,42 +28,38 @@ void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
 
     else
     {
+        this->setWindowTitle("Analisis Lista Angulos");
         const int muestras=listaAngulos.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
 
         connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaAngulos.at(newValue)->getTiempo();
             reportes->moverLineaIzquierdaAngulos(tiempo);
-            calcularEstadisticos(newValue,ui->horizontalSlider->upperValue());
-            contarDatos(newValue,ui->horizontalSlider->upperValue());
+            calcularEstadisticosAngulos(newValue,ui->horizontalSlider->upperValue());
+            contarDatosAngulos(newValue,ui->horizontalSlider->upperValue());
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaAngulos.at(newValue)->getTiempo();
             reportes->moverLineaDerechaAngulos(tiempo);
-            calcularEstadisticos(ui->horizontalSlider->lowerValue(),newValue);
-            contarDatos(ui->horizontalSlider->lowerValue(),newValue);
+            calcularEstadisticosAngulos(ui->horizontalSlider->lowerValue(),newValue);
+            contarDatosAngulos(ui->horizontalSlider->lowerValue(),newValue);
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
-            reportes->vaciarGraficoAngulos();
             reportes->moverLineaIzquierdaAngulos(0);
             reportes->moverLineaDerechaAngulos(listaAngulos.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
             ui->horizontalSlider->setUpperPosition(listaAngulos.size()-1);
-
-            foreach (Angulo *var, listaAngulos)
-                reportes->agregarDatosGraficoAngulos(var);
-
-            reportes->replotGraficoAngulos();
+            ajustarRangosGraficoAngulos(0,listaAngulos.size()-1);
         });
 
         connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
             const int inicio=ui->horizontalSlider->lowerValue();
             const int fin=ui->horizontalSlider->upperValue();
-            ajustarRangosGrafico(inicio,fin);
+            ajustarRangosGraficoAngulos(inicio,fin);
         });
 
         connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
@@ -79,7 +75,7 @@ void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
 }
 
 
-void AnalisisGrafico::ajustarRangosGrafico(const int inicio, const int fin)
+void AnalisisGrafico::ajustarRangosGraficoAngulos(const int inicio, const int fin)
 {
     reportes->vaciarGraficoAngulos();
     for (int var = inicio; var <= fin; ++var)
@@ -88,7 +84,7 @@ void AnalisisGrafico::ajustarRangosGrafico(const int inicio, const int fin)
     reportes->replotGraficoAngulos();
 }
 
-void AnalisisGrafico::contarDatos(const int inicio, const int fin){
+void AnalisisGrafico::contarDatosAngulos(const int inicio, const int fin){
     const int terminos=fin+1-inicio;
     double frecuenciaMuestreo=(listaAngulos.at(fin)->getTiempo()-listaAngulos.at(inicio)->getTiempo());
     frecuenciaMuestreo/=(fin-inicio);
@@ -98,7 +94,7 @@ void AnalisisGrafico::contarDatos(const int inicio, const int fin){
 
 }
 
-void AnalisisGrafico::calcularEstadisticos(const int inicio, const int fin)
+void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fin)
 {
     double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
     int terminos=fin+1-inicio;
@@ -125,4 +121,132 @@ void AnalisisGrafico::calcularEstadisticos(const int inicio, const int fin)
 AnalisisGrafico::~AnalisisGrafico()
 {
     delete ui;
+}
+
+
+
+void AnalisisGrafico::setListaMuestras(QList<Raw *> LR)
+{
+    this->listaMuestras=LR;
+
+    if(this->listaMuestras.isEmpty())
+        QTextStream stdout<<"No hay datos de Muestras a analizar"<<endl;
+
+    else
+    {
+        this->setWindowTitle("Analisis Lista Muestras");
+        const int muestras=listaMuestras.size()-1;
+        ui->horizontalSlider->setMaximum(muestras);
+
+        connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+            const double tiempo=listaMuestras.at(newValue)->getTiempo();
+            //reportes->moverLineaIzquierdaAngulos(tiempo);
+            calcularEstadisticosMuestras(newValue,ui->horizontalSlider->upperValue());
+            contarDatosMuestras(newValue,ui->horizontalSlider->upperValue());
+            ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
+        });
+
+        connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+            const double tiempo=listaMuestras.at(newValue)->getTiempo();
+            //reportes->moverLineaDerechaAngulos(tiempo);
+            calcularEstadisticosMuestras(ui->horizontalSlider->lowerValue(),newValue);
+            contarDatosMuestras(ui->horizontalSlider->lowerValue(),newValue);
+            ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
+        });
+
+        connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
+//            reportes->moverLineaIzquierdaAngulos(0);
+//            reportes->moverLineaDerechaAngulos(listaAngulos.last()->getTiempo());
+            ui->horizontalSlider->setLowerValue(0);
+            ui->horizontalSlider->setUpperPosition(listaMuestras.size()-1);
+            ajustarRangosGraficoMuestras(0,listaMuestras.size()-1);
+
+        });
+
+        connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
+            const int inicio=ui->horizontalSlider->lowerValue();
+            const int fin=ui->horizontalSlider->upperValue();
+            ajustarRangosGraficoMuestras(inicio,fin);
+        });
+
+        connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
+            reportes->replotGraficoMuestras();
+        });
+
+        ui->horizontalSlider->setLowerValue(0);
+        ui->horizontalSlider->setLowerPosition(0);
+        ui->horizontalSlider->lowerValueChanged(0); //para que se añada automaticamente el slider izquierdo
+        ui->horizontalSlider->setUpperValue(muestras);
+        ui->horizontalSlider->setUpperPosition(muestras);
+    }
+}
+
+
+void AnalisisGrafico::ajustarRangosGraficoMuestras(const int inicio, const int fin)
+{
+    reportes->vaciarGraficoMuestras();
+    for (int var = inicio; var <= fin; ++var)
+        reportes->agregarDatosGraficoMuestras(listaMuestras.at(var));
+
+    reportes->replotGraficoMuestras();
+}
+
+void AnalisisGrafico::contarDatosMuestras(const int inicio, const int fin){
+    const int terminos=fin+1-inicio;
+    double frecuenciaMuestreo=(listaMuestras.at(fin)->getTiempo()-listaMuestras.at(inicio)->getTiempo());
+    frecuenciaMuestreo/=(fin-inicio);
+    ui->labelCantidadDatos->setText(QString("Datos totales: %1, Datos analizados actualmente: %2"
+                                            "\nFrecuencia de muestreo obtenida %3 Hz")
+                                            .arg(listaMuestras.size()).arg(terminos).arg(1/frecuenciaMuestreo));
+
+}
+
+void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int fin)
+{
+    double mediaAcX=0,mediaAcY=0,mediaAcZ=0,mediaGyX=0,mediaGyY=0,mediaGyZ=0;
+    double varianAcX=0,varianAcY=0,varianAcZ=0,varianGyX=0,varianGyY=0,varianGyZ=0;
+    double desvEstAcX=0,desvEstAcY=0,desvEstAcZ=0,desvEstGyX=0,desvEstGyY=0,desvEstGyZ=0;
+    int terminos=fin+1-inicio;
+    for (int var = inicio; var <= fin; ++var) {
+        mediaAcX+=listaMuestras.at(var)->getAcX();
+        mediaAcY+=listaMuestras.at(var)->getAcY();
+        mediaAcZ+=listaMuestras.at(var)->getAcZ();
+        mediaGyX+=listaMuestras.at(var)->getGyX();
+        mediaGyY+=listaMuestras.at(var)->getGyY();
+        mediaGyZ+=listaMuestras.at(var)->getGyZ();
+    }
+    mediaAcX/=terminos;
+    mediaAcY/=terminos;
+    mediaAcZ/=terminos;
+    mediaGyX/=terminos;
+    mediaGyY/=terminos;
+    mediaGyZ/=terminos;
+
+    for (int var = inicio; var <= fin; ++var) {
+        varianAcX+=qPow((listaMuestras.at(var)->getAcX()-mediaAcX),2);
+        varianAcY+=qPow((listaMuestras.at(var)->getAcY()-mediaAcY),2);
+        varianAcZ+=qPow((listaMuestras.at(var)->getAcZ()-mediaAcZ),2);
+        varianGyX+=qPow((listaMuestras.at(var)->getGyX()-mediaGyX),2);
+        varianGyY+=qPow((listaMuestras.at(var)->getGyY()-mediaGyY),2);
+        varianGyZ+=qPow((listaMuestras.at(var)->getGyZ()-mediaGyZ),2);
+    }
+    varianAcX/=terminos;
+    varianAcY/=terminos;
+    varianAcZ/=terminos;
+    varianGyX/=terminos;
+    varianGyY/=terminos;
+    varianGyZ/=terminos;
+
+    desvEstAcX=qSqrt(varianAcX);
+    desvEstAcY=qSqrt(varianAcY);
+    desvEstAcZ=qSqrt(varianAcZ);
+    desvEstGyX=qSqrt(varianGyX);
+    desvEstGyY=qSqrt(varianGyY);
+    desvEstGyZ=qSqrt(varianGyZ);
+
+
+    ui->labelMedia->setText(tr("Media AcX: %1 , Media AcY: %2 , Media AcZ: %3 \nMedia GyX: %4 , Media GyY: %5 , Media GyZ: %6")
+                            .arg(mediaAcX).arg(mediaAcY).arg(mediaAcZ).arg(mediaGyX).arg(mediaGyY).arg(mediaGyZ));
+    ui->labelDesvEst->setText(QString("Desviacion Estandar AcX: %1 , Desviación Estándar AcY: %2 , Desviación Estándar AcZ: %3 \nFaltan las del giro :p")
+                              .arg(desvEstAcX).arg(desvEstAcY).arg(desvEstAcX));
 }

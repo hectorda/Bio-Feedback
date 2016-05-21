@@ -66,6 +66,8 @@ private slots:
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
 
+    void on_pushButtonAnalsisGraficoMuestras_clicked();
+
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);
     void emitRawReporte(Raw*);
@@ -91,7 +93,7 @@ private:
     QCPCurve *lienzo;
     AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;
-    AnalisisGrafico *analisisGrafico;
+    AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras;
     SQL *db;
 
     void inicializar();

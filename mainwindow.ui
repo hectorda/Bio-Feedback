@@ -972,7 +972,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1256,6 +1256,13 @@ QPushButton:hover {
               <layout class="QGridLayout" name="gridLayout_7">
                <item row="0" column="0">
                 <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="pushButtonAnalsisGraficoMuestras">
+                 <property name="text">
+                  <string>Analizar Graficos Muestras</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>

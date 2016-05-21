@@ -23,7 +23,8 @@ void MainWindow::inicializar()
     ajustesGrafico = new AjustesGrafico(this);
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
     reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
-    analisisGrafico = new AnalisisGrafico(this,reportes);
+    analisisGraficoAngulos = new AnalisisGrafico(this,reportes);
+    analisisGraficoMuestras = new AnalisisGrafico(this,reportes);
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
@@ -136,9 +137,11 @@ void MainWindow::mostrarResultados()
     QTextStream(stdout)<<"Muestras x Seg: "<< listaMuestras.size()/listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(listaAngulos);
-    analisisGrafico->setListaAngulos(listaAngulos);
+    analisisGraficoAngulos->setListaAngulos(listaAngulos);
+    analisisGraficoMuestras->setListaMuestras(listaMuestras);
     mostrarBotones();
     activarTabs();
+    ui->centralWidget->adjustSize();
 }
 
 void MainWindow::obtenerAngulos(Raw *dato)
@@ -334,7 +337,6 @@ void MainWindow::activarTabs()
 void MainWindow::activarSpacerEntreBotones()
 {
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Expanding);
-    ui->centralWidget->adjustSize();
 }
 
 void MainWindow::desactivarSpacerEntreBotones()
@@ -627,6 +629,8 @@ void MainWindow::iniciarPrueba()
     listaObjetivos.clear();
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
+    analisisGraficoMuestras->hide();
+    analisisGraficoAngulos->hide();
 
     elementosdelGrafico=ajustesGrafico->getAjustes();//Se obtienen los ajustes actuales.
 
@@ -1020,7 +1024,7 @@ void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_pushButtonAnalizarGraficos_clicked()
 {
-    analisisGrafico->show();
+    analisisGraficoAngulos->show();
 }
 
 void MainWindow::on_lineEditRut_textChanged(const QString &arg1)
@@ -1059,4 +1063,9 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
             ui->labelEdadPaciente->setText("Edad: "+datos.at(2));
         }
     }
+}
+
+void MainWindow::on_pushButtonAnalsisGraficoMuestras_clicked()
+{
+    analisisGraficoMuestras->show();
 }

@@ -3,8 +3,9 @@
 
 #include <QDialog>
 #include <qxtspanslider.h>
-#include <angulo.h>
 #include <reportes.h>
+#include <angulo.h>
+#include <raw.h>
 
 namespace Ui {
 class AnalisisGrafico;
@@ -19,13 +20,19 @@ public:
     AnalisisGrafico(QWidget *parent, Reportes *reportes);
     ~AnalisisGrafico();    
     void setListaAngulos(QList<Angulo *> LA);
-    void ajustarRangosGrafico(const int inicio, const int fin);
-    void calcularEstadisticos(const int inicio, const int fin);
-    void contarDatos(const int inicio, const int fin);
+    void setListaMuestras(QList<Raw *> LR);
+    void ajustarRangosGraficoAngulos(const int inicio, const int fin);
+    void calcularEstadisticosAngulos(const int inicio, const int fin);
+    void contarDatosAngulos(const int inicio, const int fin);
+
+    void ajustarRangosGraficoMuestras(const int inicio, const int fin);
+    void contarDatosMuestras(const int inicio, const int fin);
+    void calcularEstadisticosMuestras(const int inicio, const int fin);
 
 private:
     Ui::AnalisisGrafico *ui;
     QList<Angulo*> listaAngulos;
+    QList<Raw*> listaMuestras;
     Reportes *reportes;
 };
 
