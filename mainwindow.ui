@@ -972,7 +972,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>5</number>
+              <number>2</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>

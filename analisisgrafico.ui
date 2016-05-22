@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>638</width>
+    <height>253</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPushButton" name="pushButtonRescalar">
-     <property name="styleSheet">
-      <string notr="true">QPushButton{
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="pushButtonRescalar">
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
 color : white;
 background: #0994f0;
 border: 2px solid #0e6699;
@@ -35,11 +37,39 @@ QPushButton:pressed {
 background: #0323FF;
 border: 3px solid #0000FF;
 }</string>
-     </property>
-     <property name="text">
-      <string>Re-ajustar </string>
-     </property>
-    </widget>
+       </property>
+       <property name="text">
+        <string>Re-ajustar </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonRestaurar">
+       <property name="styleSheet">
+        <string notr="true">QPushButton{
+color : white;
+background-color: #5cb85c;
+border: 2px solid #4cae4c;
+border-radius: 3px;
+padding: 5px;
+min-width: 80px;
+}
+
+QPushButton:hover {
+background-color: #47a447;
+border: 2px solid #398439;
+}
+
+QPushButton:pressed {
+border: 3px solid #398439;
+}</string>
+       </property>
+       <property name="text">
+        <string>Restaurar Rango Completo Graficos</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="labelCantidadDatos">
@@ -49,18 +79,7 @@ border: 3px solid #0000FF;
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="labelMedia">
-     <property name="text">
-      <string>Media:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="labelDesvEst">
-     <property name="text">
-      <string>Desv Est</string>
-     </property>
-    </widget>
+    <widget class="QTableWidget" name="tableWidgetEstadisticos"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -74,8 +93,7 @@ border: 3px solid #0000FF;
      <item>
       <widget class="QxtSpanSlider" name="horizontalSlider">
        <property name="styleSheet">
-        <string notr="true">
-</string>
+        <string notr="true"/>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -116,32 +134,6 @@ border: 3px solid #398439;
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButtonRestaurar">
-     <property name="styleSheet">
-      <string notr="true">QPushButton{
-color : white;
-background-color: #5cb85c;
-border: 2px solid #4cae4c;
-border-radius: 3px;
-padding: 5px;
-min-width: 80px;
-}
-
-QPushButton:hover {
-background-color: #47a447;
-border: 2px solid #398439;
-}
-
-QPushButton:pressed {
-border: 3px solid #398439;
-}</string>
-     </property>
-     <property name="text">
-      <string>Restaurar Rango Completo Graficos</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
