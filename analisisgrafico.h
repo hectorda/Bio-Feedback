@@ -21,9 +21,10 @@ public:
     ~AnalisisGrafico();    
     void setListaAngulos(QList<Angulo *> LA);
     void setListaMuestras(QList<Raw *> LR);
+
     void ajustarRangosGraficoAngulos(const int inicio, const int fin);
-    void calcularEstadisticosAngulos(const int inicio, const int fin);
     void contarDatosAngulos(const int inicio, const int fin);
+    void calcularEstadisticosAngulos(const int inicio, const int fin);
 
     void ajustarRangosGraficoMuestras(const int inicio, const int fin);
     void contarDatosMuestras(const int inicio, const int fin);
@@ -34,6 +35,7 @@ private:
     QList<Angulo*> listaAngulos;
     QList<Raw*> listaMuestras;
     Reportes *reportes;
+    void MostrarCantidadDatos(const int datosTotales, const int datosAnalizados, const double frecuenciaMuestreo, const double tiempoTotal, const double tiempoAnalizado);
 };
 
 #endif // ANALISISGRAFICO_H

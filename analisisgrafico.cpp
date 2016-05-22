@@ -21,6 +21,11 @@ AnalisisGrafico::AnalisisGrafico(QWidget *parent,Reportes *reportes):
     ui->tableWidgetEstadisticos->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
+AnalisisGrafico::~AnalisisGrafico()
+{
+    delete ui;
+}
+
 void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
 {
     this->listaAngulos=LA;
@@ -80,108 +85,6 @@ void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
         ui->horizontalSlider->setUpperPosition(muestras);
     }
 }
-
-
-void AnalisisGrafico::ajustarRangosGraficoAngulos(const int inicio, const int fin)
-{
-    reportes->vaciarGraficoAngulos();
-    for (int var = inicio; var <= fin; ++var)
-        reportes->agregarDatosGraficoAngulos(listaAngulos.at(var));
-
-    reportes->replotGraficoAngulos();
-}
-
-void AnalisisGrafico::contarDatosAngulos(const int inicio, const int fin){
-    const int terminos=fin+1-inicio;
-    double frecuenciaMuestreo=(listaAngulos.at(fin)->getTiempo()-listaAngulos.at(inicio)->getTiempo());
-    frecuenciaMuestreo/=(fin-inicio);
-    ui->labelCantidadDatos->setText(QString("Datos totales: %1, Datos analizados actualmente: %2"
-                                            "\nFrecuencia de muestreo obtenida %3 Hz")
-                                            .arg(listaAngulos.size()).arg(terminos).arg(1/frecuenciaMuestreo));
-
-}
-
-void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fin)
-{
-    double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
-    int terminos=fin+1-inicio;
-    double menor1=listaAngulos.at(inicio)->getAnguloX(),menor2=listaAngulos.at(inicio)->getAnguloY();
-    double mayor1=listaAngulos.at(inicio)->getAnguloX(),mayor2=listaAngulos.at(inicio)->getAnguloY();
-    double tMenor1=listaAngulos.at(inicio)->getTiempo(),tMenor2=listaAngulos.at(inicio)->getTiempo();
-    double tMayor1=listaAngulos.at(inicio)->getTiempo(),tMayor2=listaAngulos.at(inicio)->getTiempo();
-    double rango1=0,rango2=0;
-
-    for (int var = inicio; var <= fin; ++var) {
-        Angulo *angulo=listaAngulos.at(var);
-        media1+=angulo->getAnguloX();
-        media2+=angulo->getAnguloY();
-
-        if(menor1>angulo->getAnguloX())
-        {
-            menor1=angulo->getAnguloX();
-            tMenor1=angulo->getTiempo();
-        }
-
-        if(menor2>angulo->getAnguloY())
-        {
-            menor2=angulo->getAnguloY();
-            tMenor2=angulo->getTiempo();
-        }
-
-        if(mayor1<angulo->getAnguloX())
-        {
-            mayor1=angulo->getAnguloX();
-            tMayor1=angulo->getTiempo();
-        }
-
-        if(mayor2<angulo->getAnguloY())
-        {
-            mayor2=angulo->getAnguloY();
-            tMayor2=angulo->getTiempo();
-        }
-
-    }
-    media1/=terminos;
-    media2/=terminos;
-    rango1=mayor1-menor1;
-    rango2=mayor2-menor2;
-
-    for (int var = inicio; var <= fin; ++var) {
-        varian1+=qPow((listaAngulos.at(var)->getAnguloX()-media1),2);
-        varian2+=qPow((listaAngulos.at(var)->getAnguloY()-media2),2);
-    }
-    varian1/=terminos;
-    varian2/=terminos;
-    desvEst1=qSqrt(varian1);
-    desvEst2=qSqrt(varian2);
-
-    ui->tableWidgetEstadisticos->clearContents();
-    ui->tableWidgetEstadisticos->setRowCount(2);
-
-    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("AnguloX"));
-    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("AnguloY"));
-    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menor1)));
-    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menor2)));
-    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenor1)));
-    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenor2)));
-    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayor1)));
-    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayor2)));
-    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayor1)));
-    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayor2)));
-    ui->tableWidgetEstadisticos->setItem(0,5,new QTableWidgetItem(QString::number(media1)));
-    ui->tableWidgetEstadisticos->setItem(1,5,new QTableWidgetItem(QString::number(media2)));
-    ui->tableWidgetEstadisticos->setItem(0,6,new QTableWidgetItem(QString::number(desvEst1)));
-    ui->tableWidgetEstadisticos->setItem(1,6,new QTableWidgetItem(QString::number(desvEst2)));
-    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rango1)));
-    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rango2)));
-}
-
-AnalisisGrafico::~AnalisisGrafico()
-{
-    delete ui;
-}
-
-
 
 void AnalisisGrafico::setListaMuestras(QList<Raw *> LR)
 {
@@ -243,6 +146,14 @@ void AnalisisGrafico::setListaMuestras(QList<Raw *> LR)
     }
 }
 
+void AnalisisGrafico::ajustarRangosGraficoAngulos(const int inicio, const int fin)
+{
+    reportes->vaciarGraficoAngulos();
+    for (int var = inicio; var <= fin; ++var)
+        reportes->agregarDatosGraficoAngulos(listaAngulos.at(var));
+
+    reportes->replotGraficoAngulos();
+}
 
 void AnalisisGrafico::ajustarRangosGraficoMuestras(const int inicio, const int fin)
 {
@@ -253,14 +164,108 @@ void AnalisisGrafico::ajustarRangosGraficoMuestras(const int inicio, const int f
     reportes->replotGraficoMuestras();
 }
 
+void AnalisisGrafico::contarDatosAngulos(const int inicio, const int fin){
+    const int datosTotales=listaAngulos.size();
+    const int datosAnalizados=fin+1-inicio;
+    double frecuenciaMuestreo=(listaAngulos.at(fin)->getTiempo()-listaAngulos.at(inicio)->getTiempo());
+    frecuenciaMuestreo/=(fin-inicio);
+    frecuenciaMuestreo=1/frecuenciaMuestreo;
+    const double tiempoTotal=listaAngulos.last()->getTiempo();
+    const double tiempoAnalizado=listaAngulos.at(fin)->getTiempo()-listaAngulos.at(inicio)->getTiempo();
+
+    MostrarCantidadDatos(datosTotales,datosAnalizados,frecuenciaMuestreo,tiempoTotal,tiempoAnalizado);
+
+}
+
 void AnalisisGrafico::contarDatosMuestras(const int inicio, const int fin){
-    const int terminos=fin+1-inicio;
+    const int datosTotales=listaMuestras.size();
+    const int datosAnalizados=fin+1-inicio;
     double frecuenciaMuestreo=(listaMuestras.at(fin)->getTiempo()-listaMuestras.at(inicio)->getTiempo());
     frecuenciaMuestreo/=(fin-inicio);
-    ui->labelCantidadDatos->setText(QString("Datos totales: %1, Datos analizados actualmente: %2"
-                                            "\nFrecuencia de muestreo obtenida %3 Hz")
-                                            .arg(listaMuestras.size()).arg(terminos).arg(1/frecuenciaMuestreo));
+    frecuenciaMuestreo=1/frecuenciaMuestreo;
+    const double tiempoTotal=listaMuestras.last()->getTiempo();
+    const double tiempoAnalizado=listaMuestras.at(fin)->getTiempo()-listaMuestras.at(inicio)->getTiempo();
 
+    MostrarCantidadDatos(datosTotales,datosAnalizados,frecuenciaMuestreo,tiempoTotal,tiempoAnalizado);
+}
+
+void AnalisisGrafico::MostrarCantidadDatos(const int datosTotales,const int datosAnalizados,const double frecuenciaMuestreo,const double tiempoTotal,const double tiempoAnalizado)
+{
+    ui->labelCantidadDatos->setText(QString("Datos totales: %1, Datos analizados actualmente: %2"
+                                            "\nFrecuencia de muestreo obtenida %3 Hz"
+                                            "\nTiempo Total: %4seg, intervalo de Tiempo: %5 seg")
+                                            .arg(datosTotales)
+                                            .arg(datosAnalizados)
+                                            .arg(frecuenciaMuestreo)
+                                            .arg(tiempoTotal)
+                                            .arg(tiempoAnalizado));
+}
+
+void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fin)
+{
+    double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
+    int terminos=fin+1-inicio;
+    double menor1=listaAngulos.at(inicio)->getAnguloX(),menor2=listaAngulos.at(inicio)->getAnguloY();
+    double mayor1=listaAngulos.at(inicio)->getAnguloX(),mayor2=listaAngulos.at(inicio)->getAnguloY();
+    double tMenor1=listaAngulos.at(inicio)->getTiempo(),tMenor2=listaAngulos.at(inicio)->getTiempo();
+    double tMayor1=listaAngulos.at(inicio)->getTiempo(),tMayor2=listaAngulos.at(inicio)->getTiempo();
+    double rango1=0,rango2=0;
+
+    for (int var = inicio; var <= fin; ++var) {
+        Angulo *angulo=listaAngulos.at(var);
+        media1+=angulo->getAnguloX();
+        media2+=angulo->getAnguloY();
+
+        if(menor1>angulo->getAnguloX()){
+            menor1=angulo->getAnguloX();
+            tMenor1=angulo->getTiempo();
+        }
+        if(menor2>angulo->getAnguloY()){
+            menor2=angulo->getAnguloY();
+            tMenor2=angulo->getTiempo();
+        }
+        if(mayor1<angulo->getAnguloX()){
+            mayor1=angulo->getAnguloX();
+            tMayor1=angulo->getTiempo();
+        }
+        if(mayor2<angulo->getAnguloY()){
+            mayor2=angulo->getAnguloY();
+            tMayor2=angulo->getTiempo();
+        }
+    }
+    media1/=terminos;
+    media2/=terminos;
+    rango1=mayor1-menor1;
+    rango2=mayor2-menor2;
+
+    for (int var = inicio; var <= fin; ++var) {
+        varian1+=qPow((listaAngulos.at(var)->getAnguloX()-media1),2);
+        varian2+=qPow((listaAngulos.at(var)->getAnguloY()-media2),2);
+    }
+    varian1/=terminos;
+    varian2/=terminos;
+    desvEst1=qSqrt(varian1);
+    desvEst2=qSqrt(varian2);
+
+    ui->tableWidgetEstadisticos->clearContents();
+    ui->tableWidgetEstadisticos->setRowCount(2);
+
+    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("AnguloX"));
+    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("AnguloY"));
+    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menor1)));
+    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menor2)));
+    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenor1)));
+    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenor2)));
+    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayor1)));
+    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayor2)));
+    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayor1)));
+    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayor2)));
+    ui->tableWidgetEstadisticos->setItem(0,5,new QTableWidgetItem(QString::number(media1)));
+    ui->tableWidgetEstadisticos->setItem(1,5,new QTableWidgetItem(QString::number(media2)));
+    ui->tableWidgetEstadisticos->setItem(0,6,new QTableWidgetItem(QString::number(desvEst1)));
+    ui->tableWidgetEstadisticos->setItem(1,6,new QTableWidgetItem(QString::number(desvEst2)));
+    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rango1)));
+    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rango2)));
 }
 
 void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int fin)
@@ -287,68 +292,56 @@ void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int f
         mediaGyY+=raw->getGyY();
         mediaGyZ+=raw->getGyZ();
 
-        if(menorAcX>raw->getAcX())
-        {
+        if(menorAcX>raw->getAcX()){
             menorAcX=raw->getAcX();
             tMenorAcX=raw->getTiempo();
         }
-        if(menorAcY>raw->getAcY())
-        {
+        if(menorAcY>raw->getAcY()){
             menorAcY=raw->getAcY();
             tMenorAcY=raw->getTiempo();
         }
-        if(menorAcZ>raw->getAcZ())
-        {
+        if(menorAcZ>raw->getAcZ()){
             menorAcZ=raw->getAcZ();
             tMenorAcZ=raw->getTiempo();
         }
-        if(menorGyX>raw->getGyX())
-        {
+        if(menorGyX>raw->getGyX()){
             menorGyX=raw->getGyX();
             tMenorGyX=raw->getTiempo();
         }
-        if(menorGyY>raw->getGyY())
-        {
+        if(menorGyY>raw->getGyY()){
             menorGyY=raw->getGyY();
             tMenorGyY=raw->getTiempo();
         }
-        if(menorGyZ>raw->getGyZ())
-        {
+        if(menorGyZ>raw->getGyZ()){
             menorGyZ=raw->getGyZ();
             tMenorGyZ=raw->getTiempo();
         }
-
-        if(mayorAcX<raw->getAcX())
-        {
+        if(mayorAcX<raw->getAcX()){
             mayorAcX=raw->getAcX();
             tMayorAcX=raw->getTiempo();
         }
-        if(mayorAcY<raw->getAcY())
-        {
+        if(mayorAcY<raw->getAcY()){
             mayorAcY=raw->getAcY();
             tMayorAcY=raw->getTiempo();
         }
-        if(mayorAcZ<raw->getAcZ())
-        {
+        if(mayorAcZ<raw->getAcZ()){
             mayorAcZ=raw->getAcZ();
             tMayorAcZ=raw->getTiempo();
         }
-        if(mayorGyX<raw->getGyX())
-        {
+        if(mayorGyX<raw->getGyX()){
             mayorGyX=raw->getGyX();
             tMayorGyX=raw->getTiempo();
         }
-        if(mayorGyY<raw->getGyY())
-        {
+        if(mayorGyY<raw->getGyY()){
             mayorGyY=raw->getGyY();
             tMayorGyY=raw->getTiempo();
         }
-        if(mayorGyZ<raw->getGyZ())
-        {
+        if(mayorGyZ<raw->getGyZ()){
             mayorGyZ=raw->getGyZ();
             tMayorGyZ=raw->getTiempo();
         }
     }
+
     mediaAcX/=terminos;
     mediaAcY/=terminos;
     mediaAcZ/=terminos;
