@@ -22,9 +22,10 @@ void MainWindow::inicializar()
     ajustesSensores = new AjustesSensores(this);
     ajustesGrafico = new AjustesGrafico(this);
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
-    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDatosRaw);
+    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoDesplazamientos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDesplazamientos,ui->tableWidgetDatosRaw);
     analisisGraficoAngulos = new AnalisisGrafico(this,reportes);
     analisisGraficoMuestras = new AnalisisGrafico(this,reportes);
+    analisisGraficoDesplazamientos = new AnalisisGrafico(this,reportes);
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 
@@ -45,6 +46,7 @@ void MainWindow::inicializar()
 
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidgetDesplazamientos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->radioButtonHorizontalAbajo->hide();
     ui->radioButtonHorizontalArriba->hide();
@@ -61,6 +63,8 @@ void MainWindow::conexiones()
     //Conjunto de connects para enviar datos a los graficos de Reportes
     connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarDatosGraficoAngulos(Angulo*)));
     connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarFilaTablaAngulos(Angulo*)));
+    connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarDatosGraficoDesplazamientos(Desplazamiento*)));
+    connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarFilaTablaDesplazamientos(Desplazamiento*)));
     connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarDatosGraficoMuestras(Raw*)));
     connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarFilaTablaMuestras(Raw*)));
     connect(this,SIGNAL(emitGraficarResultados(QList<Angulo*>)),reportes,SLOT(graficarResultados(QList<Angulo*>)));
@@ -70,6 +74,10 @@ void MainWindow::conexiones()
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
     connect(lectorSerial,SIGNAL(datosLeidos(double,double,double,double,double,double)),this,SLOT(obtenerRaw(double,double,double,double,double,double)));
     connect(ui->lineEditRut,SIGNAL(returnPressed()),ui->pushButtonBuscarPaciente,SLOT(click()));
+
+    connect(ui->pushButtonAnalizarGraficoAngulos,SIGNAL(clicked()),analisisGraficoAngulos,SLOT(show()));
+    connect(ui->pushButtonAnalizarGraficoDesplazamientos,SIGNAL(clicked()),analisisGraficoDesplazamientos,SLOT(show()));
+    connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
 
       //Connect de actions
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
@@ -138,6 +146,7 @@ void MainWindow::mostrarResultados()
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(listaAngulos);
     analisisGraficoAngulos->setListaAngulos(listaAngulos);
+    analisisGraficoDesplazamientos->setListaDesplazamientos(listaDesplazamientos);
     analisisGraficoMuestras->setListaMuestras(listaMuestras);
     mostrarBotones();
     activarTabs();
@@ -279,15 +288,23 @@ void MainWindow::obtenerAngulos(Raw *dato)
         }
 
         Angulo *angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
+        obtenerDesplazamiento(angulo);
         listaAngulos.append(angulo);
 
         emit emitAnguloReporte(angulo);
         if(listaMuestras.size()%divisorFPS==0)//Mod
             emit emitAnguloGraficoTiempoReal(angulo);
-//        if(listaMuestras.size()%divisorFPS==0)
-//            QTextStream stdout<<listaMuestras.size()<<endl;
-
     }
+}
+
+void MainWindow::obtenerDesplazamiento(Angulo *angulo)
+{
+    const double alturadisp=ui->doubleSpinBoxAlturaDispositivo->value();
+    const double despX=qSin(qDegreesToRadians(angulo->getAnguloX()));
+    const double despY=qSin(qDegreesToRadians(angulo->getAnguloY()));
+    Desplazamiento *desplazamiento=new Desplazamiento(angulo->getTiempo(),despX*alturadisp,despY*alturadisp);
+    emit emitDesplazamientoReporte(desplazamiento);
+    listaDesplazamientos.append(desplazamiento);
 }
 
 void MainWindow::mostrarBotones()
@@ -301,7 +318,7 @@ void MainWindow::mostrarBotones()
     ui->labelGuardarImagen->show();
     ui->pushButtonGuardarMuestras->show();
     ui->labelGuardarMuestras->show();
-    ui->pushButtonAnalizarGraficos->show();
+    ui->pushButtonAnalizarGraficoAngulos->show();
     activarSpacerEntreBotones();
 }
 
@@ -313,25 +330,19 @@ void MainWindow::ocultarBotones()
     ui->pushButtonGuardarMuestras->hide();
     ui->labelGuardarImagen->hide();
     ui->labelGuardarMuestras->hide();
-    ui->pushButtonAnalizarGraficos->hide();
+    ui->pushButtonAnalizarGraficoAngulos->hide();
 }
 
 void MainWindow::desactivarTabs()
 {
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(1,false);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(2,false);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(3,false);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(4,false);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(5,false);
+    for (int var = 1; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
+        ui->tabWidgetGrafico_Resultados->setTabEnabled(var,false);
 }
 
 void MainWindow::activarTabs()
 {
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(1,true);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(2,true);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(3,true);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(4,true);
-    ui->tabWidgetGrafico_Resultados->setTabEnabled(5,true);
+    for (int var = 1; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
+        ui->tabWidgetGrafico_Resultados->setTabEnabled(var,true);
 }
 
 void MainWindow::activarSpacerEntreBotones()
@@ -524,7 +535,8 @@ void MainWindow::slotGraficarTiempoReal(Angulo *angulo)
 
         }
     }
-    else{
+    else
+    {
         lienzo->addData(angulo->getAnguloX(), angulo->getAnguloY());
         ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
         ui->qCustomPlotGrafico->graph(0)->addData(angulo->getAnguloX(), angulo->getAnguloY());
@@ -621,16 +633,23 @@ void MainWindow::configurarArduino()
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
 }
 
-void MainWindow::iniciarPrueba()
+void MainWindow::limpiarListasyOcultarBotones()
 {
     //Limpieza de listas y de los elementos de la interfaz
     listaMuestras.clear();
     listaAngulos.clear();
+    listaDesplazamientos.clear();
     listaObjetivos.clear();
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
-    analisisGraficoMuestras->hide();
     analisisGraficoAngulos->hide();
+    analisisGraficoDesplazamientos->hide();
+    analisisGraficoMuestras->hide();
+}
+
+void MainWindow::iniciarPrueba()
+{
+    limpiarListasyOcultarBotones();
 
     elementosdelGrafico=ajustesGrafico->getAjustes();//Se obtienen los ajustes actuales.
 
@@ -870,6 +889,9 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
         reportes->guardarImagenGrafico(ui->qCustomPlotGraficoAngulos,1920,1080);
 
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDespalazamientos)
+        reportes->guardarImagenGrafico(ui->qCustomPlotGraficoDesplazamientos,1920,1080);
+
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
         reportes->guardarImagenGrafico(ui->qCustomPlotGraficoMuestras,1920,1080);
 }
@@ -884,6 +906,12 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la i
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
         reportes->guardarAngulosEnArchivo(listaAngulos);
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientos)
+        reportes->guardarDesplazamientosEnArchivo(listaDesplazamientos);
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDespalazamientos)
+        reportes->guardarDesplazamientosEnArchivo(listaDesplazamientos);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
         reportes->guardarMuestrasEnArchivo(listaMuestras);
@@ -944,6 +972,18 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
         desactivarSpacerEntreBotones();
     }
 
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientos)
+    {
+        ui->pushButtonGuardarImagen->hide();
+        ui->labelGuardarImagen->hide();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesplazamientos");
+        ui->labelGuardarMuestras->show();
+
+        desactivarSpacerEntreBotones();
+    }
+
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
     {
         ui->pushButtonGuardarImagen->hide();
@@ -958,8 +998,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
     {
-        ui->qCustomPlotGraficoAngulos->rescaleAxes();
-        ui->qCustomPlotGraficoAngulos->replot();
+        reportes->replotGraficoAngulos();
 
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGraficos\nAngulos");
@@ -967,6 +1006,21 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
         ui->pushButtonGuardarMuestras->show();
         ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
+        ui->labelGuardarMuestras->show();
+
+        activarSpacerEntreBotones();
+    }
+
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDespalazamientos)
+    {
+        reportes->replotGraficoDesplazamientos();
+
+        ui->pushButtonGuardarImagen->show();
+        ui->labelGuardarImagen->setText("Guardar\nGraficos\nDesplazamientos");
+        ui->labelGuardarImagen->show();
+
+        ui->pushButtonGuardarMuestras->show();
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesplazamientos");
         ui->labelGuardarMuestras->show();
 
         activarSpacerEntreBotones();
@@ -1019,12 +1073,6 @@ void MainWindow::on_comboBoxOrientacion_currentTextChanged(const QString &arg1)
         ui->radioButtonVerticalDerecha->hide();
         ui->radioButtonVerticalIzquierda->hide();
     }
-
-}
-
-void MainWindow::on_pushButtonAnalizarGraficos_clicked()
-{
-    analisisGraficoAngulos->show();
 }
 
 void MainWindow::on_lineEditRut_textChanged(const QString &arg1)
@@ -1063,9 +1111,4 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
             ui->labelEdadPaciente->setText("Edad: "+datos.at(2));
         }
     }
-}
-
-void MainWindow::on_pushButtonAnalsisGraficoMuestras_clicked()
-{
-    analisisGraficoMuestras->show();
 }

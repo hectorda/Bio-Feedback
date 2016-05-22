@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -469,19 +469,6 @@ Test ¿Circular?</string>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <layout class="QGridLayout" name="gridLayout_9">
             <item row="1" column="1">
              <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
@@ -595,7 +582,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="11" column="0">
+            <item row="13" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_6"/>
             </item>
             <item row="3" column="1">
@@ -637,7 +624,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="11" column="1">
+            <item row="13" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_7"/>
             </item>
             <item row="6" column="0">
@@ -668,7 +655,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="9" column="1">
              <widget class="QComboBox" name="comboBoxOrientacion">
               <item>
                <property name="text">
@@ -690,7 +677,7 @@ Test ¿Circular?</string>
               </item>
              </widget>
             </item>
-            <item row="7" column="0">
+            <item row="9" column="0">
              <widget class="QLabel" name="label_8">
               <property name="font">
                <font>
@@ -705,7 +692,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
+            <item row="11" column="1">
              <widget class="QRadioButton" name="radioButtonVerticalDerecha">
               <property name="text">
                <string>Derecha</string>
@@ -722,7 +709,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="10" column="1">
              <widget class="QRadioButton" name="radioButtonVerticalFrente">
               <property name="text">
                <string>Frente</string>
@@ -739,7 +726,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="0">
+            <item row="12" column="0">
              <widget class="QRadioButton" name="radioButtonHorizontalArriba">
               <property name="text">
                <string>Arriba</string>
@@ -759,7 +746,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="12" column="1">
              <widget class="QRadioButton" name="radioButtonHorizontalAbajo">
               <property name="text">
                <string>Abajo</string>
@@ -776,7 +763,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
+            <item row="11" column="0">
              <widget class="QRadioButton" name="radioButtonVerticalIzquierda">
               <property name="text">
                <string>Izquierda</string>
@@ -793,7 +780,7 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
+            <item row="10" column="0">
              <widget class="QRadioButton" name="radioButtonVerticalAtras">
               <property name="text">
                <string>Atras</string>
@@ -855,6 +842,33 @@ Test ¿Circular?</string>
               </property>
               <property name="checked">
                <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxAlturaDispositivo">
+              <property name="minimum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>200.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>70.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="labelAlturaDisp">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Altura Dispositivo</string>
               </property>
              </widget>
             </item>
@@ -925,19 +939,6 @@ border: 3px solid #398439;
             </item>
            </layout>
           </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
          </layout>
         </item>
         <item>
@@ -972,7 +973,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>3</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1163,14 +1164,57 @@ QPushButton:hover {
               </attribute>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonAnalizarGraficos">
+                <widget class="QPushButton" name="pushButtonAnalizarGraficoAngulos">
                  <property name="text">
-                  <string>Analizar Graficos</string>
+                  <string>Analizar Graficos Angulos</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="0">
                 <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_tablaDesplazamientos">
+              <attribute name="title">
+               <string>Datos Desplazamientos</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_11">
+               <item row="0" column="0">
+                <widget class="QTableWidget" name="tableWidgetDesplazamientos">
+                 <column>
+                  <property name="text">
+                   <string>Tiempo</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>Desplazamiento X</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>Desplazamiento Y</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_GraficoDespalazamientos">
+              <attribute name="title">
+               <string>Graficos Desplazamientos</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_12">
+               <item row="0" column="0">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientos" native="true"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientos">
+                 <property name="text">
+                  <string>Analizar Graficos Desplazamientos</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -1258,7 +1302,7 @@ QPushButton:hover {
                 <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
                </item>
                <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonAnalsisGraficoMuestras">
+                <widget class="QPushButton" name="pushButtonAnalizarGraficoMuestras">
                  <property name="text">
                   <string>Analizar Graficos Muestras</string>
                  </property>

@@ -5,16 +5,19 @@ Reportes::Reportes(QObject *parent) : QObject(parent)
     this->presicion = 3;
 }
 
-Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaMuestras) : QObject(parent)
+Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientos, QTableWidget *tablaMuestras) : QObject(parent)
 {
     this->presicion = 4;
     this->graficoResultados = graficoResultados;
     this->graficoAngulos = graficoAngulos;
+    this->graficoDesplazamientos = graficoDesplazamientos;
     this->graficoMuestras = graficoMuestras;
     this->tablaAngulos = tablaAngulos;
+    this->tablaDesplazamientos = tablaDesplazamientos;
     this->tablaMuestras = tablaMuestras;
     inicializarGraficoResultados();
     inicializarGraficoAngulos();
+    inicializarGraficoDesplazamientos();
     inicializarGraficoMuestras();
 }
 
@@ -22,6 +25,8 @@ void Reportes::vaciarTablas()
 {
     tablaAngulos->clearContents();
     tablaAngulos->setRowCount(0);
+    tablaDesplazamientos->clearContents();
+    tablaDesplazamientos->setRowCount(0);
     tablaMuestras->clearContents();
     tablaMuestras->setRowCount(0);
 }
@@ -32,12 +37,19 @@ void Reportes::vaciarGraficos()
 
     vaciarGraficoAngulos();
     vaciarGraficoMuestras();
+    vaciarGraficoDesplazamientos();
 }
 
 void Reportes::vaciarGraficoAngulos()
 {
     graficoAnguloX->clearData();
     graficoAnguloY->clearData();
+}
+
+void Reportes::vaciarGraficoDesplazamientos()
+{
+    graficoDesplazamientoX->clearData();
+    graficoDesplazamientoY->clearData();
 }
 
 void Reportes::vaciarGraficoMuestras()
@@ -55,6 +67,14 @@ void Reportes::replotGraficoAngulos()
     graficoAnguloX->rescaleAxes();
     graficoAnguloY->rescaleAxes();
     graficoAngulos->replot();
+}
+
+void Reportes::replotGraficoDesplazamientos()
+{
+    graficoDesplazamientoX->rescaleAxes();
+    graficoDesplazamientoY->rescaleAxes();
+    graficoDesplazamientos->replot();
+
 }
 
 void Reportes::replotGraficoMuestras()
@@ -149,35 +169,33 @@ void Reportes::inicializarGraficoAngulos()
     graficoAnguloX = graficoAngulos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
     graficoAnguloY = graficoAngulos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-    graficoAngulos->addLayer("name", 0 , QCustomPlot::limAbove);
+    lineaIzq1Angulos=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaIzq1Angulos);
+    lineaIzq1Angulos->setClipAxisRect(topAxisRect);
+    lineaIzq1Angulos->setPen(QPen(Qt::red));
+    lineaIzq1Angulos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq1Angulos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
 
-    lineaIzq1=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaIzq1);
-    lineaIzq1->setClipAxisRect(topAxisRect);
-    lineaIzq1->setPen(QPen(Qt::red));
-    lineaIzq1->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    lineaIzq1->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq2Angulos=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaIzq2Angulos);
+    lineaIzq2Angulos->setClipAxisRect(bottomAxisRect);
+    lineaIzq2Angulos->setPen(QPen(Qt::red));
+    lineaIzq2Angulos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq2Angulos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-    lineaIzq2=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaIzq2);
-    lineaIzq2->setClipAxisRect(bottomAxisRect);
-    lineaIzq2->setPen(QPen(Qt::red));
-    lineaIzq2->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
-    lineaIzq2->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDer1Angulos=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaDer1Angulos);
+    lineaDer1Angulos->setClipAxisRect(topAxisRect);
+    lineaDer1Angulos->setPen(QPen(Qt::red));
+    lineaDer1Angulos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaDer1Angulos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
 
-    lineaDer1=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaDer1);
-    lineaDer1->setClipAxisRect(topAxisRect);
-    lineaDer1->setPen(QPen(Qt::red));
-    lineaDer1->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    lineaDer1->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-
-    lineaDer2=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaDer2);
-    lineaDer2->setClipAxisRect(bottomAxisRect);
-    lineaDer2->setPen(QPen(Qt::red));
-    lineaDer2->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
-    lineaDer2->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDer2Angulos=new QCPItemLine(graficoAngulos);
+    graficoAngulos->addItem(lineaDer2Angulos);
+    lineaDer2Angulos->setClipAxisRect(bottomAxisRect);
+    lineaDer2Angulos->setPen(QPen(Qt::red));
+    lineaDer2Angulos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDer2Angulos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
     //Colores de la Line
     graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
@@ -194,6 +212,78 @@ void Reportes::inicializarGraficoAngulos()
     graficoAnguloY->rescaleAxes();
 
     graficoAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+}
+
+void Reportes::inicializarGraficoDesplazamientos()
+{
+    graficoDesplazamientos->plotLayout()->clear();
+    graficoDesplazamientos->clearItems();
+    graficoDesplazamientos->clearGraphs();
+
+    //Elementos del grafico
+    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoDesplazamientos);
+    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoDesplazamientos);
+
+    bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
+    bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
+
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento X vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento Y vs Tiempo");
+
+    //Se posicionan los layouts
+    graficoDesplazamientos->plotLayout()->addElement(0, 0, tituloX);
+    graficoDesplazamientos->plotLayout()->addElement(1, 0, topAxisRect);
+
+    graficoDesplazamientos->plotLayout()->addElement(2, 0, tituloY);
+    graficoDesplazamientos->plotLayout()->addElement(3, 0, bottomAxisRect);
+
+     //create and configure plottables:
+    graficoDesplazamientoX = graficoDesplazamientos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    graficoDesplazamientoY = graficoDesplazamientos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+    lineaIzq1Desplazamientos=new QCPItemLine(graficoDesplazamientos);
+    graficoDesplazamientos->addItem(lineaIzq1Desplazamientos);
+    lineaIzq1Desplazamientos->setClipAxisRect(topAxisRect);
+    lineaIzq1Desplazamientos->setPen(QPen(Qt::red));
+    lineaIzq1Desplazamientos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq1Desplazamientos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+
+    lineaIzq2Desplazamientos=new QCPItemLine(graficoDesplazamientos);
+    graficoDesplazamientos->addItem(lineaIzq2Desplazamientos);
+    lineaIzq2Desplazamientos->setClipAxisRect(bottomAxisRect);
+    lineaIzq2Desplazamientos->setPen(QPen(Qt::red));
+    lineaIzq2Desplazamientos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaIzq2Desplazamientos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+    lineaDer1Desplazamientos=new QCPItemLine(graficoDesplazamientos);
+    graficoDesplazamientos->addItem(lineaDer1Desplazamientos);
+    lineaDer1Desplazamientos->setClipAxisRect(topAxisRect);
+    lineaDer1Desplazamientos->setPen(QPen(Qt::red));
+    lineaDer1Desplazamientos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaDer1Desplazamientos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+
+    lineaDer2Desplazamientos=new QCPItemLine(graficoDesplazamientos);
+    graficoDesplazamientos->addItem(lineaDer2Desplazamientos);
+    lineaDer2Desplazamientos->setClipAxisRect(bottomAxisRect);
+    lineaDer2Desplazamientos->setPen(QPen(Qt::red));
+    lineaDer2Desplazamientos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDer2Desplazamientos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+    //Colores de la Line
+    graficoDesplazamientoX->setPen(QPen(QColor(71, 71, 194), 2));
+    graficoDesplazamientoY->setPen(QPen(QColor(153, 102, 51), 2));
+
+    //Labels de los ejes
+    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Desplazamiento (centimetros)");
+    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Desplazamiento (centimetros)");
+    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    //Se rescalan los ejes para el autoajuste
+    graficoDesplazamientoX->rescaleAxes();
+    graficoDesplazamientoY->rescaleAxes();
+
+    graficoDesplazamientos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
 void Reportes::inicializarGraficoMuestras()
@@ -298,6 +388,13 @@ void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
     graficoAnguloY->addData(angulo->getTiempo() , angulo->getAnguloY());
 }
 
+void Reportes::agregarDatosGraficoDesplazamientos(Desplazamiento *desp)
+{
+    //Se agregan los datos al grafico de Angulos
+    graficoDesplazamientoX->addData(desp->getTiempo() , desp->getDesplazamientoX());
+    graficoDesplazamientoY->addData(desp->getTiempo() , desp->getDesplazamientoY());
+}
+
 void Reportes::agregarDatosGraficoMuestras(Raw *datos)
 {
     //Se rellenar los datos de los graficos de las Muestras
@@ -346,120 +443,40 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     cuadrantes->setData(ticks, quadrantData);
 }
 
-void Reportes::moverLineaIzquierdaAngulos(const double newValue)
+void Reportes::moverLineasIzquierdaAngulos(const double newValue)
 {
-    lineaIzq1->end->setCoords(newValue,5000);
-    lineaIzq1->start->setCoords(newValue,-5000);
-    lineaIzq2->end->setCoords(newValue,5000);
-    lineaIzq2->start->setCoords(newValue,-5000);
+    lineaIzq1Angulos->end->setCoords(newValue,5000);
+    lineaIzq1Angulos->start->setCoords(newValue,-5000);
+    lineaIzq2Angulos->end->setCoords(newValue,5000);
+    lineaIzq2Angulos->start->setCoords(newValue,-5000);
     graficoAngulos->replot();
 }
 
-void Reportes::moverLineaDerechaAngulos(const double newValue)
+void Reportes::moverLineasDerechaAngulos(const double newValue)
 {
-    lineaDer1->end->setCoords(newValue,5000);
-    lineaDer1->start->setCoords(newValue,-5000);
-    lineaDer2->end->setCoords(newValue,5000);
-    lineaDer2->start->setCoords(newValue,-5000);
+    lineaDer1Angulos->end->setCoords(newValue,5000);
+    lineaDer1Angulos->start->setCoords(newValue,-5000);
+    lineaDer2Angulos->end->setCoords(newValue,5000);
+    lineaDer2Angulos->start->setCoords(newValue,-5000);
     graficoAngulos->replot();
 }
 
-void Reportes::analizarGraficosAngulos(QWidget *parent, double tiempoPrueba, QList<Angulo *> listaAngulos)
+void Reportes::moverLineasIzquierdaDesplazamientos(const double newValue)
 {
-    /*
-    const int rangoHorizontal=5000;
-    QCPItemLine *lineaLowerGraficoAnguloX = new QCPItemLine(graficoAnguloX);
-    graficoAnguloX->addItem(lineaLowerGraficoAnguloX);
-    lineaLowerGraficoAnguloX->setPen(QPen(Qt::red));
-    lineaLowerGraficoAnguloX->start->setCoords(0,-rangoHorizontal);
-    lineaLowerGraficoAnguloX->end->setCoords(0,rangoHorizontal);
+    lineaIzq1Desplazamientos->end->setCoords(newValue,5000);
+    lineaIzq1Desplazamientos->start->setCoords(newValue,-5000);
+    lineaIzq2Desplazamientos->end->setCoords(newValue,5000);
+    lineaIzq2Desplazamientos->start->setCoords(newValue,-5000);
+    graficoDesplazamientos->replot();
+}
 
-    QCPItemLine *lineaLowerGraficoAnguloY = new QCPItemLine(graficoAnguloY);
-    graficoAnguloY->addItem(lineaLowerGraficoAnguloY);
-    lineaLowerGraficoAnguloY->setPen(QPen(Qt::red));
-    lineaLowerGraficoAnguloY->start->setCoords(0,-rangoHorizontal);
-    lineaLowerGraficoAnguloY->end->setCoords(0,rangoHorizontal);
-
-    QCPItemLine *lineaUpperGraficoAnguloX = new QCPItemLine(graficoAnguloX);
-    graficoAnguloX->addItem(lineaUpperGraficoAnguloX);
-    lineaUpperGraficoAnguloX->setPen(QPen(Qt::red));
-    lineaUpperGraficoAnguloX->start->setCoords(tiempoPrueba,-rangoHorizontal);
-    lineaUpperGraficoAnguloX->end->setCoords(tiempoPrueba,rangoHorizontal);
-
-    QCPItemLine *lineaUpperGraficoAnguloY = new QCPItemLine(graficoAnguloY);
-    graficoAnguloY->addItem(lineaUpperGraficoAnguloY);
-    lineaUpperGraficoAnguloY->setPen(QPen(Qt::red));
-    lineaUpperGraficoAnguloY->start->setCoords(tiempoPrueba,-rangoHorizontal);
-    lineaUpperGraficoAnguloY->end->setCoords(tiempoPrueba,rangoHorizontal);
-
-    graficoAnguloX->replot();
-    graficoAnguloY->replot();
-
-    //Qdialog de ventana de carga configuracion sensores.
-    QDialogAnalisis= new QDialog(parent);
-    QDialogAnalisis->setWindowFlags(QDialogAnalisis->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-    QLabel *labelCarga= new QLabel("SLIDERS!!");
-    layoutBarraCarga->addWidget(labelCarga);
-
-    QxtSpanSlider *horizontalSlider = new QxtSpanSlider(Qt::Horizontal);
-
-    horizontalSlider->setHandleMovementMode(QxtSpanSlider::NoOverlapping);
-    horizontalSlider->setMaximum(tiempoPrueba*100);
-    horizontalSlider->setLowerValue(0);
-    horizontalSlider->setLowerPosition(0);
-    horizontalSlider->setUpperValue(tiempoPrueba*100);
-    horizontalSlider->setUpperPosition(tiempoPrueba*100);
-
-    layoutBarraCarga->addWidget(horizontalSlider);
-
-    QPushButton *QPushButtonAplicarRangos= new QPushButton("Aplicar");
-    layoutBarraCarga->addWidget(QPushButtonAplicarRangos);
-
-    QDialogAnalisis->setLayout(layoutBarraCarga);
-
-    connect(QPushButtonAplicarRangos,QPushButton::clicked ,[=](){
-        graficoAnguloX->graph(0)->clearData();
-        graficoAnguloY->graph(0)->clearData();
-        foreach (Angulo *var, listaAngulos) {
-            if(var->getTiempo()>=horizontalSlider->lowerValue()/10000.0 && var->getTiempo()<=horizontalSlider->upperValue()/10000.0){
-                graficoAnguloX->graph(0)->addData(var->getTiempo(),var->getAnguloX());
-                graficoAnguloY->graph(0)->addData(var->getTiempo(),var->getAnguloY());
-            }
-        }
-        graficoAnguloX->rescaleAxes();
-        graficoAnguloY->rescaleAxes();
-        graficoAnguloX->replot();
-        graficoAnguloY->replot();
-    });
-
-    connect(horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
-        lineaLowerGraficoAnguloX->start->setCoords(newValue/10000.0,-rangoHorizontal);
-        lineaLowerGraficoAnguloX->end->setCoords(newValue/10000.0,rangoHorizontal);
-        lineaLowerGraficoAnguloY->start->setCoords(newValue/10000.0,-rangoHorizontal);
-        lineaLowerGraficoAnguloY->end->setCoords(newValue/10000.0,rangoHorizontal);
-        graficoAnguloX->replot();
-        graficoAnguloY->replot();
-    });
-
-    connect(horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
-        lineaUpperGraficoAnguloX->start->setCoords(newValue/10000.0,-rangoHorizontal);
-        lineaUpperGraficoAnguloX->end->setCoords(newValue/10000.0,rangoHorizontal);
-        lineaUpperGraficoAnguloY->start->setCoords(newValue/10000.0,-rangoHorizontal);
-        lineaUpperGraficoAnguloY->end->setCoords(newValue/10000.0,rangoHorizontal);
-        graficoAnguloX->replot();
-        graficoAnguloY->replot();
-    });
-
-    connect(QDialogAnalisis,QDialog::rejected, [=](){
-        graficoAnguloX->clearItems();
-        graficoAnguloY->clearItems();
-        graficoAnguloX->replot();
-        graficoAnguloY->replot();
-    });
-
-    QDialogAnalisis->show();
-    */
+void Reportes::moverLineasDerechaDesplazamientos(const double newValue)
+{
+    lineaDer1Desplazamientos->end->setCoords(newValue,5000);
+    lineaDer1Desplazamientos->start->setCoords(newValue,-5000);
+    lineaDer2Desplazamientos->end->setCoords(newValue,5000);
+    lineaDer2Desplazamientos->start->setCoords(newValue,-5000);
+    graficoDesplazamientos->replot();
 }
 
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
@@ -470,6 +487,15 @@ void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
     tablaAngulos->setItem(currentRow,0,new QTableWidgetItem(QString::number(angulo->getTiempo(),'f',presicion)));
     tablaAngulos->setItem(currentRow,1,new QTableWidgetItem(QString::number(angulo->getAnguloX(),'f',presicion)));
     tablaAngulos->setItem(currentRow,2,new QTableWidgetItem(QString::number(angulo->getAnguloY(),'f',presicion)));
+}
+
+void Reportes::agregarFilaTablaDesplazamientos(Desplazamiento *desp)
+{
+    const int currentRow = tablaDesplazamientos->rowCount();
+    tablaDesplazamientos->setRowCount(currentRow + 1);
+    tablaDesplazamientos->setItem(currentRow,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
+    tablaDesplazamientos->setItem(currentRow,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoX(),'f',presicion)));
+    tablaDesplazamientos->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoY(),'f',presicion)));
 }
 
 void Reportes::agregarFilaTablaMuestras(Raw *datos)
@@ -499,6 +525,68 @@ void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)
       grafico->savePdf(fileName,false,ancho,alto);
 }
 
+void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
+{
+    QString selectedFilter;
+    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
+
+    if (fileName != ""){
+        QFile file(fileName);
+        file.remove();
+        if (file.open(QIODevice::Append)){
+            QTextStream stream(&file);
+            foreach (Angulo *var, listaAngulos){
+                if(selectedFilter.contains("txt")){
+                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
+                           << " Y: " << QString::number(var->getAnguloY()) << endl;
+                }
+                if(selectedFilter.contains("csv")){
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getAnguloX())
+                           <<"," << QString::number(var->getAnguloY()) << endl;
+                }
+            }
+            file.flush();
+            file.close();
+        }
+        else {
+            QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
+            return;
+        }
+    }
+}
+
+void Reportes::guardarDesplazamientosEnArchivo(QList<Desplazamiento*> listaDesplazamientos)
+{
+    QString selectedFilter;
+    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
+
+    if (fileName != ""){
+        QFile file(fileName);
+        file.remove();
+        if (file.open(QIODevice::Append)){
+            QTextStream stream(&file);
+            foreach (Desplazamiento *var, listaDesplazamientos){
+                if(selectedFilter.contains("txt")){
+                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getDesplazamientoX())
+                           << " Y: " << QString::number(var->getDesplazamientoY()) << endl;
+                }
+                if(selectedFilter.contains("csv")){
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getDesplazamientoX())
+                           <<"," << QString::number(var->getDesplazamientoY()) << endl;
+                }
+            }
+            file.flush();
+            file.close();
+        }
+        else {
+            QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
+            return;
+        }
+    }
+}
+
 void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
 {
     QString selectedFilter;
@@ -520,37 +608,6 @@ void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
                            <<"," << QString::number(var->getAcY()) <<"," << QString::number(var->getAcZ())
                            <<"," << QString::number(var->getGyX()) <<"," << QString::number(var->getGyY())
                            <<"," << QString::number(var->getGyZ()) << endl;
-                }
-            }
-            file.flush();
-            file.close();
-        }
-        else {
-            QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
-            return;
-        }
-    }
-}
-
-void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
-{
-    QString selectedFilter;
-    QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
-    QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
-
-    if (fileName != ""){
-        QFile file(fileName);
-        file.remove();
-        if (file.open(QIODevice::Append)){
-            QTextStream stream(&file);
-            foreach (Angulo *var, listaAngulos){
-                if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
-                           << " Y: " << QString::number(var->getAnguloY()) << endl;
-                }
-                if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getAnguloX())
-                           <<"," << QString::number(var->getAnguloY()) << endl;
                 }
             }
             file.flush();

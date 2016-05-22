@@ -13,6 +13,7 @@
 #include <filtro_kalman.h>
 #include <serial.h>
 #include <reportes.h>
+#include <desplazamiento.h>
 #include <sql.h>
 #include <analisisgrafico.h>
 
@@ -43,17 +44,16 @@ private slots:
     void on_pushButtonVolverInicio_clicked();
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
-    void on_pushButtonAnalizarGraficos_clicked();
     void on_pushButtonBuscarPaciente_clicked();
 
-    //
+
     void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);    
     void on_lineEditRut_textChanged(const QString &arg1);
     void on_dockWidget_topLevelChanged(bool topLevel);
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
-
     void iniciarPrueba();
+    void limpiarListasyOcultarBotones();
     void mostrarResultados();
     void slotGraficarTiempoReal(Angulo *angulo);
     void marcarObjetivos(Angulo *angulo);
@@ -65,13 +65,11 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
-
-    void on_pushButtonAnalsisGraficoMuestras_clicked();
-
 signals:
     void emitAnguloGraficoTiempoReal(Angulo*);
     void emitRawReporte(Raw*);
     void emitAnguloReporte(Angulo*);
+    void emitDesplazamientoReporte(Desplazamiento*);
     void emitGraficarResultados(QList<Angulo*>);
 
 private:
@@ -84,6 +82,7 @@ private:
     QString datosLeidosPuertoSerial;
     QList<Raw*> listaMuestras;
     QList<Angulo*> listaAngulos;
+    QList<Desplazamiento*> listaDesplazamientos;
     Reportes *reportes;
     QList<QCPItemEllipse*> listaObjetivos;
     QLabel *status;
@@ -93,7 +92,7 @@ private:
     QCPCurve *lienzo;
     AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;
-    AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras;
+    AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientos;
     SQL *db;
 
     void inicializar();
@@ -106,6 +105,7 @@ private:
     void activarTabs();
     void preguntarRegresarInicio();
     void obtenerAngulos(Raw* dato);
+    void obtenerDesplazamiento(Angulo *angulo);
     void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
     void activarSpacerEntreBotones();
