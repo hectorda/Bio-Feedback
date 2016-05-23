@@ -470,30 +470,6 @@ Test ¿Circular?</string>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <layout class="QGridLayout" name="gridLayout_9">
-            <item row="1" column="1">
-             <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <italic>false</italic>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="value">
-               <number>8</number>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QSpinBox" name="spinBoxTiempoPrueba">
               <property name="minimumSize">
@@ -533,6 +509,43 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>8</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="checkBoxLimitarGrafico">
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="5" column="0">
              <widget class="QLabel" name="label_9">
               <property name="font">
@@ -566,19 +579,6 @@ Test ¿Circular?</string>
               </property>
               <property name="text">
                <string>Tiempo Prueba</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QCheckBox" name="checkBoxLimitarGrafico">
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -677,18 +677,23 @@ Test ¿Circular?</string>
               </item>
              </widget>
             </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <italic>false</italic>
-                <bold>true</bold>
-               </font>
-              </property>
+            <item row="12" column="0">
+             <widget class="QRadioButton" name="radioButtonHorizontalArriba">
               <property name="text">
-               <string>Orientacion</string>
+               <string>Arriba</string>
+              </property>
+              <property name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/IMU/horizontalarriba.png</normaloff>:/images/IMU/horizontalarriba.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -726,40 +731,18 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="0">
-             <widget class="QRadioButton" name="radioButtonHorizontalArriba">
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string>Arriba</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/IMU/horizontalarriba.png</normaloff>:/images/IMU/horizontalarriba.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="12" column="1">
-             <widget class="QRadioButton" name="radioButtonHorizontalAbajo">
-              <property name="text">
-               <string>Abajo</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/IMU/horizontalabajo.png</normaloff>:/images/IMU/horizontalabajo.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
+               <string>Orientacion</string>
               </property>
              </widget>
             </item>
@@ -800,6 +783,37 @@ Test ¿Circular?</string>
               </property>
              </widget>
             </item>
+            <item row="12" column="1">
+             <widget class="QRadioButton" name="radioButtonHorizontalAbajo">
+              <property name="text">
+               <string>Abajo</string>
+              </property>
+              <property name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/IMU/horizontalabajo.png</normaloff>:/images/IMU/horizontalabajo.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>¿Detener al marcar todos?</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelCantidadObjetivos">
               <property name="font">
@@ -815,20 +829,6 @@ Test ¿Circular?</string>
               </property>
               <property name="text">
                <string>Cantidad objetivos</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>¿Detener al marcar todos?</string>
               </property>
              </widget>
             </item>

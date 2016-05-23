@@ -399,8 +399,8 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
     ui->tableWidgetEstadisticos->clearContents();
     ui->tableWidgetEstadisticos->setRowCount(2);
 
-    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("AnguloX"));
-    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("AnguloY"));
+    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("DesplazamientoX"));
+    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("DesplazamientoY"));
     ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menor1)));
     ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menor2)));
     ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenor1)));

@@ -69,6 +69,8 @@ void AjustesGrafico::llenarParametrosComboBox()
     ui->comboBoxColorObjetivosMarcados->blockSignals(false);
     ui->comboBoxColorObjetivosSinMarcar->blockSignals(false);
 
+    ui->comboBoxUnidadGrafico->addItem(QString("Centimetros"),0);
+    ui->comboBoxUnidadGrafico->addItem(QString("Grados"),0);
 }
 
 void AjustesGrafico::aplicar()
@@ -78,13 +80,13 @@ void AjustesGrafico::aplicar()
         ajustesActuales.RadioExterior=ui->spinBoxRExterior->value();
         ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
         ajustesActuales.FPS=ui->comboBoxFPS->currentText().toDouble();
+        ajustesActuales.Unidad=ui->comboBoxUnidadGrafico->currentText();
 
         const QColor colorSinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
         const QColor colorMarcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));
         ajustesActuales.colorObjetivoSinMarcar = colorSinMarcar;
         ajustesActuales.colorObjetivoMarcado = colorMarcado;
         hide();
-        //QTextStream stdout <<ui->comboBoxColorObjetivosSinMarcar->currentIndex()<<sinMarcar.name()<<" "<<ui->comboBoxColorObjetivosMarcados->currentIndex()<<marcado.name()<<endl;
     }
 }
 

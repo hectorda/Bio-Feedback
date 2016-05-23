@@ -178,7 +178,7 @@ void Reportes::inicializarGraficoAngulos()
     agregarQCPItemLine(lineaIzqAnguloY,graficoAngulos,bottomAxisRect);
 
     lineaDerAnguloY=new QCPItemLine(graficoAngulos);
-    agregarQCPItemLine(lineaDerAnguloY,graficoAngulos,topAxisRect);
+    agregarQCPItemLine(lineaDerAnguloY,graficoAngulos,bottomAxisRect);
 
     //Colores de la Linea
     graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
@@ -321,9 +321,9 @@ void Reportes::inicializarGraficoMuestras()
     agregarQCPItemLine(lineaDerAcZ,graficoMuestras,rightAxisRectAcelerometro);
 
     lineaIzqGyX=new QCPItemLine(graficoMuestras);
-    agregarQCPItemLine(lineaIzqGyX,graficoMuestras,rightAxisRectGiroscopio);
+    agregarQCPItemLine(lineaIzqGyX,graficoMuestras,leftAxisRectGiroscopio);
     lineaDerGyX=new QCPItemLine(graficoMuestras);
-    agregarQCPItemLine(lineaDerGyX,graficoMuestras,rightAxisRectGiroscopio);
+    agregarQCPItemLine(lineaDerGyX,graficoMuestras,leftAxisRectGiroscopio);
     lineaIzqGyY=new QCPItemLine(graficoMuestras);
     agregarQCPItemLine(lineaIzqGyY,graficoMuestras,centerAxisRectGiroscopio);
     lineaDerGyY=new QCPItemLine(graficoMuestras);
