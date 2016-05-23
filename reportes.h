@@ -49,16 +49,30 @@ private:
     QCPGraph *graficoDesplazamientoY;
 
     //Item para el ajuste de los rangos del Grafico Angulos
-    QCPItemLine *lineaIzq1Angulos;
-    QCPItemLine *lineaIzq2Angulos;
-    QCPItemLine *lineaDer1Angulos;
-    QCPItemLine *lineaDer2Angulos;
+    QCPItemLine *lineaIzqAnguloX;
+    QCPItemLine *lineaDerAnguloX;
+    QCPItemLine *lineaIzqAnguloY;
+    QCPItemLine *lineaDerAnguloY;
 
     //Item para el ajuste de los rangos del Grafico Desplazamientos
-    QCPItemLine *lineaIzq1Desplazamientos;
-    QCPItemLine *lineaIzq2Desplazamientos;
-    QCPItemLine *lineaDer1Desplazamientos;
-    QCPItemLine *lineaDer2Desplazamientos;
+    QCPItemLine *lineaIzqDesplazamientoX;
+    QCPItemLine *lineaDerDesplazamientoX;
+    QCPItemLine *lineaIzqDesplazamientoY;
+    QCPItemLine *lineaDerDesplazamientoY;
+
+    //Item para el ajuste de los rangos del Grafico Muestras
+    QCPItemLine *lineaIzqAcX;
+    QCPItemLine *lineaDerAcX;
+    QCPItemLine *lineaIzqAcY;
+    QCPItemLine *lineaDerAcY;
+    QCPItemLine *lineaIzqAcZ;
+    QCPItemLine *lineaDerAcZ;
+    QCPItemLine *lineaIzqGyX;
+    QCPItemLine *lineaDerGyX;
+    QCPItemLine *lineaIzqGyY;
+    QCPItemLine *lineaDerGyY;
+    QCPItemLine *lineaIzqGyZ;
+    QCPItemLine *lineaDerGyZ;
 
     //Plotables de los Graficos de las Muestras
     QCPGraph *graficoAcX;
@@ -67,6 +81,10 @@ private:
     QCPGraph *graficoGyX;
     QCPGraph *graficoGyY;
     QCPGraph *graficoGyZ;
+
+    //Funcion para agregar un ItemLine a un QAxisRect de un grafico
+    //Se debe incializar el Parent de QCPItemLine antes de llamar la funcion.
+    void agregarQCPItemLine(QCPItemLine *linea, QCustomPlot *grafico,QCPAxisRect *contenedor);
 
     //Funciones donde se crean los layouts y elementos de los graficos del reporte
     void inicializarGraficoResultados();
@@ -78,17 +96,20 @@ signals:
 
 public slots:
     void graficarResultados(QList<Angulo*> listaAngulos);
-
+    //Funciones para mover las lineas tanto izquierda y derechas de los graficos
     void moverLineasIzquierdaAngulos(const double newValue);
     void moverLineasDerechaAngulos(const double newValue);
     void moverLineasIzquierdaDesplazamientos(const double newValue);
     void moverLineasDerechaDesplazamientos(const double newValue);
+    void moverLineasDerechaMuestras(const double newValue);
+    void moverLineasIzquierdaMuestras(const double newValue);
 
-    //Slots para agregar datos
+    //Slots para agregar datos: Graficos
     void agregarDatosGraficoAngulos(Angulo *angulo);
     void agregarDatosGraficoDesplazamientos(Desplazamiento *desp);
     void agregarDatosGraficoMuestras(Raw *datos);
 
+    //Slots para agregar datos: Tablas
     void agregarFilaTablaAngulos(Angulo *angulo);
     void agregarFilaTablaDesplazamientos(Desplazamiento *desp);
     void agregarFilaTablaMuestras(Raw *datos);
@@ -98,6 +119,7 @@ public slots:
     void vaciarGraficoDesplazamientos();
     void vaciarGraficoMuestras();
 
+    //Para redibujar los graficos
     void replotGraficoAngulos();
     void replotGraficoDesplazamientos();
     void replotGraficoMuestras();

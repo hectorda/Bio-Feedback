@@ -1028,8 +1028,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
     {
-        ui->qCustomPlotGraficoMuestras->rescaleAxes();
-        ui->qCustomPlotGraficoMuestras->replot();
+        reportes->replotGraficoMuestras();
 
         ui->pushButtonGuardarImagen->show();
         ui->labelGuardarImagen->setText("Guardar\nGraficos\nMuestras");

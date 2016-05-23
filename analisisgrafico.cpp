@@ -165,7 +165,7 @@ void AnalisisGrafico::setListaMuestras(QList<Raw *> LR)
 
         connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaMuestras.at(newValue)->getTiempo();
-            //reportes->moverLineaIzquierdaAngulos(tiempo);
+            reportes->moverLineasIzquierdaMuestras(tiempo);
             calcularEstadisticosMuestras(newValue,ui->horizontalSlider->upperValue());
             contarDatosMuestras(newValue,ui->horizontalSlider->upperValue());
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
@@ -173,15 +173,15 @@ void AnalisisGrafico::setListaMuestras(QList<Raw *> LR)
 
         connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaMuestras.at(newValue)->getTiempo();
-            //reportes->moverLineaDerechaAngulos(tiempo);
+            reportes->moverLineasDerechaMuestras(tiempo);
             calcularEstadisticosMuestras(ui->horizontalSlider->lowerValue(),newValue);
             contarDatosMuestras(ui->horizontalSlider->lowerValue(),newValue);
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
-//            reportes->moverLineaIzquierdaAngulos(0);
-//            reportes->moverLineaDerechaAngulos(listaAngulos.last()->getTiempo());
+            reportes->moverLineasIzquierdaMuestras(0);
+            reportes->moverLineasDerechaMuestras(listaMuestras.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
             ui->horizontalSlider->setUpperPosition(listaMuestras.size()-1);
             ajustarRangosGraficoMuestras(0,listaMuestras.size()-1);

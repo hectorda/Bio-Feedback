@@ -74,7 +74,6 @@ void Reportes::replotGraficoDesplazamientos()
     graficoDesplazamientoX->rescaleAxes();
     graficoDesplazamientoY->rescaleAxes();
     graficoDesplazamientos->replot();
-
 }
 
 void Reportes::replotGraficoMuestras()
@@ -169,35 +168,19 @@ void Reportes::inicializarGraficoAngulos()
     graficoAnguloX = graficoAngulos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
     graficoAnguloY = graficoAngulos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-    lineaIzq1Angulos=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaIzq1Angulos);
-    lineaIzq1Angulos->setClipAxisRect(topAxisRect);
-    lineaIzq1Angulos->setPen(QPen(Qt::red));
-    lineaIzq1Angulos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    lineaIzq1Angulos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaIzqAnguloX=new QCPItemLine(graficoAngulos);
+    agregarQCPItemLine(lineaIzqAnguloX,graficoAngulos,topAxisRect);
 
-    lineaIzq2Angulos=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaIzq2Angulos);
-    lineaIzq2Angulos->setClipAxisRect(bottomAxisRect);
-    lineaIzq2Angulos->setPen(QPen(Qt::red));
-    lineaIzq2Angulos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
-    lineaIzq2Angulos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDerAnguloX=new QCPItemLine(graficoAngulos);
+    agregarQCPItemLine(lineaDerAnguloX,graficoAngulos,topAxisRect);
 
-    lineaDer1Angulos=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaDer1Angulos);
-    lineaDer1Angulos->setClipAxisRect(topAxisRect);
-    lineaDer1Angulos->setPen(QPen(Qt::red));
-    lineaDer1Angulos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    lineaDer1Angulos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaIzqAnguloY=new QCPItemLine(graficoAngulos);
+    agregarQCPItemLine(lineaIzqAnguloY,graficoAngulos,bottomAxisRect);
 
-    lineaDer2Angulos=new QCPItemLine(graficoAngulos);
-    graficoAngulos->addItem(lineaDer2Angulos);
-    lineaDer2Angulos->setClipAxisRect(bottomAxisRect);
-    lineaDer2Angulos->setPen(QPen(Qt::red));
-    lineaDer2Angulos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
-    lineaDer2Angulos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaDerAnguloY=new QCPItemLine(graficoAngulos);
+    agregarQCPItemLine(lineaDerAnguloY,graficoAngulos,topAxisRect);
 
-    //Colores de la Line
+    //Colores de la Linea
     graficoAnguloX->setPen(QPen(QColor(71, 71, 194), 2));
     graficoAnguloY->setPen(QPen(QColor(153, 102, 51), 2));
 
@@ -241,33 +224,19 @@ void Reportes::inicializarGraficoDesplazamientos()
     graficoDesplazamientoX = graficoDesplazamientos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
     graficoDesplazamientoY = graficoDesplazamientos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
-    lineaIzq1Desplazamientos=new QCPItemLine(graficoDesplazamientos);
-    graficoDesplazamientos->addItem(lineaIzq1Desplazamientos);
-    lineaIzq1Desplazamientos->setClipAxisRect(topAxisRect);
-    lineaIzq1Desplazamientos->setPen(QPen(Qt::red));
-    lineaIzq1Desplazamientos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    lineaIzq1Desplazamientos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    //agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientos,topAxisRect);
 
-    lineaIzq2Desplazamientos=new QCPItemLine(graficoDesplazamientos);
-    graficoDesplazamientos->addItem(lineaIzq2Desplazamientos);
-    lineaIzq2Desplazamientos->setClipAxisRect(bottomAxisRect);
-    lineaIzq2Desplazamientos->setPen(QPen(Qt::red));
-    lineaIzq2Desplazamientos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
-    lineaIzq2Desplazamientos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaIzqDesplazamientoX=new QCPItemLine(graficoDesplazamientos);
+    agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientos,topAxisRect);
 
-    lineaDer1Desplazamientos=new QCPItemLine(graficoDesplazamientos);
-    graficoDesplazamientos->addItem(lineaDer1Desplazamientos);
-    lineaDer1Desplazamientos->setClipAxisRect(topAxisRect);
-    lineaDer1Desplazamientos->setPen(QPen(Qt::red));
-    lineaDer1Desplazamientos->start->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    lineaDer1Desplazamientos->end->setAxes(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    lineaDerDesplazamientoX=new QCPItemLine(graficoDesplazamientos);
+    agregarQCPItemLine(lineaDerDesplazamientoX,graficoDesplazamientos,topAxisRect);
 
-    lineaDer2Desplazamientos=new QCPItemLine(graficoDesplazamientos);
-    graficoDesplazamientos->addItem(lineaDer2Desplazamientos);
-    lineaDer2Desplazamientos->setClipAxisRect(bottomAxisRect);
-    lineaDer2Desplazamientos->setPen(QPen(Qt::red));
-    lineaDer2Desplazamientos->start->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
-    lineaDer2Desplazamientos->end->setAxes(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    lineaIzqDesplazamientoY=new QCPItemLine(graficoDesplazamientos);
+    agregarQCPItemLine(lineaIzqDesplazamientoY,graficoDesplazamientos,bottomAxisRect);
+
+    lineaDerDesplazamientoY=new QCPItemLine(graficoDesplazamientos);
+    agregarQCPItemLine(lineaDerDesplazamientoY,graficoDesplazamientos,bottomAxisRect);
 
     //Colores de la Line
     graficoDesplazamientoX->setPen(QPen(QColor(71, 71, 194), 2));
@@ -337,23 +306,41 @@ void Reportes::inicializarGraficoMuestras()
     graficoGyY = graficoMuestras->addGraph(centerAxisRectGiroscopio->axis(QCPAxis::atBottom), centerAxisRectGiroscopio->axis(QCPAxis::atLeft));
     graficoGyZ = graficoMuestras->addGraph(rightAxisRectGiroscopio->axis(QCPAxis::atBottom), rightAxisRectGiroscopio->axis(QCPAxis::atLeft));
 
+    // Lineas para el analisis
+    lineaIzqAcX=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaIzqAcX,graficoMuestras,leftAxisRectAcelerometro);
+    lineaDerAcX=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaDerAcX,graficoMuestras,leftAxisRectAcelerometro);
+    lineaIzqAcY=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaIzqAcY,graficoMuestras,centerAxisRectAcelerometro);
+    lineaDerAcY=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaDerAcY,graficoMuestras,centerAxisRectAcelerometro);
+    lineaIzqAcZ=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaIzqAcZ,graficoMuestras,rightAxisRectAcelerometro);
+    lineaDerAcZ=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaDerAcZ,graficoMuestras,rightAxisRectAcelerometro);
+
+    lineaIzqGyX=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaIzqGyX,graficoMuestras,rightAxisRectGiroscopio);
+    lineaDerGyX=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaDerGyX,graficoMuestras,rightAxisRectGiroscopio);
+    lineaIzqGyY=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaIzqGyY,graficoMuestras,centerAxisRectGiroscopio);
+    lineaDerGyY=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaDerGyY,graficoMuestras,centerAxisRectGiroscopio);
+    lineaIzqGyZ=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaIzqGyZ,graficoMuestras,rightAxisRectGiroscopio);
+    lineaDerGyZ=new QCPItemLine(graficoMuestras);
+    agregarQCPItemLine(lineaDerGyZ,graficoMuestras,rightAxisRectGiroscopio);
+
     //Estilo del lapiz para la linea
     graficoAcX->setPen(QPen(Qt::blue));
     graficoAcY->setPen(QPen(Qt::blue));
     graficoAcZ->setPen(QPen(Qt::blue));
 
-    graficoGyX->setPen(QPen(Qt::red));
-    graficoGyY->setPen(QPen(Qt::red));
-    graficoGyZ->setPen(QPen(Qt::red));
-
-//    // rescale axes according to graph's data:
-//    graficoAcX->rescaleAxes();
-//    graficoAcY->rescaleAxes();
-//    graficoAcZ->rescaleAxes();
-
-//    graficoGyX->rescaleAxes();
-//    graficoGyY->rescaleAxes();
-//    graficoGyZ->rescaleAxes();
+    graficoGyX->setPen(QPen(QColor(153, 102, 51), 2));
+    graficoGyY->setPen(QPen(QColor(153, 102, 51), 2));
+    graficoGyZ->setPen(QPen(QColor(153, 102, 51), 2));
 
     //Labels de los ejes: Acelerometro
     leftAxisRectAcelerometro->axis(QCPAxis::atLeft)->setLabel("Aceleracion Eje X (G)");
@@ -378,7 +365,6 @@ void Reportes::inicializarGraficoMuestras()
     //Agregamos interactividad
     graficoMuestras->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     //grafico->replot(); //Se redibuja para actualizar la vista
-
 }
 
 void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
@@ -443,40 +429,83 @@ void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
     cuadrantes->setData(ticks, quadrantData);
 }
 
+void Reportes::agregarQCPItemLine(QCPItemLine *linea,QCustomPlot *grafico,QCPAxisRect *contenedor)
+{
+    grafico->addItem(linea);
+    linea->setClipAxisRect(contenedor);
+    linea->setPen(QPen(Qt::red));
+    linea->start->setAxes(contenedor->axis(QCPAxis::atBottom), contenedor->axis(QCPAxis::atLeft));
+    linea->end->setAxes(contenedor->axis(QCPAxis::atBottom), contenedor->axis(QCPAxis::atLeft));
+}
+
 void Reportes::moverLineasIzquierdaAngulos(const double newValue)
 {
-    lineaIzq1Angulos->end->setCoords(newValue,5000);
-    lineaIzq1Angulos->start->setCoords(newValue,-5000);
-    lineaIzq2Angulos->end->setCoords(newValue,5000);
-    lineaIzq2Angulos->start->setCoords(newValue,-5000);
+    lineaIzqAnguloX->start->setCoords(newValue,-5000);
+    lineaIzqAnguloX->end->setCoords(newValue,5000);
+    lineaIzqAnguloY->start->setCoords(newValue,-5000);
+    lineaIzqAnguloY->end->setCoords(newValue,5000);
     graficoAngulos->replot();
 }
 
 void Reportes::moverLineasDerechaAngulos(const double newValue)
 {
-    lineaDer1Angulos->end->setCoords(newValue,5000);
-    lineaDer1Angulos->start->setCoords(newValue,-5000);
-    lineaDer2Angulos->end->setCoords(newValue,5000);
-    lineaDer2Angulos->start->setCoords(newValue,-5000);
+    lineaDerAnguloX->start->setCoords(newValue,-5000);
+    lineaDerAnguloX->end->setCoords(newValue,5000);
+    lineaDerAnguloY->start->setCoords(newValue,-5000);
+    lineaDerAnguloY->end->setCoords(newValue,5000);
     graficoAngulos->replot();
 }
 
 void Reportes::moverLineasIzquierdaDesplazamientos(const double newValue)
 {
-    lineaIzq1Desplazamientos->end->setCoords(newValue,5000);
-    lineaIzq1Desplazamientos->start->setCoords(newValue,-5000);
-    lineaIzq2Desplazamientos->end->setCoords(newValue,5000);
-    lineaIzq2Desplazamientos->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoX->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoX->end->setCoords(newValue,5000);
+    lineaIzqDesplazamientoY->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoY->end->setCoords(newValue,5000);
     graficoDesplazamientos->replot();
 }
 
 void Reportes::moverLineasDerechaDesplazamientos(const double newValue)
 {
-    lineaDer1Desplazamientos->end->setCoords(newValue,5000);
-    lineaDer1Desplazamientos->start->setCoords(newValue,-5000);
-    lineaDer2Desplazamientos->end->setCoords(newValue,5000);
-    lineaDer2Desplazamientos->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoX->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoX->end->setCoords(newValue,5000);
+    lineaDerDesplazamientoY->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoY->end->setCoords(newValue,5000);
     graficoDesplazamientos->replot();
+}
+
+void Reportes::moverLineasIzquierdaMuestras(const double newValue)
+{
+    lineaIzqAcX->start->setCoords(newValue,-5000);
+    lineaIzqAcX->end->setCoords(newValue,5000);
+    lineaIzqAcY->start->setCoords(newValue,-5000);
+    lineaIzqAcY->end->setCoords(newValue,5000);
+    lineaIzqAcZ->start->setCoords(newValue,-5000);
+    lineaIzqAcZ->end->setCoords(newValue,5000);
+    lineaIzqGyX->start->setCoords(newValue,-5000);
+    lineaIzqGyX->end->setCoords(newValue,5000);
+    lineaIzqGyY->start->setCoords(newValue,-5000);
+    lineaIzqGyY->end->setCoords(newValue,5000);
+    lineaIzqGyZ->start->setCoords(newValue,-5000);
+    lineaIzqGyZ->end->setCoords(newValue,5000);
+    graficoMuestras->replot();
+}
+
+void Reportes::moverLineasDerechaMuestras(const double newValue)
+{
+    lineaDerAcX->start->setCoords(newValue,-5000);
+    lineaDerAcX->end->setCoords(newValue,5000);
+    lineaDerAcY->start->setCoords(newValue,-5000);
+    lineaDerAcY->end->setCoords(newValue,5000);
+    lineaDerAcZ->start->setCoords(newValue,-5000);
+    lineaDerAcZ->end->setCoords(newValue,5000);
+    lineaDerGyX->start->setCoords(newValue,-5000);
+    lineaDerGyX->end->setCoords(newValue,5000);
+    lineaDerGyY->start->setCoords(newValue,-5000);
+    lineaDerGyY->end->setCoords(newValue,5000);
+    lineaDerGyZ->start->setCoords(newValue,-5000);
+    lineaDerGyZ->end->setCoords(newValue,5000);
+    graficoMuestras->replot();
 }
 
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
