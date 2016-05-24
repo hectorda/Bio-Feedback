@@ -389,7 +389,7 @@ void Reportes::agregarDatosGraficoMuestras(Raw *datos)
     graficoAcZ->addData(datos->getTiempo(), datos->getAcZ());
 
     graficoGyX->addData(datos->getTiempo(), datos->getGyX());
-    graficoGyY->addData(datos->getTiempo(), datos->getGyZ());
+    graficoGyY->addData(datos->getTiempo(), datos->getGyY());
     graficoGyZ->addData(datos->getTiempo(), datos->getGyZ());
 
 }
