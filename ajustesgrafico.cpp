@@ -80,7 +80,7 @@ void AjustesGrafico::aplicar()
         ajustesActuales.RadioExterior=ui->spinBoxRExterior->value();
         ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
         ajustesActuales.FPS=ui->comboBoxFPS->currentText().toDouble();
-        ajustesActuales.Unidad=ui->comboBoxUnidadGrafico->currentText();
+        ajustesActuales.Unidad=ui->comboBoxUnidadGrafico->currentText().trimmed().toLower();
 
         const QColor colorSinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
         const QColor colorMarcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));

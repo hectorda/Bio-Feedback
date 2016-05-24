@@ -37,15 +37,12 @@ private slots:
     void on_pushButtonPrueba2_clicked();
     void on_pushButtonPrueba3_clicked();
     void on_pushButtonPrueba4_clicked();
-    void on_pushButtonIniciarPrueba_clicked();
     void on_pushButtonReiniciarPrueba_clicked();
-    void on_pushButtonDetenerPrueba_clicked();
     void on_pushButtonConfPrueba_clicked();
     void on_pushButtonVolverInicio_clicked();
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
     void on_pushButtonBuscarPaciente_clicked();
-
 
     void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);    
     void on_lineEditRut_textChanged(const QString &arg1);
@@ -53,10 +50,11 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
     void iniciarPrueba();
+    void configurarArduino();
     void limpiarListasyOcultarBotones();
     void mostrarResultados();
-    void slotGraficarTiempoReal(Angulo *angulo);
-    void marcarObjetivos(Angulo *angulo);
+    void slotGraficarTiempoReal(const double x, const double y);
+    void marcarObjetivos(const double x, const double y);
     void RangeGraphic(int Range);
     void ZoomGraphic(QWheelEvent *event);
     void contextMenuRequest(QPoint pos);
@@ -66,7 +64,7 @@ private slots:
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
 
 signals:
-    void emitAnguloGraficoTiempoReal(Angulo*);
+    void emitAnguloGraficoTiempoReal(const double x,const double y);
     void emitRawReporte(Raw*);
     void emitAnguloReporte(Angulo*);
     void emitDesplazamientoReporte(Desplazamiento*);
@@ -89,6 +87,7 @@ private:
     int pruebaNumero;
     int divisorFPS;
     double frecuenciaMuestreo;
+    QCPPlotTitle *titulo;
     QCPCurve *lienzo;
     AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;
@@ -97,10 +96,10 @@ private:
 
     void inicializar();
     void conexiones();
-    void configurarArduino();
     void inicializarGrafico();
-    void mostrarBotones();
-    void ocultarBotones();
+
+    void mostrarBotonesPrueba();
+    void ocultarBotonesPrueba();
     void desactivarTabs();
     void activarTabs();
     void preguntarRegresarInicio();
@@ -108,9 +107,15 @@ private:
     void obtenerDesplazamiento(Angulo *angulo);
     void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
+
+    void ocultarMostrarBotonesLabelTabGraficos(const QString &textoBoton, const QString &textoLabel);
+    void ocultarMostrarBotonesLabelTabTabla(const QString &textoLabel);
+
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
     void generarObjetivos();
+    bool PertenecePuntoAlObjetivo(const double x, const double y,QCPItemEllipse *P);
+    void parpadeoCirculo(QCPItemEllipse *P);
 };
 
 #endif // MAINWINDOW_H

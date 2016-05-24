@@ -924,7 +924,9 @@ void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)//Si el grafico est
 
 void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 {
-    (void) index;
+    if(index==0)
+        ui->centralWidget->adjustSize();
+
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
     {
         if (elementosdelGrafico.Unidad.contains("grados"))
@@ -954,7 +956,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientos)
-        ocultarMostrarBotonesLabelTabTabla("Guardar\nDatos\nDesp..");
+        ocultarMostrarBotonesLabelTabTabla("Guardar\Datos\nDesp..");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
         ocultarMostrarBotonesLabelTabTabla("Guardar\nMuestras");
