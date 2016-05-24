@@ -11,6 +11,7 @@ AjustesGrafico::AjustesGrafico(QWidget *parent) :
     aplicar();
     graficarObjetivo(ajustesActuales.RadioObjetivo,ajustesActuales.colorObjetivoSinMarcar);
     graficarRepresentacionGrafico(ajustesActuales.RadioInterior,ajustesActuales.RadioExterior);
+    this->adjustSize();
 }
 
 AjustesGrafico::~AjustesGrafico()

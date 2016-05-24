@@ -31,6 +31,7 @@ public:
     ~MainWindow();
     void calibrarDispositivos();
 
+    QString obtenerOrientacionSensor();
 private slots:
     //Slots de Botones
     void on_pushButtonPrueba1_clicked();
@@ -62,6 +63,11 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
+    //Para guardar e importar en formato.
+    void exportar();
+    void importar();
+
+    void on_pushButtonVolverPrueba_clicked();
 
 signals:
     void emitAnguloGraficoTiempoReal(const double x,const double y);
@@ -116,6 +122,7 @@ private:
     void generarObjetivos();
     bool PertenecePuntoAlObjetivo(const double x, const double y,QCPItemEllipse *P);
     void parpadeoCirculo(QCPItemEllipse *P);
+
 };
 
 #endif // MAINWINDOW_H

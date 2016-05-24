@@ -49,6 +49,8 @@ void MainWindow::inicializar()
     ui->radioButtonHorizontalAbajo->hide();
     ui->radioButtonHorizontalArriba->hide();
 
+    ui->pushButtonVolverPrueba->hide();
+
     db = new SQL;
     db->consulta();
 }
@@ -81,6 +83,9 @@ void MainWindow::conexiones()
     connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
 
       //Connect de actions
+    connect(ui->actionExportar,SIGNAL(triggered()),this,SLOT(exportar()));
+    connect(ui->actionImportar,SIGNAL(triggered()),this,SLOT(importar()));
+
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(exec()));
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(exec()));
@@ -163,7 +168,6 @@ void MainWindow::obtenerAngulos(Raw *dato)
         if(orientacion.contains("vertical"))
         {
             if(ui->radioButtonVerticalAtras->isChecked()){
-
                 //Se calculan los angulos con la IMU vertical.
                 angulo1 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
                 angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
@@ -180,7 +184,6 @@ void MainWindow::obtenerAngulos(Raw *dato)
                     anguloComplementario2=angulo2;
                 }
             }
-
             if(ui->radioButtonVerticalFrente->isChecked()){
 
                 //Se calculan los angulos con la IMU vertical.
@@ -199,7 +202,6 @@ void MainWindow::obtenerAngulos(Raw *dato)
                     anguloComplementario2=angulo2;
                 }
             }
-
             if(ui->radioButtonVerticalDerecha->isChecked()){
 
                 //Se calculan los angulos con la IMU vertical.
@@ -218,7 +220,6 @@ void MainWindow::obtenerAngulos(Raw *dato)
                     anguloComplementario2=angulo2;
                 }
             }
-
             if(ui->radioButtonVerticalIzquierda->isChecked()){
 
                 //Se calculan los angulos con la IMU vertical.
@@ -245,8 +246,6 @@ void MainWindow::obtenerAngulos(Raw *dato)
                 //Se calculan los angulos con la IMU horizontal.
                 angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
                 angulo2 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-                //angulo1 = qAtan2((double)dato->getAcY() , (double)dato->getAcZ())*RAD_TO_DEG;
-                //angulo2 = qAtan2((double)dato->getAcX() , (double)dato->getAcZ())*RAD_TO_DEG;
 
                 //Aplicar el Filtro Complementario
                 if(listaAngulos.size()>0){
@@ -260,14 +259,11 @@ void MainWindow::obtenerAngulos(Raw *dato)
                     anguloComplementario2=angulo2;
                 }
             }
-
             if(ui->radioButtonHorizontalAbajo->isChecked())
             {
                 //Se calculan los angulos con la IMU horizontal.
                 angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
                 angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-                //angulo1 = qAtan2((double)dato->getAcY() , (double)dato->getAcZ())*RAD_TO_DEG;
-                //angulo2 = qAtan2((double)dato->getAcX() , (double)dato->getAcZ())*RAD_TO_DEG;
 
                 //Aplicar el Filtro Complementario
                 if(listaAngulos.size()>0){
@@ -356,13 +352,14 @@ void MainWindow::desactivarSpacerEntreBotones()
 
 void MainWindow::generarObjetivos()
 {
-    if(pruebaNumero==3)
+    if(pruebaNumero==3||pruebaNumero==4)
     {
-        int distanciaCentro=10;
-        for (int var = 0; var < 8; ++var){
+        const int distanciaCentro=elementosdelGrafico.RadioInterior;
+        const int cantidadObjetivos=pruebaNumero==3? 8: 4;
+        for (int var = 0; var < cantidadObjetivos; ++var){
             QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
             ui->qCustomPlotGrafico->addItem(objetivo);
-            const double angulo=2*var*((M_PI)/8); //
+            const double angulo=2*var*((M_PI)/cantidadObjetivos); //
             objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo);
             objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo);
             objetivo->setBrush(QBrush(Qt::red));
@@ -375,7 +372,7 @@ void MainWindow::generarObjetivos()
         objetivo->setBrush(QBrush(Qt::red));
         listaObjetivos.append(objetivo);
     }
-    if(pruebaNumero==1 || pruebaNumero==2 || pruebaNumero==4)
+    if(pruebaNumero==1 || pruebaNumero==2)
     {
         int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
 
@@ -415,7 +412,47 @@ void MainWindow::generarObjetivos()
             }
             QTextStream(stdout)<<"Objetivos Puestos"<<listaObjetivos.size()<<endl;
         }
+        else
+        {
+            const int distanciaCentro=elementosdelGrafico.RadioInterior;
+            for (int var = 0; var < cantidadObjetivos; ++var){
+                QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+                ui->qCustomPlotGrafico->addItem(objetivo);
+                const double angulo=2*var*((M_PI)/cantidadObjetivos);
+                objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo);
+                objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo);
+                objetivo->setBrush(QBrush(Qt::red));
+                listaObjetivos.append(objetivo);
+            }
+        }
     }
+}
+
+QString MainWindow::obtenerOrientacionSensor()
+{
+    QString cBorientacion = ui->comboBoxOrientacion->currentText().toLower();
+    QString orientacion;
+    if(cBorientacion.contains("vertical"))
+    {
+        orientacion="Vertical ";
+        if(ui->radioButtonVerticalAtras->isChecked())
+            orientacion+="Atras";
+        if(ui->radioButtonVerticalFrente->isChecked())
+            orientacion+="Frente";
+        if(ui->radioButtonVerticalDerecha->isChecked())
+            orientacion+="Derecha";
+        if(ui->radioButtonVerticalIzquierda->isChecked())
+            orientacion+="Izquierda";
+    }
+    else
+    {
+        orientacion="Horizontal ";
+        if(ui->radioButtonHorizontalArriba->isChecked())
+            orientacion+="Arribla";
+        if(ui->radioButtonHorizontalAbajo->isChecked())
+            orientacion+="Abajo";
+    }
+    return orientacion;
 }
 
 /*
@@ -424,7 +461,7 @@ void MainWindow::generarObjetivos()
 */
 void MainWindow::marcarObjetivos(const double x,const double y)
 {
-    if(pruebaNumero==3)
+    if(pruebaNumero== 3 || pruebaNumero== 4)
     {
         if(!listaObjetivos.isEmpty())
         {
@@ -452,7 +489,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
             }
         }
     }
-    if(pruebaNumero==1 || pruebaNumero==2 || pruebaNumero==4)
+    if(pruebaNumero==1 || pruebaNumero==2)
     {
         if(!ui->checkBoxOrdenObjetivos->isChecked())//Si es que se puede ir a cualquier objetivo
         {
@@ -513,6 +550,91 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
     else
         P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
 
+}
+
+void MainWindow::exportar()
+{
+    if(listaAngulos.isEmpty() || listaDesplazamientos.isEmpty())
+        QMessageBox::critical(this,"Aun no se realiza prueba","Se debe realizar una prueba antes de Exportar.");
+    else{
+        QString selectedFilter;
+        QString filters(tr("Formato BioFeed-Back (*.bioh)"));
+        QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
+
+        if (fileName != ""){
+            QFile file(fileName);
+            file.remove();
+            if (file.open(QIODevice::Append)){
+                QTextStream stream(&file);
+                const int muestras=listaAngulos.size();
+                const double tiempo=listaAngulos.last()->getTiempo();
+                const double alturaSensor=ui->doubleSpinBoxAlturaDispositivo->value();
+                stream <<"PruebaNumero: "<<pruebaNumero<<endl;
+                stream <<"OrientacionSensor: "<<obtenerOrientacionSensor()<<endl;
+                stream <<"AlturaPuestaSensor: "<<alturaSensor<<endl;
+                stream <<"TiempoPrueba: "<<tiempo<<endl;
+                stream <<"MuestrasObtenidas: "<<muestras<<endl;
+                for (int var = 0; var < muestras; ++var){
+                    Angulo *ang=listaAngulos.at(var);
+                    Desplazamiento *desp=listaDesplazamientos.at(var);
+                    Raw *raw=listaMuestras.at(var);
+                    stream << ang->getTiempo()<<" "<<ang->getAnguloX()<<" "<<ang->getAnguloY()<<" "<<desp->getDesplazamientoX()<<" "<<desp->getDesplazamientoY()<<" "<<
+                              raw->getAcX()<<" "<<raw->getAcY()<<" "<<raw->getAcZ()<<" "<<raw->getAcZ()<<" "<<raw->getGyX()<<" "<<raw->getGyY()<<" "<<raw->getGyZ()<<endl;
+                }
+                file.flush();
+                file.close();
+            }
+            else {
+                QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
+                return;
+            }
+        }
+    }
+}
+
+void MainWindow::importar(){
+    QString selectedFilter;
+    QString filters(tr("Formato BioFeed-Back (*.bioh)"));
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
+    if (fileName != ""){
+        QFile file(fileName);
+        if (file.open(QIODevice::ReadOnly)){
+            QTextStream stream(&file);
+            const int pNumero=stream.readLine().split(" ").last().toInt();
+            const QStringList lineaOrientacion=stream.readLine().split(" ");
+            const QString orientacion=lineaOrientacion.at(1)+lineaOrientacion.at(2);
+            const QStringList lineaAlturaSensor=stream.readLine().split(" ");
+            const double alturaSensor=lineaAlturaSensor.last().toDouble();
+            const double tiempoPrueba=stream.readLine().split(" ").last().toDouble();
+            const int muestras=stream.readLine().split(" ").last().toInt();
+            listaMuestras.clear();
+            listaAngulos.clear();
+            listaDesplazamientos.clear();
+            for (int var = 0; var < muestras; ++var){
+                QList<double> datos;
+                foreach (QString var, stream.readLine().split(" ")) {
+                    datos.append(var.toDouble());
+                }
+                Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
+                Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
+                Raw *raw=new Raw(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
+                emit emitAnguloReporte(ang);
+                emit emitDesplazamientoReporte(desp);
+                emit emitRawReporte(raw);
+                listaAngulos.append(ang);
+                listaDesplazamientos.append(desp);
+                listaMuestras.append(raw);
+            }
+            file.flush();
+            file.close();
+            ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+            mostrarResultados();
+        }
+        else {
+            QMessageBox::critical(0, tr("Error"), tr("No se pudo abir el archivo"));
+            return;
+        }
+    }
 }
 
 void MainWindow::slotGraficarTiempoReal(const double x,const double y)
@@ -667,7 +789,6 @@ void MainWindow::iniciarPrueba()
 
     elementosdelGrafico=ajustesGrafico->getAjustes();//Se obtienen los ajustes actuales para el grafico
 
-
     if(frecuenciaMuestreo>elementosdelGrafico.FPS)//Si la frecuencia de muestreo es menor a 275 se calculan el divisor en base a la frecuencia elegida sino en 275.
         divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
                                            (int)(275/elementosdelGrafico.FPS);
@@ -680,9 +801,13 @@ void MainWindow::iniciarPrueba()
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
 
+    if (ui->checkBoxTiempoInfinito->isChecked())
+        ui->progressBarPrueba->hide();
+
+    ui->pushButtonVolverPrueba->show();
     ui->stackedWidget->setCurrentWidget(ui->widgetTest);
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
-
+    ui->centralWidget->adjustSize();
     desactivarTabs();
     desactivarSpacerEntreBotones();
     ocultarBotonesPrueba();
@@ -712,7 +837,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
        cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
     const double a1=frecuenciaMuestreo<275 ? listaMuestras.size()*(1/frecuenciaMuestreo) : cronometro.elapsed()/1000.0;
-    const double tiempoPrueba=pruebaNumero==1 ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
+    const double tiempoPrueba=ui->checkBoxTiempoInfinito->isChecked() ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
     if ( a1 < tiempoPrueba)
     {
         const double tiempo=frecuenciaMuestreo<275 ? (1/frecuenciaMuestreo)*listaMuestras.size(): cronometro.elapsed()/1000.0;
@@ -782,6 +907,11 @@ void MainWindow::on_pushButtonVolverInicio_clicked()
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
 }
 
+void MainWindow::on_pushButtonVolverPrueba_clicked()
+{
+    ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+}
+
 void MainWindow::limpiarGrafico(QCustomPlot *grafico){
 
     if(grafico->plotLayout()->hasElement(0,1))
@@ -811,9 +941,9 @@ void MainWindow::on_pushButtonPrueba1_clicked()
     ui->labelCantidadObjetivos->show();
     ui->spinBoxCantidadObjetivos->show();
 
-    ui->progressBarPrueba->hide();
-    ui->labelTiempoPrueba->hide();
-    ui->spinBoxTiempoPrueba->hide();
+    ui->progressBarPrueba->show();
+    ui->labelTiempoPrueba->show();
+    ui->spinBoxTiempoPrueba->show();
 }
 
 void MainWindow::on_pushButtonPrueba2_clicked()
@@ -855,13 +985,13 @@ void MainWindow::on_pushButtonPrueba4_clicked()
 {
     pruebaNumero=4;
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    ui->labelNombrePrueba->setText("Prueba 4");
+    ui->labelNombrePrueba->setText("Prueba 4:Prueba Base");
 
     ui->labelCantidadObjetivos->show();
     ui->spinBoxCantidadObjetivos->show();
 
-    ui->labelCantidadObjetivos->show();
-    ui->spinBoxCantidadObjetivos->show();
+    ui->labelCantidadObjetivos->hide();
+    ui->spinBoxCantidadObjetivos->hide();
 
     ui->progressBarPrueba->show();
     ui->labelTiempoPrueba->show();
@@ -932,8 +1062,6 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
         else
             ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráfico","Guardar\nDatos\nDesp..");
     }
-
-
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
     {
         ui->qCustomPlotResultados->rescaleAxes();
