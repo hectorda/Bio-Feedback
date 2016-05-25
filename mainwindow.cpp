@@ -159,154 +159,6 @@ void MainWindow::mostrarResultados()
     ui->centralWidget->adjustSize();
 }
 
-void MainWindow::obtenerAngulos(Raw *dato)
-{
-    const double RAD_TO_DEG=180/M_PI;
-    double anguloComplementario1=0,anguloComplementario2=0;
-    double angulo1,angulo2;
-    double alpha=0.02;
-    bool filtroComplementario=true;
-    QString orientacion=ui->comboBoxOrientacion->currentText().toLower();
-
-    if(filtroComplementario){
-
-        if(orientacion.contains("vertical"))
-        {
-            if(ui->radioButtonVerticalAtras->isChecked()){
-                //Se calculan los angulos con la IMU vertical.
-                angulo1 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-                angulo2 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-
-                //Aplicar el Filtro Complementario
-                if(listaAngulos.size()>0){
-                    Angulo *lastAngulo=listaAngulos.last();
-                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
-                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
-                }
-                else{
-                    anguloComplementario1=angulo1;
-                    anguloComplementario2=angulo2;
-                }
-            }
-            if(ui->radioButtonVerticalFrente->isChecked()){
-
-                //Se calculan los angulos con la IMU vertical.
-                angulo1 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-                angulo2 = qAtan(-dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-
-                //Aplicar el Filtro Complementario
-                if(listaAngulos.size()>0){
-                    Angulo *lastAngulo=listaAngulos.last();
-                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
-                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
-                }
-                else{
-                    anguloComplementario1=angulo1;
-                    anguloComplementario2=angulo2;
-                }
-            }
-            if(ui->radioButtonVerticalDerecha->isChecked()){
-
-                //Se calculan los angulos con la IMU vertical.
-                angulo1 = qAtan(-dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-                angulo2 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-
-                //Aplicar el Filtro Complementario
-                if(listaAngulos.size()>0){
-                    Angulo *lastAngulo=listaAngulos.last();
-                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
-                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
-                }
-                else{
-                    anguloComplementario1=angulo1;
-                    anguloComplementario2=angulo2;
-                }
-            }
-            if(ui->radioButtonVerticalIzquierda->isChecked()){
-
-                //Se calculan los angulos con la IMU vertical.
-                angulo1 = qAtan(dato->getAcZ()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-                angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcZ(),2) + qPow(dato->getAcY(),2)))*RAD_TO_DEG;
-
-                //Aplicar el Filtro Complementario
-                if(listaAngulos.size()>0){
-                    Angulo *lastAngulo=listaAngulos.last();
-                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyZ()*dt) + alpha*angulo1;
-                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyX()*dt) + alpha*angulo2;
-                }
-                else{
-                    anguloComplementario1=angulo1;
-                    anguloComplementario2=angulo2;
-                }
-            }
-        }
-        else
-        {
-            if(ui->radioButtonHorizontalArriba->isChecked())
-            {
-                //Se calculan los angulos con la IMU horizontal.
-                angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-                angulo2 = qAtan(-dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-
-                //Aplicar el Filtro Complementario
-                if(listaAngulos.size()>0){
-                    Angulo *lastAngulo=listaAngulos.last();
-                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + alpha*angulo1;
-                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + alpha*angulo2;
-                }
-                else{
-                    anguloComplementario1=angulo1;
-                    anguloComplementario2=angulo2;
-                }
-            }
-            if(ui->radioButtonHorizontalAbajo->isChecked())
-            {
-                //Se calculan los angulos con la IMU horizontal.
-                angulo1 = qAtan(dato->getAcY()/qSqrt(qPow(dato->getAcX(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-                angulo2 = qAtan(dato->getAcX()/qSqrt(qPow(dato->getAcY(),2) + qPow(dato->getAcZ(),2)))*RAD_TO_DEG;
-
-                //Aplicar el Filtro Complementario
-                if(listaAngulos.size()>0){
-                    Angulo *lastAngulo=listaAngulos.last();
-                    const double dt=(dato->getTiempo()-listaAngulos.last()->getTiempo())/ 1000;
-                    anguloComplementario1 = (1-alpha) *(lastAngulo->getAnguloX()+dato->getGyX()*dt) + alpha*angulo1;
-                    anguloComplementario2 = (1-alpha) *(lastAngulo->getAnguloY()+dato->getGyY()*dt) + alpha*angulo2;
-                }
-                else{
-                    anguloComplementario1=angulo1;
-                    anguloComplementario2=angulo2;
-                }
-            }
-        }
-
-        Angulo *angulo=new Angulo(dato->getTiempo(),anguloComplementario1,anguloComplementario2);
-        obtenerDesplazamiento(angulo);
-        listaAngulos.append(angulo);
-
-        emit emitAnguloReporte(angulo);
-
-        if(listaMuestras.size()%prueba->getDivisorFPS()==0 && prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
-            emit emitAnguloGraficoTiempoReal(angulo->getAnguloX(),angulo->getAnguloY());
-    }
-}
-
-void MainWindow::obtenerDesplazamiento(Angulo *angulo)
-{
-    const double alturadisp=ui->doubleSpinBoxAlturaDispositivo->value();
-    const double despX=qSin(qDegreesToRadians(angulo->getAnguloX()));
-    const double despY=qSin(qDegreesToRadians(angulo->getAnguloY()));
-    Desplazamiento *desplazamiento=new Desplazamiento(angulo->getTiempo(),despX*alturadisp,despY*alturadisp);
-    emit emitDesplazamientoReporte(desplazamiento);
-    listaDesplazamientos.append(desplazamiento);
-    if(listaMuestras.size()%prueba->getDivisorFPS()==0 && prueba->getAjustesGrafico().Unidad.contains("centimetros"))//Mod
-        emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
-}
-
 void MainWindow::mostrarBotonesPrueba()
 {
     ui->pushButtonReiniciarPrueba->show();
@@ -454,7 +306,7 @@ QString MainWindow::obtenerOrientacionSensor()
     {
         orientacion="Horizontal ";
         if(ui->radioButtonHorizontalArriba->isChecked())
-            orientacion+="Arribla";
+            orientacion+="Arriba";
         if(ui->radioButtonHorizontalAbajo->isChecked())
             orientacion+="Abajo";
     }
@@ -804,7 +656,7 @@ void MainWindow::iniciarPrueba()
     prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
     prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
     prueba->setOrientacion(obtenerOrientacionSensor());
-
+    prueba->setAlturaDispositivo(ui->doubleSpinBoxAlturaDispositivo->value());
     prueba->setDivisorFPS(); //Se calcula el divisor de FPS
 
     ui->verticalSliderRangeGraphic->setValue(prueba->getAjustesGrafico().RadioExterior+5);//Se actualiza el slider del Rango
@@ -843,6 +695,13 @@ void MainWindow::regresarInicio()
     }
 }
 
+/*
+ *Se obtiene la Informacion proveniete del Sensor
+ * Ademas se obtiene el Angulo y Desplazamiento
+ * Junto con enviar a los Elementos Graficos de Reporte y
+ * Grafico en Tiempo Real el dato que corresponda.
+ */
+
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
     if(listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
@@ -852,10 +711,35 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
                                                           cronometro.elapsed()/1000.0;
     if ( tiempo < prueba->getTiempoPrueba())
     {
+        Angulo *angulo=new Angulo;
+        Desplazamiento *desplazamiento=new Desplazamiento;
+
+        //Calculo y de Angulos y Desplazamiento
         Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
-        obtenerAngulos(dato);
+        const QString orientacion=prueba->getOrientacion().toLower();
+        if(!listaAngulos.isEmpty()){
+            Angulo *anguloAnterior=listaAngulos.last();
+            angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior);
+        }
+        else
+            angulo->calcularAngulo(orientacion,dato);
+
+        desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
+        listaAngulos.append(angulo);
+        listaDesplazamientos.append(desplazamiento);
         listaMuestras.append(dato);
         emit emitRawReporte(dato);
+        emit emitDesplazamientoReporte(desplazamiento);
+        emit emitAnguloReporte(angulo);
+
+        //Comienza Actualizacion elementos de la interfaz
+        //Se pregunta y envia el dato para graficar
+        if(listaMuestras.size() % prueba->getDivisorFPS()==0){
+            if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
+                emit emitAnguloGraficoTiempoReal(angulo->getAnguloX(),angulo->getAnguloY());
+            if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
+                emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
+        }
 
         if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
         {
@@ -880,7 +764,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
                           + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
         actualizarMensajeBarraEstado(mensaje);
     }
-    else
+    else//Si se agoto el tiempo de la preueba
     {
         cronometro.invalidate();
         mostrarResultados();

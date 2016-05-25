@@ -1,4 +1,8 @@
 #include "desplazamiento.h"
+Desplazamiento::Desplazamiento()
+{
+
+}
 
 Desplazamiento::Desplazamiento(double tiempo,double desplazamientoX,double desplazamientoY)
 {
@@ -20,4 +24,14 @@ double Desplazamiento::getDesplazamientoX()
 double Desplazamiento::getDesplazamientoY()
 {
     return this->DesplazamientoY;
+}
+
+void Desplazamiento::calcularDesplazamiento(Angulo *angulo,double alturaDispositivo)
+{
+    const double despX=qSin(qDegreesToRadians(angulo->getAnguloX()));
+    const double despY=qSin(qDegreesToRadians(angulo->getAnguloY()));
+    this->Tiempo=angulo->getTiempo();
+    this->DesplazamientoX=despX*alturaDispositivo;
+    this->DesplazamientoY=despY*alturaDispositivo;
+
 }

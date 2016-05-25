@@ -107,8 +107,6 @@ private:
     void desactivarTabs();
     void activarTabs();
     void preguntarRegresarInicio();
-    void obtenerAngulos(Raw* dato);
-    void obtenerDesplazamiento(Angulo *angulo);
     void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
 
