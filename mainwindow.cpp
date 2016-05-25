@@ -51,6 +51,8 @@ void MainWindow::inicializar()
 
     ui->pushButtonVolverPrueba->hide();
 
+    prueba=new Prueba(this);
+
     db = new SQL;
     db->consulta();
 }
@@ -98,18 +100,18 @@ void MainWindow::conexiones()
 void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
-    circuloExterior->topLeft->setCoords(-elementosdelGrafico.RadioExterior,elementosdelGrafico.RadioExterior);
-    circuloExterior->bottomRight->setCoords(elementosdelGrafico.RadioExterior,-elementosdelGrafico.RadioExterior);
+    circuloExterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioExterior,prueba->getAjustesGrafico().RadioExterior);
+    circuloExterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioExterior,-prueba->getAjustesGrafico().RadioExterior);
 
     circuloExterior->setBrush(QBrush(Qt::yellow));
 
-    if (elementosdelGrafico.Unidad.contains("grados"))
+    if (prueba->getAjustesGrafico().Unidad.contains("grados"))
         titulo->setText("Grados Antero-Posterior y Medio Lateral");
     else
         titulo->setText("Centimetros Antero-Posterior y Medio Lateral");
 
-    circuloInterior->topLeft->setCoords(-elementosdelGrafico.RadioInterior,elementosdelGrafico.RadioInterior);
-    circuloInterior->bottomRight->setCoords(elementosdelGrafico.RadioInterior,-elementosdelGrafico.RadioInterior);
+    circuloInterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioInterior,prueba->getAjustesGrafico().RadioInterior);
+    circuloInterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioInterior,-prueba->getAjustesGrafico().RadioInterior);
 
     generarObjetivos();
 
@@ -143,6 +145,9 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::mostrarResultados()
 {
+    prueba->setCantidadMuestras(listaMuestras.size());
+    prueba->setTiempoTotal(listaMuestras.last()->getTiempo());
+
     QTextStream(stdout)<<"Muestras x Seg: "<< listaMuestras.size()/listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(listaAngulos);
@@ -285,7 +290,7 @@ void MainWindow::obtenerAngulos(Raw *dato)
 
         emit emitAnguloReporte(angulo);
 
-        if(listaMuestras.size()%divisorFPS==0 && elementosdelGrafico.Unidad.contains("grados"))//Mod
+        if(listaMuestras.size()%prueba->getDivisorFPS()==0 && prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
             emit emitAnguloGraficoTiempoReal(angulo->getAnguloX(),angulo->getAnguloY());
     }
 }
@@ -298,7 +303,7 @@ void MainWindow::obtenerDesplazamiento(Angulo *angulo)
     Desplazamiento *desplazamiento=new Desplazamiento(angulo->getTiempo(),despX*alturadisp,despY*alturadisp);
     emit emitDesplazamientoReporte(desplazamiento);
     listaDesplazamientos.append(desplazamiento);
-    if(listaMuestras.size()%divisorFPS==0 && elementosdelGrafico.Unidad.contains("centimetros"))//Mod
+    if(listaMuestras.size()%prueba->getDivisorFPS()==0 && prueba->getAjustesGrafico().Unidad.contains("centimetros"))//Mod
         emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
 }
 
@@ -352,23 +357,24 @@ void MainWindow::desactivarSpacerEntreBotones()
 
 void MainWindow::generarObjetivos()
 {
+    const int pruebaNumero=prueba->getNumeroPrueba();
     if(pruebaNumero==3||pruebaNumero==4)
     {
-        const int distanciaCentro=elementosdelGrafico.RadioInterior;
+        const int distanciaCentro=prueba->getAjustesGrafico().RadioInterior;
         const int cantidadObjetivos=pruebaNumero==3? 8: 4;
         for (int var = 0; var < cantidadObjetivos; ++var){
             QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
             ui->qCustomPlotGrafico->addItem(objetivo);
             const double angulo=2*var*((M_PI)/cantidadObjetivos); //
-            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo);
-            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo);
+            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo);
+            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo);
             objetivo->setBrush(QBrush(Qt::red));
             listaObjetivos.append(objetivo);
         }
         QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
         ui->qCustomPlotGrafico->addItem(objetivo);
-        objetivo->topLeft->setCoords(-elementosdelGrafico.RadioObjetivo,elementosdelGrafico.RadioObjetivo);
-        objetivo->bottomRight->setCoords(elementosdelGrafico.RadioObjetivo,-elementosdelGrafico.RadioObjetivo);
+        objetivo->topLeft->setCoords(-prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().RadioObjetivo);
+        objetivo->bottomRight->setCoords(prueba->getAjustesGrafico().RadioObjetivo,-prueba->getAjustesGrafico().RadioObjetivo);
         objetivo->setBrush(QBrush(Qt::red));
         listaObjetivos.append(objetivo);
     }
@@ -383,25 +389,25 @@ void MainWindow::generarObjetivos()
                 const int signox=qrand()%2==1 ? 1: -1;
                 const int signoy=qrand()%2==1 ? 1: -1;
 
-                const int randomx=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signox;
-                const int randomy=(qrand()%(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo))*signoy;
+                const int randomx=(qrand()%(prueba->getAjustesGrafico().RadioExterior-prueba->getAjustesGrafico().RadioObjetivo))*signox;
+                const int randomy=(qrand()%(prueba->getAjustesGrafico().RadioExterior-prueba->getAjustesGrafico().RadioObjetivo))*signoy;
                 const double ecuacionCircExt=qPow(randomx,2)+qPow(randomy,2);
 
-                if(ecuacionCircExt<=qPow(double(elementosdelGrafico.RadioExterior-elementosdelGrafico.RadioObjetivo),2)){//Si es que no se sale del radio exterior
+                if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior-prueba->getAjustesGrafico().RadioObjetivo),2)){//Si es que no se sale del radio exterior
                     bool noIntersectaOtros=true;
                     foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
-                        const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
+                        const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+prueba->getAjustesGrafico().RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-prueba->getAjustesGrafico().RadioObjetivo)),2));
                         //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
-                        if( perteneceCirc < 2*elementosdelGrafico.RadioObjetivo + 0.5)
+                        if( perteneceCirc < 2*prueba->getAjustesGrafico().RadioObjetivo + 0.5)
                             noIntersectaOtros=false;
                     }
                     if(noIntersectaOtros){
                         QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
                         ui->qCustomPlotGrafico->addItem(objetivo);
 
-                        objetivo->topLeft->setCoords(randomx-elementosdelGrafico.RadioObjetivo,randomy+elementosdelGrafico.RadioObjetivo);
-                        objetivo->bottomRight->setCoords(randomx+elementosdelGrafico.RadioObjetivo,randomy-elementosdelGrafico.RadioObjetivo);
-                        objetivo->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+                        objetivo->topLeft->setCoords(randomx-prueba->getAjustesGrafico().RadioObjetivo,randomy+prueba->getAjustesGrafico().RadioObjetivo);
+                        objetivo->bottomRight->setCoords(randomx+prueba->getAjustesGrafico().RadioObjetivo,randomy-prueba->getAjustesGrafico().RadioObjetivo);
+                        objetivo->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
                         listaObjetivos.append(objetivo);
 
                         cantidadintentos=0;
@@ -414,13 +420,13 @@ void MainWindow::generarObjetivos()
         }
         else
         {
-            const int distanciaCentro=elementosdelGrafico.RadioInterior;
+            const int distanciaCentro=prueba->getAjustesGrafico().RadioInterior;
             for (int var = 0; var < cantidadObjetivos; ++var){
                 QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
                 ui->qCustomPlotGrafico->addItem(objetivo);
                 const double angulo=2*var*((M_PI)/cantidadObjetivos);
-                objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo);
-                objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+elementosdelGrafico.RadioObjetivo,qSin(angulo)*distanciaCentro-elementosdelGrafico.RadioObjetivo);
+                objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo);
+                objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo);
                 objetivo->setBrush(QBrush(Qt::red));
                 listaObjetivos.append(objetivo);
             }
@@ -461,6 +467,7 @@ QString MainWindow::obtenerOrientacionSensor()
 */
 void MainWindow::marcarObjetivos(const double x,const double y)
 {
+    const int pruebaNumero=prueba->getNumeroPrueba();
     if(pruebaNumero== 3 || pruebaNumero== 4)
     {
         if(!listaObjetivos.isEmpty())
@@ -496,7 +503,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
             for (int var = 0; var < listaObjetivos.size(); ++var)//Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
             {
                 QCPItemEllipse *P=listaObjetivos.at(var);
-                if(P->brush()==QBrush(elementosdelGrafico.colorObjetivoSinMarcar)) //Si aun sigue con el color por defecto.
+                if(P->brush()==QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar)) //Si aun sigue con el color por defecto.
                 {
                     if(PertenecePuntoAlObjetivo(x,y,P)){
                         listaObjetivos.removeAt(var);
@@ -530,9 +537,9 @@ void MainWindow::marcarObjetivos(const double x,const double y)
 *En caso contrario retorna False.
 */
 bool MainWindow::PertenecePuntoAlObjetivo(const double x,const double y,QCPItemEllipse *P){
-    const double perteneceCirc=qSqrt(qPow(( x - (P->topLeft->coords().x()+elementosdelGrafico.RadioObjetivo)),2)+qPow(( y - (P->topLeft->coords().y()-elementosdelGrafico.RadioObjetivo)),2));
-    if( perteneceCirc < elementosdelGrafico.RadioObjetivo){
-        P->setBrush(QBrush(elementosdelGrafico.colorObjetivoMarcado));
+    const double perteneceCirc=qSqrt(qPow(( x - (P->topLeft->coords().x()+prueba->getAjustesGrafico().RadioObjetivo)),2)+qPow(( y - (P->topLeft->coords().y()-prueba->getAjustesGrafico().RadioObjetivo)),2));
+    if( perteneceCirc < prueba->getAjustesGrafico().RadioObjetivo){
+        P->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoMarcado));
         return true;
     }
     return false;
@@ -548,7 +555,7 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
     if(cronometro.elapsed()/1000%2==0)
          P->setBrush(QBrush(Qt::white));
     else
-        P->setBrush(QBrush(elementosdelGrafico.colorObjetivoSinMarcar));
+        P->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
 
 }
 
@@ -566,15 +573,12 @@ void MainWindow::exportar()
             file.remove();
             if (file.open(QIODevice::Append)){
                 QTextStream stream(&file);
-                const int muestras=listaAngulos.size();
-                const double tiempo=listaAngulos.last()->getTiempo();
-                const double alturaSensor=ui->doubleSpinBoxAlturaDispositivo->value();
-                stream <<"PruebaNumero: "<<pruebaNumero<<endl;
-                stream <<"OrientacionSensor: "<<obtenerOrientacionSensor()<<endl;
-                stream <<"AlturaPuestaSensor: "<<alturaSensor<<endl;
-                stream <<"TiempoPrueba: "<<tiempo<<endl;
-                stream <<"MuestrasObtenidas: "<<muestras<<endl;
-                for (int var = 0; var < muestras; ++var){
+                stream <<"PruebaNumero: "<<prueba->getNumeroPrueba()<<endl;
+                stream <<"OrientacionSensor: "<<prueba->getOrientacion()<<endl;
+                stream <<"AlturaPuestaSensor: "<<prueba->getAlturaDispositivo()<<endl;
+                stream <<"TiempoMediciones: "<<prueba->getTiempoTotal()<<endl;
+                stream <<"MuestrasObtenidas: "<<prueba->getCantidadMuestras()<<endl;
+                for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
                     Angulo *ang=listaAngulos.at(var);
                     Desplazamiento *desp=listaDesplazamientos.at(var);
                     Raw *raw=listaMuestras.at(var);
@@ -605,14 +609,21 @@ void MainWindow::importar(){
             const QString orientacion=lineaOrientacion.at(1)+lineaOrientacion.at(2);
             const QStringList lineaAlturaSensor=stream.readLine().split(" ");
             const double alturaSensor=lineaAlturaSensor.last().toDouble();
-            const double tiempoPrueba=stream.readLine().split(" ").last().toDouble();
+            const double tiempoMediciones=stream.readLine().split(" ").last().toDouble();
             const int muestras=stream.readLine().split(" ").last().toInt();
+
+            prueba->setNumeroPrueba(pNumero);
+            prueba->setOrientacion(orientacion);
+            prueba->setAlturaDispositivo(alturaSensor);
+            prueba->setTiempoTotal(tiempoMediciones);
+            prueba->setCantidadMuestras(muestras);
+
             listaMuestras.clear();
             listaAngulos.clear();
             listaDesplazamientos.clear();
-            for (int var = 0; var < muestras; ++var){
+            for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
                 QList<double> datos;
-                foreach (QString var, stream.readLine().split(" ")) {
+                foreach (QString var, stream.readLine().split(" ")) {//Cast a Double conjunto de datos
                     datos.append(var.toDouble());
                 }
                 Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
@@ -628,6 +639,7 @@ void MainWindow::importar(){
             file.flush();
             file.close();
             ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+            //ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
             mostrarResultados();
         }
         else {
@@ -644,7 +656,7 @@ void MainWindow::slotGraficarTiempoReal(const double x,const double y)
     if(ui->checkBoxLimitarGrafico->isChecked())
     {
         const double ecuacionCircExt=qPow(x,2)+qPow(y,2);
-        if(ecuacionCircExt<=qPow(double(elementosdelGrafico.RadioExterior),2)){//Si es que no se sale del radio exterior
+        if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior),2)){//Si es que no se sale del radio exterior
             lienzo->addData(x,y);
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
             ui->qCustomPlotGrafico->graph(0)->addData(x,y);
@@ -664,8 +676,8 @@ void MainWindow::slotGraficarTiempoReal(const double x,const double y)
             else  //Cuadrante 2 y Cuadrante 3
                 inclRecta+=180;
 
-            const double aX=elementosdelGrafico.RadioExterior*qCos(qDegreesToRadians(inclRecta));
-            const double aY=elementosdelGrafico.RadioExterior*qSin(qDegreesToRadians(inclRecta));
+            const double aX=prueba->getAjustesGrafico().RadioExterior*qCos(qDegreesToRadians(inclRecta));
+            const double aY=prueba->getAjustesGrafico().RadioExterior*qSin(qDegreesToRadians(inclRecta));
             //QTextStream(stdout)<<"Grados Inclinacion Recta: "<<inclRecta<<" Ax:"<<aX<<" aY:"<<aY<<endl;
             lienzo->addData(aX,aY);
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
@@ -735,15 +747,17 @@ void MainWindow::relacionAspectodelGrafico()
 
 void MainWindow::configurarArduino()
 {
-    if(lectorSerial->abrirPuertoSerial(ajustesSerial->getAjustes()))//Se abre el puerto serial con sus ajustes respectivos
+    const AjustesPuertoSerial::Ajustes aSerial=ajustesSerial->getAjustes();
+    if(lectorSerial->abrirPuertoSerial(aSerial))//Se abre el puerto serial con sus ajustes respectivos
     {
-        QTextStream stdout<<"Cadena Ajustes:"<<ajustesSensores->getAjustesSensores()<<endl;
-        frecuenciaMuestreo=ajustesSensores->obtenerFrecuenciaMuestreo();
+        prueba->setAjustesPuertoSerial(aSerial);
+        prueba->setCadenaConfiguracion(ajustesSensores->getAjustesSensores());
+        prueba->setFrecuenciaMuestreo(ajustesSensores->obtenerFrecuenciaMuestreo());
 
         //Qdialog de ventana de carga configuracion sensores.
         QDialog *QdialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
         QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-        QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(frecuenciaMuestreo));
+        QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo()));
         layoutBarraCarga->addWidget(labelCarga);
         QLabel *labelQMovie= new QLabel;
         layoutBarraCarga->addWidget(labelQMovie);
@@ -756,7 +770,7 @@ void MainWindow::configurarArduino()
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
-        connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(ajustesSensores->getAjustesSensores()); });
+        connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
         connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
         connect(timer, QTimer::timeout, [=]() { QdialogCarga->close();});
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
@@ -786,22 +800,20 @@ void MainWindow::limpiarListasyOcultarBotones()
 void MainWindow::iniciarPrueba()
 {
     limpiarListasyOcultarBotones();
+    const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
+    prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
+    prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
+    prueba->setOrientacion(obtenerOrientacionSensor());
 
-    elementosdelGrafico=ajustesGrafico->getAjustes();//Se obtienen los ajustes actuales para el grafico
+    prueba->setDivisorFPS(); //Se calcula el divisor de FPS
 
-    if(frecuenciaMuestreo>elementosdelGrafico.FPS)//Si la frecuencia de muestreo es menor a 275 se calculan el divisor en base a la frecuencia elegida sino en 275.
-        divisorFPS=frecuenciaMuestreo<275 ? (int)(frecuenciaMuestreo/elementosdelGrafico.FPS):
-                                           (int)(275/elementosdelGrafico.FPS);
-    else//Si la frecuencia de muestreo  es menor a los fps se grafica en base a la frecuencia
-        divisorFPS=1;
-    ui->verticalSliderRangeGraphic->setValue(elementosdelGrafico.RadioExterior+5);//Se actualiza el slider del Rango
+    ui->verticalSliderRangeGraphic->setValue(prueba->getAjustesGrafico().RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian y Reajustan los graficos
-    elementosdelGrafico.RadioObjetivo=elementosdelGrafico.RadioObjetivo;
 
     ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
     ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
 
-    if (ui->checkBoxTiempoInfinito->isChecked())
+    if (prueba->getTiempoPrueba()==qInf())
         ui->progressBarPrueba->hide();
 
     ui->pushButtonVolverPrueba->show();
@@ -833,22 +845,21 @@ void MainWindow::regresarInicio()
 
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
-    if(listaMuestras.size()==0)//Cuando se agrega el primer dato, se inicia el tiempo.
+    if(listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
        cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
-    const double a1=frecuenciaMuestreo<275 ? listaMuestras.size()*(1/frecuenciaMuestreo) : cronometro.elapsed()/1000.0;
-    const double tiempoPrueba=ui->checkBoxTiempoInfinito->isChecked() ? qInf() :ui->spinBoxTiempoPrueba->value(); //Se coloca un tiempo infinito o el elegido
-    if ( a1 < tiempoPrueba)
+    const double tiempo=prueba->getFrecuenciaMuestreo()<275 ? listaMuestras.size()*(1/prueba->getFrecuenciaMuestreo()) :
+                                                          cronometro.elapsed()/1000.0;
+    if ( tiempo < prueba->getTiempoPrueba())
     {
-        const double tiempo=frecuenciaMuestreo<275 ? (1/frecuenciaMuestreo)*listaMuestras.size(): cronometro.elapsed()/1000.0;
         Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         obtenerAngulos(dato);
         listaMuestras.append(dato);
         emit emitRawReporte(dato);
 
-        if(tiempoPrueba!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
+        if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
         {
-           const int porcentaje=qRound((tiempo/tiempoPrueba)*100.0);
+           const int porcentaje=qRound((tiempo/prueba->getTiempoPrueba())*100.0);
            ui->progressBarPrueba->setValue(porcentaje);
         }
 
@@ -931,9 +942,8 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
 void MainWindow::on_pushButtonPrueba1_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    pruebaNumero=1;
+    prueba->setNumeroPrueba(1);
     ui->labelNombrePrueba->setText("Modo Libre");
-    QTextStream stdout <<pruebaNumero<<endl;
 
     ui->labelObjetivosAleatorios->show();
     ui->checkBoxObjetivosAleatorios->show();
@@ -949,9 +959,8 @@ void MainWindow::on_pushButtonPrueba1_clicked()
 void MainWindow::on_pushButtonPrueba2_clicked()
 {
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    pruebaNumero=2;
+    prueba->setNumeroPrueba(2);
     ui->labelNombrePrueba->setText("Prueba 2");
-    QTextStream stdout <<pruebaNumero<<endl;
 
     ui->labelCantidadObjetivos->show();
     ui->spinBoxCantidadObjetivos->show();
@@ -966,7 +975,7 @@ void MainWindow::on_pushButtonPrueba2_clicked()
 
 void MainWindow::on_pushButtonPrueba3_clicked()
 {
-    pruebaNumero=3;
+    prueba->setNumeroPrueba(3);
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
     ui->labelNombrePrueba->setText("Prueba 3");
 
@@ -983,7 +992,7 @@ void MainWindow::on_pushButtonPrueba3_clicked()
 
 void MainWindow::on_pushButtonPrueba4_clicked()
 {
-    pruebaNumero=4;
+    prueba->setNumeroPrueba(4);
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
     ui->labelNombrePrueba->setText("Prueba 4:Prueba Base");
 
@@ -1057,7 +1066,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     (void) index;
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
     {
-        if (elementosdelGrafico.Unidad.contains("grados"))
+        if (prueba->getAjustesGrafico().Unidad.contains("grados"))
             ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráfico","Guardar\nDatos\nAngulos");
         else
             ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráfico","Guardar\nDatos\nDesp..");

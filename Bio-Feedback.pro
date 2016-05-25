@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     sql.cpp \
     qxtspanslider.cpp \
     analisisgrafico.cpp \
-    desplazamiento.cpp
+    desplazamiento.cpp \
+    prueba.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
     qxtspanslider.h \
     qxtspanslider_p.h \
     analisisgrafico.h \
-    desplazamiento.h
+    desplazamiento.h \
+    prueba.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \

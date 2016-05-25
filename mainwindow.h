@@ -16,6 +16,7 @@
 #include <desplazamiento.h>
 #include <sql.h>
 #include <analisisgrafico.h>
+#include <prueba.h>
 
 namespace Ui {
 class MainWindow;
@@ -90,12 +91,9 @@ private:
     Reportes *reportes;
     QList<QCPItemEllipse*> listaObjetivos;
     QLabel *status;
-    int pruebaNumero;
-    int divisorFPS;
-    double frecuenciaMuestreo;
+    Prueba *prueba;
     QCPPlotTitle *titulo;
     QCPCurve *lienzo;
-    AjustesGrafico::Ajustes elementosdelGrafico;
     QCPItemEllipse *circuloExterior,*circuloInterior;
     AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientos;
     SQL *db;
