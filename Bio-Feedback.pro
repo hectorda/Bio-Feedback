@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     ajustespuertoserial.cpp \
     ajustessensores.cpp \
-    raw.cpp \
     angulo.cpp \
     filtro_kalman.cpp \
     serial.cpp \
@@ -27,13 +26,13 @@ SOURCES += main.cpp\
     qxtspanslider.cpp \
     analisisgrafico.cpp \
     desplazamiento.cpp \
-    prueba.cpp
+    prueba.cpp \
+    muestra.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
     ajustespuertoserial.h \
     ajustessensores.h \
-    raw.h \
     angulo.h \
     filtro_kalman.h \
     serial.h \
@@ -44,7 +43,8 @@ HEADERS  += mainwindow.h \
     qxtspanslider_p.h \
     analisisgrafico.h \
     desplazamiento.h \
-    prueba.h
+    prueba.h \
+    muestra.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \

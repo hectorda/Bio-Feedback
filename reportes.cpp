@@ -381,7 +381,7 @@ void Reportes::agregarDatosGraficoDesplazamientos(Desplazamiento *desp)
     graficoDesplazamientoY->addData(desp->getTiempo() , desp->getDesplazamientoY());
 }
 
-void Reportes::agregarDatosGraficoMuestras(Raw *datos)
+void Reportes::agregarDatosGraficoMuestras(Muestra *datos)
 {
     //Se rellenar los datos de los graficos de las Muestras
     graficoAcX->addData(datos->getTiempo(), datos->getAcX());
@@ -527,7 +527,7 @@ void Reportes::agregarFilaTablaDesplazamientos(Desplazamiento *desp)
     tablaDesplazamientos->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoY(),'f',presicion)));
 }
 
-void Reportes::agregarFilaTablaMuestras(Raw *datos)
+void Reportes::agregarFilaTablaMuestras(Muestra *datos)
 {
     const int currentRow = tablaMuestras->rowCount();
     tablaMuestras->setRowCount(currentRow + 1);
@@ -616,7 +616,7 @@ void Reportes::guardarDesplazamientosEnArchivo(QList<Desplazamiento*> listaDespl
     }
 }
 
-void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
+void Reportes::guardarMuestrasEnArchivo(QList<Muestra*> listaMuestras)
 {
     QString selectedFilter;
     QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
@@ -627,7 +627,7 @@ void Reportes::guardarMuestrasEnArchivo(QList<Raw*> listaMuestras)
         file.remove();
         if (file.open(QIODevice::Append)){
             QTextStream stream(&file);
-            foreach (Raw *var, listaMuestras){
+            foreach (Muestra *var, listaMuestras){
                 if(selectedFilter.contains("txt")){
                     stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAcX())
                            << " Y: " << QString::number(var->getAcY()) <<  " Z: " << QString::number(var->getAcZ()) <<  " X: " << QString::number(var->getGyX(),'f',presicion) << endl;

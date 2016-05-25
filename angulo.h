@@ -1,7 +1,7 @@
 #ifndef ANGULO_H
 #define ANGULO_H
 
-#include <raw.h>
+#include <muestra.h>
 #include <QString>
 #include <QtMath>
 
@@ -21,8 +21,8 @@ public:
     void setTiempo(const double tiempo);
     void setAnguloX(const double angulo);
     void setAnguloY(const double angulo);
-    void calcularAngulo(const QString orientacion, Raw *raw);
-    void calcularAnguloFiltroComplementario(const QString orientacion, Raw *raw, Angulo *anguloAnterior);
+    void calcularAngulo(const QString orientacion, Muestra *muestra);
+    void calcularAnguloFiltroComplementario(const QString orientacion, Muestra *muestra, Angulo *anguloAnterior);
 };
 
 #endif // ANGULO_H

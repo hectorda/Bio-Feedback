@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QSerialPort>
-#include <raw.h>
+#include <muestra.h>
 #include <ajustespuertoserial.h>
 #include <QTextStream>
 #include <QMessageBox>

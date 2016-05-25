@@ -6,7 +6,7 @@
 #include <reportes.h>
 #include <angulo.h>
 #include <desplazamiento.h>
-#include <raw.h>
+#include <muestra.h>
 
 namespace Ui {
 class AnalisisGrafico;
@@ -22,7 +22,7 @@ public:
     ~AnalisisGrafico();    
     void setListaAngulos(QList<Angulo *> LA);
     void setListaDesplazamientos(QList<Desplazamiento *> LD);
-    void setListaMuestras(QList<Raw *> LR);
+    void setListaMuestras(QList<Muestra *> LR);
 
     void ajustarRangosGraficoAngulos(const int inicio, const int fin);
     void ajustarRangosGraficoDesplazamientos(const int inicio, const int fin);
@@ -40,7 +40,7 @@ private:
     Ui::AnalisisGrafico *ui;
     QList<Angulo*> listaAngulos;
     QList<Desplazamiento*> listaDesplazamientos;
-    QList<Raw*> listaMuestras;
+    QList<Muestra*> listaMuestras;
     Reportes *reportes;
     void MostrarCantidadDatos(const int datosTotales, const int datosAnalizados, const double frecuenciaMuestreo, const double tiempoTotal, const double tiempoAnalizado);
 };

@@ -146,7 +146,7 @@ void AnalisisGrafico::setListaDesplazamientos(QList<Desplazamiento *> LD)
     }
 }
 
-void AnalisisGrafico::setListaMuestras(QList<Raw *> LR)
+void AnalisisGrafico::setListaMuestras(QList<Muestra *> LR)
 {
     this->listaMuestras=LR;
 
@@ -447,7 +447,7 @@ void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int f
     double rangoAcX=0,rangoAcY=0,rangoAcZ=0,rangoGyX=0,rangoGyY=0,rangoGyZ=0;
     int terminos=fin+1-inicio;
     for (int var = inicio; var <= fin; ++var) {
-        Raw *raw=listaMuestras.at(var);
+        Muestra *raw=listaMuestras.at(var);
         mediaAcX+=raw->getAcX();
         mediaAcY+=raw->getAcY();
         mediaAcZ+=raw->getAcZ();

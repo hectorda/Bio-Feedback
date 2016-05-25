@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -28,7 +27,6 @@ void MainWindow::inicializar()
     analisisGraficoDesplazamientos = new AnalisisGrafico(this,reportes);
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-
     status = new QLabel;
     ui->statusBar->addWidget(status);
     ui->dockWidget->installEventFilter(this);
@@ -49,12 +47,15 @@ void MainWindow::inicializar()
     ui->radioButtonHorizontalAbajo->hide();
     ui->radioButtonHorizontalArriba->hide();
 
+    ui->menuVer->addAction(ui->mainToolBar->toggleViewAction());
+
     ui->pushButtonVolverPrueba->hide();
 
     prueba=new Prueba(this);
 
     db = new SQL;
     db->consulta();
+
 }
 
 void MainWindow::conexiones()
@@ -67,8 +68,8 @@ void MainWindow::conexiones()
     connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarFilaTablaAngulos(Angulo*)));
     connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarDatosGraficoDesplazamientos(Desplazamiento*)));
     connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarFilaTablaDesplazamientos(Desplazamiento*)));
-    connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarDatosGraficoMuestras(Raw*)));
-    connect(this,SIGNAL(emitRawReporte(Raw*)),reportes,SLOT(agregarFilaTablaMuestras(Raw*)));
+    connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarDatosGraficoMuestras(Muestra*)));
+    connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarFilaTablaMuestras(Muestra*)));
     connect(this,SIGNAL(emitGraficarResultados(QList<Angulo*>)),reportes,SLOT(graficarResultados(QList<Angulo*>)));
 
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
@@ -433,7 +434,7 @@ void MainWindow::exportar()
                 for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
                     Angulo *ang=listaAngulos.at(var);
                     Desplazamiento *desp=listaDesplazamientos.at(var);
-                    Raw *raw=listaMuestras.at(var);
+                    Muestra *raw=listaMuestras.at(var);
                     stream << ang->getTiempo()<<" "<<ang->getAnguloX()<<" "<<ang->getAnguloY()<<" "<<desp->getDesplazamientoX()<<" "<<desp->getDesplazamientoY()<<" "<<
                               raw->getAcX()<<" "<<raw->getAcY()<<" "<<raw->getAcZ()<<" "<<raw->getGyX()<<" "<<raw->getGyY()<<" "<<raw->getGyZ()<<endl;
                 }
@@ -480,7 +481,7 @@ void MainWindow::importar(){
                 }
                 Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
                 Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
-                Raw *raw=new Raw(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
+                Muestra *raw=new Muestra(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
                 emit emitAnguloReporte(ang);
                 emit emitDesplazamientoReporte(desp);
                 emit emitRawReporte(raw);
@@ -715,7 +716,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         Desplazamiento *desplazamiento=new Desplazamiento;
 
         //Calculo y de Angulos y Desplazamiento
-        Raw *dato=new Raw(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
+        Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
         if(!listaAngulos.isEmpty()){
             Angulo *anguloAnterior=listaAngulos.last();

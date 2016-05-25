@@ -1,11 +1,11 @@
-#include "raw.h"
+#include "muestra.h"
 
-Raw::Raw()
+Muestra::Muestra()
 {
 
 }
 
-Raw::Raw(double Tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
+Muestra::Muestra(double Tiempo,double AcX, double AcY, double AcZ, double GyX, double GyY, double GyZ)
 {
     this->Tiempo=Tiempo;
     this->AcX=AcX;
@@ -16,37 +16,37 @@ Raw::Raw(double Tiempo,double AcX, double AcY, double AcZ, double GyX, double Gy
     this->GyZ=GyZ;
 }
 
-double Raw::getAcX()
+double Muestra::getAcX()
 {
     return this->AcX;
 }
 
-double Raw::getAcY()
+double Muestra::getAcY()
 {
     return this->AcY;
 }
 
-double Raw::getAcZ()
+double Muestra::getAcZ()
 {
     return this->AcZ;
 }
 
-double Raw::getGyX()
+double Muestra::getGyX()
 {
     return this->GyX;
 }
 
-double Raw::getGyY()
+double Muestra::getGyY()
 {
     return this->GyY;
 }
 
-double Raw::getGyZ()
+double Muestra::getGyZ()
 {
     return this->GyZ;
 }
 
-double Raw::getTiempo()
+double Muestra::getTiempo()
 {
     return this->Tiempo;
 }

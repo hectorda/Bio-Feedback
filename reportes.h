@@ -2,7 +2,7 @@
 #define REPORTES_H
 
 #include <QObject>
-#include <raw.h>
+#include <muestra.h>
 #include <angulo.h>
 #include <desplazamiento.h>
 #include <qcustomplot.h>
@@ -21,7 +21,7 @@ public:
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarAngulosEnArchivo(QList<Angulo*> listaAngulos);
     void guardarDesplazamientosEnArchivo(QList<Desplazamiento *> listaDesplazamientos);
-    void guardarMuestrasEnArchivo(QList<Raw*> listaMuestras);
+    void guardarMuestrasEnArchivo(QList<Muestra*> listaMuestras);
 
     //Para dejar los espacios de reportes sin datos.
     void vaciarTablas();
@@ -107,12 +107,12 @@ public slots:
     //Slots para agregar datos: Graficos
     void agregarDatosGraficoAngulos(Angulo *angulo);
     void agregarDatosGraficoDesplazamientos(Desplazamiento *desp);
-    void agregarDatosGraficoMuestras(Raw *datos);
+    void agregarDatosGraficoMuestras(Muestra *datos);
 
     //Slots para agregar datos: Tablas
     void agregarFilaTablaAngulos(Angulo *angulo);
     void agregarFilaTablaDesplazamientos(Desplazamiento *desp);
-    void agregarFilaTablaMuestras(Raw *datos);
+    void agregarFilaTablaMuestras(Muestra *datos);
 
     //Slots para Limpiar
     void vaciarGraficoAngulos();

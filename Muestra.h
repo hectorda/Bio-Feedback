@@ -1,8 +1,8 @@
-#ifndef RAW_H
-#define RAW_H
+#ifndef MUESTRA_H
+#define MUESTRA_H
 
 
-class Raw
+class Muestra
 {
 private:
     double Tiempo;
@@ -15,8 +15,8 @@ private:
 
 
 public:
-    Raw();
-    Raw(double Tiempo,double AcX,double AcY,double AcZ,double GyX,double GyY,double GyZ);
+    Muestra();
+    Muestra(double Tiempo,double AcX,double AcY,double AcZ,double GyX,double GyY,double GyZ);
     double getTiempo();
     double getAcX();
     double getAcY();
@@ -27,4 +27,4 @@ public:
 
 };
 
-#endif // RAW_H
+#endif // MUESTRA_H

@@ -8,7 +8,7 @@
 #include <ajustessensores.h>
 #include <ajustesgrafico.h>
 #include <qcustomplot.h>
-#include <raw.h>
+#include <muestra.h>
 #include <angulo.h>
 #include <filtro_kalman.h>
 #include <serial.h>
@@ -17,6 +17,7 @@
 #include <sql.h>
 #include <analisisgrafico.h>
 #include <prueba.h>
+#include <filtro_kalman.h>
 
 namespace Ui {
 class MainWindow;
@@ -70,7 +71,7 @@ private slots:
 
 signals:
     void emitAnguloGraficoTiempoReal(const double x,const double y);
-    void emitRawReporte(Raw*);
+    void emitRawReporte(Muestra*);
     void emitAnguloReporte(Angulo*);
     void emitDesplazamientoReporte(Desplazamiento*);
     void emitGraficarResultados(QList<Angulo*>);
@@ -83,7 +84,7 @@ private:
     AjustesGrafico *ajustesGrafico;
     QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
-    QList<Raw*> listaMuestras;
+    QList<Muestra*> listaMuestras;
     QList<Angulo*> listaAngulos;
     QList<Desplazamiento*> listaDesplazamientos;
     Reportes *reportes;

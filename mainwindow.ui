@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1093,7 +1093,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>3</number>
+              <number>7</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1344,7 +1344,7 @@ QPushButton:hover {
                 <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
               </attribute>
               <attribute name="title">
-               <string>Raw</string>
+               <string>Muestras</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
@@ -1415,7 +1415,7 @@ QPushButton:hover {
                 <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
               </attribute>
               <attribute name="title">
-               <string>Graficos Raw</string>
+               <string>Graficos Muestras</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_7">
                <item row="0" column="0">
@@ -1797,12 +1797,21 @@ QProgressBar:hover {
     </property>
     <addaction name="actionSQL"/>
    </widget>
+   <widget class="QMenu" name="menuVer">
+    <property name="title">
+     <string>Ver</string>
+    </property>
+   </widget>
    <addaction name="menuArchivo"/>
+   <addaction name="menuVer"/>
    <addaction name="menuAjustes"/>
    <addaction name="menuBase_de_Datos"/>
    <addaction name="menuAcerca_de"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="windowTitle">
+    <string>Barra de Navegacion</string>
+   </property>
    <property name="iconSize">
     <size>
      <width>32</width>
