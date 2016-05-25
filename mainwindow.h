@@ -30,9 +30,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void calibrarDispositivos();
 
-    QString obtenerOrientacionSensor();
 private slots:
     //Slots de Botones
     void on_pushButtonPrueba1_clicked();
@@ -109,6 +107,7 @@ private:
     void preguntarRegresarInicio();
     void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
+    QString obtenerOrientacionSensor();
 
     void ocultarMostrarBotonesLabelTabGraficos(const QString &textoBoton, const QString &textoLabel);
     void ocultarMostrarBotonesLabelTabTabla(const QString &textoLabel);

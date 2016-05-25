@@ -627,7 +627,6 @@ void MainWindow::configurarArduino()
         connect(timer, QTimer::timeout, [=]() { QdialogCarga->close();});
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
         connect(timer, QTimer::timeout, [=]() { delete timer; delete QdialogCarga; delete movie;});
-
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
         QdialogCarga->exec();
     }
@@ -652,6 +651,7 @@ void MainWindow::limpiarListasyOcultarBotones()
 void MainWindow::iniciarPrueba()
 {
     limpiarListasyOcultarBotones();
+
     const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
     prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
     prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico

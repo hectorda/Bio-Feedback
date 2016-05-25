@@ -95,9 +95,9 @@ void AnalisisGrafico::setListaDesplazamientos(QList<Desplazamiento *> LD)
 
     else
     {
-        ui->tableWidgetEstadisticos->setColumnCount(8);
+        ui->tableWidgetEstadisticos->setColumnCount(9);
         QStringList headers;
-        headers <<"Parametro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango";
+        headers <<"Parametro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango"<<"Vel Media";
         ui->tableWidgetEstadisticos->setHorizontalHeaderLabels(headers);
 
         this->setWindowTitle("Analisis Lista Desplazamientos");
@@ -287,38 +287,38 @@ void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fi
 {
     double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
     int terminos=fin+1-inicio;
-    double menor1=listaAngulos.at(inicio)->getAnguloX(),menor2=listaAngulos.at(inicio)->getAnguloY();
-    double mayor1=listaAngulos.at(inicio)->getAnguloX(),mayor2=listaAngulos.at(inicio)->getAnguloY();
-    double tMenor1=listaAngulos.at(inicio)->getTiempo(),tMenor2=listaAngulos.at(inicio)->getTiempo();
-    double tMayor1=listaAngulos.at(inicio)->getTiempo(),tMayor2=listaAngulos.at(inicio)->getTiempo();
-    double rango1=0,rango2=0;
+    double menorX=listaAngulos.at(inicio)->getAnguloX(),menorY=listaAngulos.at(inicio)->getAnguloY();
+    double mayorX=listaAngulos.at(inicio)->getAnguloX(),mayorY=listaAngulos.at(inicio)->getAnguloY();
+    double tMenorX=listaAngulos.at(inicio)->getTiempo(),tMenorY=listaAngulos.at(inicio)->getTiempo();
+    double tMayorX=listaAngulos.at(inicio)->getTiempo(),tMayorY=listaAngulos.at(inicio)->getTiempo();
+    double rangoX=0,rangoY=0;
 
     for (int var = inicio; var <= fin; ++var) {
         Angulo *angulo=listaAngulos.at(var);
         media1+=angulo->getAnguloX();
         media2+=angulo->getAnguloY();
 
-        if(menor1>angulo->getAnguloX()){
-            menor1=angulo->getAnguloX();
-            tMenor1=angulo->getTiempo();
+        if(menorX>angulo->getAnguloX()){
+            menorX=angulo->getAnguloX();
+            tMenorX=angulo->getTiempo();
         }
-        if(menor2>angulo->getAnguloY()){
-            menor2=angulo->getAnguloY();
-            tMenor2=angulo->getTiempo();
+        if(menorY>angulo->getAnguloY()){
+            menorY=angulo->getAnguloY();
+            tMenorY=angulo->getTiempo();
         }
-        if(mayor1<angulo->getAnguloX()){
-            mayor1=angulo->getAnguloX();
-            tMayor1=angulo->getTiempo();
+        if(mayorX<angulo->getAnguloX()){
+            mayorX=angulo->getAnguloX();
+            tMayorX=angulo->getTiempo();
         }
-        if(mayor2<angulo->getAnguloY()){
-            mayor2=angulo->getAnguloY();
-            tMayor2=angulo->getTiempo();
+        if(mayorY<angulo->getAnguloY()){
+            mayorY=angulo->getAnguloY();
+            tMayorY=angulo->getTiempo();
         }
     }
     media1/=terminos;
     media2/=terminos;
-    rango1=mayor1-menor1;
-    rango2=mayor2-menor2;
+    rangoX=mayorX-menorX;
+    rangoY=mayorY-menorY;
 
     for (int var = inicio; var <= fin; ++var) {
         varian1+=qPow((listaAngulos.at(var)->getAnguloX()-media1),2);
@@ -334,58 +334,70 @@ void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fi
 
     ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("AnguloX"));
     ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("AnguloY"));
-    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menor1)));
-    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menor2)));
-    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenor1)));
-    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenor2)));
-    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayor1)));
-    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayor2)));
-    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayor1)));
-    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayor2)));
+    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menorX)));
+    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menorY)));
+    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenorX)));
+    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenorY)));
+    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayorX)));
+    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayorY)));
+    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayorX)));
+    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayorY)));
     ui->tableWidgetEstadisticos->setItem(0,5,new QTableWidgetItem(QString::number(media1)));
     ui->tableWidgetEstadisticos->setItem(1,5,new QTableWidgetItem(QString::number(media2)));
     ui->tableWidgetEstadisticos->setItem(0,6,new QTableWidgetItem(QString::number(desvEst1)));
     ui->tableWidgetEstadisticos->setItem(1,6,new QTableWidgetItem(QString::number(desvEst2)));
-    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rango1)));
-    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rango2)));
+    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rangoX)));
+    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rangoY)));
 }
 
 void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, const int fin)
 {
     double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
     int terminos=fin+1-inicio;
-    double menor1=listaDesplazamientos.at(inicio)->getDesplazamientoX(),menor2=listaDesplazamientos.at(inicio)->getDesplazamientoY();
-    double mayor1=listaDesplazamientos.at(inicio)->getDesplazamientoX(),mayor2=listaDesplazamientos.at(inicio)->getDesplazamientoY();
-    double tMenor1=listaDesplazamientos.at(inicio)->getTiempo(),tMenor2=listaDesplazamientos.at(inicio)->getTiempo();
-    double tMayor1=listaDesplazamientos.at(inicio)->getTiempo(),tMayor2=listaDesplazamientos.at(inicio)->getTiempo();
-    double rango1=0,rango2=0;
+    double menorX=listaDesplazamientos.at(inicio)->getDesplazamientoX(),menorY=listaDesplazamientos.at(inicio)->getDesplazamientoY();
+    double mayorX=listaDesplazamientos.at(inicio)->getDesplazamientoX(),mayorY=listaDesplazamientos.at(inicio)->getDesplazamientoY();
+    double tMenorX=listaDesplazamientos.at(inicio)->getTiempo(),tMenorY=listaDesplazamientos.at(inicio)->getTiempo();
+    double tMayorX=listaDesplazamientos.at(inicio)->getTiempo(),tMayorY=listaDesplazamientos.at(inicio)->getTiempo();
+    double rangoX=0,rangoY=0;
+    double velMediaX=0,velMediaY=0;
 
     for (int var = inicio; var <= fin; ++var) {
         Desplazamiento *desplazamiento=listaDesplazamientos.at(var);
         media1+=desplazamiento->getDesplazamientoX();
         media2+=desplazamiento->getDesplazamientoY();
 
-        if(menor1>desplazamiento->getDesplazamientoX()){
-            menor1=desplazamiento->getDesplazamientoX();
-            tMenor1=desplazamiento->getTiempo();
+        if(menorX>desplazamiento->getDesplazamientoX()){
+            menorX=desplazamiento->getDesplazamientoX();
+            tMenorX=desplazamiento->getTiempo();
         }
-        if(menor2>desplazamiento->getDesplazamientoY()){
-            menor2=desplazamiento->getDesplazamientoY();
-            tMenor2=desplazamiento->getTiempo();
+        if(menorY>desplazamiento->getDesplazamientoY()){
+            menorY=desplazamiento->getDesplazamientoY();
+            tMenorY=desplazamiento->getTiempo();
         }
-        if(mayor1<desplazamiento->getDesplazamientoX()){
-            mayor1=desplazamiento->getDesplazamientoX();
-            tMayor1=desplazamiento->getTiempo();
+        if(mayorX<desplazamiento->getDesplazamientoX()){
+            mayorX=desplazamiento->getDesplazamientoX();
+            tMayorX=desplazamiento->getTiempo();
         }
-        if(mayor2<desplazamiento->getDesplazamientoY()){
-            mayor2=desplazamiento->getDesplazamientoY();
-            tMayor2=desplazamiento->getTiempo();
+        if(mayorY<desplazamiento->getDesplazamientoY()){
+            mayorY=desplazamiento->getDesplazamientoY();
+            tMayorY=desplazamiento->getTiempo();
+        }
+
+        if(var<fin){
+            Desplazamiento *despb=listaDesplazamientos.at(var+1);
+            const double deltaT=despb->getTiempo() - desplazamiento->getTiempo();
+            const double deltaX=despb->getDesplazamientoX() - desplazamiento->getDesplazamientoX();
+            const double deltaY=despb->getDesplazamientoY() - desplazamiento->getDesplazamientoY();
+            velMediaX+=(deltaX/deltaT);
+            velMediaY+=(deltaY/deltaT);
         }
     }
     media1/=terminos;
     media2/=terminos;
-    rango1=mayor1-menor1;
-    rango2=mayor2-menor2;
+    rangoX=mayorX-menorX;
+    rangoY=mayorY-menorY;
+    velMediaX/=terminos-1;
+    velMediaY/=terminos-1;
 
     for (int var = inicio; var <= fin; ++var) {
         varian1+=qPow((listaDesplazamientos.at(var)->getDesplazamientoX()-media1),2);
@@ -401,20 +413,22 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
 
     ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("DesplazamientoX"));
     ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("DesplazamientoY"));
-    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menor1)));
-    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menor2)));
-    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenor1)));
-    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenor2)));
-    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayor1)));
-    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayor2)));
-    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayor1)));
-    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayor2)));
+    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menorX)));
+    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menorY)));
+    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenorX)));
+    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenorY)));
+    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayorX)));
+    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayorY)));
+    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayorX)));
+    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayorY)));
     ui->tableWidgetEstadisticos->setItem(0,5,new QTableWidgetItem(QString::number(media1)));
     ui->tableWidgetEstadisticos->setItem(1,5,new QTableWidgetItem(QString::number(media2)));
     ui->tableWidgetEstadisticos->setItem(0,6,new QTableWidgetItem(QString::number(desvEst1)));
     ui->tableWidgetEstadisticos->setItem(1,6,new QTableWidgetItem(QString::number(desvEst2)));
-    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rango1)));
-    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rango2)));
+    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rangoX)));
+    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rangoY)));
+    ui->tableWidgetEstadisticos->setItem(0,8,new QTableWidgetItem(QString::number(velMediaX)));
+    ui->tableWidgetEstadisticos->setItem(1,8,new QTableWidgetItem(QString::number(velMediaY)));
 }
 
 void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int fin)
