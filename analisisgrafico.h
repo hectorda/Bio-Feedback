@@ -20,9 +20,9 @@ public:
     explicit AnalisisGrafico(QWidget *parent = 0);
     AnalisisGrafico(QWidget *parent, Reportes *reportes);
     ~AnalisisGrafico();    
-    void setListaAngulos(QList<Angulo *> LA);
-    void setListaDesplazamientos(QList<Desplazamiento *> LD);
-    void setListaMuestras(QList<Muestra *> LR);
+    void setListaAngulos(QVector<Angulo *> LA);
+    void setListaDesplazamientos(QVector<Desplazamiento *> LD);
+    void setListaMuestras(QVector<Muestra *> LR);
 
     void ajustarRangosGraficoAngulos(const int inicio, const int fin);
     void ajustarRangosGraficoDesplazamientos(const int inicio, const int fin);
@@ -38,9 +38,9 @@ public:
 
 private:
     Ui::AnalisisGrafico *ui;
-    QList<Angulo*> listaAngulos;
-    QList<Desplazamiento*> listaDesplazamientos;
-    QList<Muestra*> listaMuestras;
+    QVector<Angulo*> listaAngulos;
+    QVector<Desplazamiento*> listaDesplazamientos;
+    QVector<Muestra*> listaMuestras;
     Reportes *reportes;
     void MostrarCantidadDatos(const int datosTotales, const int datosAnalizados, const double frecuenciaMuestreo, const double tiempoTotal, const double tiempoAnalizado);
 };

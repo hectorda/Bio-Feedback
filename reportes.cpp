@@ -393,7 +393,7 @@ void Reportes::agregarDatosGraficoMuestras(Muestra *datos)
     graficoGyZ->addData(datos->getTiempo(), datos->getGyZ());
 }
 
-void Reportes::setDatosGraficoAngulos(QList<Angulo*> listaAngulos)
+void Reportes::setDatosGraficoAngulos(QVector<Angulo*> listaAngulos)
 {
     const int size=listaAngulos.size();
     QVector<double> tiempo(size);
@@ -411,7 +411,7 @@ void Reportes::setDatosGraficoAngulos(QList<Angulo*> listaAngulos)
     this->replotGraficoAngulos();
 }
 
-void Reportes::setDatosGraficoDezplazamiento(QList<Desplazamiento*> listaDesplazamientos)
+void Reportes::setDatosGraficoDezplazamiento(QVector<Desplazamiento*> listaDesplazamientos)
 {
     const int size=listaDesplazamientos.size();
     QVector<double> tiempo(size);
@@ -429,7 +429,7 @@ void Reportes::setDatosGraficoDezplazamiento(QList<Desplazamiento*> listaDesplaz
     this->replotGraficoDesplazamientos();
 }
 
-void Reportes::setDatosGraficoMuestras(QList<Muestra*> listaMuestras)
+void Reportes::setDatosGraficoMuestras(QVector<Muestra*> listaMuestras)
 {
     const int size=listaMuestras.size();
     QVector<double> tiempo(size);
@@ -459,7 +459,7 @@ void Reportes::setDatosGraficoMuestras(QList<Muestra*> listaMuestras)
     this->replotGraficoMuestras();
 }
 
-void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
+void Reportes::graficarResultados(QVector<Angulo*> listaAngulos)
 {
     // Add data:
     QVector<double> quadrantData;
@@ -609,7 +609,7 @@ void Reportes::agregarFilaTablaMuestras(Muestra *datos)
 
 //Para Agregar todas las filas de la Tabla
 
-void Reportes::setDatosTablaAngulos(QList<Angulo*> listaAngulos)
+void Reportes::setDatosTablaAngulos(QVector<Angulo*> listaAngulos)
 {
     //Se agrega una nueva fila a la tabla
     tablaAngulos->setRowCount(listaAngulos.size());
@@ -621,7 +621,7 @@ void Reportes::setDatosTablaAngulos(QList<Angulo*> listaAngulos)
     }
 }
 
-void Reportes::setDatosTablaDesplazamientos(QList<Desplazamiento*> listaDesplazamientos){
+void Reportes::setDatosTablaDesplazamientos(QVector<Desplazamiento*> listaDesplazamientos){
     //Se agrega una nueva fila a la tabla
     tablaDesplazamientos->setRowCount(listaDesplazamientos.size());
     for(int i = 0; i < listaDesplazamientos.size(); ++i){
@@ -632,7 +632,7 @@ void Reportes::setDatosTablaDesplazamientos(QList<Desplazamiento*> listaDesplaza
     }
 }
 
-void Reportes::setDatosTablaMuestras(QList<Muestra*> listaMuestras){
+void Reportes::setDatosTablaMuestras(QVector<Muestra*> listaMuestras){
 
     tablaMuestras->setRowCount(listaMuestras.size());
     for (int var = 0; var < listaMuestras.size(); ++var) {
@@ -661,7 +661,7 @@ void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)
       grafico->savePdf(fileName,false,ancho,alto);
 }
 
-void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
+void Reportes::guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos)
 {
     QString selectedFilter;
     QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
@@ -692,7 +692,7 @@ void Reportes::guardarAngulosEnArchivo(QList<Angulo*> listaAngulos)
     }
 }
 
-void Reportes::guardarDesplazamientosEnArchivo(QList<Desplazamiento*> listaDesplazamientos)
+void Reportes::guardarDesplazamientosEnArchivo(QVector<Desplazamiento*> listaDesplazamientos)
 {
     QString selectedFilter;
     QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
@@ -723,7 +723,7 @@ void Reportes::guardarDesplazamientosEnArchivo(QList<Desplazamiento*> listaDespl
     }
 }
 
-void Reportes::guardarMuestrasEnArchivo(QList<Muestra*> listaMuestras)
+void Reportes::guardarMuestrasEnArchivo(QVector<Muestra*> listaMuestras)
 {
     QString selectedFilter;
     QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));

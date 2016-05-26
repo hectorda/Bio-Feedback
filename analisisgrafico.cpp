@@ -26,7 +26,7 @@ AnalisisGrafico::~AnalisisGrafico()
     delete ui;
 }
 
-void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
+void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
 {
     this->listaAngulos=LA;
 
@@ -86,7 +86,7 @@ void AnalisisGrafico::setListaAngulos(QList<Angulo *> LA)
     }
 }
 
-void AnalisisGrafico::setListaDesplazamientos(QList<Desplazamiento *> LD)
+void AnalisisGrafico::setListaDesplazamientos(QVector<Desplazamiento *> LD)
 {
     this->listaDesplazamientos=LD;
 
@@ -146,7 +146,7 @@ void AnalisisGrafico::setListaDesplazamientos(QList<Desplazamiento *> LD)
     }
 }
 
-void AnalisisGrafico::setListaMuestras(QList<Muestra *> LR)
+void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
 {
     this->listaMuestras=LR;
 

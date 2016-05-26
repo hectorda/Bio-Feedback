@@ -71,7 +71,7 @@ void MainWindow::conexiones()
     connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarFilaTablaDesplazamientos(Desplazamiento*)));
     connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarDatosGraficoMuestras(Muestra*)));
     connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarFilaTablaMuestras(Muestra*)));
-    connect(this,SIGNAL(emitGraficarResultados(QList<Angulo*>)),reportes,SLOT(graficarResultados(QList<Angulo*>)));
+    connect(this,SIGNAL(emitGraficarResultados(QVector<Angulo*>)),reportes,SLOT(graficarResultados(QVector<Angulo*>)));
 
     connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
     connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
@@ -87,7 +87,7 @@ void MainWindow::conexiones()
     connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
 
       //Connect de actions
-    connect(ui->actionExportar,SIGNAL(triggered()),this,SLOT(exportar()));
+    connect(ui->actionExportar,QAction::triggered,[=](){ prueba->exportar(); });
     connect(ui->actionImportar,SIGNAL(triggered()),this,SLOT(importar()));
 
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
@@ -147,15 +147,15 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 
 void MainWindow::mostrarResultados()
 {
-    prueba->setCantidadMuestras(listaMuestras.size());
-    prueba->setTiempoTotal(listaMuestras.last()->getTiempo());
+    prueba->setCantidadMuestras(prueba->listaMuestras.size());
+    prueba->setTiempoTotal(prueba->listaMuestras.last()->getTiempo());
 
-    QTextStream(stdout)<<"Muestras x Seg: "<< listaMuestras.size()/listaMuestras.last()->getTiempo()<<endl;
+    QTextStream(stdout)<<"Muestras x Seg: "<< prueba->listaMuestras.size()/prueba->listaMuestras.last()->getTiempo()<<endl;
     lectorSerial->cerrarPuertoSerial();
-    emit emitGraficarResultados(listaAngulos);
-    analisisGraficoAngulos->setListaAngulos(listaAngulos);
-    analisisGraficoDesplazamientos->setListaDesplazamientos(listaDesplazamientos);
-    analisisGraficoMuestras->setListaMuestras(listaMuestras);
+    emit emitGraficarResultados(prueba->listaAngulos);
+    analisisGraficoAngulos->setListaAngulos(prueba->listaAngulos);
+    analisisGraficoDesplazamientos->setListaDesplazamientos(prueba->listaDesplazamientos);
+    analisisGraficoMuestras->setListaMuestras(prueba->listaMuestras);
     mostrarBotonesPrueba();
     activarTabs();
     ui->centralWidget->adjustSize();
@@ -195,7 +195,7 @@ void MainWindow::desactivarTabs()
 
 void MainWindow::activarTabs()
 {
-    for (int var = 0; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
+    for (int var = 1; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
         ui->tabWidgetGrafico_Resultados->setTabEnabled(var,true);
 }
 
@@ -223,14 +223,14 @@ void MainWindow::generarObjetivos()
             objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo);
             objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo);
             objetivo->setBrush(QBrush(Qt::red));
-            listaObjetivos.append(objetivo);
+            prueba->listaObjetivos.append(objetivo);
         }
         QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
         ui->qCustomPlotGrafico->addItem(objetivo);
         objetivo->topLeft->setCoords(-prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().RadioObjetivo);
         objetivo->bottomRight->setCoords(prueba->getAjustesGrafico().RadioObjetivo,-prueba->getAjustesGrafico().RadioObjetivo);
         objetivo->setBrush(QBrush(Qt::red));
-        listaObjetivos.append(objetivo);
+        prueba->listaObjetivos.append(objetivo);
     }
     if(pruebaNumero==1 || pruebaNumero==2)
     {
@@ -238,7 +238,7 @@ void MainWindow::generarObjetivos()
 
         if(prueba->getAleatorios()){
             int cantidadintentos=0;
-            while(listaObjetivos.size()<cantidadObjetivos && cantidadintentos<10000){
+            while(prueba->listaObjetivos.size()<cantidadObjetivos && cantidadintentos<10000){
                //para los Random
                 const int signox=qrand()%2==1 ? 1: -1;
                 const int signoy=qrand()%2==1 ? 1: -1;
@@ -249,7 +249,7 @@ void MainWindow::generarObjetivos()
 
                 if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior-prueba->getAjustesGrafico().RadioObjetivo),2)){//Si es que no se sale del radio exterior
                     bool noIntersectaOtros=true;
-                    foreach (QCPItemEllipse *P, listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
+                    foreach (QCPItemEllipse *P, prueba->listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
                         const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+prueba->getAjustesGrafico().RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-prueba->getAjustesGrafico().RadioObjetivo)),2));
                         //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
                         if( perteneceCirc < 2*prueba->getAjustesGrafico().RadioObjetivo + 0.5)
@@ -262,7 +262,7 @@ void MainWindow::generarObjetivos()
                         objetivo->topLeft->setCoords(randomx-prueba->getAjustesGrafico().RadioObjetivo,randomy+prueba->getAjustesGrafico().RadioObjetivo);
                         objetivo->bottomRight->setCoords(randomx+prueba->getAjustesGrafico().RadioObjetivo,randomy-prueba->getAjustesGrafico().RadioObjetivo);
                         objetivo->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
-                        listaObjetivos.append(objetivo);
+                        prueba->listaObjetivos.append(objetivo);
 
                         cantidadintentos=0;
                     }
@@ -270,7 +270,7 @@ void MainWindow::generarObjetivos()
                         ++cantidadintentos;
                 }
             }
-            QTextStream(stdout)<<"Objetivos Puestos"<<listaObjetivos.size()<<endl;
+            QTextStream(stdout)<<"Objetivos Puestos"<<prueba->listaObjetivos.size()<<endl;
         }
         else
         {
@@ -282,7 +282,7 @@ void MainWindow::generarObjetivos()
                 objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo);
                 objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo);
                 objetivo->setBrush(QBrush(Qt::red));
-                listaObjetivos.append(objetivo);
+                prueba->listaObjetivos.append(objetivo);
             }
         }
     }
@@ -324,13 +324,13 @@ void MainWindow::marcarObjetivos(const double x,const double y)
     const int pruebaNumero=prueba->getNumeroPrueba();
     if(pruebaNumero== 3 || pruebaNumero== 4)
     {
-        if(!listaObjetivos.isEmpty())
+        if(!prueba->listaObjetivos.isEmpty())
         {
             static bool centro=true;
             if(centro)
             {
 
-                QCPItemEllipse *P=listaObjetivos.last();
+                QCPItemEllipse *P=prueba->listaObjetivos.last();
                 parpadeoCirculo(P);
 
                 if(PertenecePuntoAlObjetivo(x,y,P))
@@ -338,13 +338,13 @@ void MainWindow::marcarObjetivos(const double x,const double y)
             }
             else{
 
-                QCPItemEllipse *P=listaObjetivos.at(0);
+                QCPItemEllipse *P=prueba->listaObjetivos.at(0);
                 parpadeoCirculo(P);
 
                 if(PertenecePuntoAlObjetivo(x,y,P)){
-                    listaObjetivos.removeAt(0);
-                    ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
-                    QTextStream(stdout)<<listaObjetivos.size()<<endl;
+                    prueba->listaObjetivos.removeAt(0);
+                    ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                    QTextStream(stdout)<<prueba->listaObjetivos.size()<<endl;
                     centro=true;
                 }
             }
@@ -354,34 +354,34 @@ void MainWindow::marcarObjetivos(const double x,const double y)
     {
         if(!prueba->getObjetivosEnOrden())//Si es que se puede ir a cualquier objetivo
         {
-            for (int var = 0; var < listaObjetivos.size(); ++var)//Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
+            for (int var = 0; var < prueba->listaObjetivos.size(); ++var)//Se recorre la prueba->lista de Objetivos y verifica si se pasa por algun objetivo.
             {
-                QCPItemEllipse *P=listaObjetivos.at(var);
+                QCPItemEllipse *P=prueba->listaObjetivos.at(var);
                 if(P->brush()==QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar)) //Si aun sigue con el color por defecto.
                 {
                     if(PertenecePuntoAlObjetivo(x,y,P)){
-                        listaObjetivos.removeAt(var);
-                        ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+                        prueba->listaObjetivos.removeAt(var);
+                        ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
                     }
                 }
             }
         }
         else
         {
-           if(!listaObjetivos.isEmpty())
+           if(!prueba->listaObjetivos.isEmpty())
            {
-               QCPItemEllipse *P=listaObjetivos.at(0);
+               QCPItemEllipse *P=prueba->listaObjetivos.at(0);
                parpadeoCirculo(P);
 
                if( PertenecePuntoAlObjetivo(x,y,P)){
-                   listaObjetivos.removeAt(0);
-                   ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+                   prueba->listaObjetivos.removeAt(0);
+                   ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
                }
            }
         }
     }
 
-    if(listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
+    if(prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
 }
 
@@ -413,11 +413,6 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
 
 }
 
-void MainWindow::exportar()
-{
-
-}
-
 void MainWindow::importar(){
     QString selectedFilter;
     QString filters(tr("Formato BioFeed-Back (*.bioh)"));
@@ -441,34 +436,32 @@ void MainWindow::importar(){
             prueba->setTiempoTotal(tiempoMediciones);
             prueba->setCantidadMuestras(muestras);
 
-            listaMuestras.clear();
-            listaAngulos.clear();
-            listaDesplazamientos.clear();
-
+            prueba->limpiarListas();
+            //prueba->(muestras);
             for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
-                QList<double> datos;
+                QVector<double> datos;
                 foreach (QString var, stream.readLine().split(" ")) {//Cast a Double conjunto de datos
                     datos.append(var.toDouble());
                 }
                 Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
                 Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
                 Muestra *raw=new Muestra(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
-                listaAngulos.append(ang);
-                listaDesplazamientos.append(desp);
-                listaMuestras.append(raw);
+                prueba->listaAngulos.append(ang);
+                prueba->listaDesplazamientos.append(desp);
+                prueba->listaMuestras.append(raw);
             }
 
 
 
-            reportes->setDatosTablaAngulos(listaAngulos);
-            reportes->setDatosGraficoAngulos(listaAngulos);
-            reportes->setDatosTablaDesplazamientos(listaDesplazamientos);
-            reportes->setDatosGraficoDezplazamiento(listaDesplazamientos);
-            reportes->setDatosTablaMuestras(listaMuestras);
-            reportes->setDatosGraficoMuestras(listaMuestras);
-//            analisisGraficoAngulos->setListaAngulos(listaAngulos);
-//            analisisGraficoDesplazamientos->setListaDesplazamientos(listaDesplazamientos);
-//            analisisGraficoMuestras->setListaMuestras(listaMuestras);
+            reportes->setDatosTablaAngulos(prueba->listaAngulos);
+            reportes->setDatosGraficoAngulos(prueba->listaAngulos);
+            reportes->setDatosTablaDesplazamientos(prueba->listaDesplazamientos);
+            reportes->setDatosGraficoDezplazamiento(prueba->listaDesplazamientos);
+            reportes->setDatosTablaMuestras(prueba->listaMuestras);
+            reportes->setDatosGraficoMuestras(prueba->listaMuestras);
+//            analisisGraficoAngulos->setprueba->listaAngulos(prueba->listaAngulos);
+//            analisisGraficoDesplazamientos->setprueba->listaDesplazamientos(prueba->listaDesplazamientos);
+//            analisisGraficoMuestras->setprueba->listaMuestras(prueba->listaMuestras);
             file.flush();
             file.close();
             ui->stackedWidget->setCurrentWidget(ui->widgetTest);            
@@ -617,11 +610,8 @@ void MainWindow::configurarArduino()
 
 void MainWindow::limpiarListasyOcultarBotones()
 {
-    //Limpieza de listas y de los elementos de la interfaz
-    listaMuestras.clear();
-    listaAngulos.clear();
-    listaDesplazamientos.clear();
-    listaObjetivos.clear();
+    //Limpieza de prueba->listas y de los elementos de la interfaz
+    prueba->limpiarListas();
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
     analisisGraficoAngulos->hide();
@@ -632,12 +622,6 @@ void MainWindow::limpiarListasyOcultarBotones()
 void MainWindow::iniciarPrueba()
 {
     limpiarListasyOcultarBotones();
-
-    if (prueba->getAjustesGrafico().Unidad.contains("grados"))
-        ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
-    else
-        ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesp..");
-
     const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
     prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
     prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
@@ -645,7 +629,6 @@ void MainWindow::iniciarPrueba()
     prueba->setAlturaDispositivo(ui->doubleSpinBoxAlturaDispositivo->value());
     prueba->setDivisorFPS(); //Se calcula el divisor de FPS
     prueba->setCantidadObjetivos(ui->spinBoxCantidadObjetivos->value());
-
 
     //Almacenando los Checkboxs
     prueba->setAleatorios(ui->checkBoxObjetivosAleatorios->isChecked());
@@ -657,14 +640,23 @@ void MainWindow::iniciarPrueba()
     ui->verticalSliderRangeGraphic->setValue(prueba->getAjustesGrafico().RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian y Reajustan los graficos
 
-    ui->lcdNumberCantidadObjetivos->display(listaObjetivos.size());
-    ui->lcdNumberObjetivosRestantes->display(listaObjetivos.size());
+    ui->lcdNumberCantidadObjetivos->display(prueba->listaObjetivos.size());
+    ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
 
     if (prueba->getTiempoPrueba()==qInf())
         ui->progressBarPrueba->hide();
 
     ui->pushButtonVolverPrueba->show();
     ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+
+    if (prueba->getAjustesGrafico().Unidad.contains("grados"))
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
+    else
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesp..");
+
+    ui->tabWidgetGrafico_Resultados->setTabEnabled(0,true);
+
+
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
     ui->centralWidget->adjustSize();
     desactivarTabs();
@@ -699,10 +691,10 @@ void MainWindow::regresarInicio()
 
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
-    if(listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
+    if(prueba->listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
        cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
-    const double tiempo=prueba->getFrecuenciaMuestreo()<275 ? listaMuestras.size()*(1/prueba->getFrecuenciaMuestreo()) :
+    const double tiempo=prueba->getFrecuenciaMuestreo()<275 ? prueba->listaMuestras.size()*(1/prueba->getFrecuenciaMuestreo()) :
                                                           cronometro.elapsed()/1000.0;
     if ( tiempo < prueba->getTiempoPrueba())
     {
@@ -712,24 +704,24 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         //Calculo y de Angulos y Desplazamiento
         Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
-        if(!listaAngulos.isEmpty()){
-            Angulo *anguloAnterior=listaAngulos.last();
+        if(!prueba->listaAngulos.isEmpty()){
+            Angulo *anguloAnterior=prueba->listaAngulos.last();
             angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior);
         }
         else
             angulo->calcularAngulo(orientacion,dato);
 
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
-        listaAngulos.append(angulo);
-        listaDesplazamientos.append(desplazamiento);
-        listaMuestras.append(dato);
+        prueba->listaAngulos.append(angulo);
+        prueba->listaDesplazamientos.append(desplazamiento);
+        prueba->listaMuestras.append(dato);
         emit emitRawReporte(dato);
         emit emitDesplazamientoReporte(desplazamiento);
         emit emitAnguloReporte(angulo);
 
         //Comienza Actualizacion elementos de la interfaz
         //Se pregunta y envia el dato para graficar
-        if(listaMuestras.size() % prueba->getDivisorFPS()==0){
+        if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
             if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
                 emit emitAnguloGraficoTiempoReal(angulo->getAnguloX(),angulo->getAnguloY());
             if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
@@ -755,7 +747,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 
         ui->lcdNumberTiempoTranscurrido->display(result);
 
-        const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
+        const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(prueba->listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
                           + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
         actualizarMensajeBarraEstado(mensaje);
     }
@@ -913,27 +905,27 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la i
 {    
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico){
         if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
-            reportes->guardarDesplazamientosEnArchivo(listaDesplazamientos);
+            reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos);
         if(prueba->getAjustesGrafico().Unidad.contains("grados"))
-            reportes->guardarAngulosEnArchivo(listaAngulos);
+            reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
     }
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
-        reportes->guardarAngulosEnArchivo(listaAngulos);
+        reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
-        reportes->guardarAngulosEnArchivo(listaAngulos);
+        reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientos)
-        reportes->guardarDesplazamientosEnArchivo(listaDesplazamientos);
+        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDespalazamientos)
-        reportes->guardarDesplazamientosEnArchivo(listaDesplazamientos);
+        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
-        reportes->guardarMuestrasEnArchivo(listaMuestras);
+        reportes->guardarMuestrasEnArchivo(prueba->listaMuestras);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
-        reportes->guardarMuestrasEnArchivo(listaMuestras);
+        reportes->guardarMuestrasEnArchivo(prueba->listaMuestras);
 
 }
 
@@ -971,13 +963,11 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
         ocultarMostrarBotonesLabelTabTabla("Guardar\nDatos\nAngulos");
 
-
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientos)
         ocultarMostrarBotonesLabelTabTabla("Guardar\nDatos\nDesp..");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
         ocultarMostrarBotonesLabelTabTabla("Guardar\nMuestras");
-
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
     {

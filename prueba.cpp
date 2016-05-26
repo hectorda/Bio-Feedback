@@ -54,7 +54,7 @@ void Prueba::setDivisorFPS(const int divisor)
     this->divisorFPS=divisor;
 }
 
-void Prueba::setListaObjetivos(const QList<QCPItemEllipse *> listaObjetivos)
+void Prueba::setListaObjetivos(const QVector<QCPItemEllipse *> listaObjetivos)
 {
     this->listaObjetivos=listaObjetivos;
 }
@@ -139,7 +139,7 @@ int Prueba::getDivisorFPS()
     return this->divisorFPS;
 }
 
-QList<QCPItemEllipse*> Prueba::getListaObjetivos()
+QVector<QCPItemEllipse*> Prueba::getListaObjetivos()
 {
     return this->listaObjetivos;
 }
@@ -184,7 +184,15 @@ AjustesPuertoSerial::Ajustes Prueba::getAjustesPuertoSerial()
     return this->ajustesPuertoSerial;
 }
 
-void Prueba::exportar(QList<Angulo*> listaAngulos, QList<Desplazamiento*> listaDesplazamientos, QList<Muestra *> listaMuestras)
+void Prueba::limpiarListas()
+{
+    this->listaMuestras.clear();
+    this->listaAngulos.clear();
+    this->listaDesplazamientos.clear();
+    this->listaObjetivos.clear();
+}
+
+void Prueba::exportar()
 {
     if(listaAngulos.isEmpty() || listaDesplazamientos.isEmpty())
         QMessageBox::critical(0,"Aun no se realiza prueba","Se debe realizar una prueba antes de Exportar.");

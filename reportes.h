@@ -19,19 +19,19 @@ public:
     Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoDesplazamientos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaDesplazamientos,QTableWidget *tablaMuestras);
 
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
-    void guardarAngulosEnArchivo(QList<Angulo*> listaAngulos);
-    void guardarDesplazamientosEnArchivo(QList<Desplazamiento *> listaDesplazamientos);
-    void guardarMuestrasEnArchivo(QList<Muestra*> listaMuestras);
+    void guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos);
+    void guardarDesplazamientosEnArchivo(QVector<Desplazamiento *> listaDesplazamientos);
+    void guardarMuestrasEnArchivo(QVector<Muestra*> listaMuestras);
 
     //Para dejar los espacios de reportes sin datos.
     void vaciarTablas();
     void vaciarGraficos();    
-    void setDatosTablaAngulos(QList<Angulo *> listaAngulos);
-    void setDatosTablaDesplazamientos(QList<Desplazamiento *> listaDesplazamientos);
-    void setDatosTablaMuestras(QList<Muestra *> listaMuestras);
-    void setDatosGraficoAngulos(QList<Angulo *> listaAngulos);
-    void setDatosGraficoDezplazamiento(QList<Desplazamiento *> listaDesplazamientos);
-    void setDatosGraficoMuestras(QList<Muestra *> listaMuestras);
+    void setDatosTablaAngulos(QVector<Angulo *> listaAngulos);
+    void setDatosTablaDesplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
+    void setDatosTablaMuestras(QVector<Muestra *> listaMuestras);
+    void setDatosGraficoAngulos(QVector<Angulo *> listaAngulos);
+    void setDatosGraficoDezplazamiento(QVector<Desplazamiento *> listaDesplazamientos);
+    void setDatosGraficoMuestras(QVector<Muestra *> listaMuestras);
 
 private:
     int presicion;
@@ -101,7 +101,7 @@ private:
 signals:
 
 public slots:
-    void graficarResultados(QList<Angulo*> listaAngulos);
+    void graficarResultados(QVector<Angulo*> listaAngulos);
     //Funciones para mover las lineas tanto izquierda y derechas de los graficos
     void moverLineasIzquierdaAngulos(const double newValue);
     void moverLineasDerechaAngulos(const double newValue);

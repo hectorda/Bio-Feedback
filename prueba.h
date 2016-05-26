@@ -16,31 +16,11 @@ class Prueba : public QObject
     Q_OBJECT
 public:
     explicit Prueba(QObject *parent = 0);
+    QVector<Muestra*> listaMuestras;
+    QVector<Angulo*> listaAngulos;
+    QVector<Desplazamiento*> listaDesplazamientos;
+    QVector<QCPItemEllipse*> listaObjetivos;
 
-signals:
-
-private:
-    int numeroPrueba;
-    int cantidadObjetivos;
-    bool aleatorios;
-    bool detenerAlMarcarTodos;
-    bool limitarGrafico;
-    bool objetivosEnOrden;
-    double tiempoPrueba;
-    int divisorFPS;
-    QList<QCPItemEllipse*> listaObjetivos;
-    double alturaDispositivo;
-    QString orientacion;
-    double frecuenciaMuestreo;
-    QString cadenaConfiguracion;
-    int cantidadMuestras;
-    double tiempoTotal;
-
-    AjustesGrafico::Ajustes ajustesGrafico;
-    AjustesPuertoSerial::Ajustes ajustesPuertoSerial;
-    AjustesSensores::Ajustes ajustesSensores;
-
-public slots:
     void setNumeroPrueba(const int numero);
     void setCantidadObjetivos(const int cantidadObjetivos);
     void setAleatorios(const bool aleatorio);
@@ -50,7 +30,7 @@ public slots:
     void setTiempoPrueba(const double tiempo);
     void setDivisorFPS();
     void setDivisorFPS(const int divisor);
-    void setListaObjetivos(const QList<QCPItemEllipse*> listaObjetivos);
+    void setListaObjetivos(const QVector<QCPItemEllipse*> listaObjetivos);
     void setAlturaDispositivo(const double altura);
     void setOrientacion(const QString orientacion);
     void setFrecuenciaMuestreo(const double frecuencia);
@@ -69,7 +49,7 @@ public slots:
     bool getObjetivosEnOrden();
     double getTiempoPrueba();
     int getDivisorFPS();
-    QList<QCPItemEllipse *> getListaObjetivos();
+    QVector<QCPItemEllipse *> getListaObjetivos();
     double getAlturaDispositivo();
     QString getOrientacion();
     double getFrecuenciaMuestreo();
@@ -79,7 +59,33 @@ public slots:
 
     AjustesGrafico::Ajustes getAjustesGrafico();
     AjustesPuertoSerial::Ajustes getAjustesPuertoSerial();
-    void exportar(QList<Angulo *> listaAngulos, QList<Desplazamiento *> listaDesplazamientos, QList<Muestra*> listaMuestras);
+    void limpiarListas();
+    void exportar();
+
+
+signals:
+
+private:
+    int numeroPrueba;
+    int cantidadObjetivos;
+    bool aleatorios;
+    bool detenerAlMarcarTodos;
+    bool limitarGrafico;
+    bool objetivosEnOrden;
+    double tiempoPrueba;
+    int divisorFPS;
+    double alturaDispositivo;
+    QString orientacion;
+    double frecuenciaMuestreo;
+    QString cadenaConfiguracion;
+    int cantidadMuestras;
+    double tiempoTotal;
+
+    AjustesGrafico::Ajustes ajustesGrafico;
+    AjustesPuertoSerial::Ajustes ajustesPuertoSerial;
+    AjustesSensores::Ajustes ajustesSensores;
+
+public slots:
 
 };
 

@@ -64,7 +64,6 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
     //Para guardar e importar en formato.
-    void exportar();
     void importar();
 
     void on_pushButtonVolverPrueba_clicked();
@@ -74,7 +73,7 @@ signals:
     void emitRawReporte(Muestra*);
     void emitAnguloReporte(Angulo*);
     void emitDesplazamientoReporte(Desplazamiento*);
-    void emitGraficarResultados(QList<Angulo*>);
+    void emitGraficarResultados(QVector<Angulo*>);
 
 private:
     Ui::MainWindow *ui;
@@ -84,11 +83,7 @@ private:
     AjustesGrafico *ajustesGrafico;
     QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
-    QList<Muestra*> listaMuestras;
-    QList<Angulo*> listaAngulos;
-    QList<Desplazamiento*> listaDesplazamientos;
-    Reportes *reportes;
-    QList<QCPItemEllipse*> listaObjetivos;
+    Reportes *reportes;    
     QLabel *status;
     Prueba *prueba;
     QCPPlotTitle *titulo;
