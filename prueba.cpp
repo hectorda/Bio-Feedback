@@ -10,9 +10,9 @@ void Prueba::setNumeroPrueba(const int numero)
     this->numeroPrueba=numero;
 }
 
-void Prueba::setNumeroObjetivos(const int numeroObjetivos)
+void Prueba::setCantidadObjetivos(const int numeroObjetivos)
 {
-    this->numeroObjetivos=numeroObjetivos;
+    this->cantidadObjetivos=numeroObjetivos;
 }
 
 void Prueba::setAleatorios(const bool aleatorio)
@@ -28,6 +28,11 @@ void Prueba::setDetenerAlMarcarTodos(const bool detener)
 void Prueba::setLimitarGrafico(const bool limitar)
 {
     this->limitarGrafico=limitar;
+}
+
+void Prueba::setObjetivosEnOrden(const bool enorden)
+{
+    this->objetivosEnOrden=enorden;
 }
 
 void Prueba::setTiempoPrueba(const double tiempo)
@@ -69,11 +74,6 @@ void Prueba::setFrecuenciaMuestreo(const double frecuencia)
     this->frecuenciaMuestreo=frecuencia;
 }
 
-void Prueba::setUnidad(const QString unidad)
-{
-    this->unidad=unidad;
-}
-
 void Prueba::setCadenaConfiguracion(const QString cadena)
 {
     this->cadenaConfiguracion=cadena;
@@ -99,19 +99,14 @@ void Prueba::setAjustesPuertoSerial(const AjustesPuertoSerial::Ajustes ajustes)
     this->ajustesPuertoSerial=ajustes;
 }
 
-void Prueba::setAjustesSensores(const AjustesSensores::Ajustes ajustes)
-{
-    this->ajustesSensores=ajustes;
-}
-
 int Prueba::getNumeroPrueba()
 {
     return this->numeroPrueba;
 }
 
-int Prueba::getNumeroObjetivos()
+int Prueba::getCantidadObjetivos()
 {
-    return this->numeroObjetivos;
+    return this->cantidadObjetivos;
 }
 
 bool Prueba::getAleatorios()
@@ -127,6 +122,11 @@ bool Prueba::getDetenerAlMarcarTodos()
 bool Prueba::getLimitarGrafico()
 {
     return this->limitarGrafico;
+}
+
+bool Prueba::getObjetivosEnOrden()
+{
+    return this->objetivosEnOrden;
 }
 
 double Prueba::getTiempoPrueba()
@@ -159,11 +159,6 @@ double Prueba::getFrecuenciaMuestreo()
     return this->frecuenciaMuestreo;
 }
 
-QString Prueba::getUnidad()
-{
-    return this->unidad;
-}
-
 QString Prueba::getCadenaConfiguracion()
 {
     return this->cadenaConfiguracion;
@@ -189,10 +184,41 @@ AjustesPuertoSerial::Ajustes Prueba::getAjustesPuertoSerial()
     return this->ajustesPuertoSerial;
 }
 
-AjustesSensores::Ajustes Prueba::getAjustesSensores()
+void Prueba::exportar(QList<Angulo*> listaAngulos, QList<Desplazamiento*> listaDesplazamientos, QList<Muestra *> listaMuestras)
 {
-    return this->ajustesSensores;
-}
+    if(listaAngulos.isEmpty() || listaDesplazamientos.isEmpty())
+        QMessageBox::critical(0,"Aun no se realiza prueba","Se debe realizar una prueba antes de Exportar.");
+    else{
+        QString selectedFilter;
+        QString filters(tr("Formato BioFeed-Back (*.bioh)"));
+        QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
 
+        if (fileName != ""){
+            QFile file(fileName);
+            file.remove();
+            if (file.open(QIODevice::Append)){
+                QTextStream stream(&file);
+                stream <<"PruebaNumero: "<<this->getNumeroPrueba()<<endl;
+                stream <<"OrientacionSensor: "<<this->getOrientacion()<<endl;
+                stream <<"AlturaPuestaSensor: "<<this->getAlturaDispositivo()<<endl;
+                stream <<"TiempoMediciones: "<<this->getTiempoTotal()<<endl;
+                stream <<"MuestrasObtenidas: "<<this->getCantidadMuestras()<<endl;
+                for (int var = 0; var < this->getCantidadMuestras(); ++var){
+                    Angulo *ang=listaAngulos.at(var);
+                    Desplazamiento *desp=listaDesplazamientos.at(var);
+                    Muestra *raw=listaMuestras.at(var);
+                    stream << ang->getTiempo()<<" "<<ang->getAnguloX()<<" "<<ang->getAnguloY()<<" "<<desp->getDesplazamientoX()<<" "<<desp->getDesplazamientoY()<<" "<<
+                              raw->getAcX()<<" "<<raw->getAcY()<<" "<<raw->getAcZ()<<" "<<raw->getGyX()<<" "<<raw->getGyY()<<" "<<raw->getGyZ()<<endl;
+                }
+                file.flush();
+                file.close();
+            }
+            else {
+                QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
+                return;
+            }
+        }
+    }
+}
 
 

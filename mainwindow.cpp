@@ -42,6 +42,7 @@ void MainWindow::inicializar()
 
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidgetAngulos->resizeRowToContents(0);
     ui->tableWidgetDesplazamientos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->radioButtonHorizontalAbajo->hide();
@@ -194,7 +195,7 @@ void MainWindow::desactivarTabs()
 
 void MainWindow::activarTabs()
 {
-    for (int var = 1; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
+    for (int var = 0; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
         ui->tabWidgetGrafico_Resultados->setTabEnabled(var,true);
 }
 
@@ -233,9 +234,9 @@ void MainWindow::generarObjetivos()
     }
     if(pruebaNumero==1 || pruebaNumero==2)
     {
-        int cantidadObjetivos=ui->spinBoxCantidadObjetivos->value();
+       const int cantidadObjetivos=prueba->getCantidadObjetivos();
 
-        if(ui->checkBoxObjetivosAleatorios->isChecked()){
+        if(prueba->getAleatorios()){
             int cantidadintentos=0;
             while(listaObjetivos.size()<cantidadObjetivos && cantidadintentos<10000){
                //para los Random
@@ -351,7 +352,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
     }
     if(pruebaNumero==1 || pruebaNumero==2)
     {
-        if(!ui->checkBoxOrdenObjetivos->isChecked())//Si es que se puede ir a cualquier objetivo
+        if(!prueba->getObjetivosEnOrden())//Si es que se puede ir a cualquier objetivo
         {
             for (int var = 0; var < listaObjetivos.size(); ++var)//Se recorre la lista de Objetivos y verifica si se pasa por algun objetivo.
             {
@@ -380,7 +381,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
         }
     }
 
-    if(listaObjetivos.isEmpty() && ui->checkBoxDeteneralMarcarObjetivos->isChecked())
+    if(listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
 }
 
@@ -414,39 +415,7 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
 
 void MainWindow::exportar()
 {
-    if(listaAngulos.isEmpty() || listaDesplazamientos.isEmpty())
-        QMessageBox::critical(this,"Aun no se realiza prueba","Se debe realizar una prueba antes de Exportar.");
-    else{
-        QString selectedFilter;
-        QString filters(tr("Formato BioFeed-Back (*.bioh)"));
-        QString fileName = QFileDialog::getSaveFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
 
-        if (fileName != ""){
-            QFile file(fileName);
-            file.remove();
-            if (file.open(QIODevice::Append)){
-                QTextStream stream(&file);
-                stream <<"PruebaNumero: "<<prueba->getNumeroPrueba()<<endl;
-                stream <<"OrientacionSensor: "<<prueba->getOrientacion()<<endl;
-                stream <<"AlturaPuestaSensor: "<<prueba->getAlturaDispositivo()<<endl;
-                stream <<"TiempoMediciones: "<<prueba->getTiempoTotal()<<endl;
-                stream <<"MuestrasObtenidas: "<<prueba->getCantidadMuestras()<<endl;
-                for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
-                    Angulo *ang=listaAngulos.at(var);
-                    Desplazamiento *desp=listaDesplazamientos.at(var);
-                    Muestra *raw=listaMuestras.at(var);
-                    stream << ang->getTiempo()<<" "<<ang->getAnguloX()<<" "<<ang->getAnguloY()<<" "<<desp->getDesplazamientoX()<<" "<<desp->getDesplazamientoY()<<" "<<
-                              raw->getAcX()<<" "<<raw->getAcY()<<" "<<raw->getAcZ()<<" "<<raw->getGyX()<<" "<<raw->getGyY()<<" "<<raw->getGyZ()<<endl;
-                }
-                file.flush();
-                file.close();
-            }
-            else {
-                QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
-                return;
-            }
-        }
-    }
 }
 
 void MainWindow::importar(){
@@ -456,7 +425,8 @@ void MainWindow::importar(){
     if (fileName != ""){
         QFile file(fileName);
         if (file.open(QIODevice::ReadOnly)){
-            QTextStream stream(&file);
+            //Qdialog de ventana de carga configuracion sensores.
+                        QTextStream stream(&file);
             const int pNumero=stream.readLine().split(" ").last().toInt();
             const QStringList lineaOrientacion=stream.readLine().split(" ");
             const QString orientacion=lineaOrientacion.at(1)+lineaOrientacion.at(2);
@@ -474,6 +444,7 @@ void MainWindow::importar(){
             listaMuestras.clear();
             listaAngulos.clear();
             listaDesplazamientos.clear();
+
             for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
                 QList<double> datos;
                 foreach (QString var, stream.readLine().split(" ")) {//Cast a Double conjunto de datos
@@ -482,18 +453,27 @@ void MainWindow::importar(){
                 Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
                 Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
                 Muestra *raw=new Muestra(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
-                emit emitAnguloReporte(ang);
-                emit emitDesplazamientoReporte(desp);
-                emit emitRawReporte(raw);
                 listaAngulos.append(ang);
                 listaDesplazamientos.append(desp);
                 listaMuestras.append(raw);
             }
+
+
+
+            reportes->setDatosTablaAngulos(listaAngulos);
+            reportes->setDatosGraficoAngulos(listaAngulos);
+            reportes->setDatosTablaDesplazamientos(listaDesplazamientos);
+            reportes->setDatosGraficoDezplazamiento(listaDesplazamientos);
+            reportes->setDatosTablaMuestras(listaMuestras);
+            reportes->setDatosGraficoMuestras(listaMuestras);
+//            analisisGraficoAngulos->setListaAngulos(listaAngulos);
+//            analisisGraficoDesplazamientos->setListaDesplazamientos(listaDesplazamientos);
+//            analisisGraficoMuestras->setListaMuestras(listaMuestras);
             file.flush();
             file.close();
-            ui->stackedWidget->setCurrentWidget(ui->widgetTest);
-            //ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
+            ui->stackedWidget->setCurrentWidget(ui->widgetTest);            
             mostrarResultados();
+            ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
         }
         else {
             QMessageBox::critical(0, tr("Error"), tr("No se pudo abir el archivo"));
@@ -653,12 +633,26 @@ void MainWindow::iniciarPrueba()
 {
     limpiarListasyOcultarBotones();
 
+    if (prueba->getAjustesGrafico().Unidad.contains("grados"))
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
+    else
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesp..");
+
     const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
     prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
     prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
     prueba->setOrientacion(obtenerOrientacionSensor());
     prueba->setAlturaDispositivo(ui->doubleSpinBoxAlturaDispositivo->value());
     prueba->setDivisorFPS(); //Se calcula el divisor de FPS
+    prueba->setCantidadObjetivos(ui->spinBoxCantidadObjetivos->value());
+
+
+    //Almacenando los Checkboxs
+    prueba->setAleatorios(ui->checkBoxObjetivosAleatorios->isChecked());
+    prueba->setDetenerAlMarcarTodos(ui->checkBoxDeteneralMarcarObjetivos->isChecked());
+    prueba->setLimitarGrafico(ui->checkBoxLimitarGrafico->isChecked());
+    prueba->setObjetivosEnOrden(ui->checkBoxOrdenObjetivos->isChecked());
+
 
     ui->verticalSliderRangeGraphic->setValue(prueba->getAjustesGrafico().RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian y Reajustan los graficos
@@ -917,9 +911,12 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
 
 void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la informacion de muestras o angulos.
 {    
-    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
-        reportes->guardarAngulosEnArchivo(listaAngulos);
-
+    if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico){
+        if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
+            reportes->guardarDesplazamientosEnArchivo(listaDesplazamientos);
+        if(prueba->getAjustesGrafico().Unidad.contains("grados"))
+            reportes->guardarAngulosEnArchivo(listaAngulos);
+    }
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
         reportes->guardarAngulosEnArchivo(listaAngulos);
 

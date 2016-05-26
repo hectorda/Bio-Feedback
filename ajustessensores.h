@@ -27,20 +27,20 @@ public:
     double frecuenciaMuestreo;
     QString getAjustesSensores() const;
     double obtenerFrecuenciaMuestreo();
+    AjustesSensores::Ajustes obtenerAjustesAPartirDeCadena(QString cadena);
 
 
 private slots:
     void on_spinBoxDLPF_valueChanged(int arg1);
     void aplicar();
-    void on_comboBoxFrecuenciaMuestreo_currentIndexChanged(const QString &arg1);
+    void mostrarFrecuenciaMuestreo(const QString SampleRate);
+    void mostrarFiltroPasaBajo(const QString DLPF);
 
 private:
     Ui::AjustesSensores *ui;
     void inicializar();
     void conexiones();
     void llenarParametros();
-    void mostrarFrecuenciaMuestreo(const QString SampleRate);
-    void mostrarFiltroPasaBajo(const QString DLPF);
 };
 
 #endif // AJUSTESSENSORES_H

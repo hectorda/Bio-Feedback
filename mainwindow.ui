@@ -1093,13 +1093,13 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>7</number>
+              <number>1</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
              </property>
              <property name="movable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <widget class="QWidget" name="tab_grafico">
               <attribute name="title">

@@ -221,14 +221,11 @@ void SQL::imprimirDigitoVerificador(QLineEdit *lineEditRut, QLineEdit *lineEditD
     int digito;
 
     rut=lineEditRut->text();
-    QTextStream stdout <<rut<<endl;
     if(rut.isEmpty())
         lineEditDigito->setText("");
 
     else{
         std::reverse(rut.begin(),rut.end());
-        QTextStream stdout <<"reverse: "<<rut.size()<<endl;
-
         for (int var = 0; var <rut.size(); ++var) {
             if(var<6)
                 suma+=rut.at(var).digitValue()*(var+2);
@@ -238,7 +235,6 @@ void SQL::imprimirDigitoVerificador(QLineEdit *lineEditRut, QLineEdit *lineEditD
         digito = 11 - suma%11;
         if (digito<10)
             lineEditDigito->setText(QString::number(digito));
-
         else{
             if(digito==11)
                 lineEditDigito->setText("0");

@@ -391,7 +391,72 @@ void Reportes::agregarDatosGraficoMuestras(Muestra *datos)
     graficoGyX->addData(datos->getTiempo(), datos->getGyX());
     graficoGyY->addData(datos->getTiempo(), datos->getGyY());
     graficoGyZ->addData(datos->getTiempo(), datos->getGyZ());
+}
 
+void Reportes::setDatosGraficoAngulos(QList<Angulo*> listaAngulos)
+{
+    const int size=listaAngulos.size();
+    QVector<double> tiempo(size);
+    QVector<double> angX(size);
+    QVector<double> angY(size);
+    for (int var = 0; var < size; ++var) {
+        Angulo *angulo=listaAngulos.at(var);
+        tiempo[var]=angulo->getTiempo();
+        angX[var]=angulo->getAnguloX();
+        angY[var]=angulo->getAnguloY();
+    }
+    this->vaciarGraficoAngulos();
+    graficoAnguloX->setData(tiempo,angX);
+    graficoAnguloY->addData(tiempo,angY);
+    this->replotGraficoAngulos();
+}
+
+void Reportes::setDatosGraficoDezplazamiento(QList<Desplazamiento*> listaDesplazamientos)
+{
+    const int size=listaDesplazamientos.size();
+    QVector<double> tiempo(size);
+    QVector<double> despX(size);
+    QVector<double> despY(size);
+    for (int var = 0; var < size; ++var) {
+        Desplazamiento *desp=listaDesplazamientos.at(var);
+        tiempo[var]=desp->getTiempo();
+        despX[var]=desp->getDesplazamientoX();
+        despY[var]=desp->getDesplazamientoY();
+    }
+    this->vaciarGraficoDesplazamientos();
+    graficoDesplazamientoX->setData(tiempo,despX);
+    graficoDesplazamientoY->addData(tiempo,despY);
+    this->replotGraficoDesplazamientos();
+}
+
+void Reportes::setDatosGraficoMuestras(QList<Muestra*> listaMuestras)
+{
+    const int size=listaMuestras.size();
+    QVector<double> tiempo(size);
+    QVector<double> AcX(size);
+    QVector<double> AcY(size);
+    QVector<double> AcZ(size);
+    QVector<double> GyX(size);
+    QVector<double> GyY(size);
+    QVector<double> GyZ(size);
+    for (int var = 0; var < size; ++var) {
+        Muestra *muestra=listaMuestras.at(var);
+        tiempo[var]=muestra->getTiempo();
+        AcX[var]=muestra->getAcX();
+        AcY[var]=muestra->getAcY();
+        AcZ[var]=muestra->getAcZ();
+        GyX[var]=muestra->getGyX();
+        GyY[var]=muestra->getGyY();
+        GyZ[var]=muestra->getGyZ();
+    }
+    this->vaciarGraficoMuestras();
+    graficoAcX->setData(tiempo,AcX);
+    graficoAcY->setData(tiempo,AcY);
+    graficoAcZ->setData(tiempo,AcZ);
+    graficoGyX->setData(tiempo,GyX);
+    graficoGyY->setData(tiempo,GyY);
+    graficoGyZ->setData(tiempo,GyZ);
+    this->replotGraficoMuestras();
 }
 
 void Reportes::graficarResultados(QList<Angulo*> listaAngulos)
@@ -508,6 +573,8 @@ void Reportes::moverLineasDerechaMuestras(const double newValue)
     graficoMuestras->replot();
 }
 
+//Para Agregar Datos fila a fila a las Tablas
+
 void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
 {
     //Se agrega una nueva fila a la tabla
@@ -538,6 +605,46 @@ void Reportes::agregarFilaTablaMuestras(Muestra *datos)
     tablaMuestras->setItem(currentRow,4,new QTableWidgetItem(QString::number(datos->getGyX(),'f',presicion)));
     tablaMuestras->setItem(currentRow,5,new QTableWidgetItem(QString::number(datos->getGyY(),'f',presicion)));
     tablaMuestras->setItem(currentRow,6,new QTableWidgetItem(QString::number(datos->getGyZ(),'f',presicion)));
+}
+
+//Para Agregar todas las filas de la Tabla
+
+void Reportes::setDatosTablaAngulos(QList<Angulo*> listaAngulos)
+{
+    //Se agrega una nueva fila a la tabla
+    tablaAngulos->setRowCount(listaAngulos.size());
+    for(int i = 0; i < listaAngulos.size(); ++i){
+        Angulo *angulo=listaAngulos.at(i);
+        tablaAngulos->setItem(i,0,new QTableWidgetItem(QString::number(angulo->getTiempo(),'f',presicion)));
+        tablaAngulos->setItem(i,1,new QTableWidgetItem(QString::number(angulo->getAnguloX(),'f',presicion)));
+        tablaAngulos->setItem(i,2,new QTableWidgetItem(QString::number(angulo->getAnguloY(),'f',presicion)));
+    }
+}
+
+void Reportes::setDatosTablaDesplazamientos(QList<Desplazamiento*> listaDesplazamientos){
+    //Se agrega una nueva fila a la tabla
+    tablaDesplazamientos->setRowCount(listaDesplazamientos.size());
+    for(int i = 0; i < listaDesplazamientos.size(); ++i){
+        Desplazamiento *desp=listaDesplazamientos.at(i);
+        tablaDesplazamientos->setItem(i,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
+        tablaDesplazamientos->setItem(i,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoX(),'f',presicion)));
+        tablaDesplazamientos->setItem(i,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoY(),'f',presicion)));
+    }
+}
+
+void Reportes::setDatosTablaMuestras(QList<Muestra*> listaMuestras){
+
+    tablaMuestras->setRowCount(listaMuestras.size());
+    for (int var = 0; var < listaMuestras.size(); ++var) {
+        Muestra *muestra=listaMuestras.at(var);
+        tablaMuestras->setItem(var,0,new QTableWidgetItem(QString::number(muestra->getTiempo(),'f',presicion)));
+        tablaMuestras->setItem(var,1,new QTableWidgetItem(QString::number(muestra->getAcX(),'f',presicion)));
+        tablaMuestras->setItem(var,2,new QTableWidgetItem(QString::number(muestra->getAcY(),'f',presicion)));
+        tablaMuestras->setItem(var,3,new QTableWidgetItem(QString::number(muestra->getAcZ(),'f',presicion)));
+        tablaMuestras->setItem(var,4,new QTableWidgetItem(QString::number(muestra->getGyX(),'f',presicion)));
+        tablaMuestras->setItem(var,5,new QTableWidgetItem(QString::number(muestra->getGyY(),'f',presicion)));
+        tablaMuestras->setItem(var,6,new QTableWidgetItem(QString::number(muestra->getGyZ(),'f',presicion)));
+    }
 }
 
 void Reportes::guardarImagenGrafico(QCustomPlot *grafico, int ancho, int alto)

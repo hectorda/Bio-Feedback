@@ -25,6 +25,7 @@ void AjustesSensores::conexiones()
 {
     connect(ui->pushButtonOK, SIGNAL(clicked()),this, SLOT(aplicar()));
     connect(ui->pushButtonExit,SIGNAL(clicked()),this,SLOT(close()));
+    connect(ui->comboBoxFrecuenciaMuestreo,SIGNAL(currentIndexChanged(QString)),this,SLOT(mostrarFrecuenciaMuestreo(QString)));
 }
 
 void AjustesSensores::llenarParametros()
@@ -83,6 +84,16 @@ double AjustesSensores::obtenerFrecuenciaMuestreo()
         frecuenciaMuestreo=(1000.0/(ajustesactuales.divisorFrecuenciaMuestreo+1));
 
     return frecuenciaMuestreo;
+}
+
+AjustesSensores::Ajustes AjustesSensores::obtenerAjustesAPartirDeCadena(QString cadena)
+{
+    AjustesSensores::Ajustes ajustes;
+    ajustes.configuracionGiroscopio=cadena.at(1).digitValue();
+    ajustes.configuracionAcelerometro=cadena.at(3).digitValue();
+    ajustes.filtroPasaBajo=cadena.at(5).digitValue();
+    ajustes.divisorFrecuenciaMuestreo=cadena.mid(7).toInt();
+    return ajustes;
 }
 
 void AjustesSensores::aplicar()
@@ -149,9 +160,4 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
         if(arg1==6)
             mostrarFiltroPasaBajo("Ac:  5Hz Gy:  5Hz ");
     }
-}
-
-void AjustesSensores::on_comboBoxFrecuenciaMuestreo_currentIndexChanged(const QString &arg1)
-{
-    mostrarFrecuenciaMuestreo(arg1);
 }

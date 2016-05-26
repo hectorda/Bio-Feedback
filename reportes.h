@@ -25,7 +25,13 @@ public:
 
     //Para dejar los espacios de reportes sin datos.
     void vaciarTablas();
-    void vaciarGraficos();
+    void vaciarGraficos();    
+    void setDatosTablaAngulos(QList<Angulo *> listaAngulos);
+    void setDatosTablaDesplazamientos(QList<Desplazamiento *> listaDesplazamientos);
+    void setDatosTablaMuestras(QList<Muestra *> listaMuestras);
+    void setDatosGraficoAngulos(QList<Angulo *> listaAngulos);
+    void setDatosGraficoDezplazamiento(QList<Desplazamiento *> listaDesplazamientos);
+    void setDatosGraficoMuestras(QList<Muestra *> listaMuestras);
 
 private:
     int presicion;
