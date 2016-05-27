@@ -1856,6 +1856,9 @@ QProgressBar:hover {
    <property name="text">
     <string>Salir</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionQT">
    <property name="icon">
@@ -1864,6 +1867,9 @@ QProgressBar:hover {
    </property>
    <property name="text">
     <string>Qt</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
   <action name="actionInicio">
@@ -1876,6 +1882,9 @@ QProgressBar:hover {
    </property>
    <property name="toolTip">
     <string>Ir a Pagina Principal</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
   <action name="actionConfigurar_Grafico">
@@ -1895,15 +1904,24 @@ QProgressBar:hover {
    <property name="text">
     <string>SQL</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
   </action>
   <action name="actionExportar">
    <property name="text">
     <string>Exportar</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionImportar">
    <property name="text">
     <string>Importar</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>

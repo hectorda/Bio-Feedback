@@ -206,11 +206,13 @@ void Prueba::exportar()
             file.remove();
             if (file.open(QIODevice::Append)){
                 QTextStream stream(&file);
-                stream <<"PruebaNumero: "<<this->getNumeroPrueba()<<endl;
-                stream <<"OrientacionSensor: "<<this->getOrientacion()<<endl;
-                stream <<"AlturaPuestaSensor: "<<this->getAlturaDispositivo()<<endl;
-                stream <<"TiempoMediciones: "<<this->getTiempoTotal()<<endl;
-                stream <<"MuestrasObtenidas: "<<this->getCantidadMuestras()<<endl;
+                stream <<"Numero Prueba: "<<this->getNumeroPrueba()<<endl;
+                stream <<"Orientacion Sensor: "<<this->getOrientacion()<<endl;
+                stream <<"Altura Sensor: "<<this->getAlturaDispositivo()<<endl;
+                stream <<"Tiempo Mediciones: "<<this->getTiempoTotal()<<endl;
+                stream <<"Muestras Obtenidas: "<<this->getCantidadMuestras()<<endl;
+                stream <<"Ajustes Serial: Puerto:"<<this->ajustesPuertoSerial.portName<<" "<<this->ajustesPuertoSerial.baudRate<<" "<<this->cadenaConfiguracion<<endl;
+                stream <<"Ajustes Grafico: FPS:"<<this->ajustesGrafico.FPS<<" RadioExterior: "<<this->ajustesGrafico.RadioExterior<<" RadioInterior: "<<this->ajustesGrafico.RadioInterior<<" RadioObjetivo: "<<this->ajustesGrafico.RadioObjetivo<<endl;
                 for (int var = 0; var < this->getCantidadMuestras(); ++var){
                     Angulo *ang=listaAngulos.at(var);
                     Desplazamiento *desp=listaDesplazamientos.at(var);
@@ -227,6 +229,58 @@ void Prueba::exportar()
             }
         }
     }
+}
+
+bool Prueba::importar()
+{
+    QString selectedFilter;
+    QString filters(tr("Formato BioFeed-Back (*.bioh)"));
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Abrir el Archivo"),"",filters,&selectedFilter);
+    if (fileName != ""){
+        QFile file(fileName);
+        if (file.open(QIODevice::ReadOnly)){
+            //Qdialog de ventana de carga configuracion sensores.
+                        QTextStream stream(&file);
+            const int pNumero=stream.readLine().split(" ").last().toInt();
+            const QStringList lineaOrientacion=stream.readLine().split(" ");
+            const QString orientacion=lineaOrientacion.at(2)+lineaOrientacion.at(3);
+            const QStringList lineaAlturaSensor=stream.readLine().split(" ");
+            const double alturaSensor=lineaAlturaSensor.last().toDouble();
+            const double tiempoMediciones=stream.readLine().split(" ").last().toDouble();
+            const int muestras=stream.readLine().split(" ").last().toInt();
+            stream.readLine();
+            stream.readLine();
+            this->setNumeroPrueba(pNumero);
+            this->setOrientacion(orientacion);
+            this->setAlturaDispositivo(alturaSensor);
+            this->setTiempoTotal(tiempoMediciones);
+            this->setCantidadMuestras(muestras);
+
+            this->limpiarListas();
+
+            for (int var = 0; var < this->getCantidadMuestras(); ++var){
+                QVector<double> datos;
+                foreach (QString var, stream.readLine().split(" ")) {//Cast a Double conjunto de datos
+                    datos.append(var.toDouble());
+                }
+                Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
+                Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
+                Muestra *raw=new Muestra(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
+                this->listaAngulos.append(ang);
+                this->listaDesplazamientos.append(desp);
+                this->listaMuestras.append(raw);
+            }
+            file.flush();
+            file.close();
+            return true;
+        }
+        else {
+            QMessageBox::critical(0, tr("Error"), tr("No se pudo abir el archivo"));
+            return false;
+        }
+    }
+    else
+        return false;
 }
 
 

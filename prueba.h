@@ -61,6 +61,7 @@ public:
     AjustesPuertoSerial::Ajustes getAjustesPuertoSerial();
     void limpiarListas();
     void exportar();
+    bool importar();
 
 
 signals:

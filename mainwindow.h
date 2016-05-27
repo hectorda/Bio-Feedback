@@ -63,8 +63,6 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
-    //Para guardar e importar en formato.
-    void importar();
 
     void on_pushButtonVolverPrueba_clicked();
 

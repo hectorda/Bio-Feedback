@@ -88,7 +88,19 @@ void MainWindow::conexiones()
 
       //Connect de actions
     connect(ui->actionExportar,QAction::triggered,[=](){ prueba->exportar(); });
-    connect(ui->actionImportar,SIGNAL(triggered()),this,SLOT(importar()));
+    connect(ui->actionImportar,QAction::triggered,[=](){
+        if(prueba->importar()){
+            reportes->setDatosTablaAngulos(prueba->listaAngulos);
+            reportes->setDatosGraficoAngulos(prueba->listaAngulos);
+            reportes->setDatosTablaDesplazamientos(prueba->listaDesplazamientos);
+            reportes->setDatosGraficoDezplazamiento(prueba->listaDesplazamientos);
+            reportes->setDatosTablaMuestras(prueba->listaMuestras);
+            reportes->setDatosGraficoMuestras(prueba->listaMuestras);
+            mostrarResultados();
+            ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+            ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
+        }
+    });
 
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(exec()));
@@ -411,68 +423,6 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
     else
         P->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
 
-}
-
-void MainWindow::importar(){
-    QString selectedFilter;
-    QString filters(tr("Formato BioFeed-Back (*.bioh)"));
-    QString fileName = QFileDialog::getOpenFileName(0, tr("Guardar el Archivo"),"",filters,&selectedFilter);
-    if (fileName != ""){
-        QFile file(fileName);
-        if (file.open(QIODevice::ReadOnly)){
-            //Qdialog de ventana de carga configuracion sensores.
-                        QTextStream stream(&file);
-            const int pNumero=stream.readLine().split(" ").last().toInt();
-            const QStringList lineaOrientacion=stream.readLine().split(" ");
-            const QString orientacion=lineaOrientacion.at(1)+lineaOrientacion.at(2);
-            const QStringList lineaAlturaSensor=stream.readLine().split(" ");
-            const double alturaSensor=lineaAlturaSensor.last().toDouble();
-            const double tiempoMediciones=stream.readLine().split(" ").last().toDouble();
-            const int muestras=stream.readLine().split(" ").last().toInt();
-
-            prueba->setNumeroPrueba(pNumero);
-            prueba->setOrientacion(orientacion);
-            prueba->setAlturaDispositivo(alturaSensor);
-            prueba->setTiempoTotal(tiempoMediciones);
-            prueba->setCantidadMuestras(muestras);
-
-            prueba->limpiarListas();
-            //prueba->(muestras);
-            for (int var = 0; var < prueba->getCantidadMuestras(); ++var){
-                QVector<double> datos;
-                foreach (QString var, stream.readLine().split(" ")) {//Cast a Double conjunto de datos
-                    datos.append(var.toDouble());
-                }
-                Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
-                Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
-                Muestra *raw=new Muestra(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
-                prueba->listaAngulos.append(ang);
-                prueba->listaDesplazamientos.append(desp);
-                prueba->listaMuestras.append(raw);
-            }
-
-
-
-            reportes->setDatosTablaAngulos(prueba->listaAngulos);
-            reportes->setDatosGraficoAngulos(prueba->listaAngulos);
-            reportes->setDatosTablaDesplazamientos(prueba->listaDesplazamientos);
-            reportes->setDatosGraficoDezplazamiento(prueba->listaDesplazamientos);
-            reportes->setDatosTablaMuestras(prueba->listaMuestras);
-            reportes->setDatosGraficoMuestras(prueba->listaMuestras);
-//            analisisGraficoAngulos->setprueba->listaAngulos(prueba->listaAngulos);
-//            analisisGraficoDesplazamientos->setprueba->listaDesplazamientos(prueba->listaDesplazamientos);
-//            analisisGraficoMuestras->setprueba->listaMuestras(prueba->listaMuestras);
-            file.flush();
-            file.close();
-            ui->stackedWidget->setCurrentWidget(ui->widgetTest);            
-            mostrarResultados();
-            ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
-        }
-        else {
-            QMessageBox::critical(0, tr("Error"), tr("No se pudo abir el archivo"));
-            return;
-        }
-    }
 }
 
 void MainWindow::slotGraficarTiempoReal(const double x,const double y)
