@@ -674,8 +674,10 @@ void Reportes::guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos)
             QTextStream stream(&file);
             foreach (Angulo *var, listaAngulos){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
-                           << " Y: " << QString::number(var->getAnguloY()) << endl;
+                    /*stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
+                           << " Y: " << QString::number(var->getAnguloY()) << endl;*/
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << " " << QString::number(var->getAnguloX())
+                           <<" " << QString::number(var->getAnguloY()) << endl;
                 }
                 if(selectedFilter.contains("csv")){
                     stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getAnguloX())

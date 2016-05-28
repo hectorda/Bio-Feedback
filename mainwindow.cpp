@@ -30,6 +30,7 @@ void MainWindow::inicializar()
     status = new QLabel;
     ui->statusBar->addWidget(status);
     ui->dockWidget->installEventFilter(this);
+    ui->qCustomPlotGrafico->installEventFilter(this);
     ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
 
     ui->qCustomPlotGrafico->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -42,7 +43,6 @@ void MainWindow::inicializar()
 
     ui->tableWidgetDatosRaw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetAngulos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableWidgetAngulos->resizeRowToContents(0);
     ui->tableWidgetDesplazamientos->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ui->radioButtonHorizontalAbajo->hide();
@@ -73,8 +73,7 @@ void MainWindow::conexiones()
     connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarFilaTablaMuestras(Muestra*)));
     connect(this,SIGNAL(emitGraficarResultados(QVector<Angulo*>)),reportes,SLOT(graficarResultados(QVector<Angulo*>)));
 
-    connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(RangeGraphic(int)));
-    connect(ui->qCustomPlotGrafico,SIGNAL(mouseWheel(QWheelEvent*)),this,SLOT(ZoomGraphic(QWheelEvent*)));
+    connect(ui->verticalSliderRangeGraphic,SIGNAL(valueChanged(int)),this,SLOT(actualizarRangoGrafico(int)));
     connect(ui->qCustomPlotGrafico, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
     connect(lectorSerial,SIGNAL(datosLeidos(double,double,double,double,double,double)),this,SLOT(obtenerRaw(double,double,double,double,double,double)));
     connect(ui->lineEditRut,SIGNAL(returnPressed()),ui->pushButtonBuscarPaciente,SLOT(click()));
@@ -139,9 +138,6 @@ void MainWindow::inicializarGrafico()
 
     ui->qCustomPlotGrafico->addPlottable(lienzo);
 
-    ui->qCustomPlotGrafico->xAxis2->setVisible(true);
-    ui->qCustomPlotGrafico->yAxis2->setVisible(true);
-
     //Se configuran los rangos maximos para los ejes X e Y segun el slider.
     const int range=ui->verticalSliderRangeGraphic->value();
     ui->qCustomPlotGrafico->xAxis->setRange(-range,range);
@@ -149,7 +145,8 @@ void MainWindow::inicializarGrafico()
     ui->qCustomPlotGrafico->xAxis2->setRange(-range,range);
     ui->qCustomPlotGrafico->yAxis2->setRange(-range,range);
 
-    ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom); // Para usar el el Zoom y el Arrastre del grafico.
+    ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag); // Para usar el el Zoom y el Arrastre del grafico.
+
 }
 
 void MainWindow::actualizarMensajeBarraEstado(const QString &message)
@@ -469,26 +466,12 @@ void MainWindow::slotGraficarTiempoReal(const double x,const double y)
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
 
-void MainWindow::RangeGraphic(int Range)
+void MainWindow::actualizarRangoGrafico(int Range)
 {
     ui->qCustomPlotGrafico->xAxis->setRange(-Range,Range);
     ui->qCustomPlotGrafico->yAxis->setRange(-Range,Range);
     ui->qCustomPlotGrafico->xAxis2->setRange(-Range,Range);
     ui->qCustomPlotGrafico->yAxis2->setRange(-Range,Range);
-    ui->qCustomPlotGrafico->replot();
-}
-
-void MainWindow::ZoomGraphic(QWheelEvent *event)
-{
-    (void) event;//Variable no usada
-    QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
-
-    ui->qCustomPlotGrafico->xAxis->setRange(range);
-    ui->qCustomPlotGrafico->yAxis->setRange(range);
-    ui->qCustomPlotGrafico->xAxis2->setRange(range);
-    ui->qCustomPlotGrafico->yAxis2->setRange(range);
-
-    ui->verticalSliderRangeGraphic->setValue(range.upper);
     ui->qCustomPlotGrafico->replot();
 }
 
@@ -505,6 +488,14 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::Resize && obj == ui->dockWidget)
         relacionAspectodelGrafico();
+
+    if(event->type()==QEvent::Wheel && obj == ui->qCustomPlotGrafico){
+        QWheelEvent *wheelEvent = (QWheelEvent *)event;
+
+        QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
+        range+=(wheelEvent->delta()/120);
+        ui->verticalSliderRangeGraphic->setValue(range.upper); //Acticar el Slot
+    }
 
     return QWidget::eventFilter(obj, event);
 }
@@ -660,6 +651,10 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         }
         else
             angulo->calcularAngulo(orientacion,dato);
+        Angulo *angt=new Angulo;
+        angt->calcularAngulo(orientacion,dato);
+
+        QTextStream stdout <<dato->getTiempo()<<" "<<angt->getAnguloX()<<" "<<angt->getAnguloY()<<endl;
 
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
         prueba->listaAngulos.append(angulo);
@@ -890,6 +885,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     (void) index;
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico)
     {
+        relacionAspectodelGrafico();
         if (prueba->getAjustesGrafico().Unidad.contains("grados"))
             ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráfico","Guardar\nDatos\nAngulos");
         else

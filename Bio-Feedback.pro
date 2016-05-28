@@ -18,7 +18,6 @@ SOURCES += main.cpp\
     ajustespuertoserial.cpp \
     ajustessensores.cpp \
     angulo.cpp \
-    filtro_kalman.cpp \
     serial.cpp \
     ajustesgrafico.cpp \
     reportes.cpp \
@@ -34,7 +33,6 @@ HEADERS  += mainwindow.h \
     ajustespuertoserial.h \
     ajustessensores.h \
     angulo.h \
-    filtro_kalman.h \
     serial.h \
     ajustesgrafico.h \
     reportes.h \

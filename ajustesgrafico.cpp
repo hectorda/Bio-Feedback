@@ -162,6 +162,12 @@ bool AjustesGrafico::validar()
     const int RadioInterior=ui->spinBoxRInterior->value();
     const int RadioObjetivo=ui->spinBoxRObjetivo->value();
     bool val=true;
+
+    if(ui->comboBoxColorObjetivosMarcados->currentText()=="white" || ui->comboBoxColorObjetivosSinMarcar->currentText()=="white")
+    {
+        QMessageBox::warning(this,"Color No Seleccionable","Los objetivos por defecto al parpadear son blancos");
+        val=false;
+    }
     if(RadioExterior < RadioInterior){
         QMessageBox::warning(this,"Radio Exterior muy Pequeño","Radio Exterior debe ser debe ser mayor al Radio Interior");
         val=false;

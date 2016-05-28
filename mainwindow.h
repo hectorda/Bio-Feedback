@@ -10,14 +10,12 @@
 #include <qcustomplot.h>
 #include <muestra.h>
 #include <angulo.h>
-#include <filtro_kalman.h>
 #include <serial.h>
 #include <reportes.h>
 #include <desplazamiento.h>
 #include <sql.h>
 #include <analisisgrafico.h>
 #include <prueba.h>
-#include <filtro_kalman.h>
 
 namespace Ui {
 class MainWindow;
@@ -56,8 +54,7 @@ private slots:
     void mostrarResultados();
     void slotGraficarTiempoReal(const double x, const double y);
     void marcarObjetivos(const double x, const double y);
-    void RangeGraphic(int Range);
-    void ZoomGraphic(QWheelEvent *event);
+    void actualizarRangoGrafico(int Range);
     void contextMenuRequest(QPoint pos);
     void relacionAspectodelGrafico();
     bool eventFilter(QObject *obj, QEvent *event);
