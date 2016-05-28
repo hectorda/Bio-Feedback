@@ -675,16 +675,15 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 
         if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
         {
-           const int porcentaje=qRound((tiempo/prueba->getTiempoPrueba())*100.0);
+           const int porcentaje=qRound((tiempo*100.0)/prueba->getTiempoPrueba());
            ui->progressBarPrueba->setValue(porcentaje);
         }
 
         const QString lapso=QString::number(tiempo, 'f', 1);
-        const int elapased=cronometro.elapsed()/1000;
 
-        QString horas = QString::number(qFloor(elapased / 3600));
-        QString minutos = QString::number(qFloor ((elapased % 3600) / 60 ));
-        QString segundos = QString::number(elapased % 60);
+        QString horas = QString::number(qFloor(tiempo / 3600));
+        QString minutos = QString::number(qFloor ((qRound(tiempo)% 3600) / 60 ));
+        QString segundos = QString::number(qRound(tiempo) % 60);
 
         minutos = minutos.toInt() < 10 ? '0' + minutos : minutos;//Anteponiendo un 0 a los minutos si son menos de 10
         segundos = segundos.toInt() < 10 ? '0' + segundos : segundos;//Anteponiendo un 0 a los segundos si son menos de 10
