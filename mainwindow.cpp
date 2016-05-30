@@ -645,9 +645,10 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         //Calculo y de Angulos y Desplazamiento
         Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
+        const double alpha=ui->doubleSpinBoxAlphaFiltroComp->value();
         if(!prueba->listaAngulos.isEmpty()){
             Angulo *anguloAnterior=prueba->listaAngulos.last();
-            angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior);
+            angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
         }
         else
             angulo->calcularAngulo(orientacion,dato);

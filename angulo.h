@@ -22,7 +22,7 @@ public:
     void setAnguloX(const double angulo);
     void setAnguloY(const double angulo);
     void calcularAngulo(const QString orientacion, Muestra *muestra);
-    void calcularAnguloFiltroComplementario(const QString orientacion, Muestra *muestra, Angulo *anguloAnterior);
+    void calcularAnguloFiltroComplementario(const QString orientacion, Muestra *muestra, Angulo *anguloAnterior, const double alpha);
 };
 
 #endif // ANGULO_H
