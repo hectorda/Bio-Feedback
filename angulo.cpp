@@ -94,8 +94,8 @@ void Angulo::calcularAngulo(const QString orientacion,Muestra *muestra){
 void Angulo::calcularAnguloFiltroComplementario(const QString orientacion, Muestra *muestra,Angulo *anguloAnterior)
 {
     double anguloComplementario1=0,anguloComplementario2=0;
-    double alpha=0.02;
-    const double dt=(muestra->getTiempo() - anguloAnterior->getTiempo());
+    double alpha=0.07;
+    const double dt=(muestra->getTiempo() - anguloAnterior->getTiempo())/1000.0;
     Angulo *anguloSinFiltro = new Angulo();
     anguloSinFiltro->calcularAngulo(orientacion,muestra);
 

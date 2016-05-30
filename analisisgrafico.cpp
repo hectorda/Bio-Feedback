@@ -360,7 +360,7 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
     double tMayorX=listaDesplazamientos.at(inicio)->getTiempo(),tMayorY=listaDesplazamientos.at(inicio)->getTiempo();
     double rangoX=0,rangoY=0;
     double velMediaX=0,velMediaY=0;
-
+    double deltaT=(listaDesplazamientos.at(fin)->getTiempo()-listaDesplazamientos.at(inicio)->getTiempo())/(fin-inicio);
     for (int var = inicio; var <= fin; ++var) {
         Desplazamiento *desplazamiento=listaDesplazamientos.at(var);
         media1+=desplazamiento->getDesplazamientoX();
@@ -385,7 +385,6 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
 
         if(var<fin){
             Desplazamiento *despb=listaDesplazamientos.at(var+1);
-            const double deltaT=despb->getTiempo() - desplazamiento->getTiempo();
             const double deltaX=despb->getDesplazamientoX() - desplazamiento->getDesplazamientoX();
             const double deltaY=despb->getDesplazamientoY() - desplazamiento->getDesplazamientoY();
             velMediaX+=(deltaX/deltaT);
