@@ -23,7 +23,9 @@ void MainWindow::inicializar()
     ajustesCalculoAngulo=new AjustesCalculoAngulo(this);
 
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
-    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoDesplazamientos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDesplazamientos,ui->tableWidgetDatosRaw);
+    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoDesplazamientos,
+                            ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDesplazamientos,
+                            ui->tableWidgetDatosRaw,ui->textEditReporte);
     analisisGraficoAngulos = new AnalisisGrafico(this,reportes);
     analisisGraficoMuestras = new AnalisisGrafico(this,reportes);
     analisisGraficoDesplazamientos = new AnalisisGrafico(this,reportes);
@@ -88,6 +90,7 @@ void MainWindow::conexiones()
     connect(ui->pushButtonAnalizarGraficoAngulos,SIGNAL(clicked()),analisisGraficoAngulos,SLOT(show()));
     connect(ui->pushButtonAnalizarGraficoDesplazamientos,SIGNAL(clicked()),analisisGraficoDesplazamientos,SLOT(show()));
     connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
+    connect(ui->pushButtonGuardarReportePDF,QPushButton::clicked,[=]{ reportes->guardarInformeReportePDF(); });
 
       //Connect de actions
     connect(ui->actionExportar,QAction::triggered,[=](){ prueba->exportar(); });
@@ -173,7 +176,17 @@ void MainWindow::mostrarResultados()
     mostrarBotonesPrueba();
     activarTabs();
     activarActions();
+    llenarInformeReporte();
     ui->centralWidget->adjustSize();
+}
+
+void MainWindow::llenarInformeReporte()
+{
+    reportes->agregarDatosInformeReporte(":nombreP","Hector Peredo");
+    reportes->agregarDatosInformeReporte(":numeroP",QString::number(prueba->getNumeroPrueba()));
+    reportes->agregarDatosInformeReporte(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
+    //ui->qCustomPlotResultados->savePng("reportes/images/resultado.png",1000,1000);
+    //reportes->agregarDatosInformeReporte(":graficobarras","reportes/images/resultado.png");
 }
 
 void MainWindow::mostrarBotonesPrueba()
@@ -563,6 +576,7 @@ void MainWindow::limpiarListasyOcultarBotones()
     prueba->limpiarListas();
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
+    reportes->vaciarInformeReporte();
     analisisGraficoAngulos->hide();
     analisisGraficoDesplazamientos->hide();
     analisisGraficoMuestras->hide();
@@ -688,10 +702,23 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
                     objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
             }
         }
-//        Angulo *angt=new Angulo;
-//        angt->calcularAngulo(orientacion,dato);
 
-//        QTextStream stdout <<dato->getTiempo()<<" "<<angt->getAnguloX()<<" "<<angt->getAnguloY()<<endl;
+//        if(!prueba->listaAngulos.isEmpty()){
+//            Angulo *anguloAnterior=prueba->listaAngulos.last();
+//             objetoAngulo->calcularAngulo(orientacion,dato);
+//             QTextStream stdout <<objetoAngulo->getTiempo()<<" "<<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
+//            //if(filtroAngulo.contains("kalman"))
+//                objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
+//            QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
+//                //if(filtroAngulo.contains("complementario"))
+//                objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+//                QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<endl;
+//        }
+//        else{
+//            objetoAngulo->calcularAngulo(orientacion,dato);
+//            if(filtroAngulo.contains("kalman"))
+//                objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
+//        }
 
         Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());

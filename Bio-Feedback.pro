@@ -58,7 +58,8 @@ FORMS    += mainwindow.ui \
 
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
+    reporte.qrc
 
 QMAKE_CXXFLAGS += -std=gnu++11
 

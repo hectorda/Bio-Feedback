@@ -5,7 +5,7 @@ Reportes::Reportes(QObject *parent) : QObject(parent)
     this->presicion = 3;
 }
 
-Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientos, QTableWidget *tablaMuestras) : QObject(parent)
+Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientos, QTableWidget *tablaMuestras,QTextEdit *textEditReporte) : QObject(parent)
 {
     this->presicion = 4;
     this->graficoResultados = graficoResultados;
@@ -15,10 +15,12 @@ Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot 
     this->tablaAngulos = tablaAngulos;
     this->tablaDesplazamientos = tablaDesplazamientos;
     this->tablaMuestras = tablaMuestras;
+    this->textEditReporte = textEditReporte;
     inicializarGraficoResultados();
     inicializarGraficoAngulos();
     inicializarGraficoDesplazamientos();
     inicializarGraficoMuestras();
+    inicializarInformeReporte();
 }
 
 void Reportes::vaciarTablas()
@@ -62,6 +64,18 @@ void Reportes::vaciarGraficoMuestras()
     graficoGyZ->clearData();
 }
 
+void Reportes::vaciarInformeReporte()
+{
+    textEditReporte->clear();
+    inicializarInformeReporte();
+}
+
+void Reportes::agregarDatosInformeReporte(const QString busq,const QString dato)
+{
+    textEditReporte->find(busq);
+    textEditReporte->insertPlainText(dato);
+}
+
 void Reportes::replotGraficoAngulos()
 {
     graficoAnguloX->rescaleAxes();
@@ -85,6 +99,17 @@ void Reportes::replotGraficoMuestras()
     graficoGyY->rescaleAxes();
     graficoGyZ->rescaleAxes();
     graficoMuestras->replot();
+}
+
+void Reportes::inicializarInformeReporte()
+{
+    QFile file(":/reporte/reporte.htm");
+    file.open(QFile::ReadOnly);
+    QByteArray data = file.readAll();
+    QTextCodec *codec = Qt::codecForHtml(data);
+    QString str = codec->toUnicode(data);
+    if (Qt::mightBeRichText(str))
+        textEditReporte->setHtml(data);
 }
 
 void Reportes::inicializarGraficoResultados()
@@ -755,5 +780,18 @@ void Reportes::guardarMuestrasEnArchivo(QVector<Muestra*> listaMuestras)
             QMessageBox::critical(0, tr("Error"), tr("No se pudo guardar el archivo"));
             return;
         }
+    }
+}
+
+void Reportes::guardarInformeReportePDF()
+{
+    QString filename = QFileDialog::getSaveFileName(0,"Guardar Reporte","","Archivo pdf(*.pdf)");
+    if(!filename.isEmpty()) {
+        if(QFileInfo(filename).suffix().isEmpty())
+            filename.append(".pdf");
+
+        QPrinter printer(QPrinter::HighResolution);
+        printer.setOutputFileName(filename);
+        textEditReporte->print(&printer);
     }
 }

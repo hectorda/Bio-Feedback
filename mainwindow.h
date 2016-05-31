@@ -68,7 +68,6 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
-
     void on_pushButtonVolverPrueba_clicked();
 
 signals:
@@ -106,6 +105,7 @@ private:
     void desactivarTabs();
     void activarTabs();
     void preguntarRegresarInicio();
+    void llenarInformeReporte();
     void actualizarMensajeBarraEstado(const QString &message);
     void limpiarGrafico(QCustomPlot *grafico);
     QString obtenerOrientacionSensor();

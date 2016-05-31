@@ -16,22 +16,26 @@ class Reportes : public QObject
     Q_OBJECT
 public:
     explicit Reportes(QObject *parent = 0);
-    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoDesplazamientos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaDesplazamientos,QTableWidget *tablaMuestras);
+    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoDesplazamientos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaDesplazamientos,QTableWidget *tablaMuestras,QTextEdit *textEditReporte);
 
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos);
     void guardarDesplazamientosEnArchivo(QVector<Desplazamiento *> listaDesplazamientos);
     void guardarMuestrasEnArchivo(QVector<Muestra*> listaMuestras);
+    void guardarInformeReportePDF();
 
     //Para dejar los espacios de reportes sin datos.
     void vaciarTablas();
     void vaciarGraficos();    
+    void vaciarInformeReporte();
+    void agregarDatosInformeReporte(const QString busq,const QString dato);
     void setDatosTablaAngulos(QVector<Angulo *> listaAngulos);
     void setDatosTablaDesplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
     void setDatosTablaMuestras(QVector<Muestra *> listaMuestras);
     void setDatosGraficoAngulos(QVector<Angulo *> listaAngulos);
     void setDatosGraficoDezplazamiento(QVector<Desplazamiento *> listaDesplazamientos);
     void setDatosGraficoMuestras(QVector<Muestra *> listaMuestras);
+    void inicializarInformeReporte();
 
 private:
     int presicion;
@@ -42,6 +46,7 @@ private:
     QTableWidget *tablaAngulos;
     QTableWidget *tablaDesplazamientos;
     QTableWidget *tablaMuestras;
+    QTextEdit *textEditReporte;
 
     //Plotables del Rrafico Resultado
     QCPBars *cuadrantes;

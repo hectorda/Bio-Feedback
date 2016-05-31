@@ -34,7 +34,7 @@ void AjustesCalculoAngulo::conexiones()
 
 void AjustesCalculoAngulo::on_comboBoxFiltroAngulo_currentTextChanged(const QString &arg1)
 {
-    ui->labelFiltroUsado->setText(arg1);
+    ui->labelFiltroUsado->setText("Filtro usado: "+arg1);
     if(arg1.toLower().contains("sin filtro")){
         ui->doubleSpinBoxAlphaFC->hide();
     }
