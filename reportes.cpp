@@ -70,7 +70,13 @@ void Reportes::vaciarInformeReporte()
     inicializarInformeReporte();
 }
 
-void Reportes::agregarDatosInformeReporte(const QString busq,const QString dato)
+void Reportes::agregarDatosInformeReporteHTML(const QString busq,const QString dato)
+{
+    textEditReporte->find(busq);
+    textEditReporte->insertHtml(dato);
+}
+
+void Reportes::agregarDatosInformeReportePlainText(const QString busq, const QString dato)
 {
     textEditReporte->find(busq);
     textEditReporte->insertPlainText(dato);
@@ -110,6 +116,9 @@ void Reportes::inicializarInformeReporte()
     QString str = codec->toUnicode(data);
     if (Qt::mightBeRichText(str))
         textEditReporte->setHtml(data);
+    if(QDir("images").exists())
+        QDir().remove("images");
+    QDir().mkdir("images");
 }
 
 void Reportes::inicializarGraficoResultados()

@@ -53,7 +53,7 @@ void MainWindow::inicializar()
     ui->radioButtonHorizontalArriba->hide();
 
     ui->menuVer->addAction(ui->mainToolBar->toggleViewAction());
-
+    ui->qCustomPlotResultados->hide();
     ui->pushButtonVolverPrueba->hide();
 
     prueba=new Prueba(this);
@@ -182,11 +182,15 @@ void MainWindow::mostrarResultados()
 
 void MainWindow::llenarInformeReporte()
 {
-    reportes->agregarDatosInformeReporte(":nombreP","Hector Peredo");
-    reportes->agregarDatosInformeReporte(":numeroP",QString::number(prueba->getNumeroPrueba()));
-    reportes->agregarDatosInformeReporte(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
-    //ui->qCustomPlotResultados->savePng("reportes/images/resultado.png",1000,1000);
-    //reportes->agregarDatosInformeReporte(":graficobarras","reportes/images/resultado.png");
+    reportes->agregarDatosInformeReportePlainText(":nombreP","Hector Peredo");
+    reportes->agregarDatosInformeReportePlainText(":numeroP",QString::number(prueba->getNumeroPrueba()));
+    reportes->agregarDatosInformeReportePlainText(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
+    ui->qCustomPlotResultados->savePng("images/resultado.png",400,400);
+    reportes->agregarDatosInformeReporteHTML(":graficobarras",QString("<img src="+QDir().absolutePath()+"/images/resultado.png>"));
+    ui->qCustomPlotGraficoDesplazamientos->rescaleAxes();
+    ui->qCustomPlotGraficoDesplazamientos->savePng("images/desplazamientos.png",400,400);
+    reportes->agregarDatosInformeReporteHTML(":graficodesp",QString("<img src="+QDir().absolutePath()+"/images/desplazamientos.png"));
+    ui->textEditReporte->moveCursor(QTextCursor::Start);
 }
 
 void MainWindow::mostrarBotonesPrueba()
