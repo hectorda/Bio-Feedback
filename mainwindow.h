@@ -93,9 +93,8 @@ private:
     QCPItemEllipse *circuloExterior,*circuloInterior;
     AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientos;
     SQL *db;
-
-    Kalman kalmanX; // Create the Kalman instances
-    Kalman kalmanY;
+    Angulo *angulo;
+    Desplazamiento *desplazamiento;
 
     void inicializar();
     void conexiones();

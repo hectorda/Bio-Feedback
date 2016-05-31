@@ -59,6 +59,9 @@ void MainWindow::inicializar()
     db = new SQL;
     db->consulta();
 
+    //Crean instancias de Objetos
+    angulo=new Angulo;
+    desplazamiento=new Desplazamiento;
 }
 
 void MainWindow::conexiones()
@@ -642,50 +645,33 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
                                                           cronometro.elapsed()/1000.0;
     if ( tiempo < prueba->getTiempoPrueba())
     {
-        Angulo *angulo=new Angulo;
-        Desplazamiento *desplazamiento=new Desplazamiento;
-
         //Calculo y de Angulos y Desplazamiento
         Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
         const double alpha=ui->doubleSpinBoxAlphaFiltroComp->value();
-        Angulo *Kangulo,*ang=new Angulo;
-        double kalAngleY=0,kalAngleX=0;
-        ang->calcularAngulo(orientacion,dato);
-        if(!prueba->listaAngulos.isEmpty()){
-            const double dt=(dato->getTiempo() - prueba->listaAngulos.last()->getTiempo());
-            if ((ang->getAnguloY() < -90 && kalAngleY > 90) || (ang->getAnguloY() > 90 && kalAngleY < -90)) {
-                kalmanY.setAngle(ang->getAnguloY());
-              } else
-                kalAngleY = kalmanY.getAngle(ang->getAnguloY(), dato->getGyY(), dt); // Calculate the angle using a Kalman filter
-              if (abs(kalAngleY) > 90)
-                kalAngleX = kalmanX.getAngle(ang->getAnguloX(), -dato->getGyX(), dt); // Calculate the angle using a Kalman filter
-
-              kalAngleX = kalmanX.getAngle(ang->getAnguloX(), dato->getGyX(), dt); // Calculate the angle using a Kalman filter
-        Kangulo=new Angulo(dato->getTiempo(),kalAngleX,kalAngleY);
-        }
-        else
-            Kangulo=new Angulo(dato->getTiempo(),ang->getAnguloX(),ang->getAnguloY());
-
 
         if(!prueba->listaAngulos.isEmpty()){
             Angulo *anguloAnterior=prueba->listaAngulos.last();
-            angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+            //angulo->calcularAngulo(orientacion,dato);
+            //angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+            angulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
         }
-        else
+        else{
             angulo->calcularAngulo(orientacion,dato);
-        Angulo *angt=new Angulo;
-        angt->calcularAngulo(orientacion,dato);
+            angulo->setAnguloInicialKalman(angulo->getAnguloX(),angulo->getAnguloY());
+        }
+//        Angulo *angt=new Angulo;
+//        angt->calcularAngulo(orientacion,dato);
 
-        QTextStream stdout <<dato->getTiempo()<<" "<<Kangulo->getAnguloX()<<" "<<Kangulo->getAnguloY()<<endl;
+//        QTextStream stdout <<dato->getTiempo()<<" "<<angt->getAnguloX()<<" "<<angt->getAnguloY()<<endl;
 
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
-        prueba->listaAngulos.append(Kangulo);
+        prueba->listaAngulos.append(angulo);
         prueba->listaDesplazamientos.append(desplazamiento);
         prueba->listaMuestras.append(dato);
         emit emitRawReporte(dato);
         emit emitDesplazamientoReporte(desplazamiento);
-        emit emitAnguloReporte(Kangulo);
+        emit emitAnguloReporte(angulo);
 
         //Comienza Actualizacion elementos de la interfaz
         //Se pregunta y envia el dato para graficar

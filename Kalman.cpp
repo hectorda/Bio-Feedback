@@ -30,7 +30,7 @@ Kalman::Kalman() {
     P[0][1] = 0.0f;
     P[1][0] = 0.0f;
     P[1][1] = 0.0f;
-};
+}
 
 // The angle should be in degrees and the rate should be in degrees per second and the delta time in seconds
 float Kalman::getAngle(float newAngle, float newRate, float dt) {
@@ -78,16 +78,16 @@ float Kalman::getAngle(float newAngle, float newRate, float dt) {
     P[1][1] -= K[1] * P01_temp;
 
     return angle;
-};
+}
 
-void Kalman::setAngle(float angle) { this->angle = angle; }; // Used to set angle, this should be set as the starting angle
-float Kalman::getRate() { return this->rate; }; // Return the unbiased rate
+void Kalman::setAngle(float angle) { this->angle = angle; } // Used to set angle, this should be set as the starting angle
+float Kalman::getRate() { return this->rate; } // Return the unbiased rate
 
 /* These are used to tune the Kalman filter */
-void Kalman::setQangle(float Q_angle) { this->Q_angle = Q_angle; };
-void Kalman::setQbias(float Q_bias) { this->Q_bias = Q_bias; };
-void Kalman::setRmeasure(float R_measure) { this->R_measure = R_measure; };
+void Kalman::setQangle(float Q_angle) { this->Q_angle = Q_angle; }
+void Kalman::setQbias(float Q_bias) { this->Q_bias = Q_bias; }
+void Kalman::setRmeasure(float R_measure) { this->R_measure = R_measure; }
 
-float Kalman::getQangle() { return this->Q_angle; };
-float Kalman::getQbias() { return this->Q_bias; };
-float Kalman::getRmeasure() { return this->R_measure; };
+float Kalman::getQangle() { return this->Q_angle; }
+float Kalman::getQbias() { return this->Q_bias; }
+float Kalman::getRmeasure() { return this->R_measure; }
