@@ -4,9 +4,15 @@
 #include <QMainWindow>
 #include <QtSerialPort>
 #include <QtMath>
+
+//Clases Ventanas de Configuracion//
 #include <ajustespuertoserial.h>
 #include <ajustessensores.h>
 #include <ajustesgrafico.h>
+#include <analisisgrafico.h>
+#include <ajustescalculoangulo.h>
+
+//Clases para Objetos
 #include <qcustomplot.h>
 #include <muestra.h>
 #include <angulo.h>
@@ -14,8 +20,8 @@
 #include <reportes.h>
 #include <desplazamiento.h>
 #include <sql.h>
-#include <analisisgrafico.h>
 #include <prueba.h>
+#include <Kalman.h>
 
 namespace Ui {
 class MainWindow;
@@ -76,6 +82,7 @@ private:
     AjustesPuertoSerial *ajustesSerial;
     AjustesSensores *ajustesSensores;
     AjustesGrafico *ajustesGrafico;
+    AjustesCalculoAngulo *ajustesCalculoAngulo;
     QElapsedTimer cronometro;
     QString datosLeidosPuertoSerial;
     Reportes *reportes;    
@@ -86,6 +93,9 @@ private:
     QCPItemEllipse *circuloExterior,*circuloInterior;
     AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientos;
     SQL *db;
+
+    Kalman kalmanX; // Create the Kalman instances
+    Kalman kalmanY;
 
     void inicializar();
     void conexiones();

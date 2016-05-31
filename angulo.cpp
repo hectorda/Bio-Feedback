@@ -148,4 +148,3 @@ void Angulo::calcularAnguloFiltroComplementario(const QString orientacion, Muest
     this->setAnguloX(anguloComplementario1);
     this->setAnguloY(anguloComplementario2);
 }
-

@@ -20,6 +20,8 @@ void MainWindow::inicializar()
     ajustesSerial= new AjustesPuertoSerial(this);
     ajustesSensores = new AjustesSensores(this);
     ajustesGrafico = new AjustesGrafico(this);
+    ajustesCalculoAngulo=new AjustesCalculoAngulo(this);
+
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
     reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoDesplazamientos,ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDesplazamientos,ui->tableWidgetDatosRaw);
     analisisGraficoAngulos = new AnalisisGrafico(this,reportes);
@@ -104,6 +106,7 @@ void MainWindow::conexiones()
     connect(ui->actionConfigurar_Serial,SIGNAL(triggered()),ajustesSerial,SLOT(exec()));
     connect(ui->actionConfigurar_Sensores,SIGNAL(triggered(bool)),ajustesSensores,SLOT(exec()));
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(exec()));
+    connect(ui->actionConfigurar_Angulo,SIGNAL(triggered(bool)),ajustesCalculoAngulo,SLOT(exec()));
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
@@ -646,6 +649,25 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
         const double alpha=ui->doubleSpinBoxAlphaFiltroComp->value();
+        Angulo *Kangulo,*ang=new Angulo;
+        double kalAngleY=0,kalAngleX=0;
+        ang->calcularAngulo(orientacion,dato);
+        if(!prueba->listaAngulos.isEmpty()){
+            const double dt=(dato->getTiempo() - prueba->listaAngulos.last()->getTiempo());
+            if ((ang->getAnguloY() < -90 && kalAngleY > 90) || (ang->getAnguloY() > 90 && kalAngleY < -90)) {
+                kalmanY.setAngle(ang->getAnguloY());
+              } else
+                kalAngleY = kalmanY.getAngle(ang->getAnguloY(), dato->getGyY(), dt); // Calculate the angle using a Kalman filter
+              if (abs(kalAngleY) > 90)
+                kalAngleX = kalmanX.getAngle(ang->getAnguloX(), -dato->getGyX(), dt); // Calculate the angle using a Kalman filter
+
+              kalAngleX = kalmanX.getAngle(ang->getAnguloX(), dato->getGyX(), dt); // Calculate the angle using a Kalman filter
+        Kangulo=new Angulo(dato->getTiempo(),kalAngleX,kalAngleY);
+        }
+        else
+            Kangulo=new Angulo(dato->getTiempo(),ang->getAnguloX(),ang->getAnguloY());
+
+
         if(!prueba->listaAngulos.isEmpty()){
             Angulo *anguloAnterior=prueba->listaAngulos.last();
             angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
@@ -655,15 +677,15 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         Angulo *angt=new Angulo;
         angt->calcularAngulo(orientacion,dato);
 
-        QTextStream stdout <<dato->getTiempo()<<" "<<angt->getAnguloX()<<" "<<angt->getAnguloY()<<endl;
+        QTextStream stdout <<dato->getTiempo()<<" "<<Kangulo->getAnguloX()<<" "<<Kangulo->getAnguloY()<<endl;
 
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
-        prueba->listaAngulos.append(angulo);
+        prueba->listaAngulos.append(Kangulo);
         prueba->listaDesplazamientos.append(desplazamiento);
         prueba->listaMuestras.append(dato);
         emit emitRawReporte(dato);
         emit emitDesplazamientoReporte(desplazamiento);
-        emit emitAnguloReporte(angulo);
+        emit emitAnguloReporte(Kangulo);
 
         //Comienza Actualizacion elementos de la interfaz
         //Se pregunta y envia el dato para graficar

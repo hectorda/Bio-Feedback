@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>656</width>
-    <height>628</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1789,6 +1789,7 @@ QProgressBar:hover {
     <addaction name="actionConfigurar_Serial"/>
     <addaction name="actionConfigurar_Sensores"/>
     <addaction name="actionConfigurar_Grafico"/>
+    <addaction name="actionConfigurar_Angulo"/>
    </widget>
    <widget class="QMenu" name="menuArchivo">
     <property name="title">
@@ -1843,6 +1844,7 @@ QProgressBar:hover {
    <addaction name="actionConfigurar_Serial"/>
    <addaction name="actionConfigurar_Sensores"/>
    <addaction name="actionConfigurar_Grafico"/>
+   <addaction name="actionConfigurar_Angulo"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionConfigurar_Serial">
@@ -1937,6 +1939,11 @@ QProgressBar:hover {
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionConfigurar_Angulo">
+   <property name="text">
+    <string>Configurar Calculo Angulo</string>
    </property>
   </action>
  </widget>
