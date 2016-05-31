@@ -95,8 +95,7 @@ private:
     QCPItemEllipse *circuloExterior,*circuloInterior;
     AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientos;
     SQL *db;
-    Angulo *angulo;
-    Desplazamiento *desplazamiento;
+    Angulo *objetoAngulo;
 
     void inicializar();
     void conexiones();

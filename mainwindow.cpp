@@ -60,8 +60,7 @@ void MainWindow::inicializar()
     db->consulta();
 
     //Crean instancias de Objetos
-    angulo=new Angulo;
-    desplazamiento=new Desplazamiento;
+    objetoAngulo=new Angulo;
 }
 
 void MainWindow::conexiones()
@@ -666,25 +665,27 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
     if ( tiempo < prueba->getTiempoPrueba())
     {
         //Calculo y de Angulos y Desplazamiento
+        Desplazamiento *desplazamiento=new Desplazamiento;
         Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
         const double alpha=ajustesCalculoAngulo->alpha;
         const QString filtroAngulo=ajustesCalculoAngulo->filtro.toLower();
 
+
         if(filtroAngulo.contains("sin filtro"))
-            angulo->calcularAngulo(orientacion,dato);
+            objetoAngulo->calcularAngulo(orientacion,dato);
         else{
             if(!prueba->listaAngulos.isEmpty()){
                 Angulo *anguloAnterior=prueba->listaAngulos.last();
                 if(filtroAngulo.contains("kalman"))
-                    angulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
+                    objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
                 if(filtroAngulo.contains("complementario"))
-                    angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+                    objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
             }
             else{
-                angulo->calcularAngulo(orientacion,dato);
+                objetoAngulo->calcularAngulo(orientacion,dato);
                 if(filtroAngulo.contains("kalman"))
-                    angulo->setAnguloInicialKalman(angulo->getAnguloX(),angulo->getAnguloY());
+                    objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
             }
         }
 //        Angulo *angt=new Angulo;
@@ -692,6 +693,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 
 //        QTextStream stdout <<dato->getTiempo()<<" "<<angt->getAnguloX()<<" "<<angt->getAnguloY()<<endl;
 
+        Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
         prueba->listaAngulos.append(angulo);
         prueba->listaDesplazamientos.append(desplazamiento);
@@ -704,7 +706,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         //Se pregunta y envia el dato para graficar
         if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
             if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
-                emit emitAnguloGraficoTiempoReal(angulo->getAnguloX(),angulo->getAnguloY());
+                emit emitAnguloGraficoTiempoReal(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
             if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
                 emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
         }

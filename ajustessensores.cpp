@@ -47,9 +47,18 @@ void AjustesSensores::llenarParametros()
     ui->comboBoxGscale->addItem(QStringLiteral("2000 º/s"), 3);
     ui->comboBoxGscale->setCurrentIndex(0);
 
+    ui->comboBoxDLPF->addItem(QString("Desactivado"),0);
+    ui->comboBoxDLPF->addItem(QString("Ac:184Hz Gy:188Hz"),1);
+    ui->comboBoxDLPF->addItem(QString("Ac: 94Hz Gy: 98Hz"),2);
+    ui->comboBoxDLPF->addItem(QString("Ac: 44Hz Gy: 42Hz"),3);
+    ui->comboBoxDLPF->addItem(QString("Ac: 21Hz Gy: 20Hz"),4);
+    ui->comboBoxDLPF->addItem(QString("Ac: 10Hz Gy: 10Hz"),5);
+    ui->comboBoxDLPF->addItem(QString("Ac:  5Hz Gy:  5Hz"),6);
+    ui->comboBoxDLPF->setCurrentIndex(0);
+
     frecuenciaMuestreo=ui->comboBoxFrecuenciaMuestreo->currentText().toDouble();
     mostrarFrecuenciaMuestreo(QString::number(frecuenciaMuestreo,'f',2));
-    mostrarFiltroPasaBajo("Desactivado");
+    mostrarFiltroPasaBajo(ui->comboBoxDLPF->currentText());
 }
 
 void AjustesSensores::mostrarFrecuenciaMuestreo(const QString SampleRate)
@@ -113,7 +122,7 @@ void AjustesSensores::aplicar()
         if (messageBox.exec() == QMessageBox::Yes){
             ajustesactuales.configuracionGiroscopio=ui->comboBoxGscale->currentIndex();
             ajustesactuales.configuracionAcelerometro=ui->comboBoxAscale->currentIndex();
-            ajustesactuales.filtroPasaBajo = ui->spinBoxDLPF->value();
+            ajustesactuales.filtroPasaBajo = ui->comboBoxDLPF->currentIndex();
             ajustesactuales.divisorFrecuenciaMuestreo = ui->comboBoxFrecuenciaMuestreo->currentIndex();
             hide();
 
@@ -122,13 +131,13 @@ void AjustesSensores::aplicar()
     else{
         ajustesactuales.configuracionGiroscopio=ui->comboBoxGscale->currentIndex();
         ajustesactuales.configuracionAcelerometro=ui->comboBoxAscale->currentIndex();
-        ajustesactuales.filtroPasaBajo = ui->spinBoxDLPF->value();
+        ajustesactuales.filtroPasaBajo = ui->comboBoxDLPF->currentIndex();
         ajustesactuales.divisorFrecuenciaMuestreo = ui->comboBoxFrecuenciaMuestreo->currentIndex();
         hide();
     }
 }
 
-void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
+void AjustesSensores::on_comboBoxDLPF_currentIndexChanged(int arg1)
 {
     const int indiceCBFrecuenciaMuestreo=ui->comboBoxFrecuenciaMuestreo->currentIndex();
     if(arg1==0){
@@ -138,7 +147,6 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
 
         ui->comboBoxFrecuenciaMuestreo->setCurrentIndex(indiceCBFrecuenciaMuestreo);
         mostrarFrecuenciaMuestreo(ui->comboBoxFrecuenciaMuestreo->currentText());
-        mostrarFiltroPasaBajo("Desactivado");
     }
     else{
         ui->comboBoxFrecuenciaMuestreo->clear();
@@ -147,17 +155,6 @@ void AjustesSensores::on_spinBoxDLPF_valueChanged(int arg1)
 
         ui->comboBoxFrecuenciaMuestreo->setCurrentIndex(indiceCBFrecuenciaMuestreo);
         mostrarFrecuenciaMuestreo(ui->comboBoxFrecuenciaMuestreo->currentText());
-        if(arg1==1)
-            mostrarFiltroPasaBajo("Ac:184Hz Gy:188Hz ");
-        if(arg1==2)
-            mostrarFiltroPasaBajo("Ac: 94Hz Gy: 98Hz  ");
-        if(arg1==3)
-            mostrarFiltroPasaBajo("Ac: 44Hz Gy: 42Hz ");
-        if(arg1==4)
-            mostrarFiltroPasaBajo("Ac: 21Hz Gy: 20Hz ");
-        if(arg1==5)
-            mostrarFiltroPasaBajo("Ac: 10Hz Gy: 10Hz ");
-        if(arg1==6)
-            mostrarFiltroPasaBajo("Ac:  5Hz Gy:  5Hz ");
     }
+    mostrarFiltroPasaBajo(ui->comboBoxDLPF->currentText());
 }

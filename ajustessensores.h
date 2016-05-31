@@ -31,7 +31,7 @@ public:
 
 
 private slots:
-    void on_spinBoxDLPF_valueChanged(int arg1);
+    void on_comboBoxDLPF_currentIndexChanged(int arg1);
     void aplicar();
     void mostrarFrecuenciaMuestreo(const QString SampleRate);
     void mostrarFiltroPasaBajo(const QString DLPF);

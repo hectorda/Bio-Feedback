@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -550,16 +550,6 @@ Resultados</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="doubleSpinBoxAlphaFiltroComp">
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="value">
-           <double>0.020000000000000</double>
           </property>
          </widget>
         </item>
@@ -1257,13 +1247,8 @@ QPushButton:hover {
                <string>Resultados</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_6">
-               <item row="1" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotResultados" native="true"/>
-               </item>
                <item row="0" column="0">
-                <widget class="QWidget" name="widget_2" native="true">
-                 <layout class="QGridLayout" name="gridLayout_13"/>
-                </widget>
+                <widget class="QCustomPlot" name="qCustomPlotResultados" native="true"/>
                </item>
               </layout>
              </widget>
