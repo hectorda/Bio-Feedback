@@ -173,6 +173,7 @@ void MainWindow::mostrarResultados()
     analisisGraficoMuestras->setListaMuestras(prueba->listaMuestras);
     mostrarBotonesPrueba();
     activarTabs();
+    activarActions();
     ui->centralWidget->adjustSize();
 }
 
@@ -554,10 +555,12 @@ void MainWindow::configurarArduino()
     else
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
 }
+/*
+ *Limpieza de prueba->listas y de los elementos de la interfaz
+ */
 
 void MainWindow::limpiarListasyOcultarBotones()
 {
-    //Limpieza de prueba->listas y de los elementos de la interfaz
     prueba->limpiarListas();
     reportes->vaciarTablas();
     reportes->vaciarGraficos();
@@ -566,9 +569,26 @@ void MainWindow::limpiarListasyOcultarBotones()
     analisisGraficoMuestras->hide();
 }
 
+void MainWindow::desactivarActions()
+{
+    QList<QAction *> actionList = this->findChildren<QAction *>();
+    foreach (QAction *action, actionList) {
+        action->blockSignals(true);
+    }
+}
+
+void MainWindow::activarActions()
+{
+    QList<QAction *> actionList = this->findChildren<QAction *>();
+    foreach (QAction *action, actionList) {
+        action->blockSignals(false);
+    }
+}
+
 void MainWindow::iniciarPrueba()
 {
     limpiarListasyOcultarBotones();
+    desactivarActions();
     const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
     prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
     prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
@@ -648,17 +668,24 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         //Calculo y de Angulos y Desplazamiento
         Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
         const QString orientacion=prueba->getOrientacion().toLower();
-        const double alpha=ui->doubleSpinBoxAlphaFiltroComp->value();
+        const double alpha=ajustesCalculoAngulo->alpha;
+        const QString filtroAngulo=ajustesCalculoAngulo->filtro.toLower();
 
-        if(!prueba->listaAngulos.isEmpty()){
-            Angulo *anguloAnterior=prueba->listaAngulos.last();
-            //angulo->calcularAngulo(orientacion,dato);
-            //angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
-            angulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
-        }
-        else{
+        if(filtroAngulo.contains("sin filtro"))
             angulo->calcularAngulo(orientacion,dato);
-            angulo->setAnguloInicialKalman(angulo->getAnguloX(),angulo->getAnguloY());
+        else{
+            if(!prueba->listaAngulos.isEmpty()){
+                Angulo *anguloAnterior=prueba->listaAngulos.last();
+                if(filtroAngulo.contains("kalman"))
+                    angulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
+                if(filtroAngulo.contains("complementario"))
+                    angulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+            }
+            else{
+                angulo->calcularAngulo(orientacion,dato);
+                if(filtroAngulo.contains("kalman"))
+                    angulo->setAnguloInicialKalman(angulo->getAnguloX(),angulo->getAnguloY());
+            }
         }
 //        Angulo *angt=new Angulo;
 //        angt->calcularAngulo(orientacion,dato);

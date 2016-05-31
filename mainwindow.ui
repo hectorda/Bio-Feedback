@@ -1942,6 +1942,10 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionConfigurar_Angulo">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/angulo.png</normaloff>:/images/angulo.png</iconset>
+   </property>
    <property name="text">
     <string>Configurar Calculo Angulo</string>
    </property>

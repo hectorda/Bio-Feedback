@@ -57,6 +57,8 @@ private slots:
     void iniciarPrueba();
     void configurarArduino();
     void limpiarListasyOcultarBotones();
+    void desactivarActions();
+    void activarActions();
     void mostrarResultados();
     void slotGraficarTiempoReal(const double x, const double y);
     void marcarObjetivos(const double x, const double y);

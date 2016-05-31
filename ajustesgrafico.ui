@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Ajustes Elementos del Grafico</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="images.qrc">
+    <normaloff>:/images/diana.png</normaloff>:/images/diana.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">QDialog{
 background-color:rgb(221, 221, 221)
@@ -222,6 +226,8 @@ border: 3px solid rgb(102, 0, 0);
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

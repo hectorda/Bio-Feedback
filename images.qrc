@@ -32,5 +32,6 @@
         <file>images/IMU/horizontalarriba.png</file>
         <file>images/IMU/verticalderecha.png</file>
         <file>images/IMU/verticalizquierda.png</file>
+        <file>images/angulo.png</file>
     </qresource>
 </RCC>

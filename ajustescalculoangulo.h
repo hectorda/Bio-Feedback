@@ -14,9 +14,18 @@ class AjustesCalculoAngulo : public QDialog
 public:
     explicit AjustesCalculoAngulo(QWidget *parent = 0);
     ~AjustesCalculoAngulo();
+    QString filtro;
+    double alpha;
+
+private slots:
+    void on_comboBoxFiltroAngulo_currentTextChanged(const QString &arg1);
+    void aplicar();
 
 private:
     Ui::AjustesCalculoAngulo *ui;
+    void inicializar();
+    void conexiones();
+
 };
 
 #endif // AJUSTESCALCULOANGULO_H
