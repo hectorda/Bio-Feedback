@@ -28,8 +28,9 @@ public:
     void vaciarTablas();
     void vaciarGraficos();    
     void vaciarInformeReporte();
-    void agregarDatosInformeReporteHTML(const QString busq,const QString dato);
+    void agregarDatosInformeReporteImagen(const QString busq, const QImage imagen);
     void agregarDatosInformeReportePlainText(const QString busq,const QString dato);
+    void agregarDatosInformeReporteHTML(const QString busq, const QString dato);
     void setDatosTablaAngulos(QVector<Angulo *> listaAngulos);
     void setDatosTablaDesplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
     void setDatosTablaMuestras(QVector<Muestra *> listaMuestras);

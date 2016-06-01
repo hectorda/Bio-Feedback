@@ -70,16 +70,22 @@ void Reportes::vaciarInformeReporte()
     inicializarInformeReporte();
 }
 
-void Reportes::agregarDatosInformeReporteHTML(const QString busq,const QString dato)
+void Reportes::agregarDatosInformeReporteImagen(const QString busq,const QImage imagen)
 {
     textEditReporte->find(busq);
-    textEditReporte->insertHtml(dato);
+    textEditReporte->textCursor().insertImage(imagen);
 }
 
 void Reportes::agregarDatosInformeReportePlainText(const QString busq, const QString dato)
 {
     textEditReporte->find(busq);
     textEditReporte->insertPlainText(dato);
+}
+
+void Reportes::agregarDatosInformeReporteHTML(const QString busq, const QString dato)
+{
+    textEditReporte->find(busq);
+    textEditReporte->insertHtml(dato);
 }
 
 void Reportes::replotGraficoAngulos()

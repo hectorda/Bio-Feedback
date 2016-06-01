@@ -185,11 +185,10 @@ void MainWindow::llenarInformeReporte()
     reportes->agregarDatosInformeReportePlainText(":nombreP","Hector Peredo");
     reportes->agregarDatosInformeReportePlainText(":numeroP",QString::number(prueba->getNumeroPrueba()));
     reportes->agregarDatosInformeReportePlainText(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
-    ui->qCustomPlotResultados->savePng("images/resultado.png",400,400);
-    reportes->agregarDatosInformeReporteHTML(":graficobarras",QString("<img src="+QDir().absolutePath()+"/images/resultado.png>"));
+    reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
     ui->qCustomPlotGraficoDesplazamientos->rescaleAxes();
-    ui->qCustomPlotGraficoDesplazamientos->savePng("images/desplazamientos.png",400,400);
-    reportes->agregarDatosInformeReporteHTML(":graficodesp",QString("<img src="+QDir().absolutePath()+"/images/desplazamientos.png"));
+    reportes->agregarDatosInformeReporteImagen(":graficodesp",ui->qCustomPlotGraficoDesplazamientos->toPixmap(400,400).toImage());
+
     ui->textEditReporte->moveCursor(QTextCursor::Start);
 }
 
