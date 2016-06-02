@@ -36,6 +36,7 @@ public:
     void calcularEstadisticosDesplazamientos(const int inicio, const int fin);
     void calcularEstadisticosMuestras(const int inicio, const int fin);
 
+    QImage obtenerImagenTablaEstadisticos();
 private:
     Ui::AnalisisGrafico *ui;
     QVector<Angulo*> listaAngulos;

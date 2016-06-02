@@ -122,9 +122,6 @@ void Reportes::inicializarInformeReporte()
     QString str = codec->toUnicode(data);
     if (Qt::mightBeRichText(str))
         textEditReporte->setHtml(data);
-    if(QDir("images").exists())
-        QDir().remove("images");
-    QDir().mkdir("images");
 }
 
 void Reportes::inicializarGraficoResultados()

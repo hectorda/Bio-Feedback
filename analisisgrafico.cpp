@@ -599,3 +599,8 @@ void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int f
     ui->tableWidgetEstadisticos->setItem(4,7,new QTableWidgetItem(QString::number(rangoGyY)));
     ui->tableWidgetEstadisticos->setItem(5,7,new QTableWidgetItem(QString::number(rangoGyZ)));
 }
+
+QImage AnalisisGrafico::obtenerImagenTablaEstadisticos()
+{
+    return ui->tableWidgetEstadisticos->grab().toImage();
+}

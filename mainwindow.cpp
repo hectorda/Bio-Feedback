@@ -188,7 +188,7 @@ void MainWindow::llenarInformeReporte()
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
     ui->qCustomPlotGraficoDesplazamientos->rescaleAxes();
     reportes->agregarDatosInformeReporteImagen(":graficodesp",ui->qCustomPlotGraficoDesplazamientos->toPixmap(400,400).toImage());
-
+    reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientos->obtenerImagenTablaEstadisticos());
     ui->textEditReporte->moveCursor(QTextCursor::Start);
 }
 
