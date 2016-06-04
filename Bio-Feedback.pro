@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     prueba.cpp \
     muestra.cpp \
     Kalman.cpp \
-    ajustescalculoangulo.cpp
+    ajustescalculoangulo.cpp \
+    acerca.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     prueba.h \
     muestra.h \
     Kalman.h \
-    ajustescalculoangulo.h
+    ajustescalculoangulo.h \
+    acerca.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
@@ -54,7 +56,8 @@ FORMS    += mainwindow.ui \
     ajustesgrafico.ui \
     sql.ui \
     analisisgrafico.ui \
-    ajustescalculoangulo.ui
+    ajustescalculoangulo.ui \
+    acerca.ui
 
 
 RESOURCES += \

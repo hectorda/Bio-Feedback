@@ -21,7 +21,9 @@
 #include <desplazamiento.h>
 #include <sql.h>
 #include <prueba.h>
-#include <Kalman.h>
+
+#include <acerca.h>
+
 
 namespace Ui {
 class MainWindow;

@@ -24,7 +24,7 @@ public:
     QStringList listarNombresPacientes();
     QStringList listarRutPacientes();
     QStringList buscarPacienteporRut(const QString rut);
-
+    void tabAgregarPaciente(const QString rut);
 
 private:
     Ui::SQL *ui;

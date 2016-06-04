@@ -33,5 +33,9 @@
         <file>images/IMU/verticalderecha.png</file>
         <file>images/IMU/verticalizquierda.png</file>
         <file>images/angulo.png</file>
+        <file>images/SQL/delete.png</file>
+        <file>images/SQL/edit.png</file>
+        <file>images/SQL/update.png</file>
+        <file>images/SQL/insert.png</file>
     </qresource>
 </RCC>

@@ -1815,8 +1815,9 @@ QProgressBar:hover {
    </widget>
    <widget class="QMenu" name="menuAcerca_de">
     <property name="title">
-     <string>Acerca</string>
+     <string>Ayuda</string>
     </property>
+    <addaction name="actionAcerca"/>
     <addaction name="actionQT"/>
    </widget>
    <widget class="QMenu" name="menuBase_de_Datos">
@@ -1895,10 +1896,7 @@ QProgressBar:hover {
      <normaloff>:/images/qt-icon.png</normaloff>:/images/qt-icon.png</iconset>
    </property>
    <property name="text">
-    <string>Qt</string>
-   </property>
-   <property name="shortcut">
-    <string>F1</string>
+    <string>Acerca de Qt</string>
    </property>
   </action>
   <action name="actionInicio">
@@ -1960,6 +1958,14 @@ QProgressBar:hover {
    </property>
    <property name="text">
     <string>Configurar Calculo Angulo</string>
+   </property>
+  </action>
+  <action name="actionAcerca">
+   <property name="text">
+    <string>Acerca de BioFeed-Back</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>

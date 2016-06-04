@@ -18,6 +18,7 @@ void SQL::inicializar()
 {
     ui->setupUi(this);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     this->conectar();
     ui->tabWidget->setCurrentWidget(ui->tab_tablaPacientes);
     ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
@@ -177,6 +178,13 @@ bool SQL::agregarPaciente(const QString rut,const QString nombre, const QString 
      }
 
     return query_ok;
+}
+
+void SQL::tabAgregarPaciente(const QString rut)
+{
+    ui->lineEditRut->setText(rut);
+    ui->tabWidget->setCurrentWidget(ui->tab_AgregarPaciente);
+    exec();
 }
 
 void SQL::on_pushButtonAgregar_clicked()

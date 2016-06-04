@@ -115,6 +115,7 @@ void MainWindow::conexiones()
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
+    connect(ui->actionAcerca,QAction::triggered,[=]{ Acerca *acerca=new Acerca(this); acerca->exec();});
     connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
 }
 
@@ -1083,9 +1084,8 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
             messageBox.setButtonText(QMessageBox::Yes, tr("Agregar"));
             messageBox.setButtonText(QMessageBox::No, tr("No"));
 
-            if (messageBox.exec() == QMessageBox::Yes){
-               db->show();
-            }
+            if (messageBox.exec() == QMessageBox::Yes)
+               db->tabAgregarPaciente(rut);
         }
         else{
             ui->labelNombrePaciente->setText("Nombre: "+datos.at(0));
