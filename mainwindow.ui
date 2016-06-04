@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1250,13 +1250,6 @@ QPushButton:hover {
                <item row="1" column="0">
                 <widget class="QCustomPlot" name="qCustomPlotResultados" native="true"/>
                </item>
-               <item row="2" column="0">
-                <widget class="QPushButton" name="pushButtonGuardarReportePDF">
-                 <property name="text">
-                  <string>Guardar Reporte</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="0">
                 <widget class="QTextEdit" name="textEditReporte">
                  <property name="documentTitle">
@@ -1274,6 +1267,13 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButtonGuardarReportePDF">
+                 <property name="text">
+                  <string>Guardar Reporte</string>
                  </property>
                 </widget>
                </item>
@@ -1808,6 +1808,7 @@ QProgressBar:hover {
      <string>Archivo</string>
     </property>
     <addaction name="actionInicio"/>
+    <addaction name="separator"/>
     <addaction name="actionExportar"/>
     <addaction name="actionImportar"/>
     <addaction name="separator"/>
@@ -1905,7 +1906,7 @@ QProgressBar:hover {
      <normaloff>:/images/home.png</normaloff>:/images/home.png</iconset>
    </property>
    <property name="text">
-    <string>Inicio</string>
+    <string>Página Principal</string>
    </property>
    <property name="toolTip">
     <string>Ir a Pagina Principal</string>

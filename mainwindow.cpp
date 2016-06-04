@@ -105,6 +105,7 @@ void MainWindow::conexiones()
             mostrarResultados();
             ui->stackedWidget->setCurrentWidget(ui->widgetTest);
             ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
+            ui->tabWidgetGrafico_Resultados->currentChanged(1);
         }
     });
 
@@ -902,7 +903,8 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
         reportes->guardarImagenGrafico(ui->qCustomPlotGrafico,1000,1000);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_resultados)
-        reportes->guardarImagenGrafico(ui->qCustomPlotResultados,1000,1000);
+        //reportes->guardarImagenGrafico(ui->qCustomPlotResultados,1000,1000);
+        reportes->guardarInformeReportePDF();
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoAngulos)
         reportes->guardarImagenGrafico(ui->qCustomPlotGraficoAngulos,1920,1080);
@@ -965,7 +967,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
         ui->qCustomPlotResultados->replot();
 
         ui->pushButtonGuardarImagen->show();
-        ui->labelGuardarImagen->setText("Guardar\nGráfico\nResultados");
+        ui->labelGuardarImagen->setText("Guardar\nReporte");
         ui->labelGuardarImagen->show();
 
         ui->pushButtonGuardarMuestras->hide();
