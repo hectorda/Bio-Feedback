@@ -21,12 +21,14 @@ public:
     bool conectar();
     void consulta();
     QSqlDatabase db;
-    bool agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
+    bool agregarPaciente(Paciente paciente);
     QStringList listarNombresPacientes();
     QStringList listarRutPacientes();
     Paciente buscarPacienteporRut(const QString rut);
-    bool editarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
-    void tabAgregarPaciente(const QString rut);
+    bool editarPaciente(Paciente paciente);
+    void abrirTabAgregarPaciente(const QString rut);
+
+    bool existenCamposVacios(Paciente paciente);
 
 private:
     Ui::SQL *ui;

@@ -23,6 +23,9 @@ public:
     double getAltura() const;
     void setAltura(double value);
 
+    QString getSexo() const;
+    void setSexo(const QString &value);
+
     bool isEmpty();
 
 private:
@@ -30,7 +33,8 @@ private:
     QString nombre;
     QString apellido;
     int edad;
-    double altura;
+    int altura;
+    QString sexo;
 
 };
 

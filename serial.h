@@ -5,23 +5,19 @@
 #include <QSerialPort>
 #include <muestra.h>
 #include <ajustespuertoserial.h>
-#include <QTextStream>
-#include <QMessageBox>
 
 class Serial : public QObject
 {
     Q_OBJECT
 public:
-    QSerialPort *serial;
     explicit Serial(QObject *parent = 0);
     Serial(QObject *parent,QSerialPort *serial);
     bool abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial);
     void cerrarPuertoSerial();
 
 private:
-    void inicializar();
+    QSerialPort *serial;
     void conexiones();
-    QByteArray buffer;
 
 signals:
     void datosLeidos(double,double,double,double,double,double);

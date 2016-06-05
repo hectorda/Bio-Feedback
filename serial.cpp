@@ -11,11 +11,6 @@ Serial::Serial(QObject *parent, QSerialPort *serial) : QObject(parent),serial(se
     conexiones();
 }
 
-void Serial::inicializar()
-{
-
-}
-
 void Serial::conexiones()
 {
     connect(serial,SIGNAL(readyRead()),this,SLOT(leerDatosSerial()));
@@ -26,20 +21,14 @@ bool Serial::abrirPuertoSerial(AjustesPuertoSerial::Ajustes ajustesSerial)
 {
     serial->setPortName(ajustesSerial.portName);
     serial->setBaudRate(ajustesSerial.baudRate);
-    QTextStream(stdout)<<"Baudios: "<< serial->baudRate()<<endl;
-    QTextStream(stdout)<<"portName"<< serial->portName()<<endl;
     serial->setStopBits(QSerialPort::OneStop);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
     serial->setFlowControl(QSerialPort::NoFlowControl);
     if (serial->open(QIODevice::ReadWrite)){
-        //serial->clear();
         serial->setDataTerminalReady(true);
         serial->setRequestToSend(true);
         return true;
-    } else {
-        //QMessageBox::critical(0, tr("Error"), serial->errorString());
-        return false;
     }
     return false;
 }
@@ -67,10 +56,8 @@ void Serial::leerDatosSerial()
     }
 }
 
-
 void Serial::escribirDatosSerial(QString cadena)
 {
     serial->clear();
     serial->write(cadena.toLocal8Bit());
-
 }

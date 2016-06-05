@@ -59,7 +59,6 @@ void MainWindow::inicializar()
     prueba=new Prueba(this);
 
     db = new SQL;
-    db->consulta();
 
     //Crean instancias de Objetos
     objetoAngulo=new Angulo;
@@ -114,7 +113,7 @@ void MainWindow::conexiones()
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(exec()));
     connect(ui->actionConfigurar_Angulo,SIGNAL(triggered(bool)),ajustesCalculoAngulo,SLOT(exec()));
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
-    connect(ui->actionAgregar_Paciente,QAction::triggered,[=]{ db->tabAgregarPaciente("");});
+    connect(ui->actionAgregar_Paciente,QAction::triggered,[=]{ db->abrirTabAgregarPaciente("");});
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
     connect(ui->actionAcerca,QAction::triggered,[=]{ Acerca *acerca=new Acerca(this); acerca->exec();});
@@ -1100,12 +1099,12 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
             messageBox.setButtonText(QMessageBox::No, tr("No"));
 
             if (messageBox.exec() == QMessageBox::Yes)
-               db->tabAgregarPaciente(rut);
+               db->abrirTabAgregarPaciente(rut);
         }
         else{
             ui->labelNombrePaciente->setText("Nombre: "+paciente.getNombre());
             ui->labelApellidoPaciente->setText("Apellido: "+paciente.getApellido());
-            ui->labelEdadPaciente->setText("Edad: "+paciente.getEdad());
+            ui->labelEdadPaciente->setText("Edad: "+ QString::number(paciente.getEdad()));
             prueba->setPaciente(paciente);
         }
     }

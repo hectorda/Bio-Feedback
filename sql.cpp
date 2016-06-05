@@ -22,6 +22,8 @@ void SQL::inicializar()
     this->conectar();
     ui->tabWidget->setCurrentWidget(ui->tab_tablaPacientes);
     ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
+    ui->lineEditAltura->setValidator(new QIntValidator(0, 299) );
+    ui->lineEditAltura_2->setValidator(new QIntValidator(0, 299) );
     ui->tabWidget->setTabEnabled(2,false);
     actualizarTablaPacientes();
 }
@@ -36,11 +38,10 @@ bool SQL::conectar() //Se intenta conectar y crear la base de datos en caso de q
     if(QSqlDatabase::isDriverAvailable("QSQLITE")) //Verificamos que el driver QSQLITE este instalado.
     {
         db = QSqlDatabase::addDatabase("QSQLITE"); //Definimos que se usara SQLITE como driver
-        db.setDatabaseName(QDir::homePath()+QDir::separator()+"BaseDatosBioFeedBack.sqlite"); //Nuestra db en nuestro Home.
+        db.setDatabaseName("BaseDatosBioFeedBack.sqlite"); //Nuestra db en nuestro Home.
         bool db_ok = db.open(); //Creamos una bandera para ver si se puedo abrir la DB
         QSqlQuery query;
-        query.exec("CREATE TABLE IF NOT EXISTS admins (id integer primary key autoincrement, user text, passwd varchar[8])"); // Crea Tabla ADMINS solo si no existe.
-        query.exec("CREATE TABLE IF NOT EXISTS pacientes (rut integer primary key, nombre text,apellido text, edad integer,sexo varchar[15])"); // Crea Tabla ADMINS solo si no existe.
+        query.exec("CREATE TABLE IF NOT EXISTS pacientes (rut integer primary key, nombre text,apellido text, edad integer,sexo text,altura integer)"); // Crea Tabla ADMINS solo si no existe.
         return db_ok;  //Retornamos true al metodo.
 
     }
@@ -49,48 +50,19 @@ bool SQL::conectar() //Se intenta conectar y crear la base de datos en caso de q
     return false;
 }
 
-void SQL::consulta()
-{
-    db.open();
-    if(db.isOpen())
-    {
-        QSqlQuery query;
-        QString user="admin";
-        query.prepare("SELECT id FROM admins WHERE user= (:user)");
-        query.bindValue(":user", user);
-        query.exec();
-
-        if(!query.next()){
-            QTextStream stdout << "Agregando el admin"<<endl;
-            query.exec("INSERT INTO admins (user, passwd)" "VALUES('admin','12345')");
-        }
-
-        QTextStream stdout <<"Consultando a la Pseudo-Base de Datos"<<endl;
-
-        if(query.exec("SELECT * FROM admins"))
-        {
-            while(query.next())
-            {
-                QTextStream stdout  << "id: " << query.value(0).toString();
-                QTextStream stdout  << " user: " << query.value(1).toString();
-                QTextStream stdout  << " paswd: " << query.value(2).toString()<<endl;
-            }
-        }
-        db.close();
-    }
-}
-
 void SQL::actualizarTablaPacientes()
 {
     db.open();
     if(db.isOpen())
     {
         QSqlQueryModel *model = new QSqlQueryModel;
-        model->setQuery("SELECT rut,nombre,apellido,edad FROM pacientes");
+        model->setQuery("SELECT rut,nombre,apellido,edad,sexo,altura FROM pacientes");
         model->setHeaderData(0, Qt::Horizontal, tr("Rut"));
         model->setHeaderData(1, Qt::Horizontal, tr("Nombre"));
         model->setHeaderData(2, Qt::Horizontal, tr("Apellido"));
         model->setHeaderData(3, Qt::Horizontal, tr("Edad"));
+        model->setHeaderData(4, Qt::Horizontal, tr("Sexo"));
+        model->setHeaderData(5, Qt::Horizontal, tr("Altura"));
 
         ui->tableView->setModel(model);
         ui->tableView->show();
@@ -99,25 +71,10 @@ void SQL::actualizarTablaPacientes()
     }
 }
 
-QStringList SQL::listarNombresPacientes()
-{
-    QStringList nombres;
-    db.open();
-    if(db.isOpen()){
-        QSqlQuery query;
-        query.prepare("SELECT nombre FROM pacientes");
-
-        if(query.exec()){
-            while(query.next())
-            {
-                nombres.append(query.value(0).toString());
-            }
-        }
-        db.close();
-     }
-    return nombres;
-}
-
+/*
+ * Para el completer
+ *
+*/
 QStringList SQL::listarRutPacientes()
 {
     QStringList ruts;
@@ -142,7 +99,7 @@ Paciente SQL::buscarPacienteporRut(const QString rut)
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
-        query.prepare("SELECT nombre,apellido,edad FROM pacientes where rut = (:rut)");
+        query.prepare("SELECT nombre,apellido,edad,sexo,altura FROM pacientes where rut = (:rut)");
         query.bindValue(":rut",rut);
         if(query.exec()){
             while(query.next())
@@ -151,58 +108,56 @@ Paciente SQL::buscarPacienteporRut(const QString rut)
                 paciente.setNombre(query.value(0).toString());
                 paciente.setApellido(query.value(1).toString());
                 paciente.setEdad(query.value(2).toInt());
+                paciente.setSexo(query.value(3).toString());
+                paciente.setAltura(query.value(4).toDouble());
             }
         }
         db.close();
      }
     return paciente;
-
 }
 
-bool SQL::editarPaciente(const QString rut, const QString nombre, const QString apellido, const int edad)
+bool SQL::agregarPaciente(Paciente paciente)
 {
     bool query_ok=false;
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
-        query.prepare("UPDATE pacientes SET nombre=:nombre,apellido=:apellido,edad=:edad"
-                   "WHERE rut=:rut");
-        query.bindValue(":rut", rut.toInt());
-        query.bindValue(":nombre", nombre);
-        query.bindValue(":apellido", apellido);
-        query.bindValue(":edad",edad);
-        if(query.exec())
-            query_ok=true;
-        else
-            query_ok=false;
-        db.close();
-     }
-    return query_ok;
-}
-
-bool SQL::agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad)
-{
-    bool query_ok=false;
-    db.open();
-    if(db.isOpen()){
-        QSqlQuery query;
-        query.prepare("INSERT INTO pacientes (rut,nombre, apellido,edad)"
-                   "VALUES(:rut,:nombre,:apellido,:edad)");
-        query.bindValue(":rut", rut.toInt());
-        query.bindValue(":nombre", nombre);
-        query.bindValue(":apellido", apellido);
-        query.bindValue(":edad",edad);
-        if(query.exec())
-            query_ok=true;
-        else
-            query_ok=false;
+        query.prepare("INSERT INTO pacientes (rut,nombre, apellido,edad,sexo,altura)"
+                   "VALUES(:rut,:nombre,:apellido,:edad,:sexo,:altura)");
+        query.bindValue(":rut",paciente.getRut());
+        query.bindValue(":nombre", paciente.getNombre());
+        query.bindValue(":apellido", paciente.getApellido());
+        query.bindValue(":edad",paciente.getEdad());
+        query.bindValue(":sexo",paciente.getSexo());
+        query.bindValue(":altura",paciente.getAltura());
+        query_ok=query.exec();
         db.close();
      }
 
     return query_ok;
 }
 
-void SQL::tabAgregarPaciente(const QString rut)
+bool SQL::editarPaciente(Paciente paciente)
+{
+    bool query_ok=false;
+    db.open();
+    if(db.isOpen()){
+        QSqlQuery query;
+        query.prepare("UPDATE pacientes SET nombre=:nombre,apellido=:apellido,edad=:edad,sexo=:sexo,altura=:altura WHERE rut=:rut");
+        query.bindValue(":rut",paciente.getRut());
+        query.bindValue(":nombre", paciente.getNombre());
+        query.bindValue(":apellido", paciente.getApellido());
+        query.bindValue(":edad",paciente.getEdad());
+        query.bindValue(":sexo",paciente.getSexo());
+        query.bindValue(":altura",paciente.getAltura());
+        query_ok=query.exec();
+        db.close();
+     }
+    return query_ok;
+}
+
+void SQL::abrirTabAgregarPaciente(const QString rut)
 {
     ui->lineEditRut->setText(rut);
     ui->tabWidget->setCurrentWidget(ui->tab_AgregarPaciente);
@@ -211,66 +166,37 @@ void SQL::tabAgregarPaciente(const QString rut)
 
 void SQL::on_pushButtonAgregar_clicked()
 {
-    const QString rut=ui->lineEditRut->text();
-    const QString nombre=ui->lineEditNombre->text();
-    const QString apellido=ui->lineEditApellido->text();
-    const int edad=ui->spinBoxEdad->value();
-    if (rut.isEmpty()|| nombre.isEmpty() || apellido.isEmpty() || edad==0)
+    Paciente paciente;
+    paciente.setRut(ui->lineEditRut->text());
+    paciente.setNombre(ui->lineEditNombre->text());
+    paciente.setApellido(ui->lineEditApellido->text());
+    paciente.setEdad(ui->spinBoxEdad->value());
+    paciente.setSexo(ui->comboBox->currentText());
+    paciente.setAltura(ui->lineEditAltura->text().toDouble());
+
+    if (existenCamposVacios(paciente))
         QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
     else{
 
-        if(buscarPacienteporRut(rut).isEmpty()){
-
-            if(agregarPaciente(rut,nombre,apellido,edad))
+        if(buscarPacienteporRut(paciente.getRut()).isEmpty()){
+            if(agregarPaciente(paciente))
                 QMessageBox::information(this,"Paciente agregado","El Paciente a sido agragado exitosamente");
             else
                 QMessageBox::critical(this,"Error al agregar","No se pudo agregar el Paciente");
         }
         else
-            QMessageBox::warning(this,"Paciente ya existe",tr("El Paciente con rut %1 ya existe en los registros").arg(rut));
+            QMessageBox::warning(this,"Paciente ya existe",tr("El Paciente con rut %1 ya existe en los registros").arg(paciente.getRut()));
     }
 }
 
-void SQL::on_tabWidget_currentChanged(int index)
-{
-    (void) index;
-    if(ui->tabWidget->currentWidget()==ui->tab_tablaPacientes)
-        actualizarTablaPacientes();
-}
+bool SQL::existenCamposVacios(Paciente paciente){
 
-void SQL::on_lineEditRut_editingFinished()
-{
-    imprimirDigitoVerificador(ui->lineEditRut,ui->lineEditdigitoVerificador);
-}
+    if(paciente.getRut().isEmpty()|| paciente.getNombre().isEmpty() || paciente.getApellido().isEmpty() ||
+            paciente.getEdad()==0 || paciente.getAltura()==0)
+        return true;
 
-void SQL::imprimirDigitoVerificador(QLineEdit *lineEditRut, QLineEdit *lineEditDigito)
-{
-    QString rut;
-    int suma=0;
-    int digito;
+    return false;
 
-    rut=lineEditRut->text();
-    if(rut.isEmpty())
-        lineEditDigito->setText("");
-
-    else{
-        std::reverse(rut.begin(),rut.end());
-        for (int var = 0; var <rut.size(); ++var) {
-            if(var<6)
-                suma+=rut.at(var).digitValue()*(var+2);
-            else
-                suma+=rut.at(var).digitValue()*(var-4);
-        }
-        digito = 11 - suma%11;
-        if (digito<10)
-            lineEditDigito->setText(QString::number(digito));
-        else{
-            if(digito==11)
-                lineEditDigito->setText("0");
-            if (digito==10)
-                lineEditDigito->setText("K");
-        }
-    }
 }
 
 void SQL::on_pushButtonEditarPaciente_clicked()
@@ -288,11 +214,13 @@ void SQL::on_pushButtonEditarPaciente_clicked()
             ui->tabWidget->setTabEnabled(2,true);
             ui->tabWidget->setCurrentIndex(2);
 
-            ui->lineEditRut_2->setText(rut);
+            ui->lineEditRut_2->setText(paciente.getRut());
             ui->lineEditNombre_2->setText(paciente.getNombre());
             ui->lineEditApellido_2->setText(paciente.getApellido());
             ui->spinBoxEdad_2->setValue(paciente.getEdad());
             ui->lineEditAltura_2->setText(QString::number(paciente.getAltura()));
+            ui->comboBox_2->setCurrentText(paciente.getSexo());
+            QTextStream stdout <<paciente.getAltura()<<endl;
             imprimirDigitoVerificador(ui->lineEditRut_2,ui->lineEditdigitoVerificador_2);
         }
         else
@@ -305,6 +233,25 @@ void SQL::on_pushButtonEditarPaciente_clicked()
                                "No se pudo conectar con la Base de Datos.",
                                QMessageBox::Ok);
 
+}
+
+void SQL::on_pushButtonEditarActualizarDatos_clicked()
+{
+    Paciente paciente;
+    paciente.setRut(ui->lineEditRut_2->text());
+    paciente.setNombre(ui->lineEditNombre_2->text());
+    paciente.setApellido(ui->lineEditApellido_2->text());
+    paciente.setEdad(ui->spinBoxEdad_2->value());
+    paciente.setSexo(ui->comboBox_2->currentText());
+    paciente.setAltura(ui->lineEditAltura_2->text().toDouble());
+    if (existenCamposVacios(paciente))
+        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
+    else{
+        if(editarPaciente(paciente))
+            QMessageBox::information(this,"Datos Actualizados","El los datos del Paciente han sido actualizados exitosamente");
+        else
+            QMessageBox::critical(this,"Error al editar datos","No se pudo editar los datos del Paciente");
+    }
 }
 
 void SQL::on_pushButtonEliminarPaciente_clicked()
@@ -353,18 +300,46 @@ void SQL::on_pushButtonEliminarPaciente_clicked()
                                QMessageBox::Ok);
 }
 
-void SQL::on_pushButtonEditarActualizarDatos_clicked()
+void SQL::imprimirDigitoVerificador(QLineEdit *lineEditRut, QLineEdit *lineEditDigito)
 {
-    const QString rut=ui->lineEditRut_2->text();
-    const QString nombre=ui->lineEditNombre_2->text();
-    const QString apellido=ui->lineEditApellido_2->text();
-    const int edad=ui->spinBoxEdad_2->value();
-    if (rut.isEmpty()|| nombre.isEmpty() || apellido.isEmpty() || edad==0)
-        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
+    QString rut;
+    int suma=0;
+    int digito;
+
+    rut=lineEditRut->text();
+    if(rut.isEmpty())
+        lineEditDigito->setText("");
+
     else{
-        if(editarPaciente(rut,nombre,apellido,edad))
-            QMessageBox::information(this,"Datos Actualizados","El los datos del Paciente han sido actualizados exitosamente");
-        else
-            QMessageBox::critical(this,"Error al editar datos","No se pudo editar los datos del Paciente");
+        std::reverse(rut.begin(),rut.end());
+        for (int var = 0; var <rut.size(); ++var) {
+            if(var<6)
+                suma+=rut.at(var).digitValue()*(var+2);
+            else
+                suma+=rut.at(var).digitValue()*(var-4);
+        }
+        digito = 11 - suma%11;
+        if (digito<10)
+            lineEditDigito->setText(QString::number(digito));
+        else{
+            if(digito==11)
+                lineEditDigito->setText("0");
+            if (digito==10)
+                lineEditDigito->setText("K");
+        }
     }
 }
+
+void SQL::on_lineEditRut_editingFinished()
+{
+    imprimirDigitoVerificador(ui->lineEditRut,ui->lineEditdigitoVerificador);
+}
+
+void SQL::on_tabWidget_currentChanged(int index)
+{
+    (void) index;
+    if(ui->tabWidget->currentWidget()==ui->tab_tablaPacientes)
+        actualizarTablaPacientes();
+}
+
+
