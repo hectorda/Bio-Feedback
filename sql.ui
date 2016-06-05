@@ -339,9 +339,9 @@ Listado</string>
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButtonEditarPaciente_2">
+        <widget class="QPushButton" name="pushButtonEditarActualizarDatos">
          <property name="text">
-          <string>PushButton</string>
+          <string>Actualzar Datos</string>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">

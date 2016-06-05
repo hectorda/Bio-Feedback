@@ -25,7 +25,7 @@ public:
     QStringList listarNombresPacientes();
     QStringList listarRutPacientes();
     Paciente buscarPacienteporRut(const QString rut);
-    //bool editarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
+    bool editarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
     void tabAgregarPaciente(const QString rut);
 
 private:
@@ -43,6 +43,7 @@ private slots:
     void on_lineEditRut_editingFinished();
     void on_pushButtonEditarPaciente_clicked();
     void on_pushButtonEliminarPaciente_clicked();
+    void on_pushButtonEditarActualizarDatos_clicked();
 };
 
 #endif // SQL_H

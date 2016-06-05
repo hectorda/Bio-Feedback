@@ -159,6 +159,27 @@ Paciente SQL::buscarPacienteporRut(const QString rut)
 
 }
 
+bool SQL::editarPaciente(const QString rut, const QString nombre, const QString apellido, const int edad)
+{
+    bool query_ok=false;
+    db.open();
+    if(db.isOpen()){
+        QSqlQuery query;
+        query.prepare("UPDATE pacientes SET nombre=:nombre,apellido=:apellido,edad=:edad"
+                   "WHERE rut=:rut");
+        query.bindValue(":rut", rut.toInt());
+        query.bindValue(":nombre", nombre);
+        query.bindValue(":apellido", apellido);
+        query.bindValue(":edad",edad);
+        if(query.exec())
+            query_ok=true;
+        else
+            query_ok=false;
+        db.close();
+     }
+    return query_ok;
+}
+
 bool SQL::agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad)
 {
     bool query_ok=false;
@@ -195,7 +216,7 @@ void SQL::on_pushButtonAgregar_clicked()
     const QString apellido=ui->lineEditApellido->text();
     const int edad=ui->spinBoxEdad->value();
     if (rut.isEmpty()|| nombre.isEmpty() || apellido.isEmpty() || edad==0)
-        QMessageBox::warning(0,"Faltan Ddtos por llenar","Faltan datos por completar.");
+        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
     else{
 
         if(buscarPacienteporRut(rut).isEmpty()){
@@ -208,7 +229,6 @@ void SQL::on_pushButtonAgregar_clicked()
         else
             QMessageBox::warning(this,"Paciente ya existe",tr("El Paciente con rut %1 ya existe en los registros").arg(rut));
     }
-
 }
 
 void SQL::on_tabWidget_currentChanged(int index)
@@ -271,6 +291,7 @@ void SQL::on_pushButtonEditarPaciente_clicked()
             ui->lineEditRut_2->setText(rut);
             ui->lineEditNombre_2->setText(paciente.getNombre());
             ui->lineEditApellido_2->setText(paciente.getApellido());
+            ui->spinBoxEdad_2->setValue(paciente.getEdad());
             ui->lineEditAltura_2->setText(QString::number(paciente.getAltura()));
             imprimirDigitoVerificador(ui->lineEditRut_2,ui->lineEditdigitoVerificador_2);
         }
@@ -330,4 +351,20 @@ void SQL::on_pushButtonEliminarPaciente_clicked()
         QMessageBox::critical(this, "Error al Conexion!",
                                "No se pudo conectar con la Base de Datos.",
                                QMessageBox::Ok);
+}
+
+void SQL::on_pushButtonEditarActualizarDatos_clicked()
+{
+    const QString rut=ui->lineEditRut_2->text();
+    const QString nombre=ui->lineEditNombre_2->text();
+    const QString apellido=ui->lineEditApellido_2->text();
+    const int edad=ui->spinBoxEdad_2->value();
+    if (rut.isEmpty()|| nombre.isEmpty() || apellido.isEmpty() || edad==0)
+        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
+    else{
+        if(editarPaciente(rut,nombre,apellido,edad))
+            QMessageBox::information(this,"Datos Actualizados","El los datos del Paciente han sido actualizados exitosamente");
+        else
+            QMessageBox::critical(this,"Error al editar datos","No se pudo editar los datos del Paciente");
+    }
 }

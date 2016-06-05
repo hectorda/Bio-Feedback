@@ -185,10 +185,20 @@ void MainWindow::mostrarResultados()
 
 void MainWindow::llenarInformeReporte()
 {
-    reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
-    reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
-    reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
-    reportes->agregarDatosInformeReportePlainText(":edadP" ,QString::number(prueba->getPaciente().getEdad()));
+    if(prueba->getPaciente().isEmpty())
+    {
+        reportes->agregarDatosInformeReportePlainText(":rutP","S/N");
+        reportes->agregarDatosInformeReportePlainText(":nombreP","S/N");
+        reportes->agregarDatosInformeReportePlainText(":apellidoP","S/N");
+        reportes->agregarDatosInformeReportePlainText(":edadP","S/N");
+    }
+    else
+    {
+        reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
+        reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
+        reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
+        reportes->agregarDatosInformeReportePlainText(":edadP" ,QString::number(prueba->getPaciente().getEdad()));
+    }
     reportes->agregarDatosInformeReportePlainText(":numeroP",QString::number(prueba->getNumeroPrueba()));
     reportes->agregarDatosInformeReportePlainText(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
@@ -1109,7 +1119,7 @@ void MainWindow::on_stackedWidget_currentChanged(int arg1)
         if(!prueba->getPaciente().getRut().isEmpty())
             ui->labelPaciente->setText("Paciente: " + prueba->getPaciente().getRut());
         else
-            ui->labelPaciente->setText("Paciente: An");
+            ui->labelPaciente->setText("Paciente: Anónimo");
     }
 
 }
