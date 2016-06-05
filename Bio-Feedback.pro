@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     muestra.cpp \
     Kalman.cpp \
     ajustescalculoangulo.cpp \
-    acerca.cpp
+    acerca.cpp \
+    paciente.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     muestra.h \
     Kalman.h \
     ajustescalculoangulo.h \
-    acerca.h
+    acerca.h \
+    paciente.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \

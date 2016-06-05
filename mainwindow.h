@@ -14,14 +14,12 @@
 
 //Clases para Objetos
 #include <qcustomplot.h>
-#include <muestra.h>
-#include <angulo.h>
 #include <serial.h>
 #include <reportes.h>
-#include <desplazamiento.h>
 #include <sql.h>
 #include <prueba.h>
 
+//Ventana de Ayuda->acerca de ...
 #include <acerca.h>
 
 
@@ -71,6 +69,7 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
     void on_pushButtonVolverPrueba_clicked();
+    void on_stackedWidget_currentChanged(int arg1);
 
 signals:
     void emitAnguloGraficoTiempoReal(const double x,const double y);

@@ -114,6 +114,7 @@ void MainWindow::conexiones()
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(exec()));
     connect(ui->actionConfigurar_Angulo,SIGNAL(triggered(bool)),ajustesCalculoAngulo,SLOT(exec()));
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
+    connect(ui->actionAgregar_Paciente,QAction::triggered,[=]{ db->tabAgregarPaciente("");});
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
     connect(ui->actionAcerca,QAction::triggered,[=]{ Acerca *acerca=new Acerca(this); acerca->exec();});
@@ -184,7 +185,10 @@ void MainWindow::mostrarResultados()
 
 void MainWindow::llenarInformeReporte()
 {
-    reportes->agregarDatosInformeReportePlainText(":nombreP","Hector Peredo");
+    reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
+    reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
+    reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
+    reportes->agregarDatosInformeReportePlainText(":edadP" ,QString::number(prueba->getPaciente().getEdad()));
     reportes->agregarDatosInformeReportePlainText(":numeroP",QString::number(prueba->getNumeroPrueba()));
     reportes->agregarDatosInformeReportePlainText(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
@@ -355,66 +359,67 @@ QString MainWindow::obtenerOrientacionSensor()
 void MainWindow::marcarObjetivos(const double x,const double y)
 {
     const int pruebaNumero=prueba->getNumeroPrueba();
-    if(pruebaNumero== 3 || pruebaNumero== 4)
-    {
-        if(!prueba->listaObjetivos.isEmpty())
+    if(!prueba->listaObjetivos.isEmpty()){
+        if(pruebaNumero== 3 || pruebaNumero== 4)
         {
-            static bool centro=true;
-            if(centro)
+            if(!prueba->listaObjetivos.isEmpty())
             {
-
-                QCPItemEllipse *P=prueba->listaObjetivos.last();
-                parpadeoCirculo(P);
-
-                if(PertenecePuntoAlObjetivo(x,y,P))
-                    centro=false;
-            }
-            else{
-
-                QCPItemEllipse *P=prueba->listaObjetivos.at(0);
-                parpadeoCirculo(P);
-
-                if(PertenecePuntoAlObjetivo(x,y,P)){
-                    prueba->listaObjetivos.removeAt(0);
-                    ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
-                    QTextStream(stdout)<<prueba->listaObjetivos.size()<<endl;
-                    centro=true;
-                }
-            }
-        }
-    }
-    if(pruebaNumero==1 || pruebaNumero==2)
-    {
-        if(!prueba->getObjetivosEnOrden())//Si es que se puede ir a cualquier objetivo
-        {
-            for (int var = 0; var < prueba->listaObjetivos.size(); ++var)//Se recorre la prueba->lista de Objetivos y verifica si se pasa por algun objetivo.
-            {
-                QCPItemEllipse *P=prueba->listaObjetivos.at(var);
-                if(P->brush()==QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar)) //Si aun sigue con el color por defecto.
+                static bool centro=true;
+                if(centro)
                 {
+                    QCPItemEllipse *P=prueba->listaObjetivos.last();
+                    parpadeoCirculo(P);
+
+                    if(PertenecePuntoAlObjetivo(x,y,P))
+                        centro=false;
+                }
+                else{
+
+                    QCPItemEllipse *P=prueba->listaObjetivos.at(0);
+                    parpadeoCirculo(P);
+
                     if(PertenecePuntoAlObjetivo(x,y,P)){
-                        prueba->listaObjetivos.removeAt(var);
+                        prueba->listaObjetivos.removeAt(0);
                         ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                        QTextStream(stdout)<<prueba->listaObjetivos.size()<<endl;
+                        centro=true;
                     }
                 }
             }
         }
-        else
+        if(pruebaNumero==1 || pruebaNumero==2)
         {
-           if(!prueba->listaObjetivos.isEmpty())
-           {
-               QCPItemEllipse *P=prueba->listaObjetivos.at(0);
-               parpadeoCirculo(P);
+            if(!prueba->getObjetivosEnOrden())//Si es que se puede ir a cualquier objetivo
+            {
+                for (int var = 0; var < prueba->listaObjetivos.size(); ++var)//Se recorre la prueba->lista de Objetivos y verifica si se pasa por algun objetivo.
+                {
+                    QCPItemEllipse *P=prueba->listaObjetivos.at(var);
+                    if(P->brush()==QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar)) //Si aun sigue con el color por defecto.
+                    {
+                        if(PertenecePuntoAlObjetivo(x,y,P)){
+                            prueba->listaObjetivos.removeAt(var);
+                            ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                        }
+                    }
+                }
+            }
+            else
+            {
+               if(!prueba->listaObjetivos.isEmpty())
+               {
+                   QCPItemEllipse *P=prueba->listaObjetivos.at(0);
+                   parpadeoCirculo(P);
 
-               if( PertenecePuntoAlObjetivo(x,y,P)){
-                   prueba->listaObjetivos.removeAt(0);
-                   ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                   if( PertenecePuntoAlObjetivo(x,y,P)){
+                       prueba->listaObjetivos.removeAt(0);
+                       ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                   }
                }
-           }
+            }
         }
     }
 
-    if(prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
+    if(prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
 }
 
@@ -673,7 +678,6 @@ void MainWindow::regresarInicio()
  * Junto con enviar a los Elementos Graficos de Reporte y
  * Grafico en Tiempo Real el dato que corresponda.
  */
-
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
     if(prueba->listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
@@ -689,7 +693,6 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         const QString orientacion=prueba->getOrientacion().toLower();
         const double alpha=ajustesCalculoAngulo->alpha;
         const QString filtroAngulo=ajustesCalculoAngulo->filtro.toLower();
-
 
         if(filtroAngulo.contains("sin filtro"))
             objetoAngulo->calcularAngulo(orientacion,dato);
@@ -1076,8 +1079,8 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
         QMessageBox::warning(this,"Datos Vacios","Debe Ingresar un Rut a Buscar");
     else
     {
-        QStringList datos=db->buscarPacienteporRut(rut);
-        if(datos.isEmpty()){
+        Paciente paciente=db->buscarPacienteporRut(rut);
+        if(paciente.isEmpty()){
             QMessageBox messageBox(QMessageBox::Question,
                         tr("El Rut no Existe"),
                         tr("El Rut no existe en la base de datos, desea agregarlo?"),
@@ -1090,9 +1093,23 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
                db->tabAgregarPaciente(rut);
         }
         else{
-            ui->labelNombrePaciente->setText("Nombre: "+datos.at(0));
-            ui->labelApellidoPaciente->setText("Apellido: "+datos.at(1));
-            ui->labelEdadPaciente->setText("Edad: "+datos.at(2));
+            ui->labelNombrePaciente->setText("Nombre: "+paciente.getNombre());
+            ui->labelApellidoPaciente->setText("Apellido: "+paciente.getApellido());
+            ui->labelEdadPaciente->setText("Edad: "+paciente.getEdad());
+            prueba->setPaciente(paciente);
         }
     }
+}
+
+void MainWindow::on_stackedWidget_currentChanged(int arg1)
+{
+    (void) arg1;
+    if(ui->stackedWidget->currentWidget()==ui->widgetConfigurarPrueba)
+    {
+        if(!prueba->getPaciente().getRut().isEmpty())
+            ui->labelPaciente->setText("Paciente: " + prueba->getPaciente().getRut());
+        else
+            ui->labelPaciente->setText("Paciente: An");
+    }
+
 }

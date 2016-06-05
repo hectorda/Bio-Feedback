@@ -283,4 +283,14 @@ bool Prueba::importar()
         return false;
 }
 
+Paciente Prueba::getPaciente() const
+{
+    return paciente;
+}
+
+void Prueba::setPaciente(const Paciente &value)
+{
+    paciente = value;
+}
+
 

@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QtSql>
 #include <QMessageBox>
+#include <paciente.h>
 
 namespace Ui {
 class SQL;
@@ -23,7 +24,8 @@ public:
     bool agregarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
     QStringList listarNombresPacientes();
     QStringList listarRutPacientes();
-    QStringList buscarPacienteporRut(const QString rut);
+    Paciente buscarPacienteporRut(const QString rut);
+    //bool editarPaciente(const QString rut,const QString nombre, const QString apellido, const int edad);
     void tabAgregarPaciente(const QString rut);
 
 private:

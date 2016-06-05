@@ -136,9 +136,9 @@ QStringList SQL::listarRutPacientes()
     return ruts;
 }
 
-QStringList SQL::buscarPacienteporRut(const QString rut)
+Paciente SQL::buscarPacienteporRut(const QString rut)
 {
-    QStringList datos;
+    Paciente paciente;
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
@@ -147,14 +147,15 @@ QStringList SQL::buscarPacienteporRut(const QString rut)
         if(query.exec()){
             while(query.next())
             {
-                datos.append(query.value(0).toString());
-                datos.append(query.value(1).toString());
-                datos.append(query.value(2).toString());
+                paciente.setRut(rut);
+                paciente.setNombre(query.value(0).toString());
+                paciente.setApellido(query.value(1).toString());
+                paciente.setEdad(query.value(2).toInt());
             }
         }
         db.close();
      }
-    return datos;
+    return paciente;
 
 }
 
@@ -263,14 +264,14 @@ void SQL::on_pushButtonEditarPaciente_clicked()
     if(db.isOpen()){
         if(select->hasSelection()){
 
-            QStringList datos=buscarPacienteporRut(rut);
+            Paciente paciente=buscarPacienteporRut(rut);
             ui->tabWidget->setTabEnabled(2,true);
             ui->tabWidget->setCurrentIndex(2);
 
             ui->lineEditRut_2->setText(rut);
-            ui->lineEditNombre_2->setText(datos.at(0));
-            ui->lineEditApellido_2->setText(datos.at(1));
-            ui->lineEditAltura_2->setText(datos.at(2));
+            ui->lineEditNombre_2->setText(paciente.getNombre());
+            ui->lineEditApellido_2->setText(paciente.getApellido());
+            ui->lineEditAltura_2->setText(QString::number(paciente.getAltura()));
             imprimirDigitoVerificador(ui->lineEditRut_2,ui->lineEditdigitoVerificador_2);
         }
         else

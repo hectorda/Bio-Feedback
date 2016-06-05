@@ -10,6 +10,7 @@
 #include <angulo.h>
 #include <desplazamiento.h>
 #include <Muestra.h>
+#include <paciente.h>
 
 class Prueba : public QObject
 {
@@ -63,6 +64,8 @@ public:
     void exportar();
     bool importar();
 
+    Paciente getPaciente() const;
+    void setPaciente(const Paciente &value);
 
 signals:
 
@@ -81,6 +84,7 @@ private:
     QString cadenaConfiguracion;
     int cantidadMuestras;
     double tiempoTotal;
+    Paciente paciente;
 
     AjustesGrafico::Ajustes ajustesGrafico;
     AjustesPuertoSerial::Ajustes ajustesPuertoSerial;

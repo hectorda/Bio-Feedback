@@ -221,7 +221,7 @@ QTabBar::tab:!selected {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -522,6 +522,20 @@ Resultados</string>
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelPaciente">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Paciente</string>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer_2">
@@ -926,7 +940,7 @@ Resultados</string>
                <set>Qt::AlignCenter</set>
               </property>
               <property name="minimum">
-               <number>1</number>
+               <number>0</number>
               </property>
               <property name="value">
                <number>8</number>
@@ -1826,6 +1840,7 @@ QProgressBar:hover {
      <string>Base de Datos</string>
     </property>
     <addaction name="actionSQL"/>
+    <addaction name="actionAgregar_Paciente"/>
    </widget>
    <widget class="QMenu" name="menuVer">
     <property name="title">
@@ -1962,11 +1977,24 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionAcerca">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/home.png</normaloff>:/images/home.png</iconset>
+   </property>
    <property name="text">
     <string>Acerca de BioFeed-Back</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAgregar_Paciente">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/SQL/insert.png</normaloff>:/images/SQL/insert.png</iconset>
+   </property>
+   <property name="text">
+    <string>Agregar Paciente</string>
    </property>
   </action>
  </widget>
