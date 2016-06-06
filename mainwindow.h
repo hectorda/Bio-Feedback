@@ -48,6 +48,7 @@ private slots:
     void on_pushButtonGuardarImagen_clicked();
     void on_pushButtonGuardarMuestras_clicked();
     void on_pushButtonBuscarPaciente_clicked();
+    void on_pushButtonVolverPrueba_clicked();
 
     void on_comboBoxOrientacion_currentTextChanged(const QString &arg1);    
     void on_lineEditRut_textChanged(const QString &arg1);
@@ -68,7 +69,6 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
-    void on_pushButtonVolverPrueba_clicked();
     void on_stackedWidget_currentChanged(int arg1);
 
 signals:

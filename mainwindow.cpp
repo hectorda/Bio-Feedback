@@ -102,7 +102,7 @@ void MainWindow::conexiones()
             reportes->setDatosTablaMuestras(prueba->listaMuestras);
             reportes->setDatosGraficoMuestras(prueba->listaMuestras);
             mostrarResultados();
-            ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+            ui->stackedWidget->setCurrentWidget(ui->widgetPruebayResultados);
             ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
             ui->tabWidgetGrafico_Resultados->currentChanged(1);
         }
@@ -646,7 +646,7 @@ void MainWindow::iniciarPrueba()
         ui->progressBarPrueba->hide();
 
     ui->pushButtonVolverPrueba->show();
-    ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+    ui->stackedWidget->setCurrentWidget(ui->widgetPruebayResultados);
 
     if (prueba->getAjustesGrafico().Unidad.contains("grados"))
         ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
@@ -817,7 +817,7 @@ void MainWindow::on_pushButtonVolverInicio_clicked()
 
 void MainWindow::on_pushButtonVolverPrueba_clicked()
 {
-    ui->stackedWidget->setCurrentWidget(ui->widgetTest);
+    ui->stackedWidget->setCurrentWidget(ui->widgetPruebayResultados);
 }
 
 void MainWindow::limpiarGrafico(QCustomPlot *grafico){
