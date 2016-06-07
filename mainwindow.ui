@@ -26,23 +26,9 @@
   <property name="styleSheet">
    <string notr="true">QMainWindow{
 background-color:rgb(221, 221, 221)
-};
-
-QGroupBox {
-    border: 1px solid gray;
-    border-radius: 9px;
-    margin-top: 0.5em;
 }
 
-QGroupBox::title {
-    subcontrol-origin: margin;
-    left: 10px;
-    padding: 0 3px 0 3px;
-}</string>
-  </property>
-  <widget class="QWidget" name="centralWidget">
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
+QPushButton {
     padding: 10px 16px;
     border: 5px solid #aba7a5;
     border-radius: 10px;
@@ -61,6 +47,14 @@ QLineEdit{
     selection-background-color: blue;
 }
 
+QComboBox {
+    border: 2px solid #aba7a5;
+    border-radius: 5px;
+    padding: 1px 18px 1px 3px;
+    min-width: 6em;
+}
+
+
 QLCDNumber {
     padding: 2px;
     border: 2px solid #aba7a5;
@@ -72,85 +66,17 @@ QLCDNumber:hover {
 	background-color: rgb(247, 183, 19)
 }
 
-QSpinBox {  
-	padding: 0px 15px;
+QSpinBox { 
     border: 2px solid #aba7a5;
     border-radius: 5px;
     background: white;
-    selection-background-color: blue;
 }
 
-QSpinBox::up-button,QSpinBox::down-button {
-    width: 16px; /* 16 + 2*1px border-width = 15px padding + 3px parent border */
-
+QDoubleSpinBox { 
+    border: 2px solid #aba7a5;
+    border-radius: 5px;
+    background: white;
 }
-
-QSpinBox::up-button:hover,QSpinBox::down-button:hover {
-
-	
-}
-
-QSpinBox::up-button:pressed {
-
-}
-
-
-QSpinBox::down-button:pressed {
-}
-
-
-QSpinBox::up-arrow:disabled,
-QSpinBox::up-arrow:off { /* off state when value is max */
-
-}
-
-
-QSpinBox::down-arrow:disabled,
-QSpinBox::down-arrow:off { /* off state when value in min */
-  
-}
-
-
-
-QCheckBox {
-
-}
-
-QCheckBox::indicator {
-}
-
-QCheckBox::indicator:unchecked {
-
-}
-
-QCheckBox::indicator:unchecked:hover {
-  
-}
-
-QCheckBox::indicator:unchecked:pressed {
-
-}
-
-QCheckBox::indicator:checked {
-
-}
-
-QCheckBox::indicator:checked:hover {
-
-}
-
-QCheckBox::indicator:checked:pressed {
-
-}
-
-QCheckBox::indicator:indeterminate:hover {
-   
-}
-
-QCheckBox::indicator:indeterminate:pressed {
-
-}
-
 
 QSlider::groove:vertical {
     background: red;
@@ -230,7 +156,24 @@ QGroupBox::title {
     subcontrol-origin: margin;
     left: 10px;
     padding: 0 3px 0 3px;
-}</string>
+}
+
+QMessageBox QPushButton {
+	padding: 5px 8px;
+    border: 5px solid #aba7a5;
+    border-radius: 10px;
+}
+
+QMessageBox QPushButton:hover {
+    border: 5px solid;	
+	background-color: rgb(247, 183, 19)
+}
+
+</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -245,7 +188,7 @@ QGroupBox::title {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -593,13 +536,13 @@ Resultados</string>
              </font>
             </property>
             <property name="title">
-             <string>Ajustes Orientación Sensor</string>
+             <string>Ajustes Orientación Sensores</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_14">
              <item row="0" column="0">
               <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>Orientación Sensor</string>
+                <string>Orientación sensores</string>
                </property>
               </widget>
              </item>
@@ -800,7 +743,7 @@ border: 3px solid #398439;
              <item row="3" column="0">
               <widget class="QLabel" name="label_9">
                <property name="text">
-                <string>Limitar Gráfico</string>
+                <string>Limitar gráfico al borde</string>
                </property>
               </widget>
              </item>
@@ -820,7 +763,7 @@ border: 3px solid #398439;
              <item row="1" column="0">
               <widget class="QLabel" name="labelAlturaDisp">
                <property name="text">
-                <string>Altura Dispositivo (cm)</string>
+                <string>Altura dispositivo (cm)</string>
                </property>
               </widget>
              </item>
@@ -944,7 +887,7 @@ border: 3px solid #398439;
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
-                <string>Orden Aleatorio</string>
+                <string>Generar en orden aleatorio </string>
                </property>
               </widget>
              </item>
@@ -975,7 +918,7 @@ border: 3px solid #398439;
                 <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
-                <string>Cantidad objetivos</string>
+                <string>Cantidad Objetivos</string>
                </property>
               </widget>
              </item>
@@ -1015,7 +958,7 @@ border: 3px solid #398439;
              <item row="4" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>Detener al marcar todos</string>
+                <string>Detener Prueba al marcar todos</string>
                </property>
               </widget>
              </item>
@@ -1043,7 +986,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>7</number>
+              <number>6</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1791,7 +1734,7 @@ QProgressBar:hover {
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="windowTitle">
-    <string>Barra de Navegacion</string>
+    <string>Barra de navegación</string>
    </property>
    <property name="iconSize">
     <size>
@@ -1818,7 +1761,10 @@ QProgressBar:hover {
      <normaloff>:/images/usb-icon.png</normaloff>:/images/usb-icon.png</iconset>
    </property>
    <property name="text">
-    <string>Configurar Serial</string>
+    <string>Configurar puerto serial</string>
+   </property>
+   <property name="toolTip">
+    <string>Para configurar el puerto serial a usar</string>
    </property>
   </action>
   <action name="actionConfigurar_Sensores">
@@ -1827,7 +1773,7 @@ QProgressBar:hover {
      <normaloff>:/images/IMU.png</normaloff>:/images/IMU.png</iconset>
    </property>
    <property name="text">
-    <string>Configurar Sensores</string>
+    <string>Configurar sensores</string>
    </property>
   </action>
   <action name="actionSalir">
@@ -1857,10 +1803,10 @@ QProgressBar:hover {
      <normaloff>:/images/home.png</normaloff>:/images/home.png</iconset>
    </property>
    <property name="text">
-    <string>Página Principal</string>
+    <string>Página principal</string>
    </property>
    <property name="toolTip">
-    <string>Ir a Pagina Principal</string>
+    <string>Ir a página principal</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
@@ -1872,7 +1818,10 @@ QProgressBar:hover {
      <normaloff>:/images/diana.png</normaloff>:/images/diana.png</iconset>
    </property>
    <property name="text">
-    <string>Configurar Elementos del Grafico</string>
+    <string>Configurar elementos del Gráfico</string>
+   </property>
+   <property name="toolTip">
+    <string>Configurar elementos del Gráfico</string>
    </property>
   </action>
   <action name="actionSQL">
@@ -1888,6 +1837,10 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionExportar">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/export.png</normaloff>:/images/export.png</iconset>
+   </property>
    <property name="text">
     <string>Exportar</string>
    </property>
@@ -1896,6 +1849,10 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionImportar">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/import.png</normaloff>:/images/import.png</iconset>
+   </property>
    <property name="text">
     <string>Importar</string>
    </property>
@@ -1909,7 +1866,10 @@ QProgressBar:hover {
      <normaloff>:/images/angulo.png</normaloff>:/images/angulo.png</iconset>
    </property>
    <property name="text">
-    <string>Configurar Calculo Angulo</string>
+    <string>Configurar filtro cálculo ángulo</string>
+   </property>
+   <property name="toolTip">
+    <string>Configurar filtro usado para el cálculo ángulo</string>
    </property>
   </action>
   <action name="actionAcerca">

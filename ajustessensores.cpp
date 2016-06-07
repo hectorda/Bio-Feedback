@@ -65,7 +65,6 @@ void AjustesSensores::mostrarFrecuenciaMuestreo(const QString SampleRate)
 {
     const QString fSampleRate=tr("Frecuencia de Muestreo: %1 Hz").arg(SampleRate);
     ui->labelSampleRate->setText(fSampleRate);
-    ui->lcdNumberSampleRate->display(SampleRate);
 }
 
 void AjustesSensores::mostrarFiltroPasaBajo(const QString DLPF)

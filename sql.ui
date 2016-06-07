@@ -18,7 +18,11 @@
     <normaloff>:/images/database.png</normaloff>:/images/database.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QGroupBox {
+   <string notr="true">QDialog{
+background-color:rgb(221, 221, 221)
+}
+
+QGroupBox {
     border: 1px solid gray;
     border-radius: 9px;
     margin-top: 0.5em;
@@ -28,7 +32,8 @@ QGroupBox::title {
     subcontrol-origin: margin;
     left: 10px;
     padding: 0 3px 0 3px;
-}</string>
+}
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -359,7 +364,6 @@ Listado</string>
            <widget class="QLineEdit" name="lineEditAltura_2"/>
           </item>
          </layout>
-         <zorder></zorder>
          <zorder>spinBoxEdad_2</zorder>
          <zorder>lineEditApellido_2</zorder>
          <zorder>label_9</zorder>
@@ -371,7 +375,6 @@ Listado</string>
          <zorder>lineEditAltura_2</zorder>
          <zorder>label_13</zorder>
          <zorder>label_12</zorder>
-         <zorder>layoutWidget</zorder>
         </widget>
        </item>
        <item>

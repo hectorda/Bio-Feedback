@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
-    <height>461</height>
+    <width>472</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,112 +26,147 @@
   <property name="styleSheet">
    <string notr="true">QDialog{
 background-color:rgb(221, 221, 221)
-};</string>
+}
+
+QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="spinBoxRObjetivo">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>90</number>
-       </property>
-       <property name="value">
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Radio Circulo Interior</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>FPS</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QComboBox" name="comboBoxFPS"/>
-     </item>
+    <layout class="QFormLayout" name="formLayout_2">
      <item row="0" column="0">
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="labelUnidad">
        <property name="text">
-        <string>Unidad de representacion grafico</string>
+        <string>Unidad para representación</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="comboBoxUnidadGrafico"/>
      </item>
-     <item row="2" column="1">
-      <widget class="QSpinBox" name="spinBoxRInterior">
-       <property name="minimum">
-        <number>1</number>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Ajustes de Radios</string>
        </property>
-       <property name="maximum">
-        <number>90</number>
-       </property>
-       <property name="singleStep">
-        <number>2</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelRadioCircExterior">
+          <property name="text">
+           <string>Radio círculo exterior</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="spinBoxRExterior">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>90</number>
+          </property>
+          <property name="value">
+           <number>20</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelRadioCircInterior">
+          <property name="text">
+           <string>Radio círculo interior</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="spinBoxRInterior">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>90</number>
+          </property>
+          <property name="singleStep">
+           <number>2</number>
+          </property>
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelRadioObjetivos">
+          <property name="text">
+           <string>Radio de objetivos</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="spinBoxRObjetivo">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>90</number>
+          </property>
+          <property name="value">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
-     <item row="7" column="1">
-      <widget class="QComboBox" name="comboBoxColorObjetivosSinMarcar"/>
-     </item>
-     <item row="8" column="1">
-      <widget class="QComboBox" name="comboBoxColorObjetivosMarcados"/>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Color Objetivos Marcados</string>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>Ajustes Colores objetivos Y FPS</string>
        </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Color Objetivos Sin Marcar</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Radio de Objetivos</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Radio Circulo Exterior</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="spinBoxRExterior">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>90</number>
-       </property>
-       <property name="value">
-        <number>20</number>
-       </property>
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelColorObjSinMarcar">
+          <property name="text">
+           <string>Color sin marcar</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="comboBoxColorObjetivosSinMarcar"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelColorObjMarcados">
+          <property name="text">
+           <string>Color marcados</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="comboBoxColorObjetivosMarcados"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelFPS">
+          <property name="text">
+           <string>FPS</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBoxFPS"/>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>

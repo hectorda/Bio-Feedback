@@ -20,7 +20,20 @@
   <property name="styleSheet">
    <string notr="true">QDialog{
 background-color:rgb(221, 221, 221)
-};</string>
+}
+
+QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -32,109 +45,52 @@ background-color:rgb(221, 221, 221)
        <bold>true</bold>
       </font>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="title">
-      <string>Ajustes de Muestreo</string>
+      <string>Ajustes de captura sensores</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="labelDivisorFrecuenciaMuestreo">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
         <property name="text">
          <string>Frecuencia de Muestreo</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="QLabel" name="labelRangoAcelerometro">
         <property name="text">
          <string>Rango Acelerometro</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QComboBox" name="comboBoxAscale">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="comboBoxAscale"/>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="QLabel" name="labelRangoGiroscopio">
         <property name="text">
          <string>Rango Giroscopio</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QComboBox" name="comboBoxGscale">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="comboBoxGscale"/>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="QLabel" name="labelFiltroPasaBajo">
         <property name="text">
-         <string>Digital Low Pass Filter</string>
+         <string>Filtro Pasa-Bajo Digital</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="comboBoxFrecuenciaMuestreo">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="comboBoxFrecuenciaMuestreo"/>
       </item>
       <item row="4" column="1">
-       <widget class="QComboBox" name="comboBoxDLPF">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="comboBoxDLPF"/>
       </item>
      </layout>
     </widget>
@@ -142,19 +98,7 @@ background-color:rgb(221, 221, 221)
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-     </item>
-     <item>
       <widget class="QLabel" name="labelSampleRate">
-       <property name="font">
-        <font>
-         <family>MS Shell Dlg 2</family>
-         <pointsize>13</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-         <strikeout>false</strikeout>
-        </font>
-       </property>
        <property name="text">
         <string>Frecuencia de Muestreo: ?</string>
        </property>
@@ -162,15 +106,6 @@ background-color:rgb(221, 221, 221)
      </item>
      <item>
       <widget class="QLabel" name="labelDLPF">
-       <property name="font">
-        <font>
-         <family>MS Shell Dlg 2</family>
-         <pointsize>14</pointsize>
-         <weight>75</weight>
-         <italic>false</italic>
-         <bold>true</bold>
-        </font>
-       </property>
        <property name="styleSheet">
         <string notr="true"/>
        </property>
@@ -180,19 +115,6 @@ background-color:rgb(221, 221, 221)
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLCDNumber" name="lcdNumberSampleRate">
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="digitCount">
-      <number>10</number>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QLabel" name="labelAdvertencia">

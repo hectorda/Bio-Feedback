@@ -58,7 +58,7 @@ void MainWindow::inicializar()
 
     prueba=new Prueba(this);
 
-    db = new SQL;
+    db = new SQL(this);
 
     //Crean instancias de Objetos
     objetoAngulo=new Angulo;
@@ -164,12 +164,17 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
     status->setText(message);
 }
 
+/*
+* Se realizan las acciones Post-Prueba para la generación de reportes y herramientas
+* de analisis de los graficos, junto con el informe de Resultados
+*/
 void MainWindow::mostrarResultados()
 {
     prueba->setCantidadMuestras(prueba->listaMuestras.size());
     prueba->setTiempoTotal(prueba->listaMuestras.last()->getTiempo());
 
     QTextStream(stdout)<<"Muestras x Seg: "<< prueba->listaMuestras.size()/prueba->listaMuestras.last()->getTiempo()<<endl;
+
     lectorSerial->cerrarPuertoSerial();
     emit emitGraficarResultados(prueba->listaAngulos);
     analisisGraficoAngulos->setListaAngulos(prueba->listaAngulos);
@@ -182,6 +187,10 @@ void MainWindow::mostrarResultados()
     ui->centralWidget->adjustSize();
 }
 
+/*
+* Se utiliza la plantilla de Reporte dentro de los Resources
+* Para completar el Informe que se despliega en resultados.
+*/
 void MainWindow::llenarInformeReporte()
 {
     if(prueba->getPaciente().isEmpty())
@@ -255,6 +264,11 @@ void MainWindow::desactivarSpacerEntreBotones()
     ui->verticalSpacerEntreBotones->changeSize(40,20,QSizePolicy::Ignored,QSizePolicy::Ignored);
 }
 
+/*
+* Función para generar una lista de Objetivos que será almacenada
+* dentro de la listaObjetivos de el Objeto Prueba utilizado.
+* Se utilizarán los datos tomados de la interfaz y almacenados en el objeto prueba.
+*/
 void MainWindow::generarObjetivos()
 {
     const int pruebaNumero=prueba->getNumeroPrueba();
@@ -334,6 +348,10 @@ void MainWindow::generarObjetivos()
     }
 }
 
+/*
+* A partir de la interfaz se obtiene una cadena que representa la orientacion del sensor
+* utilizando el comboBox y el radiobutton usado.
+*/
 QString MainWindow::obtenerOrientacionSensor()
 {
     QString cBorientacion = ui->comboBoxOrientacion->currentText().toLower();
@@ -362,8 +380,8 @@ QString MainWindow::obtenerOrientacionSensor()
 }
 
 /*
-*Se analiza segun el tipo de prueba si el objetivo es marcable, y cual es que actualmente esta parpadenado
-*Si se selecciona el modo aleatorios ninguno parpadea.
+* Se analiza segun el tipo de prueba si el objetivo es marcable, y cual es que actualmente esta parpadenado
+* Si se selecciona el modo aleatorios ninguno parpadea.
 */
 void MainWindow::marcarObjetivos(const double x,const double y)
 {
@@ -433,9 +451,9 @@ void MainWindow::marcarObjetivos(const double x,const double y)
 }
 
 /*
-*Se verifica si el punto dado pertenece a un circulo usando geometria
-*En caso pertenecer cambia el color de esta y ademas retorna True
-*En caso contrario retorna False.
+* Se verifica si el punto dado pertenece a un circulo usando geometria
+* En caso pertenecer cambia el color de esta y ademas retorna True
+* En caso contrario retorna False.
 */
 bool MainWindow::PertenecePuntoAlObjetivo(const double x,const double y,QCPItemEllipse *P){
     const double perteneceCirc=qSqrt(qPow(( x - (P->topLeft->coords().x()+prueba->getAjustesGrafico().RadioObjetivo)),2)+qPow(( y - (P->topLeft->coords().y()-prueba->getAjustesGrafico().RadioObjetivo)),2));
@@ -447,9 +465,9 @@ bool MainWindow::PertenecePuntoAlObjetivo(const double x,const double y,QCPItemE
 }
 
 /*
-*Dado un QCPItemEllipse se calcula el tiempo y se hace parpadear
-*repintando la elipse entre dos colores
-*segun el modulo del tiempo transcurrido
+* Dado un QCPItemEllipse se calcula el tiempo y se hace parpadear
+* repintando la elipse entre dos colores
+* según el módulo del tiempo transcurrido
 */
 void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
 {
@@ -460,9 +478,13 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
 
 }
 
+/*
+* SLOT para graficar según un nuevo dato sea leído por el Sensor,
+* junto con realizar las acciones en los objetivos
+*/
 void MainWindow::slotGraficarTiempoReal(const double x,const double y)
 {
-    marcarObjetivos(x,y); // Se hace parpadear o verifica el objetivo segun las configuraciones de la prueba
+    marcarObjetivos(x,y); //Se hace parpadear o verifica el objetivo segun las configuraciones de la prueba
 
     if(ui->checkBoxLimitarGrafico->isChecked())
     {
@@ -489,7 +511,6 @@ void MainWindow::slotGraficarTiempoReal(const double x,const double y)
 
             const double aX=prueba->getAjustesGrafico().RadioExterior*qCos(qDegreesToRadians(inclRecta));
             const double aY=prueba->getAjustesGrafico().RadioExterior*qSin(qDegreesToRadians(inclRecta));
-            //QTextStream(stdout)<<"Grados Inclinacion Recta: "<<inclRecta<<" Ax:"<<aX<<" aY:"<<aY<<endl;
             lienzo->addData(aX,aY);
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
             ui->qCustomPlotGrafico->graph(0)->addData(aX,aY);
@@ -522,6 +543,11 @@ void MainWindow::contextMenuRequest(QPoint pos)
     menu->popup(ui->qCustomPlotGrafico->mapToGlobal(pos));
 }
 
+/*
+* Filtro de Eventos segun Objeto, se asigna en installEventFilter
+* Si es el QCP se reescribe el evento Zoom
+* Si es el DockWidget Mantiene el aspecto cuadrado
+*/
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::Resize && obj == ui->dockWidget)
@@ -534,22 +560,28 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
         range+=(wheelEvent->delta()/120);
         ui->verticalSliderRangeGraphic->setValue(range.upper); //Acticar el Slot
     }
-
     return QWidget::eventFilter(obj, event);
 }
 
+/*
+* Para mantener el Grafico Principal con ejes de igual tamaño
+* con el fin de que siga estando un circulo.
+*/
 void MainWindow::relacionAspectodelGrafico()
 {
     const int w=ui->qCustomPlotGrafico->width();
     const int h=ui->qCustomPlotGrafico->height();
     const QRect rect=ui->qCustomPlotGrafico->geometry();
-
     if(w>h)
         ui->qCustomPlotGrafico->setGeometry(rect.x()+((w-h)/2),rect.y(),h,h);
     else
         ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y()+((h-w)/2),w,w);
 }
 
+/*
+* Se intenta configurar Micro-controlador Arduino además de mostrar un
+* QDialog que ameniza la carga junto con darle tiempo de realizar la escritura Serial.
+*/
 void MainWindow::configurarArduino()
 {
     const AjustesPuertoSerial::Ajustes aSerial=ajustesSerial->getAjustes();
@@ -586,10 +618,10 @@ void MainWindow::configurarArduino()
     else
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
 }
-/*
- *Limpieza de prueba->listas y de los elementos de la interfaz
- */
 
+/*
+* Limpieza de prueba->listas y de los elementos de la interfaz
+*/
 void MainWindow::limpiarListasyOcultarBotones()
 {
     prueba->limpiarListas();
@@ -601,20 +633,24 @@ void MainWindow::limpiarListasyOcultarBotones()
     analisisGraficoMuestras->hide();
 }
 
+/*
+* Se bloquean todas las señales de los QAction para envitar interrupciones
+*/
 void MainWindow::desactivarActions()
 {
     QList<QAction *> actionList = this->findChildren<QAction *>();
-    foreach (QAction *action, actionList) {
+    foreach (QAction *action, actionList)
         action->blockSignals(true);
-    }
 }
 
+/*
+* Se re-activan las señales de los QAction
+*/
 void MainWindow::activarActions()
 {
     QList<QAction *> actionList = this->findChildren<QAction *>();
-    foreach (QAction *action, actionList) {
+    foreach (QAction *action, actionList)
         action->blockSignals(false);
-    }
 }
 
 void MainWindow::iniciarPrueba()
@@ -635,7 +671,6 @@ void MainWindow::iniciarPrueba()
     prueba->setLimitarGrafico(ui->checkBoxLimitarGrafico->isChecked());
     prueba->setObjetivosEnOrden(ui->checkBoxOrdenObjetivos->isChecked());
 
-
     ui->verticalSliderRangeGraphic->setValue(prueba->getAjustesGrafico().RadioExterior+5);//Se actualiza el slider del Rango
     inicializarGrafico(); //Se limpian y Reajustan los graficos
 
@@ -655,7 +690,6 @@ void MainWindow::iniciarPrueba()
 
     ui->tabWidgetGrafico_Resultados->setTabEnabled(0,true);
 
-
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
     ui->centralWidget->adjustSize();
     desactivarTabs();
@@ -663,6 +697,9 @@ void MainWindow::iniciarPrueba()
     ocultarBotonesPrueba();
 }
 
+/*
+* Se pregunta si se desea volver a Inicio.
+*/
 void MainWindow::regresarInicio()
 {
     if(ui->stackedWidget->currentWidget()!=ui->widgetWelcome){
@@ -682,11 +719,11 @@ void MainWindow::regresarInicio()
 }
 
 /*
- *Se obtiene la Informacion proveniete del Sensor
- * Ademas se obtiene el Angulo y Desplazamiento
- * Junto con enviar a los Elementos Graficos de Reporte y
- * Grafico en Tiempo Real el dato que corresponda.
- */
+* Se obtiene la Informacion proveniete del Sensor
+* Ademas se obtiene el Angulo y Desplazamiento
+* Junto con enviar a los Elementos Graficos de Reporte y
+* Grafico en Tiempo Real el dato que corresponda.
+*/
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
     if(prueba->listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
@@ -746,7 +783,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         emit emitDesplazamientoReporte(desplazamiento);
         emit emitAnguloReporte(angulo);
 
-        //Comienza Actualizacion elementos de la interfaz
+        //Comienza actualizacion elementos de la interfaz
         //Se pregunta y envia el dato para graficar
         if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
             if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
@@ -784,6 +821,10 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
     }
 }
 
+/*
+* Llamadas de funciones de reiniciar Prueba
+* Se cierra el puerto, se limpian los graficos y se reconfigura Arduino
+*/
 void MainWindow::on_pushButtonReiniciarPrueba_clicked()
 {
     lectorSerial->cerrarPuertoSerial();
@@ -1085,13 +1126,13 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
 {
     const QString rut=ui->lineEditRut->text();
     if (rut.isEmpty())
-        QMessageBox::warning(this,"Datos Vacios","Debe Ingresar un Rut a Buscar");
+        QMessageBox::warning(this,"Datos vacios","Debe ingresar un Rut a Buscar");
     else
     {
         Paciente paciente=db->buscarPacienteporRut(rut);
         if(paciente.isEmpty()){
             QMessageBox messageBox(QMessageBox::Question,
-                        tr("El Rut no Existe"),
+                        tr("Rut no encontrado"),
                         tr("El Rut no existe en la base de datos, desea agregarlo?"),
                         QMessageBox::Yes | QMessageBox::No,
                         this);
@@ -1120,5 +1161,4 @@ void MainWindow::on_stackedWidget_currentChanged(int arg1)
         else
             ui->labelPaciente->setText("Paciente: Anónimo");
     }
-
 }

@@ -168,6 +168,11 @@ bool AjustesGrafico::validar()
         QMessageBox::warning(this,"Color No Seleccionable","Los objetivos por defecto al parpadear son blancos");
         val=false;
     }
+    if(ui->comboBoxColorObjetivosMarcados->currentText()=="yellow" || ui->comboBoxColorObjetivosSinMarcar->currentText()=="yellow")
+    {
+        QMessageBox::warning(this,"Color No Seleccionable","EL gráfico principal es de color amarillo.\nLos objetivos no seran demasiado visibles");
+        val=false;
+    }
     if(RadioExterior < RadioInterior){
         QMessageBox::warning(this,"Radio Exterior muy Pequeño","Radio Exterior debe ser debe ser mayor al Radio Interior");
         val=false;
