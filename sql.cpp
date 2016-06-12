@@ -22,6 +22,8 @@ void SQL::inicializar()
     this->conectar();
     ui->tabWidget->setCurrentWidget(ui->tab_tablaPacientes);
     ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
+    ui->lineEditEdad->setValidator(new QIntValidator(0, 150) );
+    ui->lineEditEdad_2->setValidator(new QIntValidator(0, 150) );
     ui->lineEditAltura->setValidator(new QIntValidator(0, 299) );
     ui->lineEditAltura_2->setValidator(new QIntValidator(0, 299) );
     ui->tabWidget->setTabEnabled(2,false);
@@ -60,9 +62,9 @@ void SQL::actualizarTablaPacientes()
         model->setHeaderData(0, Qt::Horizontal, tr("Rut"));
         model->setHeaderData(1, Qt::Horizontal, tr("Nombre"));
         model->setHeaderData(2, Qt::Horizontal, tr("Apellido"));
-        model->setHeaderData(3, Qt::Horizontal, tr("Edad"));
+        model->setHeaderData(3, Qt::Horizontal, tr("Edad (años)"));
         model->setHeaderData(4, Qt::Horizontal, tr("Sexo"));
-        model->setHeaderData(5, Qt::Horizontal, tr("Altura"));
+        model->setHeaderData(5, Qt::Horizontal, tr("Altura (cm)"));
 
         ui->tableView->setModel(model);
         ui->tableView->show();
@@ -107,9 +109,9 @@ Paciente SQL::buscarPacienteporRut(const QString rut)
                 paciente.setRut(rut);
                 paciente.setNombre(query.value(0).toString());
                 paciente.setApellido(query.value(1).toString());
-                paciente.setEdad(query.value(2).toInt());
+                paciente.setEdad(query.value(2).toString());
                 paciente.setSexo(query.value(3).toString());
-                paciente.setAltura(query.value(4).toDouble());
+                paciente.setAltura(query.value(4).toString());
             }
         }
         db.close();
@@ -170,9 +172,9 @@ void SQL::on_pushButtonAgregar_clicked()
     paciente.setRut(ui->lineEditRut->text());
     paciente.setNombre(ui->lineEditNombre->text());
     paciente.setApellido(ui->lineEditApellido->text());
-    paciente.setEdad(ui->spinBoxEdad->value());
+    paciente.setEdad(ui->lineEditEdad->text());
     paciente.setSexo(ui->comboBox->currentText());
-    paciente.setAltura(ui->lineEditAltura->text().toDouble());
+    paciente.setAltura(ui->lineEditAltura->text());
 
     if (existenCamposVacios(paciente))
         QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
@@ -217,8 +219,8 @@ void SQL::on_pushButtonEditarPaciente_clicked()
             ui->lineEditRut_2->setText(paciente.getRut());
             ui->lineEditNombre_2->setText(paciente.getNombre());
             ui->lineEditApellido_2->setText(paciente.getApellido());
-            ui->spinBoxEdad_2->setValue(paciente.getEdad());
-            ui->lineEditAltura_2->setText(QString::number(paciente.getAltura()));
+            ui->lineEditEdad_2->setText(paciente.getEdad());
+            ui->lineEditAltura_2->setText(paciente.getAltura());
             ui->comboBox_2->setCurrentText(paciente.getSexo());
             QTextStream stdout <<paciente.getAltura()<<endl;
             imprimirDigitoVerificador(ui->lineEditRut_2,ui->lineEditdigitoVerificador_2);
@@ -241,9 +243,9 @@ void SQL::on_pushButtonEditarActualizarDatos_clicked()
     paciente.setRut(ui->lineEditRut_2->text());
     paciente.setNombre(ui->lineEditNombre_2->text());
     paciente.setApellido(ui->lineEditApellido_2->text());
-    paciente.setEdad(ui->spinBoxEdad_2->value());
+    paciente.setEdad(ui->lineEditEdad_2->text());
     paciente.setSexo(ui->comboBox_2->currentText());
-    paciente.setAltura(ui->lineEditAltura_2->text().toDouble());
+    paciente.setAltura(ui->lineEditAltura_2->text());
     if (existenCamposVacios(paciente))
         QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
     else{

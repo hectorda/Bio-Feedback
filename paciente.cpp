@@ -35,12 +35,12 @@ void Paciente::setApellido(const QString &value)
     apellido = value;
 }
 
-double Paciente::getAltura() const
+QString Paciente::getAltura() const
 {
     return altura;
 }
 
-void Paciente::setAltura(double value)
+void Paciente::setAltura(QString value)
 {
     altura = value;
 }
@@ -62,12 +62,12 @@ void Paciente::setSexo(const QString &value)
     sexo = value;
 }
 
-int Paciente::getEdad() const
+QString Paciente::getEdad() const
 {
     return edad;
 }
 
-void Paciente::setEdad(int value)
+void Paciente::setEdad(QString value)
 {
     edad = value;
 }

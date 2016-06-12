@@ -108,7 +108,7 @@ void Angulo::calcularAnguloFiltroComplementario(const QString orientacion, Muest
         if(orientacion.contains("frente"))
         {
             anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()+muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloY();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloY();
 
         }
         if(orientacion.contains("izquierda"))
@@ -161,7 +161,7 @@ void Angulo::calcularAnguloFiltroKalman(const QString orientacion, Muestra *mues
         if(orientacion.contains("frente"))
         {
             anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), +muestra->getGyZ(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), -muestra->getGyX(), dt);
+            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), +muestra->getGyX(), dt);
         }
         if(orientacion.contains("izquierda"))
         {

@@ -3,7 +3,7 @@
 #include "qserialportinfo.h"
 #include "qdebug.h"
 
-static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
+static const char blankString[] = QT_TRANSLATE_NOOP("ajustesPuertoSerial", "N/A");
 
 AjustesPuertoSerial::AjustesPuertoSerial(QWidget *parent) :
     QDialog(parent),
@@ -12,6 +12,7 @@ AjustesPuertoSerial::AjustesPuertoSerial(QWidget *parent) :
     inicializar();
     conexiones();
 
+    mostrarInformacionPuerto(0);
     llenarParametros();
     informacionPuertos();
     actualizarAjustes();
@@ -105,7 +106,8 @@ void AjustesPuertoSerial::informacionPuertos()
     QString serialNumber;
     if(QSerialPortInfo::availablePorts().isEmpty()){
         QMessageBox::warning(this,"No hay dispositivos conectados","No hay dispotivos conectados",QMessageBox::Ok);
-        exec();
+        if(isHidden())
+            exec();
     }
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
@@ -153,7 +155,6 @@ void AjustesPuertoSerial::actualizarAjustes()
     ajustesActuales.flowControl = static_cast<QSerialPort::FlowControl>(
                 ui->comboBoxFlowControl->itemData(ui->comboBoxFlowControl->currentIndex()).toInt());
     ajustesActuales.stringFlowControl = ui->comboBoxFlowControl->currentText();
-
 }
 
 void AjustesPuertoSerial::on_pushButtonRescan_clicked()

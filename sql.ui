@@ -119,7 +119,7 @@ Listado</string>
        <item row="2" column="0">
         <widget class="QPushButton" name="pushButtonAgregar">
          <property name="text">
-          <string>Agregar</string>
+          <string>Agregar Paciente</string>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
@@ -136,7 +136,7 @@ Listado</string>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
-          <string>GroupBox</string>
+          <string>Datos Persona</string>
          </property>
          <layout class="QFormLayout" name="formLayout">
           <item row="1" column="0">
@@ -203,12 +203,9 @@ Listado</string>
           <item row="4" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Edad</string>
+             <string>Edad (años)</string>
             </property>
            </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBoxEdad"/>
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="label_3">
@@ -234,12 +231,15 @@ Listado</string>
           <item row="6" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Altura</string>
+             <string>Altura (cm)</string>
             </property>
            </widget>
           </item>
           <item row="6" column="1">
            <widget class="QLineEdit" name="lineEditAltura"/>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEditEdad"/>
           </item>
          </layout>
         </widget>
@@ -325,12 +325,9 @@ Listado</string>
           <item row="3" column="0">
            <widget class="QLabel" name="label_11">
             <property name="text">
-             <string>Edad</string>
+             <string>Edad (años)</string>
             </property>
            </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBoxEdad_2"/>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_12">
@@ -356,15 +353,17 @@ Listado</string>
           <item row="5" column="0">
            <widget class="QLabel" name="label_13">
             <property name="text">
-             <string>Altura</string>
+             <string>Altura (cm)</string>
             </property>
            </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineEditEdad_2"/>
           </item>
           <item row="5" column="1">
            <widget class="QLineEdit" name="lineEditAltura_2"/>
           </item>
          </layout>
-         <zorder>spinBoxEdad_2</zorder>
          <zorder>lineEditApellido_2</zorder>
          <zorder>label_9</zorder>
          <zorder>lineEditNombre_2</zorder>
@@ -372,9 +371,10 @@ Listado</string>
          <zorder>comboBox_2</zorder>
          <zorder>label_8</zorder>
          <zorder>label_11</zorder>
-         <zorder>lineEditAltura_2</zorder>
          <zorder>label_13</zorder>
          <zorder>label_12</zorder>
+         <zorder>lineEditEdad_2</zorder>
+         <zorder>lineEditAltura_2</zorder>
         </widget>
        </item>
        <item>
@@ -401,9 +401,27 @@ Listado</string>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>pushButtonAgregar</tabstop>
-  <tabstop>tableView</tabstop>
+  <tabstop>lineEditApellido_2</tabstop>
+  <tabstop>lineEditEdad_2</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>lineEditAltura_2</tabstop>
+  <tabstop>pushButtonEditarActualizarDatos</tabstop>
   <tabstop>tabWidget</tabstop>
+  <tabstop>tableView</tabstop>
+  <tabstop>pushButtonActualizarTabla</tabstop>
+  <tabstop>pushButtonEditarPaciente</tabstop>
+  <tabstop>pushButtonEliminarPaciente</tabstop>
+  <tabstop>pushButtonAgregar</tabstop>
+  <tabstop>lineEditRut</tabstop>
+  <tabstop>lineEditdigitoVerificador</tabstop>
+  <tabstop>lineEditApellido</tabstop>
+  <tabstop>lineEditNombre</tabstop>
+  <tabstop>lineEditEdad</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEditAltura</tabstop>
+  <tabstop>lineEditRut_2</tabstop>
+  <tabstop>lineEditdigitoVerificador_2</tabstop>
+  <tabstop>lineEditNombre_2</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>

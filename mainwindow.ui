@@ -986,7 +986,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>6</number>
+              <number>2</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1132,10 +1132,6 @@ QPushButton:hover {
               </layout>
              </widget>
              <widget class="QWidget" name="tab_resultados">
-              <attribute name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/results_icon.png</normaloff>:/images/results_icon.png</iconset>
-              </attribute>
               <attribute name="title">
                <string>Resultados</string>
               </attribute>
@@ -1174,7 +1170,7 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="tab_tablaAngulos">
               <attribute name="title">
-               <string>Datos Angulos</string>
+               <string>Datos ángulos</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
@@ -1186,12 +1182,12 @@ p, li { white-space: pre-wrap; }
                  </column>
                  <column>
                   <property name="text">
-                   <string>AnguloX (°)</string>
+                   <string>ÁnguloX (°)</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>AnguloY (°)</string>
+                   <string>ÁnguloY (°)</string>
                   </property>
                  </column>
                 </widget>
@@ -1200,7 +1196,7 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="tab_GraficoAngulos">
               <attribute name="title">
-               <string>Graficos Angulos</string>
+               <string>Gráficos ángulos</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="1" column="0">
@@ -1211,13 +1207,15 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true"/>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true">
+                 <zorder>pushButtonAnalizarGraficoAngulos</zorder>
+                </widget>
                </item>
               </layout>
              </widget>
              <widget class="QWidget" name="tab_tablaDesplazamientos">
               <attribute name="title">
-               <string>Datos Desplazamientos</string>
+               <string>Datos desplazamientos</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_11">
                <item row="0" column="0">
@@ -1243,12 +1241,9 @@ p, li { white-space: pre-wrap; }
              </widget>
              <widget class="QWidget" name="tab_GraficoDespalazamientos">
               <attribute name="title">
-               <string>Graficos Desplazamientos</string>
+               <string>Gráficos desplazamientos</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_12">
-               <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientos" native="true"/>
-               </item>
                <item row="1" column="0">
                 <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientos">
                  <property name="text">
@@ -1256,15 +1251,14 @@ p, li { white-space: pre-wrap; }
                  </property>
                 </widget>
                </item>
+               <item row="0" column="0">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientos" native="true"/>
+               </item>
               </layout>
              </widget>
              <widget class="QWidget" name="tab_TablaMuestras">
-              <attribute name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
-              </attribute>
               <attribute name="title">
-               <string>Muestras</string>
+               <string>Datos muestras</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
@@ -1330,23 +1324,19 @@ p, li { white-space: pre-wrap; }
               </layout>
              </widget>
              <widget class="QWidget" name="tab_GraficoMuestras">
-              <attribute name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
-              </attribute>
               <attribute name="title">
-               <string>Graficos Muestras</string>
+               <string>Gráficos muestras</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_7">
-               <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
-               </item>
                <item row="1" column="0">
                 <widget class="QPushButton" name="pushButtonAnalizarGraficoMuestras">
                  <property name="text">
                   <string>Analizar Graficos Muestras</string>
                  </property>
                 </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
                </item>
               </layout>
              </widget>

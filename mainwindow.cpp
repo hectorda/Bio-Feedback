@@ -170,22 +170,43 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 */
 void MainWindow::mostrarResultados()
 {
-    prueba->setCantidadMuestras(prueba->listaMuestras.size());
-    prueba->setTiempoTotal(prueba->listaMuestras.last()->getTiempo());
+    if(!prueba->listaMuestras.isEmpty()){
+        prueba->setCantidadMuestras(prueba->listaMuestras.size());
+        prueba->setTiempoTotal(prueba->listaMuestras.last()->getTiempo());
 
-    QTextStream(stdout)<<"Muestras x Seg: "<< prueba->listaMuestras.size()/prueba->listaMuestras.last()->getTiempo()<<endl;
+        double frecuenciaMuestreo=(prueba->listaMuestras.last()->getTiempo()-prueba->listaMuestras.first()->getTiempo());
+        frecuenciaMuestreo/=prueba->listaMuestras.size()-1;
+        frecuenciaMuestreo=1/frecuenciaMuestreo;
 
-    lectorSerial->cerrarPuertoSerial();
-    emit emitGraficarResultados(prueba->listaAngulos);
-    analisisGraficoAngulos->setListaAngulos(prueba->listaAngulos);
-    analisisGraficoDesplazamientos->setListaDesplazamientos(prueba->listaDesplazamientos);
-    analisisGraficoMuestras->setListaMuestras(prueba->listaMuestras);
+        QTextStream(stdout)<<"Muestras x Seg: "<< frecuenciaMuestreo<<endl;
+
+        lectorSerial->cerrarPuertoSerial();
+        emit emitGraficarResultados(prueba->listaAngulos);
+        analisisGraficoAngulos->setListaAngulos(prueba->listaAngulos);
+        analisisGraficoDesplazamientos->setListaDesplazamientos(prueba->listaDesplazamientos);
+        analisisGraficoMuestras->setListaMuestras(prueba->listaMuestras);
+        activarTabs();
+        if(prueba->getPaciente().isEmpty())
+        {
+            Paciente pac;
+            pac.setRut("S/N");
+            pac.setNombre("S/N");
+            pac.setApellido("S/N");
+            pac.setEdad("S/N");
+            pac.setAltura("S/N");
+            prueba->setPaciente(pac);
+        }
+        llenarInformeReporte();
+
+    }
+    else
+        QMessageBox::critical(this,"A ocurrido un problema","A ocurrido un problema y no se realizaron mediciones\nverifique que el dispositivo esta conectado y correctamente configurdo");
+
     mostrarBotonesPrueba();
-    activarTabs();
     activarActions();
-    llenarInformeReporte();
     ui->centralWidget->adjustSize();
 }
+
 
 /*
 * Se utiliza la plantilla de Reporte dentro de los Resources
@@ -193,20 +214,13 @@ void MainWindow::mostrarResultados()
 */
 void MainWindow::llenarInformeReporte()
 {
-    if(prueba->getPaciente().isEmpty())
-    {
-        reportes->agregarDatosInformeReportePlainText(":rutP","S/N");
-        reportes->agregarDatosInformeReportePlainText(":nombreP","S/N");
-        reportes->agregarDatosInformeReportePlainText(":apellidoP","S/N");
-        reportes->agregarDatosInformeReportePlainText(":edadP","S/N");
-    }
-    else
-    {
-        reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
-        reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
-        reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
-        reportes->agregarDatosInformeReportePlainText(":edadP" ,QString::number(prueba->getPaciente().getEdad()));
-    }
+
+    reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
+    reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
+    reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
+    reportes->agregarDatosInformeReportePlainText(":edadP" ,prueba->getPaciente().getEdad());
+    reportes->agregarDatosInformeReportePlainText(":alturaP" ,prueba->getPaciente().getAltura());
+
     reportes->agregarDatosInformeReportePlainText(":numeroP",QString::number(prueba->getNumeroPrueba()));
     reportes->agregarDatosInformeReportePlainText(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
@@ -684,7 +698,7 @@ void MainWindow::iniciarPrueba()
     ui->stackedWidget->setCurrentWidget(ui->widgetPruebayResultados);
 
     if (prueba->getAjustesGrafico().Unidad.contains("grados"))
-        ui->labelGuardarMuestras->setText("Guardar\nDatos\nAngulos");
+        ui->labelGuardarMuestras->setText("Guardar\nDatos\nÁngulos");
     else
         ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesp..");
 
@@ -1126,7 +1140,7 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
 {
     const QString rut=ui->lineEditRut->text();
     if (rut.isEmpty())
-        QMessageBox::warning(this,"Datos vacios","Debe ingresar un Rut a Buscar");
+        QMessageBox::warning(this,"Datos vacíos","Debe ingresar un Rut a Buscar");
     else
     {
         Paciente paciente=db->buscarPacienteporRut(rut);
@@ -1145,7 +1159,7 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
         else{
             ui->labelNombrePaciente->setText("Nombre: "+paciente.getNombre());
             ui->labelApellidoPaciente->setText("Apellido: "+paciente.getApellido());
-            ui->labelEdadPaciente->setText("Edad: "+ QString::number(paciente.getEdad()));
+            ui->labelEdadPaciente->setText("Edad: "+ paciente.getEdad());
             prueba->setPaciente(paciente);
         }
     }

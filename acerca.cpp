@@ -10,7 +10,7 @@ Acerca::Acerca(QWidget *parent) :
     ui->labelBuild->setText(+"Compilado: " __DATE__  " a las: " __TIME__);
     ui->labelQtVersion->setText("Compilado en: " QT_VERSION_STR);
     connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(close()));
-    this->setFixedSize(410,170);
+    this->setFixedSize(QSize(410,200));
 }
 
 Acerca::~Acerca()

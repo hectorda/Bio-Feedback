@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>438</width>
-    <height>339</height>
+    <width>440</width>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@ QGroupBox::title {
       <item row="2" column="0">
        <widget class="QLabel" name="labelRangoAcelerometro">
         <property name="text">
-         <string>Rango Acelerometro</string>
+         <string>Rango Acelerómetro</string>
         </property>
        </widget>
       </item>

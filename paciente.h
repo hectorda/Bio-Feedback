@@ -17,11 +17,11 @@ public:
     QString getApellido() const;
     void setApellido(const QString &value);
 
-    int getEdad() const;
-    void setEdad(int value);
+    QString getEdad() const;
+    void setEdad(QString value);
 
-    double getAltura() const;
-    void setAltura(double value);
+    QString getAltura() const;
+    void setAltura(QString value);
 
     QString getSexo() const;
     void setSexo(const QString &value);
@@ -32,8 +32,8 @@ private:
     QString rut;
     QString nombre;
     QString apellido;
-    int edad;
-    int altura;
+    QString edad;
+    QString altura;
     QString sexo;
 
 };

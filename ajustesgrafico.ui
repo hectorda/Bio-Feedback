@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Ajustes Elementos del Grafico</string>
+   <string>Ajustes elementos del gráfico</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">

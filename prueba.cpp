@@ -206,13 +206,11 @@ void Prueba::exportar()
             file.remove();
             if (file.open(QIODevice::Append)){
                 QTextStream stream(&file);
-                stream <<"Numero Prueba: "<<this->getNumeroPrueba()<<endl;
-                stream <<"Orientacion Sensor: "<<this->getOrientacion()<<endl;
-                stream <<"Altura Sensor: "<<this->getAlturaDispositivo()<<endl;
-                stream <<"Tiempo Mediciones: "<<this->getTiempoTotal()<<endl;
-                stream <<"Muestras Obtenidas: "<<this->getCantidadMuestras()<<endl;
+                stream <<"Datos Prueba: Numero: "<<this->getNumeroPrueba() <<" Muestras: "<<this->getCantidadMuestras()<<" TiempoMediciones: "<<this->getTiempoTotal()<<" OrientacionSensor: "<<this->getOrientacion()<<" AlturaSensor: "<< this->getAlturaDispositivo()<<endl;;
                 stream <<"Ajustes Serial: Puerto:"<<this->ajustesPuertoSerial.portName<<" "<<this->ajustesPuertoSerial.baudRate<<" "<<this->cadenaConfiguracion<<endl;
                 stream <<"Ajustes Grafico: FPS:"<<this->ajustesGrafico.FPS<<" RadioExterior: "<<this->ajustesGrafico.RadioExterior<<" RadioInterior: "<<this->ajustesGrafico.RadioInterior<<" RadioObjetivo: "<<this->ajustesGrafico.RadioObjetivo<<endl;
+                stream <<"Datos Paciente: Rut: "<<this->paciente.getRut()<< " Nombre: "<< this->paciente.getNombre()<<" Apellido: "<<this->paciente.getApellido()<<" Edad: "<<this->paciente.getEdad()<<" Altura: "<<this->paciente.getAltura()<<endl;
+
                 for (int var = 0; var < this->getCantidadMuestras(); ++var){
                     Angulo *ang=listaAngulos.at(var);
                     Desplazamiento *desp=listaDesplazamientos.at(var);
@@ -239,25 +237,45 @@ bool Prueba::importar()
     if (fileName != ""){
         QFile file(fileName);
         if (file.open(QIODevice::ReadOnly)){
-            //Qdialog de ventana de carga configuracion sensores.
-                        QTextStream stream(&file);
-            const int pNumero=stream.readLine().split(" ").last().toInt();
-            const QStringList lineaOrientacion=stream.readLine().split(" ");
-            const QString orientacion=lineaOrientacion.at(2)+lineaOrientacion.at(3);
-            const QStringList lineaAlturaSensor=stream.readLine().split(" ");
-            const double alturaSensor=lineaAlturaSensor.last().toDouble();
-            const double tiempoMediciones=stream.readLine().split(" ").last().toDouble();
-            const int muestras=stream.readLine().split(" ").last().toInt();
-            stream.readLine();
-            stream.readLine();
+            QTextStream stream(&file);
+            QStringList listPrueba=stream.readLine().split(" ");
+            QStringList listAjusteSerial=stream.readLine().split(" ");
+            QStringList listAjustesGrafico=stream.readLine().split(" ");
+            QStringList listPaciente=stream.readLine().split(" ");
+
+            /*** Primera linea del Archivo***/
+            const int pNumero=listPrueba.at(3).toInt();
+            const int muestras=listPrueba.at(5).toInt();
+            const double tMediciones=listPrueba.at(7).toDouble();
+            const QString orSensor=listPrueba.at(9);
+            const double altSensor=listPrueba.at(11).toDouble();
+
             this->setNumeroPrueba(pNumero);
-            this->setOrientacion(orientacion);
-            this->setAlturaDispositivo(alturaSensor);
-            this->setTiempoTotal(tiempoMediciones);
+            this->setOrientacion(orSensor);
+            this->setAlturaDispositivo(altSensor);
+            this->setTiempoTotal(tMediciones);
             this->setCantidadMuestras(muestras);
 
-            this->limpiarListas();
+            //-----Segunda Linea -----//
+            AjustesPuertoSerial::Ajustes ajus;
+            ajus.portName=listAjusteSerial.at(3);
+            ajus.baudRate=listAjusteSerial.at(4).toInt();
+            const QString cadena=listAjusteSerial.at(5);
 
+            //--Tercera Linea ----//
+
+            //---Cuarta Linea ---//
+            Paciente pac;
+            pac.setRut(listPaciente.at(3));
+            pac.setNombre(listPaciente.at(5));
+            pac.setApellido(listPaciente.at(7));
+            pac.setEdad(listPaciente.at(9));
+            pac.setAltura(listPaciente.at(11));
+
+            this->setPaciente(pac);
+
+            this->limpiarListas();
+            //Comienza la lectura y seteo de las listas
             for (int var = 0; var < this->getCantidadMuestras(); ++var){
                 QVector<double> datos;
                 foreach (QString var, stream.readLine().split(" ")) {//Cast a Double conjunto de datos

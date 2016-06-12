@@ -37,18 +37,43 @@ void AjustesCalculoAngulo::on_comboBoxFiltroAngulo_currentTextChanged(const QStr
     ui->labelFiltroUsado->setText("Filtro usado: "+arg1);
     if(arg1.toLower().contains("sin filtro")){
         ui->doubleSpinBoxAlphaFC->hide();
+        ui->labelAlpha->hide();
     }
     if(arg1.toLower().contains("kalman")){
         ui->doubleSpinBoxAlphaFC->hide();
+        ui->labelAlpha->hide();
     }
     if(arg1.toLower().contains("complementario")){
         ui->doubleSpinBoxAlphaFC->show();
+        ui->labelAlpha->show();
     }
 }
 
 void AjustesCalculoAngulo::aplicar()
 {
-    filtro=ui->comboBoxFiltroAngulo->currentText();
-    alpha=ui->doubleSpinBoxAlphaFC->value();
-    close();
+    bool sinfiltro=ui->comboBoxFiltroAngulo->currentText().toLower().contains("sin filtro");
+    if(sinfiltro){
+        QMessageBox messageBox(QMessageBox::Warning,
+                    "Calcular ángulo sin usar filtro?",
+                    "Advertencia, el calcular el ángulo sin filtro es solo para efectos de pruebas"
+                       "\n No se recomienda el uso en una prueba real."
+                       "\n¿Desea usarlo de todos modos?",
+                    QMessageBox::Yes | QMessageBox::No,
+                    this);
+
+        messageBox.setButtonText(QMessageBox::Yes, tr("Aceptar"));
+        messageBox.setButtonText(QMessageBox::No, tr("Cancelar"));
+
+        if (messageBox.exec() == QMessageBox::Yes){
+            filtro=ui->comboBoxFiltroAngulo->currentText();
+            alpha=ui->doubleSpinBoxAlphaFC->value();
+            close();
+        }
+    }
+    else
+    {
+        filtro=ui->comboBoxFiltroAngulo->currentText();
+        alpha=ui->doubleSpinBoxAlphaFC->value();
+        close();
+    }
 }

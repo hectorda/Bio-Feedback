@@ -2,24 +2,6 @@
 <ui version="4.0">
  <class>Acerca</class>
  <widget class="QDialog" name="Acerca">
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>410</width>
-    <height>170</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>653</width>
-    <height>445</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Acerca de Bio-Feedback</string>
   </property>

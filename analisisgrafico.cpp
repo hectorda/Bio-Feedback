@@ -37,7 +37,7 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
     {
         ui->tableWidgetEstadisticos->setColumnCount(8);
         QStringList headers;
-        headers <<"Parametro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango";
+        headers <<"Parámetro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango";
         ui->tableWidgetEstadisticos->setHorizontalHeaderLabels(headers);
 
         this->setWindowTitle("Analisis Lista Angulos");
@@ -97,7 +97,7 @@ void AnalisisGrafico::setListaDesplazamientos(QVector<Desplazamiento *> LD)
     {
         ui->tableWidgetEstadisticos->setColumnCount(9);
         QStringList headers;
-        headers <<"Parametro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango"<<"Vel Media";
+        headers <<"Parámetro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango"<<"Vel Media";
         ui->tableWidgetEstadisticos->setHorizontalHeaderLabels(headers);
 
         this->setWindowTitle("Analisis Lista Desplazamientos");
@@ -158,7 +158,7 @@ void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
         this->setWindowTitle("Analisis Lista Muestras");
         ui->tableWidgetEstadisticos->setColumnCount(8);
         QStringList headers;
-        headers <<"Parametro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango";
+        headers <<"Parámetro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango";
         ui->tableWidgetEstadisticos->setHorizontalHeaderLabels(headers);
         const int muestras=listaMuestras.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
