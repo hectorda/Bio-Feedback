@@ -70,6 +70,7 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
     void on_stackedWidget_currentChanged(int arg1);
+    void on_spinBoxCantidadObjetivos_valueChanged(int arg1);
 
 signals:
     void emitAnguloGraficoTiempoReal(const double x,const double y);

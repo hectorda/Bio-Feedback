@@ -188,7 +188,7 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -949,14 +949,14 @@ border: 3px solid #398439;
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="labelOrdenObjetivos">
                <property name="text">
                 <string>Marcables en orden</string>
                </property>
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="labelDetenerPruebaAlMarcarTodos">
                <property name="text">
                 <string>Detener Prueba al marcar todos</string>
                </property>
@@ -986,7 +986,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1065,7 +1065,7 @@ QPushButton:hover {
                    <item>
                     <layout class="QVBoxLayout" name="verticalLayout_7">
                      <item>
-                      <widget class="QLabel" name="label_7">
+                      <widget class="QLabel" name="labelObjetivos">
                        <property name="text">
                         <string>Objetivos</string>
                        </property>
@@ -1088,7 +1088,7 @@ QPushButton:hover {
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_6">
+                      <widget class="QLabel" name="labelObjetivosRestantes">
                        <property name="text">
                         <string>Restantes</string>
                        </property>
@@ -1207,9 +1207,7 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true">
-                 <zorder>pushButtonAnalizarGraficoAngulos</zorder>
-                </widget>
+                <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true"/>
                </item>
               </layout>
              </widget>

@@ -31,8 +31,6 @@ void MainWindow::inicializar()
     analisisGraficoDesplazamientos = new AnalisisGrafico(this,reportes);
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
-    status = new QLabel;
-    ui->statusBar->addWidget(status);
     ui->dockWidget->installEventFilter(this);
     ui->qCustomPlotGrafico->installEventFilter(this);
     ui->lineEditRut->setValidator(new QIntValidator(0, 999999999) );
@@ -53,6 +51,7 @@ void MainWindow::inicializar()
     ui->radioButtonHorizontalArriba->hide();
 
     ui->menuVer->addAction(ui->mainToolBar->toggleViewAction());
+
     ui->qCustomPlotResultados->hide();
     ui->pushButtonVolverPrueba->hide();
 
@@ -161,7 +160,7 @@ void MainWindow::inicializarGrafico()
 
 void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 {
-    status->setText(message);
+    ui->statusBar->showMessage(message);
 }
 
 /*
@@ -1174,5 +1173,37 @@ void MainWindow::on_stackedWidget_currentChanged(int arg1)
             ui->labelPaciente->setText("Paciente: " + prueba->getPaciente().getRut());
         else
             ui->labelPaciente->setText("Paciente: Anónimo");
+    }
+}
+
+void MainWindow::on_spinBoxCantidadObjetivos_valueChanged(int arg1)
+{
+    if(arg1 > 0) //Se muestran los elementos
+    {
+        ui->lcdNumberCantidadObjetivos->show();
+        ui->lcdNumberObjetivosRestantes->show();
+        ui->labelObjetivos->show();
+        ui->labelObjetivosRestantes->show();
+
+        ui->labelObjetivosAleatorios->show();
+        ui->checkBoxObjetivosAleatorios->show();
+        ui->labelDetenerPruebaAlMarcarTodos->show();
+        ui->checkBoxDeteneralMarcarObjetivos->show();
+        ui->labelOrdenObjetivos->show();
+        ui->checkBoxOrdenObjetivos->show();
+    }
+    else //Se ocultan los elementos
+    {
+        ui->lcdNumberCantidadObjetivos->hide();
+        ui->lcdNumberObjetivosRestantes->hide();
+        ui->labelObjetivos->hide();
+        ui->labelObjetivosRestantes->hide();
+
+        ui->labelObjetivosAleatorios->hide();
+        ui->checkBoxObjetivosAleatorios->hide();
+        ui->labelDetenerPruebaAlMarcarTodos->hide();
+        ui->checkBoxDeteneralMarcarObjetivos->hide();
+        ui->labelOrdenObjetivos->hide();
+        ui->checkBoxOrdenObjetivos->hide();
     }
 }
