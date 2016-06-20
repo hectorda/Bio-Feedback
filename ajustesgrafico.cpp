@@ -66,7 +66,8 @@ void AjustesGrafico::llenarParametrosComboBox()
     for (int var = 0; var < 5; ++var) {
         ui->comboBoxFPS->addItem(QString::number(12*(var+1)),var);
     }
-    ui->comboBoxFPS->setCurrentIndex(3);
+    ui->comboBoxFPS->setCurrentIndex(4); //Para 60 FPS
+
     ui->comboBoxColorObjetivosMarcados->blockSignals(false);
     ui->comboBoxColorObjetivosSinMarcar->blockSignals(false);
 

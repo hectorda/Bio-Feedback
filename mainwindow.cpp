@@ -1146,7 +1146,7 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
         if(paciente.isEmpty()){
             QMessageBox messageBox(QMessageBox::Question,
                         tr("Rut no encontrado"),
-                        tr("El Rut no existe en la base de datos, desea agregarlo?"),
+                        tr("El Rut: %1 no existe en la base de datos, desea agregarlo?").arg(rut),
                         QMessageBox::Yes | QMessageBox::No,
                         this);
             messageBox.setButtonText(QMessageBox::Yes, tr("Agregar"));
