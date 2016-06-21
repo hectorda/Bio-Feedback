@@ -188,7 +188,7 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1257,12 +1257,12 @@ p, li { white-space: pre-wrap; }
                  </column>
                  <column>
                   <property name="text">
-                   <string>ÁnguloX (°)</string>
+                   <string>Ángulo Medio-Lateral (°)</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>ÁnguloY (°)</string>
+                   <string>Ángulo Antero-Posterior (°)</string>
                   </property>
                  </column>
                 </widget>
@@ -1300,12 +1300,12 @@ p, li { white-space: pre-wrap; }
                  </column>
                  <column>
                   <property name="text">
-                   <string>Desplazamiento X (cm)</string>
+                   <string>Desplazamiento Medio-Lateral (cm)</string>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string>Desplazamiento Y (cm)</string>
+                   <string>Desplazamiento Antero-Posterior (cm)</string>
                   </property>
                  </column>
                 </widget>

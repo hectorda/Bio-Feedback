@@ -191,8 +191,8 @@ void Reportes::inicializarGraficoAngulos()
     bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
     bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
 
-    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoAngulos,"Grafico Angulo X vs Tiempo");
-    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Y vs Tiempo");
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Medio-Lateral vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoAngulos,"Grafico Angulo Antero-Posterior vs Tiempo");
 
     //Se posicionan los layouts
     graficoAngulos->plotLayout()->addElement(0, 0, tituloX);
@@ -247,8 +247,8 @@ void Reportes::inicializarGraficoDesplazamientos()
     bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
     bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
 
-    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento X vs Tiempo");
-    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento Y vs Tiempo");
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento Medio-Lateral vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento Antero-Posterior vs Tiempo");
 
     //Se posicionan los layouts
     graficoDesplazamientos->plotLayout()->addElement(0, 0, tituloX);
