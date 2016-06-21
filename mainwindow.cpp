@@ -131,39 +131,59 @@ void MainWindow::conexiones()
 void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
-    circuloExterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioExterior,prueba->getAjustesGrafico().RadioExterior);
-    circuloExterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioExterior,-prueba->getAjustesGrafico().RadioExterior);
+    if(prueba->getNumeroPrueba()!=-1){
+        circuloExterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioExterior,prueba->getAjustesGrafico().RadioExterior);
+        circuloExterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioExterior,-prueba->getAjustesGrafico().RadioExterior);
 
-    circuloExterior->setBrush(QBrush(Qt::yellow));
+        circuloExterior->setVisible(true);
+        circuloExterior->setBrush(QBrush(Qt::yellow));
 
-    if (prueba->getAjustesGrafico().Unidad.contains("grados"))
-        titulo->setText("Grados Antero-Posterior y Medio Lateral");
+        if (prueba->getAjustesGrafico().Unidad.contains("grados"))
+            titulo->setText("Grados Antero-Posterior y Medio Lateral");
+        else
+            titulo->setText("Centimetros Antero-Posterior y Medio Lateral");
+        circuloInterior->setVisible(true);
+        circuloInterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioInterior,prueba->getAjustesGrafico().RadioInterior);
+        circuloInterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioInterior,-prueba->getAjustesGrafico().RadioInterior);
+
+        generarObjetivos();
+
+        ui->qCustomPlotGrafico->addGraph(); // Para el Grafico del punto
+        ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::blue));
+        ui->qCustomPlotGrafico->graph(0)->setLineStyle(QCPGraph::lsNone);
+        ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+
+        lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
+        lienzo->setPen(QPen(Qt::blue, 1));
+
+        ui->qCustomPlotGrafico->addPlottable(lienzo);
+
+        //Se configuran los rangos maximos para los ejes X e Y segun el slider.
+        const int range=ui->verticalSliderRangeGraphic->value();
+        ui->qCustomPlotGrafico->xAxis->setRange(-range,range);
+        ui->qCustomPlotGrafico->yAxis->setRange(-range,range);
+        ui->qCustomPlotGrafico->xAxis2->setRange(-range,range);
+        ui->qCustomPlotGrafico->yAxis2->setRange(-range,range);
+        ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag); // Para usar el el Zoom y el Arrastre del grafico.
+    }
     else
-        titulo->setText("Centimetros Antero-Posterior y Medio Lateral");
+    {
+        titulo->setText("Angulo X Tiempo ");
+        circuloExterior->setVisible(false);
+        circuloInterior->setVisible(false);
+        ui->qCustomPlotGrafico->addGraph(); // blue line
+        ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::blue));
+        ui->qCustomPlotGrafico->graph(0)->setBrush(QBrush(QColor(240, 255, 200)));
+        ui->qCustomPlotGrafico->graph(0)->setAntialiasedFill(false);
 
-    circuloInterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioInterior,prueba->getAjustesGrafico().RadioInterior);
-    circuloInterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioInterior,-prueba->getAjustesGrafico().RadioInterior);
+        ui->qCustomPlotGrafico->addGraph(); // blue dot
+        ui->qCustomPlotGrafico->graph(1)->setPen(QPen(Qt::blue));
+        ui->qCustomPlotGrafico->graph(1)->setLineStyle(QCPGraph::lsNone);
+        ui->qCustomPlotGrafico->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->qCustomPlotGrafico->setInteractions(QCP::iRangeZoom|QCP::iRangeDrag); // Para usar el el Zoom y el Arrastre del grafico.
 
-    generarObjetivos();
+    }
 
-    ui->qCustomPlotGrafico->addGraph(); // Para el Grafico del punto
-    ui->qCustomPlotGrafico->graph(0)->setPen(QPen(Qt::blue));
-    ui->qCustomPlotGrafico->graph(0)->setLineStyle(QCPGraph::lsNone);
-    ui->qCustomPlotGrafico->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-
-    lienzo = new QCPCurve(ui->qCustomPlotGrafico->xAxis,ui->qCustomPlotGrafico->yAxis);
-    lienzo->setPen(QPen(Qt::blue, 1));
-
-    ui->qCustomPlotGrafico->addPlottable(lienzo);
-
-    //Se configuran los rangos maximos para los ejes X e Y segun el slider.
-    const int range=ui->verticalSliderRangeGraphic->value();
-    ui->qCustomPlotGrafico->xAxis->setRange(-range,range);
-    ui->qCustomPlotGrafico->yAxis->setRange(-range,range);
-    ui->qCustomPlotGrafico->xAxis2->setRange(-range,range);
-    ui->qCustomPlotGrafico->yAxis2->setRange(-range,range);
-
-    ui->qCustomPlotGrafico->setInteractions(QCP::iRangeDrag); // Para usar el el Zoom y el Arrastre del grafico.
 
 }
 
@@ -508,43 +528,56 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
 */
 void MainWindow::slotGraficarTiempoReal(const double x,const double y)
 {
-    marcarObjetivos(x,y); //Se hace parpadear o verifica el objetivo segun las configuraciones de la prueba
+    if(prueba->getNumeroPrueba()!=-1){
+        marcarObjetivos(x,y); //Se hace parpadear o verifica el objetivo segun las configuraciones de la prueba
 
-    if(ui->checkBoxLimitarGrafico->isChecked())
-    {
-        const double ecuacionCircExt=qPow(x,2)+qPow(y,2);
-        if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior),2)){//Si es que no se sale del radio exterior
-            lienzo->addData(x,y);
-            ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
-            ui->qCustomPlotGrafico->graph(0)->addData(x,y);
+        if(ui->checkBoxLimitarGrafico->isChecked())
+        {
+            const double ecuacionCircExt=qPow(x,2)+qPow(y,2);
+            if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior),2)){//Si es que no se sale del radio exterior
+                lienzo->addData(x,y);
+                ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
+                ui->qCustomPlotGrafico->graph(0)->addData(x,y);
+            }
+            else
+            {
+                const double pendiente=y/x;
+                double inclRecta=qAtan(pendiente)*180/M_PI;
+
+                if(x>0)
+                {
+                    if(y>0)//Cuadrante 1
+                        inclRecta=inclRecta;
+                    else //Cuadrante 4
+                        inclRecta+=360;
+                }
+                else  //Cuadrante 2 y Cuadrante 3
+                    inclRecta+=180;
+
+                const double aX=prueba->getAjustesGrafico().RadioExterior*qCos(qDegreesToRadians(inclRecta));
+                const double aY=prueba->getAjustesGrafico().RadioExterior*qSin(qDegreesToRadians(inclRecta));
+                lienzo->addData(aX,aY);
+                ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
+                ui->qCustomPlotGrafico->graph(0)->addData(aX,aY);
+            }
         }
         else
         {
-            const double pendiente=y/x;
-            double inclRecta=qAtan(pendiente)*180/M_PI;
-
-            if(x>0)
-            {
-                if(y>0)//Cuadrante 1
-                    inclRecta=inclRecta;
-                else //Cuadrante 4
-                    inclRecta+=360;
-            }
-            else  //Cuadrante 2 y Cuadrante 3
-                inclRecta+=180;
-
-            const double aX=prueba->getAjustesGrafico().RadioExterior*qCos(qDegreesToRadians(inclRecta));
-            const double aY=prueba->getAjustesGrafico().RadioExterior*qSin(qDegreesToRadians(inclRecta));
-            lienzo->addData(aX,aY);
+            lienzo->addData(x , y);
             ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
-            ui->qCustomPlotGrafico->graph(0)->addData(aX,aY);
+            ui->qCustomPlotGrafico->graph(0)->addData(x,y);
         }
     }
-    else
-    {
-        lienzo->addData(x , y);
-        ui->qCustomPlotGrafico->graph(0)->clearData(); //Se limpian los datos anteriores, para solo mantener el ultimo punto.
-        ui->qCustomPlotGrafico->graph(0)->addData(x,y);
+    else{
+        ui->qCustomPlotGrafico->graph(0)->addData(x, y);
+        // set data of dots:
+        ui->qCustomPlotGrafico->graph(1)->clearData();
+        ui->qCustomPlotGrafico->graph(1)->addData(x, y);
+        // remove data of lines that's outside visible range:
+        //ui->qCustomPlotGrafico->graph(0)->removeDataBefore(x-8);
+        // rescale value (vertical) axis to fit the current data:
+        ui->qCustomPlotGrafico->graph(1)->rescaleValueAxis(true);
+        ui->qCustomPlotGrafico->xAxis->setRange(x+0.25, 8, Qt::AlignRight);
     }
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
@@ -575,14 +608,17 @@ void MainWindow::contextMenuRequest(QPoint pos)
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::Resize && obj == ui->dockWidget)
-        relacionAspectodelGrafico();
+        if(prueba->getNumeroPrueba()!=-1)
+            relacionAspectodelGrafico();
 
     if(event->type()==QEvent::Wheel && obj == ui->qCustomPlotGrafico){
-        QWheelEvent *wheelEvent = (QWheelEvent *)event;
-
-        QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
-        range+=(wheelEvent->delta()/120);
-        ui->verticalSliderRangeGraphic->setValue(range.upper); //Acticar el Slot
+        if(prueba->getNumeroPrueba()!=-1){
+            QWheelEvent *wheelEvent = (QWheelEvent *)event;
+            QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
+            range+=(wheelEvent->delta()/120);
+            ui->verticalSliderRangeGraphic->setValue(range.upper); //Acticar el Slot
+            ui->qCustomPlotGrafico->replot();
+        }
     }
     return QWidget::eventFilter(obj, event);
 }
@@ -815,10 +851,15 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         //Comienza actualizacion elementos de la interfaz
         //Se pregunta y envia el dato para graficar
         if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
-            if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
-                emit emitAnguloGraficoTiempoReal(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
-            if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
-                emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
+            if(prueba->getNumeroPrueba()!=-1){
+                if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
+                    emit emitAnguloGraficoTiempoReal(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
+                if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
+                    emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
+            }
+            else
+                emitAnguloGraficoTiempoReal(objetoAngulo->getTiempo(),objetoAngulo->getAnguloX());
+
         }
 
         if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
@@ -897,6 +938,7 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
 
     grafico->legend->clear();
     grafico->legend->setVisible(false);
+    grafico->clearFocus();
     grafico->clearGraphs();
     grafico->clearPlottables();
     grafico->clearItems();
@@ -1172,6 +1214,12 @@ void MainWindow::configurarPrueba()
         ui->groupBoxAjustesObjetivos->hide();
         ui->labelLimitarGrafico->hide();
         ui->checkBoxLimitarGrafico->hide();
+        ui->verticalSliderRangeGraphic->hide();
+
+        ui->lcdNumberCantidadObjetivos->hide();
+        ui->labelObjetivos->hide();
+        ui->lcdNumberObjetivosRestantes->hide();
+        ui->labelObjetivosRestantes->hide();
     }
 }
 
@@ -1191,4 +1239,11 @@ void MainWindow::mostarElementosConfigurarPrueba()
 
     ui->labelOrdenObjetivos->show();
     ui->checkBoxOrdenObjetivos->show();
+
+    ui->verticalSliderRangeGraphic->show();
+
+    ui->lcdNumberCantidadObjetivos->show();
+    ui->labelObjetivos->show();
+    ui->lcdNumberObjetivosRestantes->show();
+    ui->labelObjetivosRestantes->show();
 }

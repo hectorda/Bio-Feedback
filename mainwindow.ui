@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>639</width>
-    <height>593</height>
+    <height>656</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -188,78 +188,15 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="title">
-           <string>Datos del Paciente</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_10">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
-           </property>
-           <property name="horizontalSpacing">
-            <number>55</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Rut</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEditRut"/>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="pushButtonBuscarPaciente">
-             <property name="text">
-              <string>Buscar Paciente</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelApellidoPaciente">
-             <property name="text">
-              <string>Apellido:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="labelNombrePaciente">
-             <property name="text">
-              <string>Nombre:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="labelEdadPaciente">
-             <property name="text">
-              <string>Edad:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <spacer name="verticalSpacer_3">
+        <item row="5" column="0">
+         <spacer name="verticalSpacer_4">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -401,19 +338,6 @@ Prueba Base</string>
           </item>
          </layout>
         </item>
-        <item row="5" column="0">
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="1" column="0">
          <spacer name="verticalSpacer_8">
           <property name="orientation">
@@ -427,10 +351,101 @@ Prueba Base</string>
           </property>
          </spacer>
         </item>
+        <item row="3" column="0">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string>Datos del Paciente</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_10">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <property name="horizontalSpacing">
+            <number>55</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Rut</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEditRut"/>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="pushButtonBuscarPaciente">
+             <property name="text">
+              <string>Buscar Paciente</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="labelApellidoPaciente">
+             <property name="text">
+              <string>Apellido:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelNombrePaciente">
+             <property name="text">
+              <string>Nombre:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="labelEdadPaciente">
+             <property name="text">
+              <string>Edad:</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
         <item row="6" column="0">
-         <widget class="QPushButton" name="pushButtonOtro">
-          <property name="styleSheet">
-           <string notr="true">QPushButton {
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonOtro">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
   background: #3498db;
   border-radius: 8px;
  border: 0px solid;
@@ -445,11 +460,13 @@ QPushButton:hover {
   background: #3cb0fd;
   text-decoration: none;
 }</string>
-          </property>
-          <property name="text">
-           <string>Analisis Personalizado</string>
-          </property>
-         </widget>
+            </property>
+            <property name="text">
+             <string>Analizar X e Y</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -805,11 +822,6 @@ Resultados</string>
                </item>
                <item row="1" column="1">
                 <widget class="QComboBox" name="comboBox">
-                 <item>
-                  <property name="text">
-                   <string>AX,AY</string>
-                  </property>
-                 </item>
                  <item>
                   <property name="text">
                    <string>Tiempo AX</string>
