@@ -258,6 +258,19 @@ QMessageBox QPushButton:hover {
           </layout>
          </widget>
         </item>
+        <item row="3" column="0">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="2" column="0">
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="1">
@@ -285,7 +298,7 @@ Modo Libre</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
+          <item row="1" column="4">
            <spacer name="horizontalSpacer_10">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -298,7 +311,7 @@ Modo Libre</string>
             </property>
            </spacer>
           </item>
-          <item row="1" column="2">
+          <item row="1" column="3">
            <widget class="QPushButton" name="pushButtonPrueba2">
             <property name="styleSheet">
              <string notr="true">QPushButton {
@@ -361,7 +374,7 @@ Test ¿Circular?</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="2" column="3">
            <widget class="QPushButton" name="pushButtonPrueba4">
             <property name="styleSheet">
              <string notr="true">QPushButton {
@@ -401,19 +414,6 @@ Prueba Base</string>
           </property>
          </spacer>
         </item>
-        <item row="3" column="0">
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="1" column="0">
          <spacer name="verticalSpacer_8">
           <property name="orientation">
@@ -426,6 +426,30 @@ Prueba Base</string>
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="6" column="0">
+         <widget class="QPushButton" name="pushButtonOtro">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+  background: #3498db;
+  border-radius: 8px;
+ border: 0px solid;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 25px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+QPushButton:hover {
+  background: #3cb0fd;
+  text-decoration: none;
+}</string>
+          </property>
+          <property name="text">
+           <string>Analisis Personalizado</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -526,8 +550,285 @@ Resultados</string>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_17">
+          <item row="1" column="2">
+           <widget class="QGroupBox" name="groupBoxAjustesFinales">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="title">
+             <string>Ajustes Finales</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_13">
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelLimitarGrafico">
+               <property name="text">
+                <string>Limitar gráfico al borde</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="checkBoxLimitarGrafico">
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelAlturaDisp">
+               <property name="text">
+                <string>Altura dispositivo (cm)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QDoubleSpinBox" name="doubleSpinBoxAlturaDispositivo">
+               <property name="suffix">
+                <string extracomment="cm"/>
+               </property>
+               <property name="minimum">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>200.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>70.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelTiempoPrueba">
+               <property name="toolTip">
+                <string>Tiempo que durara la Prueba seleccionada</string>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Tiempo Prueba (seg)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QSpinBox" name="spinBoxTiempoPrueba">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Tiempo que durara la Prueba seleccionada</string>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>500</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxTiempoInfinito">
+                 <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+                 </property>
+                 <property name="text">
+                  <string>Infinito</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QGroupBox" name="groupBoxAjustesObjetivos">
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="title">
+               <string>Ajustes Objetivos</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_15">
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <italic>false</italic>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="value">
+                  <number>8</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelObjetivosAleatorios">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>Generar en orden aleatorio </string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QCheckBox" name="checkBoxObjetivosAleatorios">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <italic>false</italic>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelCantidadObjetivos">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>Cantidad Objetivos</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QCheckBox" name="checkBoxDeteneralMarcarObjetivos">
+                 <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QCheckBox" name="checkBoxOrdenObjetivos">
+                 <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="labelOrdenObjetivos">
+                 <property name="text">
+                  <string>Marcables en orden</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="labelDetenerPruebaAlMarcarTodos">
+                 <property name="text">
+                  <string>Detener Prueba al marcar todos</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBoxAjustesPruebaPersonalizada">
+              <property name="title">
+               <string>GroupBox</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Tipo de Grafico</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="comboBox">
+                 <item>
+                  <property name="text">
+                   <string>AX,AY</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Tiempo AX</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Tiempo AY</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item row="1" column="1">
-           <widget class="QGroupBox" name="groupBox_3">
+           <widget class="QGroupBox" name="groupBoxAjustesOrientacionSensores">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -725,244 +1026,6 @@ border: 3px solid #398439;
               <height>64</height>
              </size>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="title">
-             <string>Ajustes Finales</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_13">
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string>Limitar gráfico al borde</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QCheckBox" name="checkBoxLimitarGrafico">
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelAlturaDisp">
-               <property name="text">
-                <string>Altura dispositivo (cm)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QDoubleSpinBox" name="doubleSpinBoxAlturaDispositivo">
-               <property name="suffix">
-                <string extracomment="cm"/>
-               </property>
-               <property name="minimum">
-                <double>10.000000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>200.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>70.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="labelTiempoPrueba">
-               <property name="toolTip">
-                <string>Tiempo que durara la Prueba seleccionada</string>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Tiempo Prueba (seg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_8">
-               <item>
-                <widget class="QSpinBox" name="spinBoxTiempoPrueba">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Tiempo que durara la Prueba seleccionada</string>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LeftToRight</enum>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="minimum">
-                  <number>1</number>
-                 </property>
-                 <property name="maximum">
-                  <number>500</number>
-                 </property>
-                 <property name="value">
-                  <number>10</number>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxTiempoInfinito">
-                 <property name="layoutDirection">
-                  <enum>Qt::RightToLeft</enum>
-                 </property>
-                 <property name="text">
-                  <string>Infinito</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="title">
-             <string>Ajustes Objetivos</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_15">
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBoxCantidadObjetivos">
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <italic>false</italic>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-               <property name="minimum">
-                <number>0</number>
-               </property>
-               <property name="value">
-                <number>8</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelObjetivosAleatorios">
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Generar en orden aleatorio </string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QCheckBox" name="checkBoxObjetivosAleatorios">
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <italic>false</italic>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelCantidadObjetivos">
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Cantidad Objetivos</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="checkBoxDeteneralMarcarObjetivos">
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QCheckBox" name="checkBoxOrdenObjetivos">
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelOrdenObjetivos">
-               <property name="text">
-                <string>Marcables en orden</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="labelDetenerPruebaAlMarcarTodos">
-               <property name="text">
-                <string>Detener Prueba al marcar todos</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
          </layout>
@@ -1661,6 +1724,21 @@ QProgressBar:hover {
          </layout>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="widgetCustomTest">
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>90</y>
+          <width>47</width>
+          <height>13</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>

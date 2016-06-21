@@ -38,10 +38,6 @@ public:
 
 private slots:
     //Slots de Botones
-    void on_pushButtonPrueba1_clicked();
-    void on_pushButtonPrueba2_clicked();
-    void on_pushButtonPrueba3_clicked();
-    void on_pushButtonPrueba4_clicked();
     void on_pushButtonReiniciarPrueba_clicked();
     void on_pushButtonConfPrueba_clicked();
     void on_pushButtonVolverInicio_clicked();
@@ -55,8 +51,11 @@ private slots:
     void on_dockWidget_topLevelChanged(bool topLevel);
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
-    void iniciarPrueba();
+    void mostrarQDialogCarga(QDialog *dialog, QMovie *movie);
+    void mostarElementosConfigurarPrueba();
+    void configurarPrueba();
     void configurarArduino();
+    void iniciarPrueba();
     void limpiarListasyOcultarBotones();
     void desactivarActions();
     void activarActions();
@@ -70,7 +69,6 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
     void on_stackedWidget_currentChanged(int arg1);
-    void on_spinBoxCantidadObjetivos_valueChanged(int arg1);
 
 signals:
     void emitAnguloGraficoTiempoReal(const double x,const double y);

@@ -90,7 +90,16 @@ void MainWindow::conexiones()
     connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
     connect(ui->pushButtonGuardarReportePDF,QPushButton::clicked,[=]{ reportes->guardarInformeReportePDF(); });
 
-      //Connect de actions
+
+    //Conect de Botones de Prueba
+    connect(ui->pushButtonPrueba1,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
+    connect(ui->pushButtonPrueba2,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
+    connect(ui->pushButtonPrueba3,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
+    connect(ui->pushButtonPrueba4,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
+    connect(ui->pushButtonOtro,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
+
+
+    //Connect de actions
     connect(ui->actionExportar,QAction::triggered,[=](){ prueba->exportar(); });
     connect(ui->actionImportar,QAction::triggered,[=](){
         if(prueba->importar()){
@@ -459,8 +468,10 @@ void MainWindow::marcarObjetivos(const double x,const double y)
         }
     }
 
-    if(prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
+    if(prueba->getNumeroPrueba()!=-1 && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos()){
         ui->pushButtonDetenerPrueba->click();
+        QTextStream stdout <<"ora"<<endl;
+    }
 }
 
 /*
@@ -605,31 +616,36 @@ void MainWindow::configurarArduino()
         prueba->setFrecuenciaMuestreo(ajustesSensores->obtenerFrecuenciaMuestreo());
 
         //Qdialog de ventana de carga configuracion sensores.
-        QDialog *QdialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
-        QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-        QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo()));
-        layoutBarraCarga->addWidget(labelCarga);
-        QLabel *labelQMovie= new QLabel;
-        layoutBarraCarga->addWidget(labelQMovie);
+        QDialog *QDialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
         QMovie *movie = new QMovie(":/images/Loading.gif");
-        movie->setScaledSize(QSize(50,50));
-        labelQMovie->setMovie(movie);
-        movie->start();
-        QdialogCarga->setLayout(layoutBarraCarga);
+        mostrarQDialogCarga(QDialogCarga,movie);
 
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
         connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
-        connect(timer, QTimer::timeout, [=]() { QdialogCarga->close();});
+        connect(timer, QTimer::timeout, [=]() { QDialogCarga->close();});
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
-        connect(timer, QTimer::timeout, [=]() { delete timer; delete QdialogCarga; delete movie;});
+        connect(timer, QTimer::timeout, [=]() { delete timer; delete QDialogCarga; delete movie;});
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
-        QdialogCarga->exec();
+        QDialogCarga->exec();
     }
     else
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
+}
+
+void MainWindow::mostrarQDialogCarga(QDialog *dialog,QMovie *movie)
+{
+    QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
+    QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo()));
+    layoutBarraCarga->addWidget(labelCarga);
+    QLabel *labelQMovie= new QLabel;
+    layoutBarraCarga->addWidget(labelQMovie);
+    movie->setScaledSize(QSize(50,50));
+    labelQMovie->setMovie(movie);
+    movie->start();
+    dialog->setLayout(layoutBarraCarga);
 }
 
 /*
@@ -890,74 +906,6 @@ void MainWindow::limpiarGrafico(QCustomPlot *grafico){
     grafico->replot();
 }
 
-void MainWindow::on_pushButtonPrueba1_clicked()
-{
-    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    prueba->setNumeroPrueba(1);
-    ui->labelNombrePrueba->setText("Modo Libre");
-
-    ui->labelObjetivosAleatorios->show();
-    ui->checkBoxObjetivosAleatorios->show();
-
-    ui->labelCantidadObjetivos->show();
-    ui->spinBoxCantidadObjetivos->show();
-
-    ui->progressBarPrueba->show();
-    ui->labelTiempoPrueba->show();
-    ui->spinBoxTiempoPrueba->show();
-}
-
-void MainWindow::on_pushButtonPrueba2_clicked()
-{
-    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    prueba->setNumeroPrueba(2);
-    ui->labelNombrePrueba->setText("Prueba 2");
-
-    ui->labelCantidadObjetivos->show();
-    ui->spinBoxCantidadObjetivos->show();
-
-    ui->labelCantidadObjetivos->show();
-    ui->spinBoxCantidadObjetivos->show();
-
-    ui->progressBarPrueba->show();
-    ui->labelTiempoPrueba->show();
-    ui->spinBoxTiempoPrueba->show();
-}
-
-void MainWindow::on_pushButtonPrueba3_clicked()
-{
-    prueba->setNumeroPrueba(3);
-    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    ui->labelNombrePrueba->setText("Prueba 3");
-
-    ui->labelCantidadObjetivos->hide();
-    ui->spinBoxCantidadObjetivos->hide();
-
-    ui->labelCantidadObjetivos->hide();
-    ui->spinBoxCantidadObjetivos->hide();
-
-    ui->progressBarPrueba->show();
-    ui->labelTiempoPrueba->show();
-    ui->spinBoxTiempoPrueba->show();
-}
-
-void MainWindow::on_pushButtonPrueba4_clicked()
-{
-    prueba->setNumeroPrueba(4);
-    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
-    ui->labelNombrePrueba->setText("Prueba 4:Prueba Base");
-
-    ui->labelCantidadObjetivos->show();
-    ui->spinBoxCantidadObjetivos->show();
-
-    ui->labelCantidadObjetivos->hide();
-    ui->spinBoxCantidadObjetivos->hide();
-
-    ui->progressBarPrueba->show();
-    ui->labelTiempoPrueba->show();
-    ui->spinBoxTiempoPrueba->show();
-}
-
 void MainWindow::on_pushButtonConfPrueba_clicked() //Permite volver a configurar la prueba
 {
      ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
@@ -1176,34 +1124,71 @@ void MainWindow::on_stackedWidget_currentChanged(int arg1)
     }
 }
 
-void MainWindow::on_spinBoxCantidadObjetivos_valueChanged(int arg1)
+void MainWindow::configurarPrueba()
 {
-    if(arg1 > 0) //Se muestran los elementos
-    {
-        ui->lcdNumberCantidadObjetivos->show();
-        ui->lcdNumberObjetivosRestantes->show();
-        ui->labelObjetivos->show();
-        ui->labelObjetivosRestantes->show();
+    mostarElementosConfigurarPrueba();
+    QString clicked = sender()->objectName();
+    ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
 
-        ui->labelObjetivosAleatorios->show();
-        ui->checkBoxObjetivosAleatorios->show();
-        ui->labelDetenerPruebaAlMarcarTodos->show();
-        ui->checkBoxDeteneralMarcarObjetivos->show();
-        ui->labelOrdenObjetivos->show();
-        ui->checkBoxOrdenObjetivos->show();
+    if(clicked=="pushButtonPrueba1"){
+        prueba->setNumeroPrueba(1);
+        ui->labelNombrePrueba->setText("Modo Libre");
+        ui->groupBoxAjustesPruebaPersonalizada->hide();
     }
-    else //Se ocultan los elementos
-    {
-        ui->lcdNumberCantidadObjetivos->hide();
-        ui->lcdNumberObjetivosRestantes->hide();
-        ui->labelObjetivos->hide();
-        ui->labelObjetivosRestantes->hide();
+    if(clicked=="pushButtonPrueba2"){
+        prueba->setNumeroPrueba(2);
+        ui->labelNombrePrueba->setText("Prueba 2");
+        ui->groupBoxAjustesPruebaPersonalizada->hide();
+    }
+    if(clicked=="pushButtonPrueba3"){
+        prueba->setNumeroPrueba(3);
+        ui->labelNombrePrueba->setText("Prueba 3");
+        ui->groupBoxAjustesPruebaPersonalizada->hide();
 
         ui->labelObjetivosAleatorios->hide();
         ui->checkBoxObjetivosAleatorios->hide();
-        ui->labelDetenerPruebaAlMarcarTodos->hide();
-        ui->checkBoxDeteneralMarcarObjetivos->hide();
+
         ui->labelOrdenObjetivos->hide();
         ui->checkBoxOrdenObjetivos->hide();
+
     }
+    if(clicked=="pushButtonPrueba4"){
+        prueba->setNumeroPrueba(4);
+        ui->labelNombrePrueba->setText("Prueba 4:Prueba Base");
+        ui->groupBoxAjustesPruebaPersonalizada->hide();
+
+        ui->labelCantidadObjetivos->hide();
+        ui->spinBoxCantidadObjetivos->hide();
+
+        ui->labelObjetivosAleatorios->hide();
+        ui->checkBoxObjetivosAleatorios->hide();
+
+        ui->labelOrdenObjetivos->hide();
+        ui->checkBoxOrdenObjetivos->hide();
+
+    }
+    if(clicked=="pushButtonOtro"){
+        prueba->setNumeroPrueba(-1);
+        ui->groupBoxAjustesObjetivos->hide();
+        ui->labelLimitarGrafico->hide();
+        ui->checkBoxLimitarGrafico->hide();
+    }
+}
+
+void MainWindow::mostarElementosConfigurarPrueba()
+{
+    ui->groupBoxAjustesPruebaPersonalizada->show();
+    ui->groupBoxAjustesObjetivos->show();
+
+    ui->labelLimitarGrafico->show();
+    ui->checkBoxLimitarGrafico->show();
+
+    ui->labelCantidadObjetivos->show();
+    ui->spinBoxCantidadObjetivos->show();
+
+    ui->labelObjetivosAleatorios->show();
+    ui->checkBoxObjetivosAleatorios->show();
+
+    ui->labelOrdenObjetivos->show();
+    ui->checkBoxOrdenObjetivos->show();
 }
