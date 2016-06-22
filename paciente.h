@@ -28,6 +28,9 @@ public:
 
     bool isEmpty();
 
+    QString getPeso() const;
+    void setPeso(const QString &value);
+
 private:
     QString rut;
     QString nombre;
@@ -35,6 +38,7 @@ private:
     QString edad;
     QString altura;
     QString sexo;
+    QString peso;
 
 };
 

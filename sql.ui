@@ -39,7 +39,7 @@ QGroupBox::title {
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_tablaPacientes">
       <attribute name="title">
@@ -188,7 +188,7 @@ Listado</string>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEditApellido"/>
+           <widget class="QLineEdit" name="lineEditNombre"/>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_5">
@@ -197,15 +197,15 @@ Listado</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEditNombre"/>
-          </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
              <string>Edad (años)</string>
             </property>
            </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEditEdad"/>
           </item>
           <item row="5" column="0">
            <widget class="QLabel" name="label_3">
@@ -238,8 +238,18 @@ Listado</string>
           <item row="6" column="1">
            <widget class="QLineEdit" name="lineEditAltura"/>
           </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEditEdad"/>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Peso (kg)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QLineEdit" name="lineEditPeso"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineEditApellido"/>
           </item>
          </layout>
         </widget>
@@ -329,6 +339,9 @@ Listado</string>
             </property>
            </widget>
           </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineEditEdad_2"/>
+          </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_12">
             <property name="text">
@@ -357,11 +370,18 @@ Listado</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEditEdad_2"/>
-          </item>
           <item row="5" column="1">
            <widget class="QLineEdit" name="lineEditAltura_2"/>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>Peso (kg)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="lineEditPeso_2"/>
           </item>
          </layout>
          <zorder>lineEditApellido_2</zorder>
@@ -375,6 +395,8 @@ Listado</string>
          <zorder>label_12</zorder>
          <zorder>lineEditEdad_2</zorder>
          <zorder>lineEditAltura_2</zorder>
+         <zorder>label_16</zorder>
+         <zorder>lineEditPeso_2</zorder>
         </widget>
        </item>
        <item>
@@ -414,8 +436,8 @@ Listado</string>
   <tabstop>pushButtonAgregar</tabstop>
   <tabstop>lineEditRut</tabstop>
   <tabstop>lineEditdigitoVerificador</tabstop>
-  <tabstop>lineEditApellido</tabstop>
   <tabstop>lineEditNombre</tabstop>
+  <tabstop>lineEditApellido</tabstop>
   <tabstop>lineEditEdad</tabstop>
   <tabstop>comboBox</tabstop>
   <tabstop>lineEditAltura</tabstop>

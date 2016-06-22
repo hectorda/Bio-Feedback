@@ -8,8 +8,8 @@ Angulo::Angulo()
 Angulo::Angulo(double Tiempo,double AnguloX,double AnguloY)
 {
     this->Tiempo=Tiempo;
-    this->AnguloX=AnguloX;
-    this->AnguloY=AnguloY;
+    this->Angulo1=AnguloX;
+    this->Angulo2=AnguloY;
 }
 
 double Angulo::getTiempo()
@@ -17,14 +17,14 @@ double Angulo::getTiempo()
     return this->Tiempo;
 }
 
-double Angulo::getAnguloX()
+double Angulo::getAngulo1()
 {
-    return this->AnguloX;
+    return this->Angulo1;
 }
 
-double Angulo::getAnguloY()
+double Angulo::getAngulo2()
 {
-    return this->AnguloY;
+    return this->Angulo2;
 }
 
 void Angulo::setTiempo(const double tiempo)
@@ -32,43 +32,43 @@ void Angulo::setTiempo(const double tiempo)
     this->Tiempo=tiempo;
 }
 
-void Angulo::setAnguloX(const double angulo)
+void Angulo::setAngulo1(const double angulo)
 {
-    this->AnguloX=angulo;
+    this->Angulo1=angulo;
 }
 
-void Angulo::setAnguloY(const double angulo)
+void Angulo::setAngulo2(const double angulo)
 {
-    this->AnguloY=angulo;
+    this->Angulo2=angulo;
 }
 
 void Angulo::calcularAngulo(const QString orientacion,Muestra *muestra){
-    double anguloX=0,anguloY=0;
+    double angulo1=0,angulo2=0;
     if(orientacion.contains("vertical"))
     {
         if(orientacion.contains("atras"))
         {
             //Se calculan los angulos con la IMU vertical.
-            anguloX = qRadiansToDegrees(qAtan(-muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
-            anguloY = qRadiansToDegrees(qAtan(muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
+            angulo1 = qRadiansToDegrees(qAtan(-muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
+            angulo2 = qRadiansToDegrees(qAtan(muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
         }
         if(orientacion.contains("frente"))
         {
             //Se calculan los angulos con la IMU vertical.
-            anguloX = qRadiansToDegrees(qAtan(muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
-            anguloY = qRadiansToDegrees(qAtan(-muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
+            angulo1 = qRadiansToDegrees(qAtan(muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
+            angulo2 = qRadiansToDegrees(qAtan(-muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
         }
         if(orientacion.contains("derecha"))
         {
             //Se calculan los angulos con la IMU vertical.
-            anguloX = qRadiansToDegrees(qAtan(-muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
-            anguloY = qRadiansToDegrees(qAtan(-muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
+            angulo1 = qRadiansToDegrees(qAtan(-muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
+            angulo2 = qRadiansToDegrees(qAtan(-muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
         }
         if(orientacion.contains("izquierda"))
         {
             //Se calculan los angulos con la IMU vertical.
-            anguloX = qRadiansToDegrees(qAtan(muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
-            anguloY = qRadiansToDegrees(qAtan(muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
+            angulo1 = qRadiansToDegrees(qAtan(muestra->getAcZ()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcY(),2))));
+            angulo2 = qRadiansToDegrees(qAtan(muestra->getAcX()/qSqrt(qPow(muestra->getAcZ(),2) + qPow(muestra->getAcY(),2))));
         }
     }
     if(orientacion.contains("horizontal"))
@@ -76,19 +76,19 @@ void Angulo::calcularAngulo(const QString orientacion,Muestra *muestra){
         if(orientacion.contains("arriba"))
         {
             //Se calculan los angulos con la IMU horizontal.
-            anguloX = qRadiansToDegrees(qAtan(muestra->getAcY()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcZ(),2))));
-            anguloY = qRadiansToDegrees(qAtan(-muestra->getAcX()/qSqrt(qPow(muestra->getAcY(),2) + qPow(muestra->getAcZ(),2))));
+            angulo1 = qRadiansToDegrees(qAtan(muestra->getAcY()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcZ(),2))));
+            angulo2 = qRadiansToDegrees(qAtan(-muestra->getAcX()/qSqrt(qPow(muestra->getAcY(),2) + qPow(muestra->getAcZ(),2))));
         }
         if(orientacion.contains("abajo"))
         {
             //Se calculan los angulos con la IMU horizontal.
-            anguloX = qRadiansToDegrees(qAtan(muestra->getAcY()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcZ(),2))));
-            anguloY = qRadiansToDegrees(qAtan(muestra->getAcX()/qSqrt(qPow(muestra->getAcY(),2) + qPow(muestra->getAcZ(),2))));
+            angulo1 = qRadiansToDegrees(qAtan(muestra->getAcY()/qSqrt(qPow(muestra->getAcX(),2) + qPow(muestra->getAcZ(),2))));
+            angulo2 = qRadiansToDegrees(qAtan(muestra->getAcX()/qSqrt(qPow(muestra->getAcY(),2) + qPow(muestra->getAcZ(),2))));
         }
     }
     this->setTiempo(muestra->getTiempo());
-    this->setAnguloX(anguloX);
-    this->setAnguloY(anguloY);
+    this->setAngulo1(angulo1);
+    this->setAngulo2(angulo2);
 }
 
 void Angulo::calcularAnguloFiltroComplementario(const QString orientacion, Muestra *muestra,Angulo *anguloAnterior,const double alpha)
@@ -102,52 +102,52 @@ void Angulo::calcularAnguloFiltroComplementario(const QString orientacion, Muest
     {
         if(orientacion.contains("atras"))
         {
-            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()-muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloY();;
+            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAngulo1()-muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAngulo1();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAngulo2()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAngulo2();;
         }
         if(orientacion.contains("frente"))
         {
-            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()+muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloY();
+            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAngulo1()+muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAngulo1();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAngulo2()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAngulo2();
 
         }
         if(orientacion.contains("izquierda"))
         {
-            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()+muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAnguloY();
+            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAngulo1()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAngulo1();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAngulo2()+muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAngulo2();
         }
         if(orientacion.contains("derecha"))
         {
-            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()-muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAnguloY();
+            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAngulo1()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAngulo1();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAngulo2()-muestra->getGyZ()*dt) + alpha*anguloSinFiltro->getAngulo2();
         }
     }
     if(orientacion.contains("horizontal"))
     {
         if(orientacion.contains("arriba"))
         {
-            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()+muestra->getGyY()*dt) + alpha*anguloSinFiltro->getAnguloY();
+            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAngulo1()+muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAngulo1();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAngulo2()+muestra->getGyY()*dt) + alpha*anguloSinFiltro->getAngulo2();
 
         }
         if(orientacion.contains("abajo")){
-            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAnguloX()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAnguloX();
-            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAnguloY()+muestra->getGyY()*dt) + alpha*anguloSinFiltro->getAnguloY();
+            anguloComplementario1 = (1-alpha) *(anguloAnterior->getAngulo1()-muestra->getGyX()*dt) + alpha*anguloSinFiltro->getAngulo1();
+            anguloComplementario2 = (1-alpha) *(anguloAnterior->getAngulo2()+muestra->getGyY()*dt) + alpha*anguloSinFiltro->getAngulo2();
         }
     }
     this->setTiempo(muestra->getTiempo());
-    this->setAnguloX(anguloComplementario1);
-    this->setAnguloY(anguloComplementario2);
+    this->setAngulo1(anguloComplementario1);
+    this->setAngulo2(anguloComplementario2);
 }
 
-void Angulo::setAnguloInicialKalman(const double anguloX,const double anguloY){
-    kalmanX.setAngle(anguloX);
-    kalmanY.setAngle(anguloY);
+void Angulo::setAnguloInicialKalman(const double angulo1,const double angulo2){
+    kalmanX.setAngle(angulo1);
+    kalmanY.setAngle(angulo2);
 }
 
 void Angulo::calcularAnguloFiltroKalman(const QString orientacion, Muestra *muestra, Angulo *anguloAnterior)
 {
-    double anguloKalmanX=0,anguloKalmanY=0;
+    double anguloKalman1=0,anguloKalman2=0;
     Angulo *anguloSinFiltro = new Angulo();
     anguloSinFiltro->calcularAngulo(orientacion,muestra);
     const double dt=(muestra->getTiempo() - anguloAnterior->getTiempo());
@@ -155,40 +155,40 @@ void Angulo::calcularAnguloFiltroKalman(const QString orientacion, Muestra *mues
     {
         if(orientacion.contains("atras"))
         {
-            anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), -muestra->getGyZ(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), -muestra->getGyX(), dt);
+            anguloKalman1 = kalmanX.getAngle(anguloSinFiltro->getAngulo1(), -muestra->getGyZ(), dt);
+            anguloKalman2 = kalmanY.getAngle(anguloSinFiltro->getAngulo2(), -muestra->getGyX(), dt);
         }
         if(orientacion.contains("frente"))
         {
-            anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), +muestra->getGyZ(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), +muestra->getGyX(), dt);
+            anguloKalman1 = kalmanX.getAngle(anguloSinFiltro->getAngulo1(), +muestra->getGyZ(), dt);
+            anguloKalman2 = kalmanY.getAngle(anguloSinFiltro->getAngulo2(), +muestra->getGyX(), dt);
         }
         if(orientacion.contains("izquierda"))
         {
-            anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), -muestra->getGyX(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), +muestra->getGyZ(), dt);
+            anguloKalman1 = kalmanX.getAngle(anguloSinFiltro->getAngulo1(), -muestra->getGyX(), dt);
+            anguloKalman2 = kalmanY.getAngle(anguloSinFiltro->getAngulo2(), +muestra->getGyZ(), dt);
         }
         if(orientacion.contains("derecha"))
         {
-            anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), +muestra->getGyX(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), -muestra->getGyZ(), dt);
+            anguloKalman1 = kalmanX.getAngle(anguloSinFiltro->getAngulo1(), +muestra->getGyX(), dt);
+            anguloKalman2 = kalmanY.getAngle(anguloSinFiltro->getAngulo2(), -muestra->getGyZ(), dt);
         }
     }
     if(orientacion.contains("horizontal"))
     {
         if(orientacion.contains("arriba"))
         {
-            anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), muestra->getGyX(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), muestra->getGyY(), dt);
+            anguloKalman1 = kalmanX.getAngle(anguloSinFiltro->getAngulo1(), muestra->getGyX(), dt);
+            anguloKalman2 = kalmanY.getAngle(anguloSinFiltro->getAngulo2(), muestra->getGyY(), dt);
         }
         if(orientacion.contains("abajo")){
-            anguloKalmanX = kalmanX.getAngle(anguloSinFiltro->getAnguloX(), -muestra->getGyX(), dt);
-            anguloKalmanY = kalmanY.getAngle(anguloSinFiltro->getAnguloY(), muestra->getGyY(), dt);
+            anguloKalman1 = kalmanX.getAngle(anguloSinFiltro->getAngulo1(), -muestra->getGyX(), dt);
+            anguloKalman2 = kalmanY.getAngle(anguloSinFiltro->getAngulo2(), muestra->getGyY(), dt);
         }
 
     }
     this->setTiempo(muestra->getTiempo());
-    this->setAnguloX(anguloKalmanX);
-    this->setAnguloY(anguloKalmanY);
+    this->setAngulo1(anguloKalman1);
+    this->setAngulo2(anguloKalman2);
 
 }

@@ -52,6 +52,16 @@ bool Paciente::isEmpty()
     return false;
 }
 
+QString Paciente::getPeso() const
+{
+    return peso;
+}
+
+void Paciente::setPeso(const QString &value)
+{
+    peso = value;
+}
+
 QString Paciente::getSexo() const
 {
     return sexo;

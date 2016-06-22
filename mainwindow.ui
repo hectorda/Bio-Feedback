@@ -307,7 +307,7 @@ QPushButton:hover {
             </property>
             <property name="text">
              <string>Prueba 3
-Test ¿Circular?</string>
+Romeberg Modif</string>
             </property>
            </widget>
           </item>
@@ -386,27 +386,34 @@ Prueba Base</string>
            <property name="horizontalSpacing">
             <number>55</number>
            </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
+           <item row="1" column="2">
+            <widget class="QLabel" name="labelApellidoPaciente">
              <property name="text">
-              <string>Rut</string>
+              <string>Apellido:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="2">
             <widget class="QLineEdit" name="lineEditRut"/>
            </item>
-           <item row="0" column="2">
+           <item row="0" column="3">
             <widget class="QPushButton" name="pushButtonBuscarPaciente">
              <property name="text">
               <string>Buscar Paciente</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelApellidoPaciente">
+           <item row="1" column="3">
+            <widget class="QLabel" name="labelEdadPaciente">
              <property name="text">
-              <string>Apellido:</string>
+              <string>Edad:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelSexoPaciente">
+             <property name="text">
+              <string>Sexo:</string>
              </property>
             </widget>
            </item>
@@ -417,10 +424,24 @@ Prueba Base</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="labelEdadPaciente">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
              <property name="text">
-              <string>Edad:</string>
+              <string>Rut</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="labelPesoPaciente">
+             <property name="text">
+              <string>Peso:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="labelAlturaPaciente">
+             <property name="text">
+              <string>Paciente:</string>
              </property>
             </widget>
            </item>
@@ -579,24 +600,11 @@ Resultados</string>
             <property name="title">
              <string>Ajustes Finales</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_13">
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelLimitarGrafico">
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelAlturaSugerida">
                <property name="text">
-                <string>Limitar gráfico al borde</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QCheckBox" name="checkBoxLimitarGrafico">
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
+                <string>Altura Sugerida</string>
                </property>
               </widget>
              </item>
@@ -623,7 +631,27 @@ Resultados</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelLimitarGrafico">
+               <property name="text">
+                <string>Limitar gráfico al borde</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="checkBoxLimitarGrafico">
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
               <widget class="QLabel" name="labelTiempoPrueba">
                <property name="toolTip">
                 <string>Tiempo que durara la Prueba seleccionada</string>
@@ -636,7 +664,7 @@ Resultados</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="3" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_8">
                <item>
                 <widget class="QSpinBox" name="spinBoxTiempoPrueba">
@@ -1061,7 +1089,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1275,14 +1303,25 @@ p, li { white-space: pre-wrap; }
               </attribute>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonAnalizarGraficoAngulos">
-                 <property name="text">
-                  <string>Analizar Graficos Angulos</string>
+                <widget class="QDockWidget" name="dockWidgetAngulos">
+                 <property name="features">
+                  <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
                  </property>
+                 <widget class="QWidget" name="dockWidgetContents_4">
+                  <layout class="QGridLayout" name="gridLayout_9">
+                   <item row="0" column="0">
+                    <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true"/>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="pushButtonAnalizarGraficoAngulos">
+                     <property name="text">
+                      <string>Analizar Graficos Angulos</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoAngulos" native="true"/>
                </item>
               </layout>
              </widget>
@@ -1317,15 +1356,26 @@ p, li { white-space: pre-wrap; }
                <string>Gráficos desplazamientos</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_12">
-               <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientos">
-                 <property name="text">
-                  <string>Analizar Graficos Desplazamientos</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientos" native="true"/>
+                <widget class="QDockWidget" name="dockWidgetDesplazamientos">
+                 <property name="features">
+                  <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+                 </property>
+                 <widget class="QWidget" name="dockWidgetContents_5">
+                  <layout class="QVBoxLayout" name="verticalLayout_8">
+                   <item>
+                    <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientos" native="true"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientos">
+                     <property name="text">
+                      <string>Analizar Graficos Desplazamientos</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -1401,15 +1451,26 @@ p, li { white-space: pre-wrap; }
                <string>Gráficos muestras</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_7">
-               <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonAnalizarGraficoMuestras">
-                 <property name="text">
-                  <string>Analizar Graficos Muestras</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="0">
-                <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
+                <widget class="QDockWidget" name="dockWidgetMuestras">
+                 <property name="features">
+                  <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+                 </property>
+                 <widget class="QWidget" name="dockWidgetContents_6">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
+                   <item>
+                    <widget class="QCustomPlot" name="qCustomPlotGraficoMuestras" native="true"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButtonAnalizarGraficoMuestras">
+                     <property name="text">
+                      <string>Analizar Graficos Muestras</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
                </item>
               </layout>
              </widget>

@@ -287,31 +287,31 @@ void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fi
 {
     double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
     int terminos=fin+1-inicio;
-    double menorX=listaAngulos.at(inicio)->getAnguloX(),menorY=listaAngulos.at(inicio)->getAnguloY();
-    double mayorX=listaAngulos.at(inicio)->getAnguloX(),mayorY=listaAngulos.at(inicio)->getAnguloY();
+    double menorX=listaAngulos.at(inicio)->getAngulo1(),menorY=listaAngulos.at(inicio)->getAngulo2();
+    double mayorX=listaAngulos.at(inicio)->getAngulo1(),mayorY=listaAngulos.at(inicio)->getAngulo2();
     double tMenorX=listaAngulos.at(inicio)->getTiempo(),tMenorY=listaAngulos.at(inicio)->getTiempo();
     double tMayorX=listaAngulos.at(inicio)->getTiempo(),tMayorY=listaAngulos.at(inicio)->getTiempo();
     double rangoX=0,rangoY=0;
 
     for (int var = inicio; var <= fin; ++var) {
         Angulo *angulo=listaAngulos.at(var);
-        media1+=angulo->getAnguloX();
-        media2+=angulo->getAnguloY();
+        media1+=angulo->getAngulo1();
+        media2+=angulo->getAngulo2();
 
-        if(menorX>angulo->getAnguloX()){
-            menorX=angulo->getAnguloX();
+        if(menorX>angulo->getAngulo1()){
+            menorX=angulo->getAngulo1();
             tMenorX=angulo->getTiempo();
         }
-        if(menorY>angulo->getAnguloY()){
-            menorY=angulo->getAnguloY();
+        if(menorY>angulo->getAngulo2()){
+            menorY=angulo->getAngulo2();
             tMenorY=angulo->getTiempo();
         }
-        if(mayorX<angulo->getAnguloX()){
-            mayorX=angulo->getAnguloX();
+        if(mayorX<angulo->getAngulo1()){
+            mayorX=angulo->getAngulo1();
             tMayorX=angulo->getTiempo();
         }
-        if(mayorY<angulo->getAnguloY()){
-            mayorY=angulo->getAnguloY();
+        if(mayorY<angulo->getAngulo2()){
+            mayorY=angulo->getAngulo2();
             tMayorY=angulo->getTiempo();
         }
     }
@@ -321,8 +321,8 @@ void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fi
     rangoY=mayorY-menorY;
 
     for (int var = inicio; var <= fin; ++var) {
-        varian1+=qPow((listaAngulos.at(var)->getAnguloX()-media1),2);
-        varian2+=qPow((listaAngulos.at(var)->getAnguloY()-media2),2);
+        varian1+=qPow((listaAngulos.at(var)->getAngulo1()-media1),2);
+        varian2+=qPow((listaAngulos.at(var)->getAngulo2()-media2),2);
     }
     varian1/=terminos;
     varian2/=terminos;
@@ -354,8 +354,8 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
 {
     double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
     int terminos=fin+1-inicio;
-    double menorX=listaDesplazamientos.at(inicio)->getDesplazamientoX(),menorY=listaDesplazamientos.at(inicio)->getDesplazamientoY();
-    double mayorX=listaDesplazamientos.at(inicio)->getDesplazamientoX(),mayorY=listaDesplazamientos.at(inicio)->getDesplazamientoY();
+    double menorX=listaDesplazamientos.at(inicio)->getDesplazamientoProyeccion().Desplazamiento1,menorY=listaDesplazamientos.at(inicio)->getDesplazamientoProyeccion().Desplazamiento2;
+    double mayorX=listaDesplazamientos.at(inicio)->getDesplazamientoProyeccion().Desplazamiento1,mayorY=listaDesplazamientos.at(inicio)->getDesplazamientoProyeccion().Desplazamiento2;
     double tMenorX=listaDesplazamientos.at(inicio)->getTiempo(),tMenorY=listaDesplazamientos.at(inicio)->getTiempo();
     double tMayorX=listaDesplazamientos.at(inicio)->getTiempo(),tMayorY=listaDesplazamientos.at(inicio)->getTiempo();
     double rangoX=0,rangoY=0;
@@ -363,30 +363,30 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
     double deltaT=(listaDesplazamientos.at(fin)->getTiempo()-listaDesplazamientos.at(inicio)->getTiempo())/(fin-inicio);
     for (int var = inicio; var <= fin; ++var) {
         Desplazamiento *desplazamiento=listaDesplazamientos.at(var);
-        media1+=desplazamiento->getDesplazamientoX();
-        media2+=desplazamiento->getDesplazamientoY();
+        media1+=desplazamiento->getDesplazamientoProyeccion().Desplazamiento1;
+        media2+=desplazamiento->getDesplazamientoProyeccion().Desplazamiento2;
 
-        if(menorX>desplazamiento->getDesplazamientoX()){
-            menorX=desplazamiento->getDesplazamientoX();
+        if(menorX>desplazamiento->getDesplazamientoProyeccion().Desplazamiento1){
+            menorX=desplazamiento->getDesplazamientoProyeccion().Desplazamiento1;
             tMenorX=desplazamiento->getTiempo();
         }
-        if(menorY>desplazamiento->getDesplazamientoY()){
-            menorY=desplazamiento->getDesplazamientoY();
+        if(menorY>desplazamiento->getDesplazamientoProyeccion().Desplazamiento2){
+            menorY=desplazamiento->getDesplazamientoProyeccion().Desplazamiento2;
             tMenorY=desplazamiento->getTiempo();
         }
-        if(mayorX<desplazamiento->getDesplazamientoX()){
-            mayorX=desplazamiento->getDesplazamientoX();
+        if(mayorX<desplazamiento->getDesplazamientoProyeccion().Desplazamiento1){
+            mayorX=desplazamiento->getDesplazamientoProyeccion().Desplazamiento1;
             tMayorX=desplazamiento->getTiempo();
         }
-        if(mayorY<desplazamiento->getDesplazamientoY()){
-            mayorY=desplazamiento->getDesplazamientoY();
+        if(mayorY<desplazamiento->getDesplazamientoProyeccion().Desplazamiento2){
+            mayorY=desplazamiento->getDesplazamientoProyeccion().Desplazamiento2;
             tMayorY=desplazamiento->getTiempo();
         }
 
         if(var<fin){
             Desplazamiento *despb=listaDesplazamientos.at(var+1);
-            const double deltaX=despb->getDesplazamientoX() - desplazamiento->getDesplazamientoX();
-            const double deltaY=despb->getDesplazamientoY() - desplazamiento->getDesplazamientoY();
+            const double deltaX=despb->getDesplazamientoProyeccion().Desplazamiento1 - desplazamiento->getDesplazamientoProyeccion().Desplazamiento1;
+            const double deltaY=despb->getDesplazamientoProyeccion().Desplazamiento2 - desplazamiento->getDesplazamientoProyeccion().Desplazamiento2;
             velMediaX+=(deltaX/deltaT);
             velMediaY+=(deltaY/deltaT);
         }
@@ -399,8 +399,8 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
     velMediaY/=terminos-1;
 
     for (int var = inicio; var <= fin; ++var) {
-        varian1+=qPow((listaDesplazamientos.at(var)->getDesplazamientoX()-media1),2);
-        varian2+=qPow((listaDesplazamientos.at(var)->getDesplazamientoY()-media2),2);
+        varian1+=qPow((listaDesplazamientos.at(var)->getDesplazamientoProyeccion().Desplazamiento1-media1),2);
+        varian2+=qPow((listaDesplazamientos.at(var)->getDesplazamientoProyeccion().Desplazamiento2-media2),2);
     }
     varian1/=terminos;
     varian2/=terminos;

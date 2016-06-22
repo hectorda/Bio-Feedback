@@ -71,8 +71,12 @@ void AjustesGrafico::llenarParametrosComboBox()
     ui->comboBoxColorObjetivosMarcados->blockSignals(false);
     ui->comboBoxColorObjetivosSinMarcar->blockSignals(false);
 
-    ui->comboBoxUnidadGrafico->addItem(QString("Centimetros"),0);
-    ui->comboBoxUnidadGrafico->addItem(QString("Grados"),0);
+    ui->comboBoxUnidadGrafico->addItem(QString("Centímetros"),0);
+    ui->comboBoxUnidadGrafico->addItem(QString("Grados"),1);
+
+    ui->comboBoxCalculoDesplazamiento->addItem(QString("Recorrido Curvo"),0);
+    ui->comboBoxCalculoDesplazamiento->addItem(QString("Proyeccion"),1);
+
 }
 
 void AjustesGrafico::aplicar()
@@ -83,6 +87,7 @@ void AjustesGrafico::aplicar()
         ajustesActuales.RadioObjetivo=ui->spinBoxRObjetivo->value();
         ajustesActuales.FPS=ui->comboBoxFPS->currentText().toDouble();
         ajustesActuales.Unidad=ui->comboBoxUnidadGrafico->currentText().trimmed().toLower();
+        ajustesActuales.CalculoDesplazamiento=ui->comboBoxCalculoDesplazamiento->currentText().trimmed().toLower();
 
         const QColor colorSinMarcar=qvariant_cast<QColor>(ui->comboBoxColorObjetivosSinMarcar->itemData(ui->comboBoxColorObjetivosSinMarcar->currentIndex(), Qt::DecorationRole));
         const QColor colorMarcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));
@@ -251,4 +256,12 @@ bool AjustesGrafico::eventFilter(QObject *obj, QEvent *event)
         }
     }
     return QWidget::eventFilter(obj, event);
+}
+
+void AjustesGrafico::on_comboBoxUnidadGrafico_currentIndexChanged(const QString &arg1)
+{
+    if(arg1.toLower().trimmed().contains("grados"))
+        ui->comboBoxCalculoDesplazamiento->hide();
+    else
+        ui->comboBoxCalculoDesplazamiento->show();
 }

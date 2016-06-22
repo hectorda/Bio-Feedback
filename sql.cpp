@@ -26,6 +26,8 @@ void SQL::inicializar()
     ui->lineEditEdad_2->setValidator(new QIntValidator(0, 150) );
     ui->lineEditAltura->setValidator(new QIntValidator(0, 299) );
     ui->lineEditAltura_2->setValidator(new QIntValidator(0, 299) );
+    ui->lineEditPeso->setValidator(new QIntValidator(0, 299) );
+    ui->lineEditPeso_2->setValidator(new QIntValidator(0, 299) );
     ui->tabWidget->setTabEnabled(2,false);
     actualizarTablaPacientes();
 }
@@ -43,7 +45,7 @@ bool SQL::conectar() //Se intenta conectar y crear la base de datos en caso de q
         db.setDatabaseName("BaseDatosBioFeedBack.sqlite"); //Nuestra db en nuestro Home.
         bool db_ok = db.open(); //Creamos una bandera para ver si se puedo abrir la DB
         QSqlQuery query;
-        query.exec("CREATE TABLE IF NOT EXISTS pacientes (rut integer primary key, nombre text,apellido text, edad integer,sexo text,altura integer)"); // Crea Tabla ADMINS solo si no existe.
+        query.exec("CREATE TABLE IF NOT EXISTS pacientes (rut integer primary key, nombre text,apellido text, edad integer,sexo text,altura integer,peso integer)");
         return db_ok;  //Retornamos true al metodo.
 
     }
@@ -58,13 +60,14 @@ void SQL::actualizarTablaPacientes()
     if(db.isOpen())
     {
         QSqlQueryModel *model = new QSqlQueryModel;
-        model->setQuery("SELECT rut,nombre,apellido,edad,sexo,altura FROM pacientes");
+        model->setQuery("SELECT rut,nombre,apellido,edad,sexo,altura,peso FROM pacientes");
         model->setHeaderData(0, Qt::Horizontal, tr("Rut"));
         model->setHeaderData(1, Qt::Horizontal, tr("Nombre"));
         model->setHeaderData(2, Qt::Horizontal, tr("Apellido"));
         model->setHeaderData(3, Qt::Horizontal, tr("Edad (años)"));
         model->setHeaderData(4, Qt::Horizontal, tr("Sexo"));
         model->setHeaderData(5, Qt::Horizontal, tr("Altura (cm)"));
+        model->setHeaderData(6, Qt::Horizontal, tr("Peso (kg)"));
 
         ui->tableView->setModel(model);
         ui->tableView->show();
@@ -101,7 +104,7 @@ Paciente SQL::buscarPacienteporRut(const QString rut)
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
-        query.prepare("SELECT nombre,apellido,edad,sexo,altura FROM pacientes where rut = (:rut)");
+        query.prepare("SELECT nombre,apellido,edad,sexo,altura,peso FROM pacientes where rut = (:rut)");
         query.bindValue(":rut",rut);
         if(query.exec()){
             while(query.next())
@@ -112,6 +115,7 @@ Paciente SQL::buscarPacienteporRut(const QString rut)
                 paciente.setEdad(query.value(2).toString());
                 paciente.setSexo(query.value(3).toString());
                 paciente.setAltura(query.value(4).toString());
+                paciente.setPeso(query.value(5).toString());
             }
         }
         db.close();
@@ -125,14 +129,15 @@ bool SQL::agregarPaciente(Paciente paciente)
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
-        query.prepare("INSERT INTO pacientes (rut,nombre, apellido,edad,sexo,altura)"
-                   "VALUES(:rut,:nombre,:apellido,:edad,:sexo,:altura)");
+        query.prepare("INSERT INTO pacientes (rut,nombre, apellido,edad,sexo,altura,peso)"
+                   "VALUES(:rut,:nombre,:apellido,:edad,:sexo,:altura,:peso)");
         query.bindValue(":rut",paciente.getRut());
         query.bindValue(":nombre", paciente.getNombre());
         query.bindValue(":apellido", paciente.getApellido());
         query.bindValue(":edad",paciente.getEdad());
         query.bindValue(":sexo",paciente.getSexo());
         query.bindValue(":altura",paciente.getAltura());
+        query.bindValue(":peso",paciente.getPeso());
         query_ok=query.exec();
         db.close();
      }
@@ -146,13 +151,14 @@ bool SQL::editarPaciente(Paciente paciente)
     db.open();
     if(db.isOpen()){
         QSqlQuery query;
-        query.prepare("UPDATE pacientes SET nombre=:nombre,apellido=:apellido,edad=:edad,sexo=:sexo,altura=:altura WHERE rut=:rut");
+        query.prepare("UPDATE pacientes SET nombre=:nombre,apellido=:apellido,edad=:edad,sexo=:sexo,altura=:altura,peso=:peso WHERE rut=:rut");
         query.bindValue(":rut",paciente.getRut());
         query.bindValue(":nombre", paciente.getNombre());
         query.bindValue(":apellido", paciente.getApellido());
         query.bindValue(":edad",paciente.getEdad());
         query.bindValue(":sexo",paciente.getSexo());
         query.bindValue(":altura",paciente.getAltura());
+        query.bindValue(":peso",paciente.getPeso());
         query_ok=query.exec();
         db.close();
      }
@@ -162,6 +168,7 @@ bool SQL::editarPaciente(Paciente paciente)
 void SQL::abrirTabAgregarPaciente(const QString rut)
 {
     ui->lineEditRut->setText(rut);
+    ui->lineEditRut->editingFinished();
     ui->tabWidget->setCurrentWidget(ui->tab_AgregarPaciente);
     exec();
 }
@@ -175,11 +182,9 @@ void SQL::on_pushButtonAgregar_clicked()
     paciente.setEdad(ui->lineEditEdad->text());
     paciente.setSexo(ui->comboBox->currentText());
     paciente.setAltura(ui->lineEditAltura->text());
+    paciente.setPeso(ui->lineEditPeso->text());
 
-    if (existenCamposVacios(paciente))
-        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
-    else{
-
+    if (!existenCamposVacios(paciente))
         if(buscarPacienteporRut(paciente.getRut()).isEmpty()){
             if(agregarPaciente(paciente))
                 QMessageBox::information(this,"Paciente agregado","El Paciente a sido agragado exitosamente");
@@ -188,17 +193,18 @@ void SQL::on_pushButtonAgregar_clicked()
         }
         else
             QMessageBox::warning(this,"Paciente ya existe",tr("El Paciente con rut %1 ya existe en los registros").arg(paciente.getRut()));
-    }
 }
 
 bool SQL::existenCamposVacios(Paciente paciente){
 
     if(paciente.getRut().isEmpty()|| paciente.getNombre().isEmpty() || paciente.getApellido().isEmpty() ||
-            paciente.getEdad()==0 || paciente.getAltura()==0)
+            paciente.getEdad()==0 || paciente.getAltura()==0 || paciente.getPeso()==0){
+
+        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
         return true;
+    }
 
     return false;
-
 }
 
 void SQL::on_pushButtonEditarPaciente_clicked()
@@ -222,7 +228,7 @@ void SQL::on_pushButtonEditarPaciente_clicked()
             ui->lineEditEdad_2->setText(paciente.getEdad());
             ui->lineEditAltura_2->setText(paciente.getAltura());
             ui->comboBox_2->setCurrentText(paciente.getSexo());
-            QTextStream stdout <<paciente.getAltura()<<endl;
+            ui->lineEditPeso_2->setText(paciente.getPeso());
             imprimirDigitoVerificador(ui->lineEditRut_2,ui->lineEditdigitoVerificador_2);
         }
         else
@@ -246,9 +252,8 @@ void SQL::on_pushButtonEditarActualizarDatos_clicked()
     paciente.setEdad(ui->lineEditEdad_2->text());
     paciente.setSexo(ui->comboBox_2->currentText());
     paciente.setAltura(ui->lineEditAltura_2->text());
-    if (existenCamposVacios(paciente))
-        QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
-    else{
+    paciente.setPeso(ui->lineEditPeso_2->text());
+    if (!existenCamposVacios(paciente)){
         if(editarPaciente(paciente))
             QMessageBox::information(this,"Datos Actualizados","El los datos del Paciente han sido actualizados exitosamente");
         else

@@ -20,6 +20,7 @@ public:
         int RadioObjetivo;
         int FPS;
         QString Unidad;
+        QString CalculoDesplazamiento;
         QColor colorObjetivoSinMarcar;
         QColor colorObjetivoMarcado;
     };
@@ -52,6 +53,7 @@ private slots:
     void on_comboBoxColorObjetivosSinMarcar_currentIndexChanged(int index);
     bool eventFilter(QObject *obj, QEvent *event);
     void on_comboBoxColorObjetivosMarcados_currentIndexChanged(int index);
+    void on_comboBoxUnidadGrafico_currentIndexChanged(const QString &arg1);
 };
 
 #endif // AJUSTESGRAFICO_H

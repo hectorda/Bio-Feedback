@@ -215,7 +215,7 @@ void Prueba::exportar()
                     Angulo *ang=listaAngulos.at(var);
                     Desplazamiento *desp=listaDesplazamientos.at(var);
                     Muestra *raw=listaMuestras.at(var);
-                    stream << ang->getTiempo()<<" "<<ang->getAnguloX()<<" "<<ang->getAnguloY()<<" "<<desp->getDesplazamientoX()<<" "<<desp->getDesplazamientoY()<<" "<<
+                    stream << ang->getTiempo()<<" "<<ang->getAngulo1()<<" "<<ang->getAngulo2()<<" "<<desp->getDesplazamientoProyeccion().Desplazamiento1<<" "<<desp->getDesplazamientoProyeccion().Desplazamiento2<<" "<<
                               raw->getAcX()<<" "<<raw->getAcY()<<" "<<raw->getAcZ()<<" "<<raw->getGyX()<<" "<<raw->getGyY()<<" "<<raw->getGyZ()<<endl;
                 }
                 file.flush();
@@ -282,7 +282,7 @@ bool Prueba::importar()
                     datos.append(var.toDouble());
                 }
                 Angulo *ang=new Angulo(datos.at(0),datos.at(1),datos.at(2));
-                Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4));
+                Desplazamiento *desp=new Desplazamiento(datos.at(0),datos.at(3),datos.at(4),datos.at(3),datos.at(4));
                 Muestra *raw=new Muestra(datos.at(0),datos.at(5),datos.at(6),datos.at(7),datos.at(8),datos.at(9),datos.at(10));
                 this->listaAngulos.append(ang);
                 this->listaDesplazamientos.append(desp);

@@ -407,15 +407,15 @@ void Reportes::inicializarGraficoMuestras()
 void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
 {
     //Se agregan los datos al grafico de Angulos
-    graficoAnguloX->addData(angulo->getTiempo() , angulo->getAnguloX());
-    graficoAnguloY->addData(angulo->getTiempo() , angulo->getAnguloY());
+    graficoAnguloX->addData(angulo->getTiempo() , angulo->getAngulo1());
+    graficoAnguloY->addData(angulo->getTiempo() , angulo->getAngulo2());
 }
 
 void Reportes::agregarDatosGraficoDesplazamientos(Desplazamiento *desp)
 {
     //Se agregan los datos al grafico de Angulos
-    graficoDesplazamientoX->addData(desp->getTiempo() , desp->getDesplazamientoX());
-    graficoDesplazamientoY->addData(desp->getTiempo() , desp->getDesplazamientoY());
+    graficoDesplazamientoX->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento1);
+    graficoDesplazamientoY->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento2);
 }
 
 void Reportes::agregarDatosGraficoMuestras(Muestra *datos)
@@ -439,8 +439,8 @@ void Reportes::setDatosGraficoAngulos(QVector<Angulo*> listaAngulos)
     for (int var = 0; var < size; ++var) {
         Angulo *angulo=listaAngulos.at(var);
         tiempo[var]=angulo->getTiempo();
-        angX[var]=angulo->getAnguloX();
-        angY[var]=angulo->getAnguloY();
+        angX[var]=angulo->getAngulo1();
+        angY[var]=angulo->getAngulo2();
     }
     this->vaciarGraficoAngulos();
     graficoAnguloX->setData(tiempo,angX);
@@ -457,8 +457,8 @@ void Reportes::setDatosGraficoDezplazamiento(QVector<Desplazamiento*> listaDespl
     for (int var = 0; var < size; ++var) {
         Desplazamiento *desp=listaDesplazamientos.at(var);
         tiempo[var]=desp->getTiempo();
-        despX[var]=desp->getDesplazamientoX();
-        despY[var]=desp->getDesplazamientoY();
+        despX[var]=desp->getDesplazamientoProyeccion().Desplazamiento1;
+        despY[var]=desp->getDesplazamientoProyeccion().Desplazamiento2;
     }
     this->vaciarGraficoDesplazamientos();
     graficoDesplazamientoX->setData(tiempo,despX);
@@ -507,14 +507,14 @@ void Reportes::graficarResultados(QVector<Angulo*> listaAngulos)
     ticks << 1 << 2 << 3 << 4;
 
     foreach (Angulo *var, listaAngulos) {//Se recorren las muestras y compara para determinar en que cuadrante estan.
-        if(var->getAnguloX()>0){
-            if(var->getAnguloY()>0)//Cuadrante 1
+        if(var->getAngulo1()>0){
+            if(var->getAngulo2()>0)//Cuadrante 1
                 q1+=1;
             else //Cuadrante 4
                 q4+=1;
         }
         else{
-            if(var->getAnguloY()>0) //Cuadrante 2
+            if(var->getAngulo2()>0) //Cuadrante 2
                 q2+=1;
             else //Cuadrante 3
                 q3+=1;
@@ -618,8 +618,8 @@ void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
     const int currentRow = tablaAngulos->rowCount();
     tablaAngulos->setRowCount(currentRow + 1);
     tablaAngulos->setItem(currentRow,0,new QTableWidgetItem(QString::number(angulo->getTiempo(),'f',presicion)));
-    tablaAngulos->setItem(currentRow,1,new QTableWidgetItem(QString::number(angulo->getAnguloX(),'f',presicion)));
-    tablaAngulos->setItem(currentRow,2,new QTableWidgetItem(QString::number(angulo->getAnguloY(),'f',presicion)));
+    tablaAngulos->setItem(currentRow,1,new QTableWidgetItem(QString::number(angulo->getAngulo1(),'f',presicion)));
+    tablaAngulos->setItem(currentRow,2,new QTableWidgetItem(QString::number(angulo->getAngulo2(),'f',presicion)));
 }
 
 void Reportes::agregarFilaTablaDesplazamientos(Desplazamiento *desp)
@@ -627,8 +627,8 @@ void Reportes::agregarFilaTablaDesplazamientos(Desplazamiento *desp)
     const int currentRow = tablaDesplazamientos->rowCount();
     tablaDesplazamientos->setRowCount(currentRow + 1);
     tablaDesplazamientos->setItem(currentRow,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
-    tablaDesplazamientos->setItem(currentRow,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoX(),'f',presicion)));
-    tablaDesplazamientos->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoY(),'f',presicion)));
+    tablaDesplazamientos->setItem(currentRow,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento1,'f',presicion)));
+    tablaDesplazamientos->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento2,'f',presicion)));
 }
 
 void Reportes::agregarFilaTablaMuestras(Muestra *datos)
@@ -653,8 +653,8 @@ void Reportes::setDatosTablaAngulos(QVector<Angulo*> listaAngulos)
     for(int i = 0; i < listaAngulos.size(); ++i){
         Angulo *angulo=listaAngulos.at(i);
         tablaAngulos->setItem(i,0,new QTableWidgetItem(QString::number(angulo->getTiempo(),'f',presicion)));
-        tablaAngulos->setItem(i,1,new QTableWidgetItem(QString::number(angulo->getAnguloX(),'f',presicion)));
-        tablaAngulos->setItem(i,2,new QTableWidgetItem(QString::number(angulo->getAnguloY(),'f',presicion)));
+        tablaAngulos->setItem(i,1,new QTableWidgetItem(QString::number(angulo->getAngulo1(),'f',presicion)));
+        tablaAngulos->setItem(i,2,new QTableWidgetItem(QString::number(angulo->getAngulo2(),'f',presicion)));
     }
 }
 
@@ -664,8 +664,8 @@ void Reportes::setDatosTablaDesplazamientos(QVector<Desplazamiento*> listaDespla
     for(int i = 0; i < listaDesplazamientos.size(); ++i){
         Desplazamiento *desp=listaDesplazamientos.at(i);
         tablaDesplazamientos->setItem(i,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
-        tablaDesplazamientos->setItem(i,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoX(),'f',presicion)));
-        tablaDesplazamientos->setItem(i,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoY(),'f',presicion)));
+        tablaDesplazamientos->setItem(i,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento1,'f',presicion)));
+        tablaDesplazamientos->setItem(i,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento2,'f',presicion)));
     }
 }
 
@@ -713,12 +713,12 @@ void Reportes::guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos)
                 if(selectedFilter.contains("txt")){
                     /*stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getAnguloX())
                            << " Y: " << QString::number(var->getAnguloY()) << endl;*/
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << " " << QString::number(var->getAnguloX())
-                           <<" " << QString::number(var->getAnguloY()) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << " " << QString::number(var->getAngulo1())
+                           <<" " << QString::number(var->getAngulo2()) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getAnguloX())
-                           <<"," << QString::number(var->getAnguloY()) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getAngulo1())
+                           <<"," << QString::number(var->getAngulo2()) << endl;
                 }
             }
             file.flush();
@@ -744,12 +744,12 @@ void Reportes::guardarDesplazamientosEnArchivo(QVector<Desplazamiento*> listaDes
             QTextStream stream(&file);
             foreach (Desplazamiento *var, listaDesplazamientos){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getDesplazamientoX())
-                           << " Y: " << QString::number(var->getDesplazamientoY()) << endl;
+                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getDesplazamientoProyeccion().Desplazamiento1)
+                           << " Y: " << QString::number(var->getDesplazamientoProyeccion().Desplazamiento2) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getDesplazamientoX())
-                           <<"," << QString::number(var->getDesplazamientoY()) << endl;
+                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getDesplazamientoProyeccion().Desplazamiento1)
+                           <<"," << QString::number(var->getDesplazamientoProyeccion().Desplazamiento2) << endl;
                 }
             }
             file.flush();

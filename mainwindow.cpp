@@ -37,6 +37,7 @@ void MainWindow::inicializar()
 
     ui->qCustomPlotGrafico->setContextMenuPolicy(Qt::CustomContextMenu);
     titulo = new QCPPlotTitle(ui->qCustomPlotGrafico);
+    titulo->setFont(QFont("Times", 10, QFont::Bold));
     ui->qCustomPlotGrafico->plotLayout()->insertRow(0);
     ui->qCustomPlotGrafico->plotLayout()->addElement(0, 0,titulo);
 
@@ -140,8 +141,12 @@ void MainWindow::inicializarGrafico()
 
         if (prueba->getAjustesGrafico().Unidad.contains("grados"))
             titulo->setText("Grados Antero-Posterior y Medio Lateral");
-        else
-            titulo->setText("Centimetros Antero-Posterior y Medio Lateral");
+        else{
+            if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+                titulo->setText("Centimetros Antero-Posterior y Medio Lateral (Proyeccion)");
+            else
+                titulo->setText("Centímetros Antero-Posterior y Medio Lateral (Recorrido Curvo)");
+            }
         circuloInterior->setVisible(true);
         circuloInterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioInterior,prueba->getAjustesGrafico().RadioInterior);
         circuloInterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioInterior,-prueba->getAjustesGrafico().RadioInterior);
@@ -818,7 +823,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
             else{
                 objetoAngulo->calcularAngulo(orientacion,dato);
                 if(filtroAngulo.contains("kalman"))
-                    objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
+                    objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
             }
         }
 
@@ -839,7 +844,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 //                objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
 //        }
 
-        Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
+        Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
         desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
         prueba->listaAngulos.append(angulo);
         prueba->listaDesplazamientos.append(desplazamiento);
@@ -853,12 +858,16 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
             if(prueba->getNumeroPrueba()!=-1){
                 if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
-                    emit emitAnguloGraficoTiempoReal(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
-                if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
-                    emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoX(),desplazamiento->getDesplazamientoY());
+                    emit emitAnguloGraficoTiempoReal(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
+                else{
+                    if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+                        emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoProyeccion().Desplazamiento1,desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
+                    if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
+                        emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1,desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
+                }
             }
             else
-                emitAnguloGraficoTiempoReal(objetoAngulo->getTiempo(),objetoAngulo->getAnguloX());
+                emitAnguloGraficoTiempoReal(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1());
 
         }
 
@@ -975,10 +984,10 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
 void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la informacion de muestras o angulos.
 {    
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico){
-        if(prueba->getAjustesGrafico().Unidad.contains("centimetros"))
-            reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos);
         if(prueba->getAjustesGrafico().Unidad.contains("grados"))
             reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
+        else
+            reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos);
     }
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
         reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
@@ -1148,7 +1157,11 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
         else{
             ui->labelNombrePaciente->setText("Nombre: "+paciente.getNombre());
             ui->labelApellidoPaciente->setText("Apellido: "+paciente.getApellido());
-            ui->labelEdadPaciente->setText("Edad: "+ paciente.getEdad());
+            ui->labelEdadPaciente->setText("Edad: "+paciente.getEdad());
+            ui->labelSexoPaciente->setText("Sexo: "+paciente.getSexo());
+            ui->labelPesoPaciente->setText("Peso: "+paciente.getPeso());
+            ui->labelAlturaPaciente->setText("Altura: "+paciente.getAltura());
+
             prueba->setPaciente(paciente);
         }
     }
@@ -1172,6 +1185,14 @@ void MainWindow::configurarPrueba()
     QString clicked = sender()->objectName();
     ui->stackedWidget->setCurrentWidget(ui->widgetConfigurarPrueba);
 
+    if(!prueba->getPaciente().isEmpty()){
+        const double alturaSugerida=prueba->getPaciente().getAltura().toInt()*0.55;
+        ui->labelAlturaSugerida->setText(tr("Altura dispositivo sugerida (55%): %1").arg(alturaSugerida));
+        ui->doubleSpinBoxAlturaDispositivo->setValue(alturaSugerida);
+    }
+    else
+        ui->labelAlturaSugerida->hide();
+
     if(clicked=="pushButtonPrueba1"){
         prueba->setNumeroPrueba(1);
         ui->labelNombrePrueba->setText("Modo Libre");
@@ -1192,7 +1213,6 @@ void MainWindow::configurarPrueba()
 
         ui->labelOrdenObjetivos->hide();
         ui->checkBoxOrdenObjetivos->hide();
-
     }
     if(clicked=="pushButtonPrueba4"){
         prueba->setNumeroPrueba(4);
@@ -1207,7 +1227,6 @@ void MainWindow::configurarPrueba()
 
         ui->labelOrdenObjetivos->hide();
         ui->checkBoxOrdenObjetivos->hide();
-
     }
     if(clicked=="pushButtonOtro"){
         prueba->setNumeroPrueba(-1);
@@ -1225,6 +1244,7 @@ void MainWindow::configurarPrueba()
 
 void MainWindow::mostarElementosConfigurarPrueba()
 {
+    ui->labelAlturaSugerida->show();
     ui->groupBoxAjustesPruebaPersonalizada->show();
     ui->groupBoxAjustesObjetivos->show();
 
