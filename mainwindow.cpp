@@ -869,9 +869,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
             }
             else
                 emitAnguloGraficoTiempoReal(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1());
-
         }
-        QTextStream stdout <<desplazamiento->getDesplazamientoProyeccion().Desplazamiento1<<" "<<desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1<<endl;
 
         if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
         {
@@ -988,13 +986,11 @@ void MainWindow::on_pushButtonGuardarImagen_clicked()//Guardar la Imagen de los 
 
 void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la informacion de muestras o angulos.
 {    
-    const QString tipoDesp=prueba->getAjustesGrafico().CalculoDesplazamiento;
-
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_grafico){
         if(prueba->getAjustesGrafico().Unidad.contains("grados"))
             reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
         else
-            reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,tipoDesp);
+            reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,prueba->getAjustesGrafico().CalculoDesplazamiento);
     }
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaAngulos)
         reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
@@ -1003,23 +999,22 @@ void MainWindow::on_pushButtonGuardarMuestras_clicked()//Guardar en archivo la i
         reportes->guardarAngulosEnArchivo(prueba->listaAngulos);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientosProyeccion)
-        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,tipoDesp);
+        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,"proyeccion");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientosRecorridoCurvo)
-        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,tipoDesp);
+        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,"curvo");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDesplazamientosProyeccion)
-        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,tipoDesp);
+        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,"proyeccion");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDesplazamientosRecorridoCurvo)
-        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,tipoDesp);
+        reportes->guardarDesplazamientosEnArchivo(prueba->listaDesplazamientos,"curvo");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
         reportes->guardarMuestrasEnArchivo(prueba->listaMuestras);
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
         reportes->guardarMuestrasEnArchivo(prueba->listaMuestras);
-
 }
 
 void MainWindow::on_dockWidget_topLevelChanged(bool topLevel)//Si el grafico esta flotando o dejo de flotar.
