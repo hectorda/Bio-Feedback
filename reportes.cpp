@@ -5,15 +5,16 @@ Reportes::Reportes(QObject *parent) : QObject(parent)
     this->presicion = 3;
 }
 
-Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientos, QTableWidget *tablaMuestras,QTextEdit *textEditReporte) : QObject(parent)
+Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientosP, QTableWidget *tablaDesplazamientosRC, QTableWidget *tablaMuestras, QTextEdit *textEditReporte) : QObject(parent)
 {
     this->presicion = 4;
     this->graficoResultados = graficoResultados;
     this->graficoAngulos = graficoAngulos;
-    this->graficoDesplazamientos = graficoDesplazamientos;
+    this->graficoDesplazamientosProyeccion = graficoDesplazamientos;
     this->graficoMuestras = graficoMuestras;
     this->tablaAngulos = tablaAngulos;
-    this->tablaDesplazamientos = tablaDesplazamientos;
+    this->tablaDesplazamientosProyeccion = tablaDesplazamientosP;
+    this->tablaDesplazamientosRecorridoCurvo = tablaDesplazamientosRC;
     this->tablaMuestras = tablaMuestras;
     this->textEditReporte = textEditReporte;
     inicializarGraficoResultados();
@@ -27,8 +28,10 @@ void Reportes::vaciarTablas()
 {
     tablaAngulos->clearContents();
     tablaAngulos->setRowCount(0);
-    tablaDesplazamientos->clearContents();
-    tablaDesplazamientos->setRowCount(0);
+    tablaDesplazamientosProyeccion->clearContents();
+    tablaDesplazamientosProyeccion->setRowCount(0);
+    tablaDesplazamientosRecorridoCurvo->clearContents();
+    tablaDesplazamientosRecorridoCurvo->setRowCount(0);
     tablaMuestras->clearContents();
     tablaMuestras->setRowCount(0);
 }
@@ -39,7 +42,7 @@ void Reportes::vaciarGraficos()
 
     vaciarGraficoAngulos();
     vaciarGraficoMuestras();
-    vaciarGraficoDesplazamientos();
+    vaciarGraficosDesplazamientos();
 }
 
 void Reportes::vaciarGraficoAngulos()
@@ -48,7 +51,7 @@ void Reportes::vaciarGraficoAngulos()
     graficoAnguloY->clearData();
 }
 
-void Reportes::vaciarGraficoDesplazamientos()
+void Reportes::vaciarGraficosDesplazamientos()
 {
     graficoDesplazamientoX->clearData();
     graficoDesplazamientoY->clearData();
@@ -99,7 +102,7 @@ void Reportes::replotGraficoDesplazamientos()
 {
     graficoDesplazamientoX->rescaleAxes();
     graficoDesplazamientoY->rescaleAxes();
-    graficoDesplazamientos->replot();
+    graficoDesplazamientosProyeccion->replot();
 }
 
 void Reportes::replotGraficoMuestras()
@@ -236,44 +239,44 @@ void Reportes::inicializarGraficoAngulos()
 
 void Reportes::inicializarGraficoDesplazamientos()
 {
-    graficoDesplazamientos->plotLayout()->clear();
-    graficoDesplazamientos->clearItems();
-    graficoDesplazamientos->clearGraphs();
+    graficoDesplazamientosProyeccion->plotLayout()->clear();
+    graficoDesplazamientosProyeccion->clearItems();
+    graficoDesplazamientosProyeccion->clearGraphs();
 
     //Elementos del grafico
-    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoDesplazamientos);
-    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoDesplazamientos);
+    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoDesplazamientosProyeccion);
+    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoDesplazamientosProyeccion);
 
     bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
     bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
 
-    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento Medio-Lateral vs Tiempo");
-    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientos,"Grafico Desplazamiento Antero-Posterior vs Tiempo");
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientosProyeccion,"Grafico Desplazamiento Medio-Lateral vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientosProyeccion,"Grafico Desplazamiento Antero-Posterior vs Tiempo");
 
     //Se posicionan los layouts
-    graficoDesplazamientos->plotLayout()->addElement(0, 0, tituloX);
-    graficoDesplazamientos->plotLayout()->addElement(1, 0, topAxisRect);
+    graficoDesplazamientosProyeccion->plotLayout()->addElement(0, 0, tituloX);
+    graficoDesplazamientosProyeccion->plotLayout()->addElement(1, 0, topAxisRect);
 
-    graficoDesplazamientos->plotLayout()->addElement(2, 0, tituloY);
-    graficoDesplazamientos->plotLayout()->addElement(3, 0, bottomAxisRect);
+    graficoDesplazamientosProyeccion->plotLayout()->addElement(2, 0, tituloY);
+    graficoDesplazamientosProyeccion->plotLayout()->addElement(3, 0, bottomAxisRect);
 
      //create and configure plottables:
-    graficoDesplazamientoX = graficoDesplazamientos->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    graficoDesplazamientoY = graficoDesplazamientos->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    graficoDesplazamientoX = graficoDesplazamientosProyeccion->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    graficoDesplazamientoY = graficoDesplazamientosProyeccion->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
     //agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientos,topAxisRect);
 
-    lineaIzqDesplazamientoX=new QCPItemLine(graficoDesplazamientos);
-    agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientos,topAxisRect);
+    lineaIzqDesplazamientoX=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientosProyeccion,topAxisRect);
 
-    lineaDerDesplazamientoX=new QCPItemLine(graficoDesplazamientos);
-    agregarQCPItemLine(lineaDerDesplazamientoX,graficoDesplazamientos,topAxisRect);
+    lineaDerDesplazamientoX=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaDerDesplazamientoX,graficoDesplazamientosProyeccion,topAxisRect);
 
-    lineaIzqDesplazamientoY=new QCPItemLine(graficoDesplazamientos);
-    agregarQCPItemLine(lineaIzqDesplazamientoY,graficoDesplazamientos,bottomAxisRect);
+    lineaIzqDesplazamientoY=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaIzqDesplazamientoY,graficoDesplazamientosProyeccion,bottomAxisRect);
 
-    lineaDerDesplazamientoY=new QCPItemLine(graficoDesplazamientos);
-    agregarQCPItemLine(lineaDerDesplazamientoY,graficoDesplazamientos,bottomAxisRect);
+    lineaDerDesplazamientoY=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaDerDesplazamientoY,graficoDesplazamientosProyeccion,bottomAxisRect);
 
     //Colores de la Line
     graficoDesplazamientoX->setPen(QPen(QColor(71, 71, 194), 2));
@@ -289,7 +292,7 @@ void Reportes::inicializarGraficoDesplazamientos()
     graficoDesplazamientoX->rescaleAxes();
     graficoDesplazamientoY->rescaleAxes();
 
-    graficoDesplazamientos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+    graficoDesplazamientosProyeccion->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
 void Reportes::inicializarGraficoMuestras()
@@ -411,7 +414,7 @@ void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
     graficoAnguloY->addData(angulo->getTiempo() , angulo->getAngulo2());
 }
 
-void Reportes::agregarDatosGraficoDesplazamientos(Desplazamiento *desp)
+void Reportes::agregarDatosGraficosDesplazamientos(Desplazamiento *desp)
 {
     //Se agregan los datos al grafico de Angulos
     graficoDesplazamientoX->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento1);
@@ -460,7 +463,7 @@ void Reportes::setDatosGraficoDezplazamiento(QVector<Desplazamiento*> listaDespl
         despX[var]=desp->getDesplazamientoProyeccion().Desplazamiento1;
         despY[var]=desp->getDesplazamientoProyeccion().Desplazamiento2;
     }
-    this->vaciarGraficoDesplazamientos();
+    this->vaciarGraficosDesplazamientos();
     graficoDesplazamientoX->setData(tiempo,despX);
     graficoDesplazamientoY->addData(tiempo,despY);
     this->replotGraficoDesplazamientos();
@@ -564,7 +567,7 @@ void Reportes::moverLineasIzquierdaDesplazamientos(const double newValue)
     lineaIzqDesplazamientoX->end->setCoords(newValue,5000);
     lineaIzqDesplazamientoY->start->setCoords(newValue,-5000);
     lineaIzqDesplazamientoY->end->setCoords(newValue,5000);
-    graficoDesplazamientos->replot();
+    graficoDesplazamientosProyeccion->replot();
 }
 
 void Reportes::moverLineasDerechaDesplazamientos(const double newValue)
@@ -573,7 +576,7 @@ void Reportes::moverLineasDerechaDesplazamientos(const double newValue)
     lineaDerDesplazamientoX->end->setCoords(newValue,5000);
     lineaDerDesplazamientoY->start->setCoords(newValue,-5000);
     lineaDerDesplazamientoY->end->setCoords(newValue,5000);
-    graficoDesplazamientos->replot();
+    graficoDesplazamientosProyeccion->replot();
 }
 
 void Reportes::moverLineasIzquierdaMuestras(const double newValue)
@@ -622,13 +625,19 @@ void Reportes::agregarFilaTablaAngulos(Angulo *angulo)
     tablaAngulos->setItem(currentRow,2,new QTableWidgetItem(QString::number(angulo->getAngulo2(),'f',presicion)));
 }
 
-void Reportes::agregarFilaTablaDesplazamientos(Desplazamiento *desp)
+void Reportes::agregarFilaTablasDesplazamientos(Desplazamiento *desp)
 {
-    const int currentRow = tablaDesplazamientos->rowCount();
-    tablaDesplazamientos->setRowCount(currentRow + 1);
-    tablaDesplazamientos->setItem(currentRow,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
-    tablaDesplazamientos->setItem(currentRow,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento1,'f',presicion)));
-    tablaDesplazamientos->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento2,'f',presicion)));
+    const int currentRow = tablaDesplazamientosProyeccion->rowCount();
+    tablaDesplazamientosProyeccion->setRowCount(currentRow + 1);
+    tablaDesplazamientosRecorridoCurvo->setRowCount(currentRow + 1);
+
+    tablaDesplazamientosProyeccion->setItem(currentRow,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
+    tablaDesplazamientosProyeccion->setItem(currentRow,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento1,'f',presicion)));
+    tablaDesplazamientosProyeccion->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento2,'f',presicion)));
+
+    tablaDesplazamientosRecorridoCurvo->setItem(currentRow,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
+    tablaDesplazamientosRecorridoCurvo->setItem(currentRow,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoRecorridoCurvo().Desplazamiento1,'f',presicion)));
+    tablaDesplazamientosRecorridoCurvo->setItem(currentRow,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoRecorridoCurvo().Desplazamiento2,'f',presicion)));
 }
 
 void Reportes::agregarFilaTablaMuestras(Muestra *datos)
@@ -658,14 +667,18 @@ void Reportes::setDatosTablaAngulos(QVector<Angulo*> listaAngulos)
     }
 }
 
-void Reportes::setDatosTablaDesplazamientos(QVector<Desplazamiento*> listaDesplazamientos){
-    //Se agrega una nueva fila a la tabla
-    tablaDesplazamientos->setRowCount(listaDesplazamientos.size());
+void Reportes::setDatosTablasDesplazamientos(QVector<Desplazamiento*> listaDesplazamientos){
+    tablaDesplazamientosProyeccion->setRowCount(listaDesplazamientos.size());
+    tablaDesplazamientosRecorridoCurvo->setRowCount(listaDesplazamientos.size());
     for(int i = 0; i < listaDesplazamientos.size(); ++i){
         Desplazamiento *desp=listaDesplazamientos.at(i);
-        tablaDesplazamientos->setItem(i,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
-        tablaDesplazamientos->setItem(i,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento1,'f',presicion)));
-        tablaDesplazamientos->setItem(i,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento2,'f',presicion)));
+        tablaDesplazamientosProyeccion->setItem(i,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
+        tablaDesplazamientosProyeccion->setItem(i,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento1,'f',presicion)));
+        tablaDesplazamientosProyeccion->setItem(i,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoProyeccion().Desplazamiento2,'f',presicion)));
+
+        tablaDesplazamientosRecorridoCurvo->setItem(i,0,new QTableWidgetItem(QString::number(desp->getTiempo(),'f',presicion)));
+        tablaDesplazamientosRecorridoCurvo->setItem(i,1,new QTableWidgetItem(QString::number(desp->getDesplazamientoRecorridoCurvo().Desplazamiento1,'f',presicion)));
+        tablaDesplazamientosRecorridoCurvo->setItem(i,2,new QTableWidgetItem(QString::number(desp->getDesplazamientoRecorridoCurvo().Desplazamiento2,'f',presicion)));
     }
 }
 
@@ -731,7 +744,7 @@ void Reportes::guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos)
     }
 }
 
-void Reportes::guardarDesplazamientosEnArchivo(QVector<Desplazamiento*> listaDesplazamientos)
+void Reportes::guardarDesplazamientosEnArchivo(QVector<Desplazamiento*> listaDesplazamientos,QString tipo)
 {
     QString selectedFilter;
     QString filters(tr("CSV (*.csv);;Archivo de Texto (*.txt)"));
@@ -744,12 +757,20 @@ void Reportes::guardarDesplazamientosEnArchivo(QVector<Desplazamiento*> listaDes
             QTextStream stream(&file);
             foreach (Desplazamiento *var, listaDesplazamientos){
                 if(selectedFilter.contains("txt")){
-                    stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getDesplazamientoProyeccion().Desplazamiento1)
+                    if(tipo.contains("proyeccion"))
+                        stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getDesplazamientoProyeccion().Desplazamiento1)
                            << " Y: " << QString::number(var->getDesplazamientoProyeccion().Desplazamiento2) << endl;
+                    if(tipo.contains("curvo"))
+                        stream <<"Tiempo: " << QString::number(var->getTiempo()) << " X: " << QString::number(var->getDesplazamientoRecorridoCurvo().Desplazamiento1)
+                           << " Y: " << QString::number(var->getDesplazamientoRecorridoCurvo().Desplazamiento2) << endl;
                 }
                 if(selectedFilter.contains("csv")){
-                    stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getDesplazamientoProyeccion().Desplazamiento1)
+                    if(tipo.contains("proyeccion"))
+                        stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getDesplazamientoProyeccion().Desplazamiento1)
                            <<"," << QString::number(var->getDesplazamientoProyeccion().Desplazamiento2) << endl;
+                    if(tipo.contains("curvo"))
+                        stream <<QString::number(var->getTiempo(),'f',presicion) << "," << QString::number(var->getDesplazamientoRecorridoCurvo().Desplazamiento1)
+                           <<"," << QString::number(var->getDesplazamientoRecorridoCurvo().Desplazamiento2) << endl;
                 }
             }
             file.flush();

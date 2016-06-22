@@ -16,11 +16,11 @@ class Reportes : public QObject
     Q_OBJECT
 public:
     explicit Reportes(QObject *parent = 0);
-    Reportes(QObject *parent,QCustomPlot *graficoResultados,QCustomPlot *graficoAngulos,QCustomPlot *graficoDesplazamientos,QCustomPlot *graficoMuestras,QTableWidget *tablaAngulos,QTableWidget *tablaDesplazamientos,QTableWidget *tablaMuestras,QTextEdit *textEditReporte);
+    Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientosProyeccion, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientosP, QTableWidget *tablaDesplazamientosRC, QTableWidget *tablaMuestras, QTextEdit *textEditReporte);
 
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos);
-    void guardarDesplazamientosEnArchivo(QVector<Desplazamiento *> listaDesplazamientos);
+    void guardarDesplazamientosEnArchivo(QVector<Desplazamiento *> listaDesplazamientos, QString tipo);
     void guardarMuestrasEnArchivo(QVector<Muestra*> listaMuestras);
     void guardarInformeReportePDF();
 
@@ -32,7 +32,7 @@ public:
     void agregarDatosInformeReportePlainText(const QString busq,const QString dato);
     void agregarDatosInformeReporteHTML(const QString busq, const QString dato);
     void setDatosTablaAngulos(QVector<Angulo *> listaAngulos);
-    void setDatosTablaDesplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
+    void setDatosTablasDesplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
     void setDatosTablaMuestras(QVector<Muestra *> listaMuestras);
     void setDatosGraficoAngulos(QVector<Angulo *> listaAngulos);
     void setDatosGraficoDezplazamiento(QVector<Desplazamiento *> listaDesplazamientos);
@@ -43,10 +43,12 @@ private:
     int presicion;
     QCustomPlot *graficoResultados;
     QCustomPlot *graficoAngulos;
-    QCustomPlot *graficoDesplazamientos;
+    QCustomPlot *graficoDesplazamientosProyeccion;
+    QCustomPlot *graficoDesplazamientosRecorridoCurvo;
     QCustomPlot *graficoMuestras;
     QTableWidget *tablaAngulos;
-    QTableWidget *tablaDesplazamientos;
+    QTableWidget *tablaDesplazamientosProyeccion;
+    QTableWidget *tablaDesplazamientosRecorridoCurvo;
     QTableWidget *tablaMuestras;
     QTextEdit *textEditReporte;
 
@@ -104,7 +106,6 @@ private:
     void inicializarGraficoAngulos();
     void inicializarGraficoDesplazamientos();
     void inicializarGraficoMuestras();
-
 signals:
 
 public slots:
@@ -119,17 +120,17 @@ public slots:
 
     //Slots para agregar datos: Graficos
     void agregarDatosGraficoAngulos(Angulo *angulo);
-    void agregarDatosGraficoDesplazamientos(Desplazamiento *desp);
+    void agregarDatosGraficosDesplazamientos(Desplazamiento *desp);
     void agregarDatosGraficoMuestras(Muestra *datos);
 
     //Slots para agregar datos: Tablas
     void agregarFilaTablaAngulos(Angulo *angulo);
-    void agregarFilaTablaDesplazamientos(Desplazamiento *desp);
+    void agregarFilaTablasDesplazamientos(Desplazamiento *desp);
     void agregarFilaTablaMuestras(Muestra *datos);
 
     //Slots para Limpiar
     void vaciarGraficoAngulos();
-    void vaciarGraficoDesplazamientos();
+    void vaciarGraficosDesplazamientos();
     void vaciarGraficoMuestras();
 
     //Para redibujar los graficos

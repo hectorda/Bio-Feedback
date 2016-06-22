@@ -217,9 +217,9 @@ void AnalisisGrafico::ajustarRangosGraficoAngulos(const int inicio, const int fi
 
 void AnalisisGrafico::ajustarRangosGraficoDesplazamientos(const int inicio, const int fin)
 {
-    reportes->vaciarGraficoDesplazamientos();
+    reportes->vaciarGraficosDesplazamientos();
     for (int var = inicio; var <= fin; ++var)
-        reportes->agregarDatosGraficoDesplazamientos(listaDesplazamientos.at(var));
+        reportes->agregarDatosGraficosDesplazamientos(listaDesplazamientos.at(var));
 
     reportes->replotGraficoDesplazamientos();
 }

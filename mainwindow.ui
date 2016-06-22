@@ -1089,7 +1089,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>5</number>
+              <number>0</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1099,7 +1099,7 @@ border: 3px solid #398439;
              </property>
              <widget class="QWidget" name="tab_grafico">
               <attribute name="title">
-               <string>Grafico</string>
+               <string>Gráfico</string>
               </attribute>
               <layout class="QHBoxLayout" name="horizontalLayout">
                <item>
@@ -1325,13 +1325,13 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_tablaDesplazamientos">
+             <widget class="QWidget" name="tab_tablaDesplazamientosProyeccion">
               <attribute name="title">
-               <string>Datos desplazamientos</string>
+               <string>Datos desplazamientos Proyección</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_11">
                <item row="0" column="0">
-                <widget class="QTableWidget" name="tableWidgetDesplazamientos">
+                <widget class="QTableWidget" name="tableWidgetDesplazamientosProyeccion">
                  <column>
                   <property name="text">
                    <string>Tiempo (seg)</string>
@@ -1351,9 +1351,9 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_GraficoDespalazamientos">
+             <widget class="QWidget" name="tab_GraficoDesplazamientosProyeccion">
               <attribute name="title">
-               <string>Gráficos desplazamientos</string>
+               <string>Gráficos desplazamientos Proyección</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_12">
                <item row="0" column="0">
@@ -1364,10 +1364,10 @@ p, li { white-space: pre-wrap; }
                  <widget class="QWidget" name="dockWidgetContents_5">
                   <layout class="QVBoxLayout" name="verticalLayout_8">
                    <item>
-                    <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientos" native="true"/>
+                    <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientosProyeccion" native="true"/>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientos">
+                    <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientosProyeccion">
                      <property name="text">
                       <string>Analizar Graficos Desplazamientos</string>
                      </property>
@@ -1375,6 +1375,55 @@ p, li { white-space: pre-wrap; }
                    </item>
                   </layout>
                  </widget>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_tablaDesplazamientosRecorridoCurvo">
+              <attribute name="title">
+               <string>Datos desplazamientos Recorrido Curvo</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="QTableWidget" name="tableWidgetDesplazamientosRecorridoCurvo">
+                 <column>
+                  <property name="text">
+                   <string>Tiempo (seg)</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>Desplazamiento Medio-Lateral (cm)</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>Desplazamiento Antero-Posterior (cm)</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_GraficoDesplazamientosRecorridoCurvo">
+              <attribute name="title">
+               <string>Gráficos desplazamientos Recorrido Curvo</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_13">
+               <item row="0" column="0">
+                <widget class="QWidget" name="widget_2" native="true">
+                 <layout class="QGridLayout" name="gridLayout_16">
+                  <item row="0" column="0">
+                   <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientosRecorridoCurvo" native="true"/>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientosRecorridoCurvo">
+                    <property name="text">
+                     <string>PushButton</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>

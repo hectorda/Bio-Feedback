@@ -45,14 +45,15 @@ void Desplazamiento::setDesplazamientoRecorridoCurvo(const desplazamientos &valu
 
 void Desplazamiento::calcularDesplazamiento(Angulo *angulo,double alturaDispositivo)
 {
+    this->Tiempo=angulo->getTiempo();
+
     const double despPro1=qSin(qDegreesToRadians(angulo->getAngulo1()));
     const double despPro2=qSin(qDegreesToRadians(angulo->getAngulo2()));
     this->desplazamientoProyeccion.Desplazamiento1=despPro1*alturaDispositivo;
     this->desplazamientoProyeccion.Desplazamiento2=despPro2*alturaDispositivo;
 
-    const double despReco1=M_PI*(angulo->getAngulo1()/180);
-    const double despReco2=M_PI*(angulo->getAngulo2()/180);
-    this->Tiempo=angulo->getTiempo();
+    const double despReco1=qDegreesToRadians(angulo->getAngulo1());
+    const double despReco2=qDegreesToRadians(angulo->getAngulo2());
     this->desplazamientoRecorridoCurvo.Desplazamiento1=despReco1*alturaDispositivo;
     this->desplazamientoRecorridoCurvo.Desplazamiento2=despReco2*alturaDispositivo;
 }
