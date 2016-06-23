@@ -86,7 +86,7 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
     }
 }
 
-void AnalisisGrafico::setListaDesplazamientos(QVector<Desplazamiento *> LD)
+void AnalisisGrafico::setListaDesplazamientosProyeccion(QVector<Desplazamiento *> LD)
 {
     this->listaDesplazamientos=LD;
 
@@ -100,42 +100,42 @@ void AnalisisGrafico::setListaDesplazamientos(QVector<Desplazamiento *> LD)
         headers <<"Parámetro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango"<<"Vel Media";
         ui->tableWidgetEstadisticos->setHorizontalHeaderLabels(headers);
 
-        this->setWindowTitle("Analisis Lista Desplazamientos");
+        this->setWindowTitle("Analisis Desplazamientos Calculado Proyeccion");
         const int muestras=listaDesplazamientos.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
 
         connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
-            reportes->moverLineasIzquierdaDesplazamientos(tiempo);
-            calcularEstadisticosDesplazamientos(newValue,ui->horizontalSlider->upperValue());
-            contarDatosDesplazamientos(newValue,ui->horizontalSlider->upperValue());
+            reportes->moverLineasIzquierdaDesplazamientosProyeccion(tiempo);
+            calcularEstadisticosDesplazamientoProyeccion(newValue,ui->horizontalSlider->upperValue());
+            contarDatosDesplazamientoProyeccion(newValue,ui->horizontalSlider->upperValue());
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
-            reportes->moverLineasDerechaDesplazamientos(tiempo);
-            calcularEstadisticosDesplazamientos(ui->horizontalSlider->lowerValue(),newValue);
-            contarDatosDesplazamientos(ui->horizontalSlider->lowerValue(),newValue);
+            reportes->moverLineasDerechaDesplazamientosProyeccion(tiempo);
+            calcularEstadisticosDesplazamientoProyeccion(ui->horizontalSlider->lowerValue(),newValue);
+            contarDatosDesplazamientoProyeccion(ui->horizontalSlider->lowerValue(),newValue);
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
         connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
-            reportes->moverLineasIzquierdaDesplazamientos(0);
-            reportes->moverLineasDerechaDesplazamientos(listaDesplazamientos.last()->getTiempo());
+            reportes->moverLineasIzquierdaDesplazamientosProyeccion(0);
+            reportes->moverLineasDerechaDesplazamientosProyeccion(listaDesplazamientos.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
             ui->horizontalSlider->setUpperPosition(listaDesplazamientos.size()-1);
-            ajustarRangosGraficoDesplazamientos(0,listaDesplazamientos.size()-1);
+            ajustarRangosGraficoDesplazamientoProyeccion(0,listaDesplazamientos.size()-1);
         });
 
         connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
             const int inicio=ui->horizontalSlider->lowerValue();
             const int fin=ui->horizontalSlider->upperValue();
-            ajustarRangosGraficoDesplazamientos(inicio,fin);
+            ajustarRangosGraficoDesplazamientoProyeccion(inicio,fin);
         });
 
         connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
-            reportes->replotGraficoDesplazamientos();
+            reportes->replotGraficoDesplazamientoProyeccion();
         });
 
         ui->horizontalSlider->setLowerValue(0);
@@ -145,6 +145,67 @@ void AnalisisGrafico::setListaDesplazamientos(QVector<Desplazamiento *> LD)
         ui->horizontalSlider->setUpperPosition(muestras);
     }
 }
+
+void AnalisisGrafico::setListaDesplazamientosRecorridoCurvo(QVector<Desplazamiento *> LD)
+{
+    this->listaDesplazamientos=LD;
+
+    if(this->listaDesplazamientos.isEmpty())
+        QTextStream stdout<<"No hay datos de Desplazamientos a analizar"<<endl;
+
+    else
+    {
+        ui->tableWidgetEstadisticos->setColumnCount(9);
+        QStringList headers;
+        headers <<"Parámetro"<<"min"<< "@tiempo"<<"max"<<"@tiempo"<<"Media"<<"Desv Est"<<"Rango"<<"Vel Media";
+        ui->tableWidgetEstadisticos->setHorizontalHeaderLabels(headers);
+
+        this->setWindowTitle("Analisis Desplazamientos Calculado Recorrido Curvo");
+        const int muestras=listaDesplazamientos.size()-1;
+        ui->horizontalSlider->setMaximum(muestras);
+
+        connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+            const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
+            reportes->moverLineasIzquierdaDesplazamientosRecorridoCurvo(tiempo);
+            calcularEstadisticosDesplazamientoRecorridoCurvo(newValue,ui->horizontalSlider->upperValue());
+            contarDatosDesplazamientoRecorridoCurvo(newValue,ui->horizontalSlider->upperValue());
+            ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
+        });
+
+        connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+            const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
+            reportes->moverLineasDerechaDesplazamientosRecorridoCurvo(tiempo);
+            calcularEstadisticosDesplazamientoRecorridoCurvo(ui->horizontalSlider->lowerValue(),newValue);
+            contarDatosDesplazamientoRecorridoCurvo(ui->horizontalSlider->lowerValue(),newValue);
+            ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
+        });
+
+        connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
+            reportes->moverLineasIzquierdaDesplazamientosRecorridoCurvo(0);
+            reportes->moverLineasDerechaDesplazamientosRecorridoCurvo(listaDesplazamientos.last()->getTiempo());
+            ui->horizontalSlider->setLowerValue(0);
+            ui->horizontalSlider->setUpperPosition(listaDesplazamientos.size()-1);
+            ajustarRangosGraficoDesplazamientoRecorridoCurvo(0,listaDesplazamientos.size()-1);
+        });
+
+        connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
+            const int inicio=ui->horizontalSlider->lowerValue();
+            const int fin=ui->horizontalSlider->upperValue();
+            ajustarRangosGraficoDesplazamientoRecorridoCurvo(inicio,fin);
+        });
+
+        connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
+            reportes->replotGraficoDesplazamientoRecorridoCurvo();
+        });
+
+        ui->horizontalSlider->setLowerValue(0);
+        ui->horizontalSlider->setLowerPosition(0);
+        ui->horizontalSlider->lowerValueChanged(0); //para que se añada automaticamente el slider izquierdo
+        ui->horizontalSlider->setUpperValue(muestras);
+        ui->horizontalSlider->setUpperPosition(muestras);
+    }
+}
+
 
 void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
 {
@@ -215,13 +276,22 @@ void AnalisisGrafico::ajustarRangosGraficoAngulos(const int inicio, const int fi
     reportes->replotGraficoAngulos();
 }
 
-void AnalisisGrafico::ajustarRangosGraficoDesplazamientos(const int inicio, const int fin)
+void AnalisisGrafico::ajustarRangosGraficoDesplazamientoProyeccion(const int inicio, const int fin)
 {
-    reportes->vaciarGraficosDesplazamientos();
+    reportes->vaciarGraficosDesplazamientoProyeccion();
     for (int var = inicio; var <= fin; ++var)
-        reportes->agregarDatosGraficosDesplazamientos(listaDesplazamientos.at(var));
+        reportes->agregarDatosGraficoDesplazamientoProyeccion(listaDesplazamientos.at(var));
 
-    reportes->replotGraficoDesplazamientos();
+    reportes->replotGraficoDesplazamientoProyeccion();
+}
+
+void AnalisisGrafico::ajustarRangosGraficoDesplazamientoRecorridoCurvo(const int inicio, const int fin)
+{
+    reportes->vaciarGraficosDesplazamientoRecorridoCurvo();
+    for (int var = inicio; var <= fin; ++var)
+        reportes->agregarDatosGraficoDesplazamientoRecorridoCurvo(listaDesplazamientos.at(var));
+
+    reportes->replotGraficoDesplazamientoRecorridoCurvo();
 }
 
 void AnalisisGrafico::ajustarRangosGraficoMuestras(const int inicio, const int fin)
@@ -243,10 +313,21 @@ void AnalisisGrafico::contarDatosAngulos(const int inicio, const int fin){
     const double tiempoAnalizado=listaAngulos.at(fin)->getTiempo()-listaAngulos.at(inicio)->getTiempo();
 
     MostrarCantidadDatos(datosTotales,datosAnalizados,frecuenciaMuestreo,tiempoTotal,tiempoAnalizado);
-
 }
 
-void AnalisisGrafico::contarDatosDesplazamientos(const int inicio, const int fin){
+void AnalisisGrafico::contarDatosDesplazamientoProyeccion(const int inicio, const int fin){
+    const int datosTotales=listaDesplazamientos.size();
+    const int datosAnalizados=fin+1-inicio;
+    double frecuenciaMuestreo=(listaDesplazamientos.at(fin)->getTiempo()-listaDesplazamientos.at(inicio)->getTiempo());
+    frecuenciaMuestreo/=(fin-inicio);
+    frecuenciaMuestreo=1/frecuenciaMuestreo;
+    const double tiempoTotal=listaDesplazamientos.last()->getTiempo();
+    const double tiempoAnalizado=listaDesplazamientos.at(fin)->getTiempo()-listaDesplazamientos.at(inicio)->getTiempo();
+
+    MostrarCantidadDatos(datosTotales,datosAnalizados,frecuenciaMuestreo,tiempoTotal,tiempoAnalizado);
+}
+
+void AnalisisGrafico::contarDatosDesplazamientoRecorridoCurvo(const int inicio, const int fin){
     const int datosTotales=listaDesplazamientos.size();
     const int datosAnalizados=fin+1-inicio;
     double frecuenciaMuestreo=(listaDesplazamientos.at(fin)->getTiempo()-listaDesplazamientos.at(inicio)->getTiempo());
@@ -332,8 +413,8 @@ void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fi
     ui->tableWidgetEstadisticos->clearContents();
     ui->tableWidgetEstadisticos->setRowCount(2);
 
-    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("AnguloX"));
-    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("AnguloY"));
+    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("Medio-Lateral"));
+    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("Antero-Posterior"));
     ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menorX)));
     ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menorY)));
     ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenorX)));
@@ -350,7 +431,7 @@ void AnalisisGrafico::calcularEstadisticosAngulos(const int inicio, const int fi
     ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rangoY)));
 }
 
-void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, const int fin)
+void AnalisisGrafico::calcularEstadisticosDesplazamientoProyeccion(const int inicio, const int fin)
 {
     double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
     int terminos=fin+1-inicio;
@@ -410,8 +491,8 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
     ui->tableWidgetEstadisticos->clearContents();
     ui->tableWidgetEstadisticos->setRowCount(2);
 
-    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("DesplazamientoX"));
-    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("DesplazamientoY"));
+    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("Medio-Lateral"));
+    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("Antero-Posterior"));
     ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menorX)));
     ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menorY)));
     ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenorX)));
@@ -429,6 +510,87 @@ void AnalisisGrafico::calcularEstadisticosDesplazamientos(const int inicio, cons
     ui->tableWidgetEstadisticos->setItem(0,8,new QTableWidgetItem(QString::number(velMediaX)));
     ui->tableWidgetEstadisticos->setItem(1,8,new QTableWidgetItem(QString::number(velMediaY)));
 }
+
+void AnalisisGrafico::calcularEstadisticosDesplazamientoRecorridoCurvo(const int inicio, const int fin)
+{
+    double media1=0,media2=0,varian1=0,varian2=0,desvEst1=0,desvEst2=0;
+    int terminos=fin+1-inicio;
+    double menorX=listaDesplazamientos.at(inicio)->getDesplazamientoRecorridoCurvo().Desplazamiento1,menorY=listaDesplazamientos.at(inicio)->getDesplazamientoRecorridoCurvo().Desplazamiento2;
+    double mayorX=listaDesplazamientos.at(inicio)->getDesplazamientoRecorridoCurvo().Desplazamiento1,mayorY=listaDesplazamientos.at(inicio)->getDesplazamientoRecorridoCurvo().Desplazamiento2;
+    double tMenorX=listaDesplazamientos.at(inicio)->getTiempo(),tMenorY=listaDesplazamientos.at(inicio)->getTiempo();
+    double tMayorX=listaDesplazamientos.at(inicio)->getTiempo(),tMayorY=listaDesplazamientos.at(inicio)->getTiempo();
+    double rangoX=0,rangoY=0;
+    double velMediaX=0,velMediaY=0;
+    double deltaT=(listaDesplazamientos.at(fin)->getTiempo()-listaDesplazamientos.at(inicio)->getTiempo())/(fin-inicio);
+    for (int var = inicio; var <= fin; ++var) {
+        Desplazamiento *desplazamiento=listaDesplazamientos.at(var);
+        media1+=desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1;
+        media2+=desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2;
+
+        if(menorX>desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1){
+            menorX=desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1;
+            tMenorX=desplazamiento->getTiempo();
+        }
+        if(menorY>desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2){
+            menorY=desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2;
+            tMenorY=desplazamiento->getTiempo();
+        }
+        if(mayorX<desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1){
+            mayorX=desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1;
+            tMayorX=desplazamiento->getTiempo();
+        }
+        if(mayorY<desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2){
+            mayorY=desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2;
+            tMayorY=desplazamiento->getTiempo();
+        }
+
+        if(var<fin){
+            Desplazamiento *despb=listaDesplazamientos.at(var+1);
+            const double deltaX=despb->getDesplazamientoRecorridoCurvo().Desplazamiento1 - desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1;
+            const double deltaY=despb->getDesplazamientoRecorridoCurvo().Desplazamiento2 - desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2;
+            velMediaX+=(deltaX/deltaT);
+            velMediaY+=(deltaY/deltaT);
+        }
+    }
+    media1/=terminos;
+    media2/=terminos;
+    rangoX=mayorX-menorX;
+    rangoY=mayorY-menorY;
+    velMediaX/=terminos-1;
+    velMediaY/=terminos-1;
+
+    for (int var = inicio; var <= fin; ++var) {
+        varian1+=qPow((listaDesplazamientos.at(var)->getDesplazamientoRecorridoCurvo().Desplazamiento1-media1),2);
+        varian2+=qPow((listaDesplazamientos.at(var)->getDesplazamientoRecorridoCurvo().Desplazamiento2-media2),2);
+    }
+    varian1/=terminos;
+    varian2/=terminos;
+    desvEst1=qSqrt(varian1);
+    desvEst2=qSqrt(varian2);
+
+    ui->tableWidgetEstadisticos->clearContents();
+    ui->tableWidgetEstadisticos->setRowCount(2);
+
+    ui->tableWidgetEstadisticos->setItem(0,0,new QTableWidgetItem("Medio-Lateral"));
+    ui->tableWidgetEstadisticos->setItem(1,0,new QTableWidgetItem("Antero-Posterior"));
+    ui->tableWidgetEstadisticos->setItem(0,1,new QTableWidgetItem(QString::number(menorX)));
+    ui->tableWidgetEstadisticos->setItem(1,1,new QTableWidgetItem(QString::number(menorY)));
+    ui->tableWidgetEstadisticos->setItem(0,2,new QTableWidgetItem(QString::number(tMenorX)));
+    ui->tableWidgetEstadisticos->setItem(1,2,new QTableWidgetItem(QString::number(tMenorY)));
+    ui->tableWidgetEstadisticos->setItem(0,3,new QTableWidgetItem(QString::number(mayorX)));
+    ui->tableWidgetEstadisticos->setItem(1,3,new QTableWidgetItem(QString::number(mayorY)));
+    ui->tableWidgetEstadisticos->setItem(0,4,new QTableWidgetItem(QString::number(tMayorX)));
+    ui->tableWidgetEstadisticos->setItem(1,4,new QTableWidgetItem(QString::number(tMayorY)));
+    ui->tableWidgetEstadisticos->setItem(0,5,new QTableWidgetItem(QString::number(media1)));
+    ui->tableWidgetEstadisticos->setItem(1,5,new QTableWidgetItem(QString::number(media2)));
+    ui->tableWidgetEstadisticos->setItem(0,6,new QTableWidgetItem(QString::number(desvEst1)));
+    ui->tableWidgetEstadisticos->setItem(1,6,new QTableWidgetItem(QString::number(desvEst2)));
+    ui->tableWidgetEstadisticos->setItem(0,7,new QTableWidgetItem(QString::number(rangoX)));
+    ui->tableWidgetEstadisticos->setItem(1,7,new QTableWidgetItem(QString::number(rangoY)));
+    ui->tableWidgetEstadisticos->setItem(0,8,new QTableWidgetItem(QString::number(velMediaX)));
+    ui->tableWidgetEstadisticos->setItem(1,8,new QTableWidgetItem(QString::number(velMediaY)));
+}
+
 
 void AnalisisGrafico::calcularEstadisticosMuestras(const int inicio, const int fin)
 {

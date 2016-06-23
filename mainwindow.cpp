@@ -23,12 +23,13 @@ void MainWindow::inicializar()
     ajustesCalculoAngulo=new AjustesCalculoAngulo(this);
 
     lectorSerial = new Serial(this, new QSerialPort(this)); //Se le envia el objeto en el constructor de la clase Serial
-    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoDesplazamientosProyeccion,
+    reportes = new Reportes(this,ui->qCustomPlotResultados,ui->qCustomPlotGraficoAngulos,ui->qCustomPlotGraficoDesplazamientosProyeccion,ui->qCustomPlotGraficoDesplazamientosRecorridoCurvo,
                             ui->qCustomPlotGraficoMuestras,ui->tableWidgetAngulos,ui->tableWidgetDesplazamientosProyeccion,ui->tableWidgetDesplazamientosRecorridoCurvo,
                             ui->tableWidgetDatosRaw,ui->textEditReporte);
     analisisGraficoAngulos = new AnalisisGrafico(this,reportes);
     analisisGraficoMuestras = new AnalisisGrafico(this,reportes);
-    analisisGraficoDesplazamientos = new AnalisisGrafico(this,reportes);
+    analisisGraficoDesplazamientoProyeccion = new AnalisisGrafico(this,reportes);
+    analisisGraficoDesplazamientoRecorridoCurvo = new AnalisisGrafico(this,reportes);
 
     ui->stackedWidget->setCurrentWidget(ui->widgetWelcome);
     ui->dockWidget->installEventFilter(this);
@@ -73,7 +74,8 @@ void MainWindow::conexiones()
     //Conjunto de connects para enviar datos a los graficos de Reportes
     connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarDatosGraficoAngulos(Angulo*)));
     connect(this,SIGNAL(emitAnguloReporte(Angulo*)),reportes,SLOT(agregarFilaTablaAngulos(Angulo*)));
-    connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarDatosGraficosDesplazamientos(Desplazamiento*)));
+    connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarDatosGraficoDesplazamientoProyeccion(Desplazamiento*)));
+    connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarDatosGraficoDesplazamientoRecorridoCurvo(Desplazamiento*)));
     connect(this,SIGNAL(emitDesplazamientoReporte(Desplazamiento*)),reportes,SLOT(agregarFilaTablasDesplazamientos(Desplazamiento*)));
     connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarDatosGraficoMuestras(Muestra*)));
     connect(this,SIGNAL(emitRawReporte(Muestra*)),reportes,SLOT(agregarFilaTablaMuestras(Muestra*)));
@@ -88,7 +90,8 @@ void MainWindow::conexiones()
     connect(ui->pushButtonDetenerPrueba,SIGNAL(clicked()),this,SLOT(mostrarResultados()));
 
     connect(ui->pushButtonAnalizarGraficoAngulos,SIGNAL(clicked()),analisisGraficoAngulos,SLOT(show()));
-    connect(ui->pushButtonAnalizarGraficoDesplazamientosProyeccion,SIGNAL(clicked()),analisisGraficoDesplazamientos,SLOT(show()));
+    connect(ui->pushButtonAnalizarGraficoDesplazamientosProyeccion,SIGNAL(clicked()),analisisGraficoDesplazamientoProyeccion,SLOT(show()));
+    connect(ui->pushButtonAnalizarGraficoDesplazamientosRecorridoCurvo,SIGNAL(clicked()),analisisGraficoDesplazamientoRecorridoCurvo,SLOT(show()));
     connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
     connect(ui->pushButtonGuardarReportePDF,QPushButton::clicked,[=]{ reportes->guardarInformeReportePDF(); });
 
@@ -217,7 +220,8 @@ void MainWindow::mostrarResultados()
         lectorSerial->cerrarPuertoSerial();
         emit emitGraficarResultados(prueba->listaAngulos);
         analisisGraficoAngulos->setListaAngulos(prueba->listaAngulos);
-        analisisGraficoDesplazamientos->setListaDesplazamientos(prueba->listaDesplazamientos);
+        analisisGraficoDesplazamientoProyeccion->setListaDesplazamientosProyeccion(prueba->listaDesplazamientos);
+        analisisGraficoDesplazamientoRecorridoCurvo->setListaDesplazamientosRecorridoCurvo(prueba->listaDesplazamientos);
         analisisGraficoMuestras->setListaMuestras(prueba->listaMuestras);
         activarTabs();
         if(prueba->getPaciente().isEmpty())
@@ -260,7 +264,10 @@ void MainWindow::llenarInformeReporte()
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
     ui->qCustomPlotGraficoDesplazamientosProyeccion->rescaleAxes();
     reportes->agregarDatosInformeReporteImagen(":graficodesp",ui->qCustomPlotGraficoDesplazamientosProyeccion->toPixmap(400,400).toImage());
-    reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientos->obtenerImagenTablaEstadisticos());
+    //if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+        reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientoProyeccion->obtenerImagenTablaEstadisticos());
+    //else
+        reportes->agregarDatosInformeReporteImagen("...",analisisGraficoDesplazamientoRecorridoCurvo->obtenerImagenTablaEstadisticos());
     ui->textEditReporte->moveCursor(QTextCursor::Start);
 }
 
@@ -700,7 +707,8 @@ void MainWindow::limpiarListasyOcultarBotones()
     reportes->vaciarGraficos();
     reportes->vaciarInformeReporte();
     analisisGraficoAngulos->hide();
-    analisisGraficoDesplazamientos->hide();
+    analisisGraficoDesplazamientoProyeccion->hide();
+    analisisGraficoDesplazamientoRecorridoCurvo->hide();
     analisisGraficoMuestras->hide();
 }
 
@@ -1069,13 +1077,13 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDesplazamientosProyeccion)
     {
-        reportes->replotGraficoDesplazamientos();
+        reportes->replotGraficoDesplazamientoProyeccion();
         ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráficos\nDesp..\nProyección","Guardar\nDatos\nDesp..\nProyección");
     }
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDesplazamientosRecorridoCurvo)
     {
-        reportes->replotGraficoDesplazamientos();
+        reportes->replotGraficoDesplazamientoRecorridoCurvo();
         ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráficos\nDesp..\nRecorrido Curvo","Guardar\nDatos\nDesp..\nRecorrido Curvo");
     }
 

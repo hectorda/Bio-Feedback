@@ -1089,7 +1089,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1369,7 +1369,7 @@ p, li { white-space: pre-wrap; }
                    <item>
                     <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientosProyeccion">
                      <property name="text">
-                      <string>Analizar Graficos Desplazamientos</string>
+                      <string>Analizar Gráficos Desplazamientos Proyección</string>
                      </property>
                     </widget>
                    </item>
@@ -1414,13 +1414,21 @@ p, li { white-space: pre-wrap; }
                 <widget class="QWidget" name="widget_2" native="true">
                  <layout class="QGridLayout" name="gridLayout_16">
                   <item row="0" column="0">
-                   <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientosRecorridoCurvo" native="true"/>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientosRecorridoCurvo">
-                    <property name="text">
-                     <string>PushButton</string>
-                    </property>
+                   <widget class="QDockWidget" name="dockWidget_2">
+                    <widget class="QWidget" name="dockWidgetContents_2">
+                     <layout class="QVBoxLayout" name="verticalLayout_11">
+                      <item>
+                       <widget class="QCustomPlot" name="qCustomPlotGraficoDesplazamientosRecorridoCurvo" native="true"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pushButtonAnalizarGraficoDesplazamientosRecorridoCurvo">
+                        <property name="text">
+                         <string>Analizar Gráficos Desplazamientos Recorrido Curvo</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
                    </widget>
                   </item>
                  </layout>
@@ -1846,21 +1854,6 @@ QProgressBar:hover {
          </layout>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="widgetCustomTest">
-       <widget class="QLabel" name="label">
-        <property name="geometry">
-         <rect>
-          <x>150</x>
-          <y>90</y>
-          <width>47</width>
-          <height>13</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>

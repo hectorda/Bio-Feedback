@@ -92,7 +92,7 @@ private:
     QCPPlotTitle *titulo;
     QCPCurve *lienzo;
     QCPItemEllipse *circuloExterior,*circuloInterior;
-    AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientos;
+    AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientoProyeccion,*analisisGraficoDesplazamientoRecorridoCurvo;
     SQL *db;
     Angulo *objetoAngulo;
 

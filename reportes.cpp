@@ -5,12 +5,13 @@ Reportes::Reportes(QObject *parent) : QObject(parent)
     this->presicion = 3;
 }
 
-Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientos, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientosP, QTableWidget *tablaDesplazamientosRC, QTableWidget *tablaMuestras, QTextEdit *textEditReporte) : QObject(parent)
+Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientoPro,QCustomPlot *graficoDesplazamientoReCur, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientosP, QTableWidget *tablaDesplazamientosRC, QTableWidget *tablaMuestras, QTextEdit *textEditReporte) : QObject(parent)
 {
     this->presicion = 4;
     this->graficoResultados = graficoResultados;
     this->graficoAngulos = graficoAngulos;
-    this->graficoDesplazamientosProyeccion = graficoDesplazamientos;
+    this->graficoDesplazamientosProyeccion = graficoDesplazamientoPro;
+    this->graficoDesplazamientosRecorridoCurvo = graficoDesplazamientoReCur;
     this->graficoMuestras = graficoMuestras;
     this->tablaAngulos = tablaAngulos;
     this->tablaDesplazamientosProyeccion = tablaDesplazamientosP;
@@ -19,7 +20,8 @@ Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot 
     this->textEditReporte = textEditReporte;
     inicializarGraficoResultados();
     inicializarGraficoAngulos();
-    inicializarGraficoDesplazamientos();
+    inicializarGraficoDesplazamientosProyeccion();
+    inicializarGraficoDesplazamientosRecorridoCurvo();
     inicializarGraficoMuestras();
     inicializarInformeReporte();
 }
@@ -42,7 +44,8 @@ void Reportes::vaciarGraficos()
 
     vaciarGraficoAngulos();
     vaciarGraficoMuestras();
-    vaciarGraficosDesplazamientos();
+    vaciarGraficosDesplazamientoProyeccion();
+    vaciarGraficosDesplazamientoRecorridoCurvo();
 }
 
 void Reportes::vaciarGraficoAngulos()
@@ -51,10 +54,16 @@ void Reportes::vaciarGraficoAngulos()
     graficoAnguloY->clearData();
 }
 
-void Reportes::vaciarGraficosDesplazamientos()
+void Reportes::vaciarGraficosDesplazamientoProyeccion()
 {
-    graficoDesplazamientoX->clearData();
-    graficoDesplazamientoY->clearData();
+    graficoDesplazamientoProX->clearData();
+    graficoDesplazamientoProY->clearData();
+}
+
+void Reportes::vaciarGraficosDesplazamientoRecorridoCurvo()
+{
+    graficoDesplazamientoReCurX->clearData();
+    graficoDesplazamientoReCurY->clearData();
 }
 
 void Reportes::vaciarGraficoMuestras()
@@ -98,11 +107,18 @@ void Reportes::replotGraficoAngulos()
     graficoAngulos->replot();
 }
 
-void Reportes::replotGraficoDesplazamientos()
+void Reportes::replotGraficoDesplazamientoProyeccion()
 {
-    graficoDesplazamientoX->rescaleAxes();
-    graficoDesplazamientoY->rescaleAxes();
+    graficoDesplazamientoProX->rescaleAxes();
+    graficoDesplazamientoProY->rescaleAxes();
     graficoDesplazamientosProyeccion->replot();
+}
+
+void Reportes::replotGraficoDesplazamientoRecorridoCurvo()
+{
+    graficoDesplazamientoReCurX->rescaleAxes();
+    graficoDesplazamientoReCurY->rescaleAxes();
+    graficoDesplazamientosRecorridoCurvo->replot();
 }
 
 void Reportes::replotGraficoMuestras()
@@ -237,7 +253,7 @@ void Reportes::inicializarGraficoAngulos()
     graficoAngulos->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
-void Reportes::inicializarGraficoDesplazamientos()
+void Reportes::inicializarGraficoDesplazamientosProyeccion()
 {
     graficoDesplazamientosProyeccion->plotLayout()->clear();
     graficoDesplazamientosProyeccion->clearItems();
@@ -261,26 +277,26 @@ void Reportes::inicializarGraficoDesplazamientos()
     graficoDesplazamientosProyeccion->plotLayout()->addElement(3, 0, bottomAxisRect);
 
      //create and configure plottables:
-    graficoDesplazamientoX = graficoDesplazamientosProyeccion->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
-    graficoDesplazamientoY = graficoDesplazamientosProyeccion->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+    graficoDesplazamientoProX = graficoDesplazamientosProyeccion->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    graficoDesplazamientoProY = graficoDesplazamientosProyeccion->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
 
     //agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientos,topAxisRect);
 
-    lineaIzqDesplazamientoX=new QCPItemLine(graficoDesplazamientosProyeccion);
-    agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientosProyeccion,topAxisRect);
+    lineaIzqDesplazamientoProX=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaIzqDesplazamientoProX,graficoDesplazamientosProyeccion,topAxisRect);
 
-    lineaDerDesplazamientoX=new QCPItemLine(graficoDesplazamientosProyeccion);
-    agregarQCPItemLine(lineaDerDesplazamientoX,graficoDesplazamientosProyeccion,topAxisRect);
+    lineaDerDesplazamientoProX=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaDerDesplazamientoProX,graficoDesplazamientosProyeccion,topAxisRect);
 
-    lineaIzqDesplazamientoY=new QCPItemLine(graficoDesplazamientosProyeccion);
-    agregarQCPItemLine(lineaIzqDesplazamientoY,graficoDesplazamientosProyeccion,bottomAxisRect);
+    lineaIzqDesplazamientoProY=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaIzqDesplazamientoProY,graficoDesplazamientosProyeccion,bottomAxisRect);
 
-    lineaDerDesplazamientoY=new QCPItemLine(graficoDesplazamientosProyeccion);
-    agregarQCPItemLine(lineaDerDesplazamientoY,graficoDesplazamientosProyeccion,bottomAxisRect);
+    lineaDerDesplazamientoProY=new QCPItemLine(graficoDesplazamientosProyeccion);
+    agregarQCPItemLine(lineaDerDesplazamientoProY,graficoDesplazamientosProyeccion,bottomAxisRect);
 
     //Colores de la Line
-    graficoDesplazamientoX->setPen(QPen(QColor(71, 71, 194), 2));
-    graficoDesplazamientoY->setPen(QPen(QColor(153, 102, 51), 2));
+    graficoDesplazamientoProX->setPen(QPen(QColor(71, 71, 194), 2));
+    graficoDesplazamientoProY->setPen(QPen(QColor(153, 102, 51), 2));
 
     //Labels de los ejes
     topAxisRect->axis(QCPAxis::atLeft)->setLabel("Desplazamiento (centimetros)");
@@ -289,10 +305,68 @@ void Reportes::inicializarGraficoDesplazamientos()
     bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
 
     //Se rescalan los ejes para el autoajuste
-    graficoDesplazamientoX->rescaleAxes();
-    graficoDesplazamientoY->rescaleAxes();
+    graficoDesplazamientoProX->rescaleAxes();
+    graficoDesplazamientoProY->rescaleAxes();
 
     graficoDesplazamientosProyeccion->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
+}
+
+void Reportes::inicializarGraficoDesplazamientosRecorridoCurvo()
+{
+    graficoDesplazamientosRecorridoCurvo->plotLayout()->clear();
+    graficoDesplazamientosRecorridoCurvo->clearItems();
+    graficoDesplazamientosRecorridoCurvo->clearGraphs();
+
+    //Elementos del grafico
+    QCPAxisRect *topAxisRect = new QCPAxisRect(graficoDesplazamientosRecorridoCurvo);
+    QCPAxisRect *bottomAxisRect = new QCPAxisRect(graficoDesplazamientosRecorridoCurvo);
+
+    bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
+    bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
+
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientosRecorridoCurvo,"Grafico Desplazamiento Medio-Lateral vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientosRecorridoCurvo,"Grafico Desplazamiento Antero-Posterior vs Tiempo");
+
+    //Se posicionan los layouts
+    graficoDesplazamientosRecorridoCurvo->plotLayout()->addElement(0, 0, tituloX);
+    graficoDesplazamientosRecorridoCurvo->plotLayout()->addElement(1, 0, topAxisRect);
+
+    graficoDesplazamientosRecorridoCurvo->plotLayout()->addElement(2, 0, tituloY);
+    graficoDesplazamientosRecorridoCurvo->plotLayout()->addElement(3, 0, bottomAxisRect);
+
+     //create and configure plottables:
+    graficoDesplazamientoReCurX = graficoDesplazamientosRecorridoCurvo->addGraph(topAxisRect->axis(QCPAxis::atBottom), topAxisRect->axis(QCPAxis::atLeft));
+    graficoDesplazamientoReCurY = graficoDesplazamientosRecorridoCurvo->addGraph(bottomAxisRect->axis(QCPAxis::atBottom), bottomAxisRect->axis(QCPAxis::atLeft));
+
+    //agregarQCPItemLine(lineaIzqDesplazamientoX,graficoDesplazamientos,topAxisRect);
+
+    lineaIzqDesplazamientoReCurX=new QCPItemLine(graficoDesplazamientosRecorridoCurvo);
+    agregarQCPItemLine(lineaIzqDesplazamientoReCurX,graficoDesplazamientosRecorridoCurvo,topAxisRect);
+
+    lineaDerDesplazamientoReCurX=new QCPItemLine(graficoDesplazamientosRecorridoCurvo);
+    agregarQCPItemLine(lineaDerDesplazamientoReCurX,graficoDesplazamientosRecorridoCurvo,topAxisRect);
+
+    lineaIzqDesplazamientoReCurY=new QCPItemLine(graficoDesplazamientosRecorridoCurvo);
+    agregarQCPItemLine(lineaIzqDesplazamientoReCurY,graficoDesplazamientosRecorridoCurvo,bottomAxisRect);
+
+    lineaDerDesplazamientoReCurY=new QCPItemLine(graficoDesplazamientosRecorridoCurvo);
+    agregarQCPItemLine(lineaDerDesplazamientoReCurY,graficoDesplazamientosRecorridoCurvo,bottomAxisRect);
+
+    //Colores de la Line
+    graficoDesplazamientoReCurX->setPen(QPen(QColor(71, 71, 194), 2));
+    graficoDesplazamientoReCurY->setPen(QPen(QColor(153, 102, 51), 2));
+
+    //Labels de los ejes
+    topAxisRect->axis(QCPAxis::atLeft)->setLabel("Desplazamiento (centimetros)");
+    topAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+    bottomAxisRect->axis(QCPAxis::atLeft)->setLabel("Desplazamiento (centimetros)");
+    bottomAxisRect->axis(QCPAxis::atBottom)->setLabel("Tiempo (segundos)");
+
+    //Se rescalan los ejes para el autoajuste
+    graficoDesplazamientoReCurX->rescaleAxes();
+    graficoDesplazamientoReCurY->rescaleAxes();
+
+    graficoDesplazamientosRecorridoCurvo->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
 }
 
 void Reportes::inicializarGraficoMuestras()
@@ -414,11 +488,18 @@ void Reportes::agregarDatosGraficoAngulos(Angulo *angulo)
     graficoAnguloY->addData(angulo->getTiempo() , angulo->getAngulo2());
 }
 
-void Reportes::agregarDatosGraficosDesplazamientos(Desplazamiento *desp)
+void Reportes::agregarDatosGraficoDesplazamientoProyeccion(Desplazamiento *desp)
 {
-    //Se agregan los datos al grafico de Angulos
-    graficoDesplazamientoX->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento1);
-    graficoDesplazamientoY->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento2);
+    //Se agregan los datos al grafico Desplazamiento Proyeccion
+    graficoDesplazamientoProX->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento1);
+    graficoDesplazamientoProY->addData(desp->getTiempo() , desp->getDesplazamientoProyeccion().Desplazamiento2);
+}
+
+void Reportes::agregarDatosGraficoDesplazamientoRecorridoCurvo(Desplazamiento *desp)
+{
+    //Se agregan los datos al grafico Desplazamiento Recorrido Curvo
+    graficoDesplazamientoReCurX->addData(desp->getTiempo() , desp->getDesplazamientoRecorridoCurvo().Desplazamiento1);
+    graficoDesplazamientoReCurY->addData(desp->getTiempo() , desp->getDesplazamientoRecorridoCurvo().Desplazamiento2);
 }
 
 void Reportes::agregarDatosGraficoMuestras(Muestra *datos)
@@ -463,10 +544,10 @@ void Reportes::setDatosGraficoDezplazamiento(QVector<Desplazamiento*> listaDespl
         despX[var]=desp->getDesplazamientoProyeccion().Desplazamiento1;
         despY[var]=desp->getDesplazamientoProyeccion().Desplazamiento2;
     }
-    this->vaciarGraficosDesplazamientos();
-    graficoDesplazamientoX->setData(tiempo,despX);
-    graficoDesplazamientoY->addData(tiempo,despY);
-    this->replotGraficoDesplazamientos();
+    this->vaciarGraficosDesplazamientoProyeccion();
+    graficoDesplazamientoProX->setData(tiempo,despX);
+    graficoDesplazamientoProY->addData(tiempo,despY);
+    this->replotGraficoDesplazamientoProyeccion();
 }
 
 void Reportes::setDatosGraficoMuestras(QVector<Muestra*> listaMuestras)
@@ -561,22 +642,41 @@ void Reportes::moverLineasDerechaAngulos(const double newValue)
     graficoAngulos->replot();
 }
 
-void Reportes::moverLineasIzquierdaDesplazamientos(const double newValue)
+void Reportes::moverLineasIzquierdaDesplazamientosProyeccion(const double newValue)
 {
-    lineaIzqDesplazamientoX->start->setCoords(newValue,-5000);
-    lineaIzqDesplazamientoX->end->setCoords(newValue,5000);
-    lineaIzqDesplazamientoY->start->setCoords(newValue,-5000);
-    lineaIzqDesplazamientoY->end->setCoords(newValue,5000);
+    lineaIzqDesplazamientoProX->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoProX->end->setCoords(newValue,5000);
+    lineaIzqDesplazamientoProY->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoProY->end->setCoords(newValue,5000);
     graficoDesplazamientosProyeccion->replot();
 }
 
-void Reportes::moverLineasDerechaDesplazamientos(const double newValue)
+void Reportes::moverLineasDerechaDesplazamientosProyeccion(const double newValue)
 {
-    lineaDerDesplazamientoX->start->setCoords(newValue,-5000);
-    lineaDerDesplazamientoX->end->setCoords(newValue,5000);
-    lineaDerDesplazamientoY->start->setCoords(newValue,-5000);
-    lineaDerDesplazamientoY->end->setCoords(newValue,5000);
+    lineaDerDesplazamientoProX->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoProX->end->setCoords(newValue,5000);
+    lineaDerDesplazamientoProY->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoProY->end->setCoords(newValue,5000);
     graficoDesplazamientosProyeccion->replot();
+}
+
+void Reportes::moverLineasIzquierdaDesplazamientosRecorridoCurvo(const double newValue)
+{
+    lineaIzqDesplazamientoReCurX->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoReCurX->end->setCoords(newValue,5000);
+    lineaIzqDesplazamientoReCurY->start->setCoords(newValue,-5000);
+    lineaIzqDesplazamientoReCurY->end->setCoords(newValue,5000);
+    graficoDesplazamientosRecorridoCurvo->replot();
+
+}
+
+void Reportes::moverLineasDerechaDesplazamientosRecorridoCurvo(const double newValue)
+{
+    lineaDerDesplazamientoReCurX->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoReCurX->end->setCoords(newValue,5000);
+    lineaDerDesplazamientoReCurY->start->setCoords(newValue,-5000);
+    lineaDerDesplazamientoReCurY->end->setCoords(newValue,5000);
+    graficoDesplazamientosRecorridoCurvo->replot();
 }
 
 void Reportes::moverLineasIzquierdaMuestras(const double newValue)

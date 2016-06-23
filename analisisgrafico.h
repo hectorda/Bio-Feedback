@@ -21,22 +21,27 @@ public:
     AnalisisGrafico(QWidget *parent, Reportes *reportes);
     ~AnalisisGrafico();    
     void setListaAngulos(QVector<Angulo *> LA);
-    void setListaDesplazamientos(QVector<Desplazamiento *> LD);
+    void setListaDesplazamientosProyeccion(QVector<Desplazamiento *> LD);
+    void setListaDesplazamientosRecorridoCurvo(QVector<Desplazamiento *> LD);
     void setListaMuestras(QVector<Muestra *> LR);
 
     void ajustarRangosGraficoAngulos(const int inicio, const int fin);
-    void ajustarRangosGraficoDesplazamientos(const int inicio, const int fin);
+    void ajustarRangosGraficoDesplazamientoProyeccion(const int inicio, const int fin);
+    void ajustarRangosGraficoDesplazamientoRecorridoCurvo(const int inicio, const int fin);
     void ajustarRangosGraficoMuestras(const int inicio, const int fin);
 
     void contarDatosAngulos(const int inicio, const int fin);
-    void contarDatosDesplazamientos(const int inicio, const int fin);
+    void contarDatosDesplazamientoProyeccion(const int inicio, const int fin);
+    void contarDatosDesplazamientoRecorridoCurvo(const int inicio, const int fin);
     void contarDatosMuestras(const int inicio, const int fin);
 
     void calcularEstadisticosAngulos(const int inicio, const int fin);
-    void calcularEstadisticosDesplazamientos(const int inicio, const int fin);
+    void calcularEstadisticosDesplazamientoProyeccion(const int inicio, const int fin);
+    void calcularEstadisticosDesplazamientoRecorridoCurvo(const int inicio, const int fin);
     void calcularEstadisticosMuestras(const int inicio, const int fin);
 
     QImage obtenerImagenTablaEstadisticos();
+
 private:
     Ui::AnalisisGrafico *ui;
     QVector<Angulo*> listaAngulos;

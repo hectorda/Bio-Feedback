@@ -16,7 +16,7 @@ class Reportes : public QObject
     Q_OBJECT
 public:
     explicit Reportes(QObject *parent = 0);
-    Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos, QCustomPlot *graficoDesplazamientosProyeccion, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientosP, QTableWidget *tablaDesplazamientosRC, QTableWidget *tablaMuestras, QTextEdit *textEditReporte);
+    Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot *graficoAngulos,QCustomPlot *graficoDesplazamientoPro,QCustomPlot *graficoDesplazamientoReCur, QCustomPlot *graficoMuestras, QTableWidget *tablaAngulos, QTableWidget *tablaDesplazamientosP, QTableWidget *tablaDesplazamientosRC, QTableWidget *tablaMuestras, QTextEdit *textEditReporte);
 
     void guardarImagenGrafico(QCustomPlot *grafico,int ancho,int alto);
     void guardarAngulosEnArchivo(QVector<Angulo*> listaAngulos);
@@ -60,8 +60,10 @@ private:
     QCPGraph *graficoAnguloY;
 
     //Plotables de los Graficos de Desplazamientos
-    QCPGraph *graficoDesplazamientoX;
-    QCPGraph *graficoDesplazamientoY;
+    QCPGraph *graficoDesplazamientoProX;
+    QCPGraph *graficoDesplazamientoProY;
+    QCPGraph *graficoDesplazamientoReCurX;
+    QCPGraph *graficoDesplazamientoReCurY;
 
     //Item para el ajuste de los rangos del Grafico Angulos
     QCPItemLine *lineaIzqAnguloX;
@@ -70,10 +72,16 @@ private:
     QCPItemLine *lineaDerAnguloY;
 
     //Item para el ajuste de los rangos del Grafico Desplazamientos
-    QCPItemLine *lineaIzqDesplazamientoX;
-    QCPItemLine *lineaDerDesplazamientoX;
-    QCPItemLine *lineaIzqDesplazamientoY;
-    QCPItemLine *lineaDerDesplazamientoY;
+    QCPItemLine *lineaIzqDesplazamientoProX;
+    QCPItemLine *lineaDerDesplazamientoProX;
+    QCPItemLine *lineaIzqDesplazamientoProY;
+    QCPItemLine *lineaDerDesplazamientoProY;
+
+    //Item para el ajuste de los rangos del Grafico Desplazamientos
+    QCPItemLine *lineaIzqDesplazamientoReCurX;
+    QCPItemLine *lineaDerDesplazamientoReCurX;
+    QCPItemLine *lineaIzqDesplazamientoReCurY;
+    QCPItemLine *lineaDerDesplazamientoReCurY;
 
     //Item para el ajuste de los rangos del Grafico Muestras
     QCPItemLine *lineaIzqAcX;
@@ -104,7 +112,8 @@ private:
     //Funciones donde se crean los layouts y elementos de los graficos del reporte
     void inicializarGraficoResultados();
     void inicializarGraficoAngulos();
-    void inicializarGraficoDesplazamientos();
+    void inicializarGraficoDesplazamientosProyeccion();
+    void inicializarGraficoDesplazamientosRecorridoCurvo();
     void inicializarGraficoMuestras();
 signals:
 
@@ -113,14 +122,17 @@ public slots:
     //Funciones para mover las lineas tanto izquierda y derechas de los graficos
     void moverLineasIzquierdaAngulos(const double newValue);
     void moverLineasDerechaAngulos(const double newValue);
-    void moverLineasIzquierdaDesplazamientos(const double newValue);
-    void moverLineasDerechaDesplazamientos(const double newValue);
+    void moverLineasIzquierdaDesplazamientosProyeccion(const double newValue);
+    void moverLineasDerechaDesplazamientosProyeccion(const double newValue);
+    void moverLineasIzquierdaDesplazamientosRecorridoCurvo(const double newValue);
+    void moverLineasDerechaDesplazamientosRecorridoCurvo(const double newValue);
     void moverLineasDerechaMuestras(const double newValue);
     void moverLineasIzquierdaMuestras(const double newValue);
 
     //Slots para agregar datos: Graficos
     void agregarDatosGraficoAngulos(Angulo *angulo);
-    void agregarDatosGraficosDesplazamientos(Desplazamiento *desp);
+    void agregarDatosGraficoDesplazamientoProyeccion(Desplazamiento *desp);
+    void agregarDatosGraficoDesplazamientoRecorridoCurvo(Desplazamiento *desp);
     void agregarDatosGraficoMuestras(Muestra *datos);
 
     //Slots para agregar datos: Tablas
@@ -130,12 +142,14 @@ public slots:
 
     //Slots para Limpiar
     void vaciarGraficoAngulos();
-    void vaciarGraficosDesplazamientos();
+    void vaciarGraficosDesplazamientoProyeccion();
+    void vaciarGraficosDesplazamientoRecorridoCurvo();
     void vaciarGraficoMuestras();
 
     //Para redibujar los graficos
     void replotGraficoAngulos();
-    void replotGraficoDesplazamientos();
+    void replotGraficoDesplazamientoProyeccion();
+    void replotGraficoDesplazamientoRecorridoCurvo();
     void replotGraficoMuestras();
 
 };
