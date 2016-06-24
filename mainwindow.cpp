@@ -826,7 +826,7 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
     else
         calibrado=true;
 
-    if(cronometro.elapsed()>ajustesCalculoAngulo->tiempoCalibracion){
+    if(cronometro.elapsed()/1000.0>ajustesCalculoAngulo->tiempoCalibracion){
         calibrado=true;
         prueba->listaAngulos.clear();
     }
