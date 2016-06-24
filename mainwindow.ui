@@ -188,7 +188,7 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -849,7 +849,7 @@ Resultados</string>
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QComboBox" name="comboBox">
+                <widget class="QComboBox" name="comboBoxTipoGrafico">
                  <item>
                   <property name="text">
                    <string>Tiempo AX</string>

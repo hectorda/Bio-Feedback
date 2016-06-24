@@ -45,7 +45,7 @@ void Desplazamiento::setDesplazamientoRecorridoCurvo(const desplazamientos &valu
 
 void Desplazamiento::calcularDesplazamiento(Angulo *angulo,double alturaDispositivo)
 {
-    this->Tiempo=angulo->getTiempo();
+    this->setTiempo(angulo->getTiempo());
 
     const double despPro1=qSin(qDegreesToRadians(angulo->getAngulo1()));
     const double despPro2=qSin(qDegreesToRadians(angulo->getAngulo2()));

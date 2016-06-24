@@ -51,7 +51,7 @@ private slots:
     void on_dockWidget_topLevelChanged(bool topLevel);
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
-    void mostrarQDialogCarga(QDialog *dialog, QMovie *movie);
+    void mostrarQDialogCarga(QDialog *dialog, QMovie *movie,QString &texto);
     void mostarElementosConfigurarPrueba();
     void configurarPrueba();
     void configurarArduino();
@@ -68,6 +68,7 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
+    void calibrar(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
     void on_stackedWidget_currentChanged(int arg1);
 
 signals:
@@ -95,6 +96,7 @@ private:
     AnalisisGrafico *analisisGraficoAngulos,*analisisGraficoMuestras,*analisisGraficoDesplazamientoProyeccion,*analisisGraficoDesplazamientoRecorridoCurvo;
     SQL *db;
     Angulo *objetoAngulo;
+    bool calibrado;
 
     void inicializar();
     void conexiones();

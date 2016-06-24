@@ -17,6 +17,7 @@ public:
     ~AjustesCalculoAngulo();
     QString filtro;
     double alpha;
+    int tiempoCalibracion;
 
 private slots:
     void on_comboBoxFiltroAngulo_currentTextChanged(const QString &arg1);

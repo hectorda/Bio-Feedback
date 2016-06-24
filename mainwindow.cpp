@@ -667,14 +667,15 @@ void MainWindow::configurarArduino()
         //Qdialog de ventana de carga configuracion sensores.
         QDialog *QDialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
         QMovie *movie = new QMovie(":/images/Loading.gif");
-        mostrarQDialogCarga(QDialogCarga,movie);
+        QString texto=QString("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo());
+        mostrarQDialogCarga(QDialogCarga,movie,texto);
 
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
-        connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
         connect(timer, QTimer::timeout, [=]() { QDialogCarga->close();});
+        connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
         connect(timer, QTimer::timeout, [=]() { delete timer; delete QDialogCarga; delete movie;});
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
@@ -684,10 +685,10 @@ void MainWindow::configurarArduino()
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
 }
 
-void MainWindow::mostrarQDialogCarga(QDialog *dialog,QMovie *movie)
+void MainWindow::mostrarQDialogCarga(QDialog *dialog,QMovie *movie,QString &texto)
 {
     QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-    QLabel *labelCarga= new QLabel(tr("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo()));
+    QLabel *labelCarga= new QLabel(texto);
     layoutBarraCarga->addWidget(labelCarga);
     QLabel *labelQMovie= new QLabel;
     layoutBarraCarga->addWidget(labelQMovie);
@@ -768,7 +769,7 @@ void MainWindow::iniciarPrueba()
         ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesp..");
 
     ui->tabWidgetGrafico_Resultados->setTabEnabled(0,true);
-
+    calibrado=false;
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
     ui->centralWidget->adjustSize();
     desactivarTabs();
@@ -797,6 +798,40 @@ void MainWindow::regresarInicio()
     }
 }
 
+void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
+{
+    if(!cronometro.isValid())
+        cronometro.start();
+
+    double tiempo=cronometro.elapsed()/1000.0;
+    Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
+    const QString orientacion=prueba->getOrientacion().toLower();
+    const QString filtroAngulo=ajustesCalculoAngulo->filtro.toLower();
+    if(!filtroAngulo.contains("sin filtro")){
+        if(!prueba->listaAngulos.isEmpty()){
+            Angulo *anguloAnterior=prueba->listaAngulos.last();
+            if(filtroAngulo.contains("kalman"))
+                objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato,anguloAnterior);
+            if(filtroAngulo.contains("complementario")){
+                const double alpha=ajustesCalculoAngulo->alpha;
+                objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato,anguloAnterior,alpha);
+            }
+        }
+        else{
+            objetoAngulo->calcularAngulo(orientacion,dato);
+            Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
+            prueba->listaAngulos.append(angulo);
+        }
+    }
+    else
+        calibrado=true;
+
+    if(cronometro.elapsed()>ajustesCalculoAngulo->tiempoCalibracion){
+        calibrado=true;
+        prueba->listaAngulos.clear();
+    }
+}
+
 /*
 * Se obtiene la Informacion proveniete del Sensor
 * Ademas se obtiene el Angulo y Desplazamiento
@@ -805,107 +840,135 @@ void MainWindow::regresarInicio()
 */
 void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
-    if(prueba->listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
-       cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
+    if(calibrado){
+        if(prueba->listaMuestras.isEmpty())//Cuando se agrega el primer dato, se inicia el tiempo.
+           cronometro.start(); //Para revalidar que la velocidad esta pasando bien :)
 
-    const double tiempo=prueba->getFrecuenciaMuestreo()<275 ? prueba->listaMuestras.size()*(1/prueba->getFrecuenciaMuestreo()) :
-                                                          cronometro.elapsed()/1000.0;
-    if ( tiempo < prueba->getTiempoPrueba())
-    {
-        //Calculo y de Angulos y Desplazamiento
-        Desplazamiento *desplazamiento=new Desplazamiento;
-        Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
-        const QString orientacion=prueba->getOrientacion().toLower();
-        const double alpha=ajustesCalculoAngulo->alpha;
-        const QString filtroAngulo=ajustesCalculoAngulo->filtro.toLower();
+        const double tiempo=prueba->getFrecuenciaMuestreo()<275 ? prueba->listaMuestras.size()*(1/prueba->getFrecuenciaMuestreo()) :
+                                                              cronometro.elapsed()/1000.0;
+        if ( tiempo < prueba->getTiempoPrueba())
+        {
+            //Calculo y de Angulos y Desplazamiento
+            Desplazamiento *desplazamiento=new Desplazamiento;
+            Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
+            const QString orientacion=prueba->getOrientacion().toLower();
+            const double alpha=ajustesCalculoAngulo->alpha;
+            const QString filtroAngulo=ajustesCalculoAngulo->filtro.toLower();
 
-        if(filtroAngulo.contains("sin filtro"))
-            objetoAngulo->calcularAngulo(orientacion,dato);
-        else{
-            if(!prueba->listaAngulos.isEmpty()){
-                Angulo *anguloAnterior=prueba->listaAngulos.last();
-                if(filtroAngulo.contains("kalman"))
-                    objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
-                if(filtroAngulo.contains("complementario"))
-                    objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
-            }
-            else{
+            if(filtroAngulo.contains("sin filtro"))
                 objetoAngulo->calcularAngulo(orientacion,dato);
-                if(filtroAngulo.contains("kalman"))
-                    objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
-            }
-        }
-
-//        if(!prueba->listaAngulos.isEmpty()){
-//            Angulo *anguloAnterior=prueba->listaAngulos.last();
-//             objetoAngulo->calcularAngulo(orientacion,dato);
-//             QTextStream stdout <<objetoAngulo->getTiempo()<<" "<<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
-//            //if(filtroAngulo.contains("kalman"))
-//                objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
-//            QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
-//                //if(filtroAngulo.contains("complementario"))
-//                objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
-//                QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<endl;
-//        }
-//        else{
-//            objetoAngulo->calcularAngulo(orientacion,dato);
-//            if(filtroAngulo.contains("kalman"))
-//                objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
-//        }
-
-        Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
-        desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
-        prueba->listaAngulos.append(angulo);
-        prueba->listaDesplazamientos.append(desplazamiento);
-        prueba->listaMuestras.append(dato);
-        emit emitRawReporte(dato);
-        emit emitDesplazamientoReporte(desplazamiento);
-        emit emitAnguloReporte(angulo);
-
-        //Comienza actualizacion elementos de la interfaz
-        //Se pregunta y envia el dato para graficar
-        if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
-            if(prueba->getNumeroPrueba()!=-1){
-                if(prueba->getAjustesGrafico().Unidad.contains("grados"))//Mod
-                    emit emitAnguloGraficoTiempoReal(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
+            else{
+                if(!prueba->listaAngulos.isEmpty()){
+                    Angulo *anguloAnterior=prueba->listaAngulos.last();
+                    if(filtroAngulo.contains("kalman"))
+                        objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
+                    if(filtroAngulo.contains("complementario"))
+                        objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+                }
                 else{
-                    if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
-                        emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoProyeccion().Desplazamiento1,desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
-                    if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
-                        emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1,desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
+                    objetoAngulo->calcularAngulo(orientacion,dato);
+                    if(filtroAngulo.contains("kalman"))
+                        objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
                 }
             }
-            else
-                emitAnguloGraficoTiempoReal(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1());
-        }
 
-        if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
+    //        if(!prueba->listaAngulos.isEmpty()){
+    //            Angulo *anguloAnterior=prueba->listaAngulos.last();
+    //             objetoAngulo->calcularAngulo(orientacion,dato);
+    //             QTextStream stdout <<objetoAngulo->getTiempo()<<" "<<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
+    //            //if(filtroAngulo.contains("kalman"))
+    //                objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
+    //            QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
+    //                //if(filtroAngulo.contains("complementario"))
+    //                objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+    //                QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<endl;
+    //        }
+    //        else{
+    //            objetoAngulo->calcularAngulo(orientacion,dato);
+    //            if(filtroAngulo.contains("kalman"))
+    //                objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
+    //        }
+
+            Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
+            desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
+            prueba->listaAngulos.append(angulo);
+            prueba->listaDesplazamientos.append(desplazamiento);
+            prueba->listaMuestras.append(dato);
+            emit emitRawReporte(dato);
+            emit emitDesplazamientoReporte(desplazamiento);
+            emit emitAnguloReporte(angulo);
+
+            //Comienza actualizacion elementos de la interfaz
+            //Se pregunta y envia el dato para graficar
+            if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
+                if(prueba->getNumeroPrueba()!=-1){
+                    if(prueba->getAjustesGrafico().Unidad.contains("grados"))
+                        emit emitAnguloGraficoTiempoReal(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
+                    else{
+                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+                            emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoProyeccion().Desplazamiento1,desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
+                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
+                            emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1,desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
+                    }
+                }
+                else
+                    if(prueba->getAjustesGrafico().Unidad.contains("grados"))
+                    {
+                        if(ui->comboBoxTipoGrafico->currentText().contains("AX"))
+                            emitAnguloGraficoTiempoReal(angulo->getTiempo(),angulo->getAngulo1());
+                        if(ui->comboBoxTipoGrafico->currentText().contains("AY"))
+                            emitAnguloGraficoTiempoReal(angulo->getTiempo(),angulo->getAngulo2());
+                    }
+                    else{
+                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+                        {
+                            if(ui->comboBoxTipoGrafico->currentText().contains("AX"))
+                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoProyeccion().Desplazamiento1);
+                            if(ui->comboBoxTipoGrafico->currentText().contains("AY"))
+                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
+                        }
+                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
+                        {
+                            if(ui->comboBoxTipoGrafico->currentText().contains("AX"))
+                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1);
+                            if(ui->comboBoxTipoGrafico->currentText().contains("AY"))
+                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
+
+                        }
+                    }
+            }
+
+            if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
+            {
+               const int porcentaje=qRound((tiempo*100.0)/prueba->getTiempoPrueba());
+               ui->progressBarPrueba->setValue(porcentaje);
+            }
+
+            const QString lapso=QString::number(tiempo, 'f', 1);
+
+            QString horas = QString::number(qFloor(tiempo / 3600));
+            QString minutos = QString::number(qFloor ((qRound(tiempo)% 3600) / 60 ));
+            QString segundos = QString::number(qRound(tiempo) % 60);
+
+            minutos = minutos.toInt() < 10 ? '0' + minutos : minutos;//Anteponiendo un 0 a los minutos si son menos de 10
+            segundos = segundos.toInt() < 10 ? '0' + segundos : segundos;//Anteponiendo un 0 a los segundos si son menos de 10
+            QString result = horas + ":" + minutos + ":" + segundos;  // hh:mm::ss
+
+            ui->lcdNumberTiempoTranscurrido->display(result);
+
+            const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(prueba->listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
+                              + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
+            actualizarMensajeBarraEstado(mensaje);
+        }
+        else//Si se agoto el tiempo de la preueba
         {
-           const int porcentaje=qRound((tiempo*100.0)/prueba->getTiempoPrueba());
-           ui->progressBarPrueba->setValue(porcentaje);
+            cronometro.invalidate();
+            mostrarResultados();
         }
-
-        const QString lapso=QString::number(tiempo, 'f', 1);
-
-        QString horas = QString::number(qFloor(tiempo / 3600));
-        QString minutos = QString::number(qFloor ((qRound(tiempo)% 3600) / 60 ));
-        QString segundos = QString::number(qRound(tiempo) % 60);
-
-        minutos = minutos.toInt() < 10 ? '0' + minutos : minutos;//Anteponiendo un 0 a los minutos si son menos de 10
-        segundos = segundos.toInt() < 10 ? '0' + segundos : segundos;//Anteponiendo un 0 a los segundos si son menos de 10
-        QString result = horas + ":" + minutos + ":" + segundos;  // hh:mm::ss
-
-        ui->lcdNumberTiempoTranscurrido->display(result);
-
-        const QString mensaje="Tiempo: "+ lapso + " Muestras:" + QString::number(prueba->listaMuestras.size())+ " AcX: "+QString::number(dato->getAcX(),'f',3)+" AcY: "+QString::number(dato->getAcY(),'f',3)+" AcZ: "+QString::number(dato->getAcZ(),'f',3)
-                          + " GyX: "+QString::number(dato->getGyX(),'f',3)+" GyY: "+QString::number(dato->getGyY(),'f',3)+" GyZ: "+QString::number(dato->getGyZ(),'f',3);
-        actualizarMensajeBarraEstado(mensaje);
     }
-    else//Si se agoto el tiempo de la preueba
-    {
-        cronometro.invalidate();
-        mostrarResultados();
-    }
+
+    else
+        calibrar(AcX,AcY,AcZ,GyX,GyY,GyZ);
 }
 
 /*

@@ -38,14 +38,27 @@ void AjustesCalculoAngulo::on_comboBoxFiltroAngulo_currentTextChanged(const QStr
     if(arg1.toLower().contains("sin filtro")){
         ui->doubleSpinBoxAlphaFC->hide();
         ui->labelAlpha->hide();
+
+        ui->labelTiempoCalibracion->hide();
+        ui->spinBoxTiempoCalibracion->hide();
+        ui->labelSeg->hide();
+
     }
     if(arg1.toLower().contains("kalman")){
         ui->doubleSpinBoxAlphaFC->hide();
         ui->labelAlpha->hide();
+
+        ui->labelTiempoCalibracion->show();
+        ui->spinBoxTiempoCalibracion->show();
+        ui->labelSeg->show();
     }
     if(arg1.toLower().contains("complementario")){
         ui->doubleSpinBoxAlphaFC->show();
         ui->labelAlpha->show();
+
+        ui->labelTiempoCalibracion->show();
+        ui->spinBoxTiempoCalibracion->show();
+        ui->labelSeg->show();
     }
 }
 
@@ -74,6 +87,7 @@ void AjustesCalculoAngulo::aplicar()
     {
         filtro=ui->comboBoxFiltroAngulo->currentText();
         alpha=ui->doubleSpinBoxAlphaFC->value();
+        tiempoCalibracion=ui->spinBoxTiempoCalibracion->value();
         close();
     }
 }
