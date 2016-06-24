@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     Kalman.cpp \
     ajustescalculoangulo.cpp \
     acerca.cpp \
-    paciente.cpp
+    paciente.cpp \
+    dialogcarga.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -50,7 +51,8 @@ HEADERS  += mainwindow.h \
     Kalman.h \
     ajustescalculoangulo.h \
     acerca.h \
-    paciente.h
+    paciente.h \
+    dialogcarga.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
@@ -59,7 +61,8 @@ FORMS    += mainwindow.ui \
     sql.ui \
     analisisgrafico.ui \
     ajustescalculoangulo.ui \
-    acerca.ui
+    acerca.ui \
+    dialogcarga.ui
 
 
 RESOURCES += \

@@ -21,6 +21,7 @@
 
 //Ventana de Ayuda->acerca de ...
 #include <acerca.h>
+#include <dialogcarga.h>
 
 
 namespace Ui {
@@ -51,12 +52,12 @@ private slots:
     void on_dockWidget_topLevelChanged(bool topLevel);
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
-    void mostrarQDialogCarga(QDialog *dialog, QMovie *movie,QString &texto);
     void mostarElementosConfigurarPrueba();
     void configurarPrueba();
     void configurarArduino();
     void iniciarPrueba();
     void limpiarListasyOcultarBotones();
+    void almacenarAjustesInterfazenObjetoPrueba();
     void desactivarActions();
     void activarActions();
     void mostrarResultados();
@@ -64,6 +65,7 @@ private slots:
     void marcarObjetivos(const double x, const double y);
     void actualizarRangoGrafico(int Range);
     void contextMenuRequest(QPoint pos);
+    void conectarActionsParaIrATabs();
     void relacionAspectodelGrafico();
     bool eventFilter(QObject *obj, QEvent *event);
     void regresarInicio();
@@ -86,9 +88,7 @@ private:
     AjustesGrafico *ajustesGrafico;
     AjustesCalculoAngulo *ajustesCalculoAngulo;
     QElapsedTimer cronometro;
-    QString datosLeidosPuertoSerial;
-    Reportes *reportes;    
-    QLabel *status;
+    Reportes *reportes;
     Prueba *prueba;
     QCPPlotTitle *titulo;
     QCPCurve *lienzo;
@@ -97,6 +97,7 @@ private:
     SQL *db;
     Angulo *objetoAngulo;
     bool calibrado;
+    DialogCarga *dialogCarga;
 
     void inicializar();
     void conexiones();
@@ -117,6 +118,7 @@ private:
 
     void activarSpacerEntreBotones();
     void desactivarSpacerEntreBotones();
+
     void generarObjetivos();
     bool PertenecePuntoAlObjetivo(const double x, const double y,QCPItemEllipse *P);
     void parpadeoCirculo(QCPItemEllipse *P);

@@ -188,7 +188,7 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -1089,7 +1089,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>5</number>
+              <number>1</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1415,6 +1415,9 @@ p, li { white-space: pre-wrap; }
                  <layout class="QGridLayout" name="gridLayout_16">
                   <item row="0" column="0">
                    <widget class="QDockWidget" name="dockWidget_2">
+                    <property name="features">
+                     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+                    </property>
                     <widget class="QWidget" name="dockWidgetContents_2">
                      <layout class="QVBoxLayout" name="verticalLayout_11">
                       <item>
@@ -1906,6 +1909,45 @@ QProgressBar:hover {
     <property name="title">
      <string>Ver</string>
     </property>
+    <widget class="QMenu" name="menuDesplazmientos">
+     <property name="title">
+      <string>Desplazamientos</string>
+     </property>
+     <widget class="QMenu" name="menuProyeccion">
+      <property name="title">
+       <string>Proyección</string>
+      </property>
+      <addaction name="actionTablaDesplazamientoProyeccion"/>
+      <addaction name="actionGraficoDesplazamientoProyeccion"/>
+     </widget>
+     <widget class="QMenu" name="menuRecorridoCurvo">
+      <property name="title">
+       <string>Recorrido Curvo</string>
+      </property>
+      <addaction name="actionTablaDesplazamientoRecorridoCurvo"/>
+      <addaction name="actionGraficoDesplazamientoRecorridoCurvo"/>
+     </widget>
+     <addaction name="menuProyeccion"/>
+     <addaction name="menuRecorridoCurvo"/>
+    </widget>
+    <widget class="QMenu" name="menu_Angulos">
+     <property name="title">
+      <string>Ángulos</string>
+     </property>
+     <addaction name="actionTablaAngulos"/>
+     <addaction name="actionGraficoAngulos"/>
+    </widget>
+    <widget class="QMenu" name="menuMuestras">
+     <property name="title">
+      <string>Muestras</string>
+     </property>
+     <addaction name="actionTablaMuestras"/>
+     <addaction name="actionGraficoMuestras"/>
+    </widget>
+    <addaction name="actionReporte"/>
+    <addaction name="menu_Angulos"/>
+    <addaction name="menuDesplazmientos"/>
+    <addaction name="menuMuestras"/>
    </widget>
    <addaction name="menuArchivo"/>
    <addaction name="menuVer"/>
@@ -2072,6 +2114,63 @@ QProgressBar:hover {
    </property>
    <property name="text">
     <string>Agregar Paciente</string>
+   </property>
+  </action>
+  <action name="actionTablaAngulos">
+   <property name="text">
+    <string>Tabla Ángulos</string>
+   </property>
+  </action>
+  <action name="actionGraficoAngulos">
+   <property name="text">
+    <string>Gráfico Ángulos</string>
+   </property>
+  </action>
+  <action name="actionTablaDesplazamientoProyeccion">
+   <property name="text">
+    <string>Tabla Desplazamiento Proyección</string>
+   </property>
+  </action>
+  <action name="actionGraficoDesplazamientoProyeccion">
+   <property name="text">
+    <string>Gráfico Desplazamiento Proyeccion</string>
+   </property>
+   <property name="toolTip">
+    <string>Gráfico Desplazamiento Proyeccion</string>
+   </property>
+  </action>
+  <action name="actionGraficoDesplazamientoRecorridoCurvo">
+   <property name="text">
+    <string>Gráfico Desplazamiento Recorrido Curvo</string>
+   </property>
+   <property name="toolTip">
+    <string>Gráfico Desplazamiento Recorrido Curvo</string>
+   </property>
+  </action>
+  <action name="actionTablaDesplazamientoRecorridoCurvo">
+   <property name="text">
+    <string>Tabla Desplazamiento Recorrido Curvo</string>
+   </property>
+   <property name="toolTip">
+    <string>Tabla Desplazamiento Recorrido Curvo</string>
+   </property>
+  </action>
+  <action name="actionTablaMuestras">
+   <property name="text">
+    <string>Tabla Muestras</string>
+   </property>
+  </action>
+  <action name="actionGraficoMuestras">
+   <property name="text">
+    <string>Gráfico Muestras</string>
+   </property>
+   <property name="toolTip">
+    <string>Gráfico Muestras</string>
+   </property>
+  </action>
+  <action name="actionReporte">
+   <property name="text">
+    <string>Reporte</string>
    </property>
   </action>
  </widget>

@@ -52,7 +52,6 @@ void MainWindow::inicializar()
 
     ui->radioButtonHorizontalAbajo->hide();
     ui->radioButtonHorizontalArriba->hide();
-
     ui->menuVer->addAction(ui->mainToolBar->toggleViewAction());
 
     ui->qCustomPlotResultados->hide();
@@ -64,6 +63,7 @@ void MainWindow::inicializar()
 
     //Crean instancias de Objetos
     objetoAngulo=new Angulo;
+    dialogCarga=new DialogCarga(this);
 }
 
 void MainWindow::conexiones()
@@ -235,13 +235,13 @@ void MainWindow::mostrarResultados()
             prueba->setPaciente(pac);
         }
         llenarInformeReporte();
-
     }
     else
         QMessageBox::critical(this,"A ocurrido un problema","A ocurrido un problema y no se realizaron mediciones\nverifique que el dispositivo esta conectado y correctamente configurdo");
 
     mostrarBotonesPrueba();
     activarActions();
+    conectarActionsParaIrATabs();
     ui->centralWidget->adjustSize();
 }
 
@@ -252,7 +252,6 @@ void MainWindow::mostrarResultados()
 */
 void MainWindow::llenarInformeReporte()
 {
-
     reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
     reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
     reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
@@ -264,10 +263,10 @@ void MainWindow::llenarInformeReporte()
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
     ui->qCustomPlotGraficoDesplazamientosProyeccion->rescaleAxes();
     reportes->agregarDatosInformeReporteImagen(":graficodesp",ui->qCustomPlotGraficoDesplazamientosProyeccion->toPixmap(400,400).toImage());
-    //if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
-        reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientoProyeccion->obtenerImagenTablaEstadisticos());
-    //else
-        reportes->agregarDatosInformeReporteImagen("...",analisisGraficoDesplazamientoRecorridoCurvo->obtenerImagenTablaEstadisticos());
+
+    reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientoProyeccion->obtenerImagenTablaEstadisticos());
+    reportes->agregarDatosInformeReporteImagen("...",analisisGraficoDesplazamientoRecorridoCurvo->obtenerImagenTablaEstadisticos());
+
     ui->textEditReporte->moveCursor(QTextCursor::Start);
 }
 
@@ -664,38 +663,23 @@ void MainWindow::configurarArduino()
         prueba->setCadenaConfiguracion(ajustesSensores->getAjustesSensores());
         prueba->setFrecuenciaMuestreo(ajustesSensores->obtenerFrecuenciaMuestreo());
 
-        //Qdialog de ventana de carga configuracion sensores.
-        QDialog *QDialogCarga=new QDialog(this,Qt::CustomizeWindowHint|Qt::WindowTitleHint);
-        QMovie *movie = new QMovie(":/images/Loading.gif");
         QString texto=QString("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo());
-        mostrarQDialogCarga(QDialogCarga,movie,texto);
-
+        dialogCarga->setTextoCarga(texto);
+        dialogCarga->iniciarMovie();
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
-        connect(timer, QTimer::timeout, [=]() { QDialogCarga->close();});
+        connect(timer, QTimer::timeout, [=]() { dialogCarga->close();});
         connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
-        connect(timer, QTimer::timeout, [=]() { delete timer; delete QDialogCarga; delete movie;});
+        connect(timer, QTimer::timeout, [=]() { delete timer; dialogCarga->pararMovie();});
+
         timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
-        QDialogCarga->exec();
+        dialogCarga->exec();
     }
     else
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
-}
-
-void MainWindow::mostrarQDialogCarga(QDialog *dialog,QMovie *movie,QString &texto)
-{
-    QHBoxLayout* layoutBarraCarga = new QHBoxLayout;
-    QLabel *labelCarga= new QLabel(texto);
-    layoutBarraCarga->addWidget(labelCarga);
-    QLabel *labelQMovie= new QLabel;
-    layoutBarraCarga->addWidget(labelQMovie);
-    movie->setScaledSize(QSize(50,50));
-    labelQMovie->setMovie(movie);
-    movie->start();
-    dialog->setLayout(layoutBarraCarga);
 }
 
 /*
@@ -733,25 +717,32 @@ void MainWindow::activarActions()
         action->blockSignals(false);
 }
 
+void MainWindow::conectarActionsParaIrATabs()
+{
+    connect(ui->actionReporte,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_resultados); });
+
+    connect(ui->actionTablaAngulos,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaAngulos); });
+    connect(ui->actionGraficoAngulos,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoAngulos); });
+
+    connect(ui->actionTablaDesplazamientoProyeccion,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaDesplazamientosProyeccion); });
+    connect(ui->actionGraficoDesplazamientoProyeccion,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoDesplazamientosProyeccion); });
+
+    connect(ui->actionTablaDesplazamientoRecorridoCurvo,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaDesplazamientosRecorridoCurvo); });
+    connect(ui->actionGraficoDesplazamientoRecorridoCurvo,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoDesplazamientosRecorridoCurvo); });
+
+    connect(ui->actionTablaMuestras,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_TablaMuestras); });
+    connect(ui->actionGraficoMuestras,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoMuestras); });
+}
+
 void MainWindow::iniciarPrueba()
 {
     limpiarListasyOcultarBotones();
     desactivarActions();
-    const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
-    prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
-    prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
-    prueba->setOrientacion(obtenerOrientacionSensor());
-    prueba->setAlturaDispositivo(ui->doubleSpinBoxAlturaDispositivo->value());
-    prueba->setDivisorFPS(); //Se calcula el divisor de FPS
-    prueba->setCantidadObjetivos(ui->spinBoxCantidadObjetivos->value());
 
-    //Almacenando los Checkboxs
-    prueba->setAleatorios(ui->checkBoxObjetivosAleatorios->isChecked());
-    prueba->setDetenerAlMarcarTodos(ui->checkBoxDeteneralMarcarObjetivos->isChecked());
-    prueba->setLimitarGrafico(ui->checkBoxLimitarGrafico->isChecked());
-    prueba->setObjetivosEnOrden(ui->checkBoxOrdenObjetivos->isChecked());
+    almacenarAjustesInterfazenObjetoPrueba();
 
     ui->verticalSliderRangeGraphic->setValue(prueba->getAjustesGrafico().RadioExterior+5);//Se actualiza el slider del Rango
+
     inicializarGrafico(); //Se limpian y Reajustan los graficos
 
     ui->lcdNumberCantidadObjetivos->display(prueba->listaObjetivos.size());
@@ -777,6 +768,23 @@ void MainWindow::iniciarPrueba()
     ocultarBotonesPrueba();
 }
 
+void MainWindow::almacenarAjustesInterfazenObjetoPrueba()
+{
+    const double tPrueba=ui->checkBoxTiempoInfinito->isChecked()?qInf():ui->spinBoxTiempoPrueba->value();
+    prueba->setTiempoPrueba(tPrueba); //Se coloca un tiempo infinito o el elegido
+    prueba->setAjustesGrafico(ajustesGrafico->getAjustes());//Se obtienen los ajustes actuales para el grafico
+    prueba->setOrientacion(obtenerOrientacionSensor());
+    prueba->setAlturaDispositivo(ui->doubleSpinBoxAlturaDispositivo->value());
+    prueba->setDivisorFPS(); //Se calcula el divisor de FPS
+    prueba->setCantidadObjetivos(ui->spinBoxCantidadObjetivos->value());
+
+    //Almacenando los Checkboxs
+    prueba->setAleatorios(ui->checkBoxObjetivosAleatorios->isChecked());
+    prueba->setDetenerAlMarcarTodos(ui->checkBoxDeteneralMarcarObjetivos->isChecked());
+    prueba->setLimitarGrafico(ui->checkBoxLimitarGrafico->isChecked());
+    prueba->setObjetivosEnOrden(ui->checkBoxOrdenObjetivos->isChecked());
+}
+
 /*
 * Se pregunta si se desea volver a Inicio.
 */
@@ -800,8 +808,13 @@ void MainWindow::regresarInicio()
 
 void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ)
 {
-    if(!cronometro.isValid())
+    if(!cronometro.isValid()){
         cronometro.start();
+        QString texto="Calibrando Sensores espere"+QString::number(ajustesCalculoAngulo->tiempoCalibracion)+" seg";
+        dialogCarga->setTextoCarga(texto);
+        dialogCarga->iniciarMovie();
+        dialogCarga->exec();
+    }
 
     double tiempo=cronometro.elapsed()/1000.0;
     Muestra *dato=new Muestra(tiempo,AcX,AcY,AcZ,GyX,GyY,GyZ);
@@ -829,6 +842,8 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
     if(cronometro.elapsed()/1000.0>ajustesCalculoAngulo->tiempoCalibracion){
         calibrado=true;
         prueba->listaAngulos.clear();
+        dialogCarga->close();
+        dialogCarga->pararMovie();
     }
 }
 

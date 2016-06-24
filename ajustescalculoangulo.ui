@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>214</width>
-    <height>148</height>
+    <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Ajustar Calculo del Angulo</string>
+   <string>Ajustar cálculo del ángulo</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
@@ -63,7 +63,7 @@
         <item>
          <widget class="QLabel" name="labelTiempoCalibracion">
           <property name="text">
-           <string>Tiempo Calibracion</string>
+           <string>Tiempo Calibración</string>
           </property>
          </widget>
         </item>
