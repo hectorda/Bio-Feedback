@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QMovie>
+#include <QTimer>
 
 namespace Ui {
 class DialogCarga;
@@ -17,12 +18,18 @@ public:
     ~DialogCarga();
 
     void setTextoCarga(QString &texto);
-    void iniciarMovie();
+    void iniciar(double tiempo);
     void pararMovie();
 
 private:
     Ui::DialogCarga *ui;
     QMovie *movie;
+    QTimer *timer;
+    double porcentaje;
+
+private slots:
+    void actualizarPorcentaje();
+
 };
 
 #endif // DIALOGCARGA_H

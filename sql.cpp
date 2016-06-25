@@ -184,7 +184,7 @@ void SQL::on_pushButtonAgregar_clicked()
     paciente.setAltura(ui->lineEditAltura->text());
     paciente.setPeso(ui->lineEditPeso->text());
 
-    if (!existenCamposVacios(paciente))
+    if (!existenCamposVacios(paciente)){
         if(buscarPacienteporRut(paciente.getRut()).isEmpty()){
             if(agregarPaciente(paciente))
                 QMessageBox::information(this,"Paciente agregado","El Paciente a sido agragado exitosamente");
@@ -193,6 +193,7 @@ void SQL::on_pushButtonAgregar_clicked()
         }
         else
             QMessageBox::warning(this,"Paciente ya existe",tr("El Paciente con rut %1 ya existe en los registros").arg(paciente.getRut()));
+    }
 }
 
 bool SQL::existenCamposVacios(Paciente paciente){
@@ -203,7 +204,6 @@ bool SQL::existenCamposVacios(Paciente paciente){
         QMessageBox::warning(0,"Faltan Datos por llenar","Faltan datos por completar.");
         return true;
     }
-
     return false;
 }
 

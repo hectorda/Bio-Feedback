@@ -53,7 +53,7 @@ private slots:
     void on_tabWidgetGrafico_Resultados_currentChanged(int index);
 
     void mostarElementosConfigurarPrueba();
-    void configurarPrueba();
+    void irAConfigurarPrueba();
     void configurarArduino();
     void iniciarPrueba();
     void limpiarListasyOcultarBotones();

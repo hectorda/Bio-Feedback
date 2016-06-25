@@ -188,7 +188,7 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -839,13 +839,13 @@ Resultados</string>
             <item>
              <widget class="QGroupBox" name="groupBoxAjustesPruebaPersonalizada">
               <property name="title">
-               <string>GroupBox</string>
+               <string>Variable a graficar</string>
               </property>
               <layout class="QFormLayout" name="formLayout">
                <item row="1" column="0">
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>Tipo de Grafico</string>
+                  <string>Tipo de Gráfico</string>
                  </property>
                 </widget>
                </item>

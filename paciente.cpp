@@ -47,7 +47,7 @@ void Paciente::setAltura(QString value)
 
 bool Paciente::isEmpty()
 {
-    if (rut.isEmpty())
+    if (rut.isEmpty() || rut=="S/N")
         return true;
     return false;
 }

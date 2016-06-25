@@ -97,11 +97,11 @@ void MainWindow::conexiones()
 
 
     //Conect de Botones de Prueba
-    connect(ui->pushButtonPrueba1,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
-    connect(ui->pushButtonPrueba2,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
-    connect(ui->pushButtonPrueba3,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
-    connect(ui->pushButtonPrueba4,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
-    connect(ui->pushButtonOtro,SIGNAL(clicked()),this,SLOT(configurarPrueba()));
+    connect(ui->pushButtonPrueba1,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonPrueba2,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonPrueba3,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonPrueba4,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonOtro,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
 
 
     //Connect de actions
@@ -247,7 +247,7 @@ void MainWindow::mostrarResultados()
         conectarActionsParaIrATabs();
     }
     else
-        QMessageBox::critical(this,"A ocurrido un problema","A ocurrido un problema y no se realizaron mediciones\nverifique que el dispositivo esta conectado y correctamente configurdo");
+        QMessageBox::critical(this,"A ocurrido un problema","A ocurrido un problema y no se realizaron mediciones\nverifique que el dispositivo esta conectado y correctamente configurado");
 
     mostrarBotonesPrueba();
     activarActions();
@@ -398,7 +398,6 @@ void MainWindow::generarObjetivos()
                         ++cantidadintentos;
                 }
             }
-            QTextStream(stdout)<<"Objetivos Puestos"<<prueba->listaObjetivos.size()<<endl;
         }
         else
         {
@@ -671,10 +670,10 @@ void MainWindow::configurarArduino()
         prueba->setAjustesPuertoSerial(aSerial);
         prueba->setCadenaConfiguracion(ajustesSensores->getAjustesSensores());
         prueba->setFrecuenciaMuestreo(ajustesSensores->obtenerFrecuenciaMuestreo());
-
+        const double tiempo=3000;
         QString texto=QString("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo());
         dialogCarga->setTextoCarga(texto);
-        dialogCarga->iniciarMovie();
+        dialogCarga->iniciar(tiempo);
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
@@ -684,7 +683,7 @@ void MainWindow::configurarArduino()
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
         connect(timer, QTimer::timeout, [=]() { delete timer; dialogCarga->pararMovie();});
 
-        timer->start(2500); //Se fija el tiempo de accion en 2.5 seg
+        timer->start(tiempo); //Se fija el tiempo de accion en 3 seg
         dialogCarga->exec();
     }
     else
@@ -822,9 +821,10 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
 {
     if(!cronometro.isValid()){
         cronometro.start();
-        QString texto="Calibrando sensores espere: "+QString::number(ajustesCalculoAngulo->tiempoCalibracion)+" seg.";
+        const double tiempo=ajustesCalculoAngulo->tiempoCalibracion;
+        QString texto="Calibrando sensores espere: "+QString::number(tiempo)+" seg.";
         dialogCarga->setTextoCarga(texto);
-        dialogCarga->iniciarMovie();
+        dialogCarga->iniciar(tiempo);
         dialogCarga->exec();
     }
 
@@ -1159,7 +1159,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
         ocultarMostrarBotonesLabelTabTabla("Guardar\nDatos\nDesp..\nProyección");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_tablaDesplazamientosRecorridoCurvo)
-        ocultarMostrarBotonesLabelTabTabla("Guardar\nDatos\nDesp..\nRecorrido Curvo");
+        ocultarMostrarBotonesLabelTabTabla("Guardar\nDatos\nDesp..\nRecorrido\nCurvo");
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_TablaMuestras)
         ocultarMostrarBotonesLabelTabTabla("Guardar\nMuestras");
@@ -1179,7 +1179,7 @@ void MainWindow::on_tabWidgetGrafico_Resultados_currentChanged(int index)
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoDesplazamientosRecorridoCurvo)
     {
         reportes->replotGraficoDesplazamientoRecorridoCurvo();
-        ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráficos\nDesp..\nRecorrido Curvo","Guardar\nDatos\nDesp..\nRecorrido Curvo");
+        ocultarMostrarBotonesLabelTabGraficos("Guardar\nGráficos\nDesp..\nRecorrido\nCurvo","Guardar\nDatos\nDesp..\nRecorrido\nCurvo");
     }
 
     if(ui->tabWidgetGrafico_Resultados->currentWidget()==ui->tab_GraficoMuestras)
@@ -1299,7 +1299,7 @@ void MainWindow::on_stackedWidget_currentChanged(int arg1)
     }
 }
 
-void MainWindow::configurarPrueba()
+void MainWindow::irAConfigurarPrueba()
 {
     mostarElementosConfigurarPrueba();
     QString clicked = sender()->objectName();
