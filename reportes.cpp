@@ -23,7 +23,6 @@ Reportes::Reportes(QObject *parent, QCustomPlot *graficoResultados, QCustomPlot 
     inicializarGraficoDesplazamientosProyeccion();
     inicializarGraficoDesplazamientosRecorridoCurvo();
     inicializarGraficoMuestras();
-    inicializarInformeReporte();
 }
 
 void Reportes::vaciarTablas()
@@ -532,22 +531,31 @@ void Reportes::setDatosGraficoAngulos(QVector<Angulo*> listaAngulos)
     this->replotGraficoAngulos();
 }
 
-void Reportes::setDatosGraficoDezplazamiento(QVector<Desplazamiento*> listaDesplazamientos)
+void Reportes::setDatosGraficosDezplazamientos(QVector<Desplazamiento*> listaDesplazamientos)
 {
     const int size=listaDesplazamientos.size();
     QVector<double> tiempo(size);
-    QVector<double> despX(size);
-    QVector<double> despY(size);
+    QVector<double> despProX(size);
+    QVector<double> despProY(size);
+    QVector<double> despReCurX(size);
+    QVector<double> despReCurY(size);
     for (int var = 0; var < size; ++var) {
         Desplazamiento *desp=listaDesplazamientos.at(var);
         tiempo[var]=desp->getTiempo();
-        despX[var]=desp->getDesplazamientoProyeccion().Desplazamiento1;
-        despY[var]=desp->getDesplazamientoProyeccion().Desplazamiento2;
+        despProX[var]=desp->getDesplazamientoProyeccion().Desplazamiento1;
+        despProY[var]=desp->getDesplazamientoProyeccion().Desplazamiento2;
+        despReCurX[var]=desp->getDesplazamientoRecorridoCurvo().Desplazamiento1;
+        despReCurY[var]=desp->getDesplazamientoRecorridoCurvo().Desplazamiento2;
     }
+
     this->vaciarGraficosDesplazamientoProyeccion();
-    graficoDesplazamientoProX->setData(tiempo,despX);
-    graficoDesplazamientoProY->addData(tiempo,despY);
+    this->vaciarGraficosDesplazamientoRecorridoCurvo();
+    graficoDesplazamientoProX->setData(tiempo,despProX);
+    graficoDesplazamientoProY->setData(tiempo,despProY);
+    graficoDesplazamientoReCurX->setData(tiempo,despReCurX);
+    graficoDesplazamientoReCurY->setData(tiempo,despReCurY);
     this->replotGraficoDesplazamientoProyeccion();
+    this->replotGraficoDesplazamientoRecorridoCurvo();
 }
 
 void Reportes::setDatosGraficoMuestras(QVector<Muestra*> listaMuestras)

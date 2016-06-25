@@ -111,13 +111,14 @@ void MainWindow::conexiones()
             reportes->setDatosTablaAngulos(prueba->listaAngulos);
             reportes->setDatosGraficoAngulos(prueba->listaAngulos);
             reportes->setDatosTablasDesplazamientos(prueba->listaDesplazamientos);
-            reportes->setDatosGraficoDezplazamiento(prueba->listaDesplazamientos);
+            reportes->setDatosGraficosDezplazamientos(prueba->listaDesplazamientos);
             reportes->setDatosTablaMuestras(prueba->listaMuestras);
             reportes->setDatosGraficoMuestras(prueba->listaMuestras);
             mostrarResultados();
             ui->stackedWidget->setCurrentWidget(ui->widgetPruebayResultados);
             ui->tabWidgetGrafico_Resultados->setTabEnabled(0,false);
             ui->tabWidgetGrafico_Resultados->currentChanged(1);
+            ui->actionGraficoPrincipal->blockSignals(true);
         }
     });
 
@@ -147,10 +148,11 @@ void MainWindow::inicializarGrafico()
             titulo->setText("Grados Antero-Posterior y Medio Lateral");
         else{
             if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
-                titulo->setText("Centimetros Antero-Posterior y Medio Lateral (Proyeccion)");
+                titulo->setText("Centímetros Antero-Posterior y Medio Lateral (Proyeccion)");
             else
                 titulo->setText("Centímetros Antero-Posterior y Medio Lateral (Recorrido Curvo)");
-            }
+        }
+
         circuloInterior->setVisible(true);
         circuloInterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioInterior,prueba->getAjustesGrafico().RadioInterior);
         circuloInterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioInterior,-prueba->getAjustesGrafico().RadioInterior);
@@ -177,7 +179,19 @@ void MainWindow::inicializarGrafico()
     }
     else
     {
-        titulo->setText("Angulo X Tiempo ");
+        if (prueba->getAjustesGrafico().Unidad.contains("grados")){
+            if(ui->comboBoxTipoGrafico->currentText().toLower().contains("medio-lateral"))
+                titulo->setText("Tiempo Ángulo Medio-Lateral");
+            if(ui->comboBoxTipoGrafico->currentText().toLower().contains("antero-posterior"))
+                titulo->setText("Tiempo Ángulo Antero-Posterior");
+        }
+        else{
+            if(ui->comboBoxTipoGrafico->currentText().toLower().contains("medio-lateral"))
+                titulo->setText("Tiempo Desplazamiento Medio-Lateral");
+            if(ui->comboBoxTipoGrafico->currentText().toLower().contains("antero-posterior"))
+                titulo->setText("Tiempo Desplazamiento Antero-Posterior");
+        }
+
         circuloExterior->setVisible(false);
         circuloInterior->setVisible(false);
         ui->qCustomPlotGrafico->addGraph(); // blue line
@@ -190,12 +204,12 @@ void MainWindow::inicializarGrafico()
         ui->qCustomPlotGrafico->graph(1)->setLineStyle(QCPGraph::lsNone);
         ui->qCustomPlotGrafico->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
         ui->qCustomPlotGrafico->setInteractions(QCP::iRangeZoom|QCP::iRangeDrag); // Para usar el el Zoom y el Arrastre del grafico.
-
     }
-
-
 }
 
+/*
+ *Actualiza el Mensaje de la Barra de Estado.
+ */
 void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 {
     ui->statusBar->showMessage(message);
@@ -210,20 +224,14 @@ void MainWindow::mostrarResultados()
     if(!prueba->listaMuestras.isEmpty()){
         prueba->setCantidadMuestras(prueba->listaMuestras.size());
         prueba->setTiempoTotal(prueba->listaMuestras.last()->getTiempo());
-
-        double frecuenciaMuestreo=(prueba->listaMuestras.last()->getTiempo()-prueba->listaMuestras.first()->getTiempo());
-        frecuenciaMuestreo/=prueba->listaMuestras.size()-1;
-        frecuenciaMuestreo=1/frecuenciaMuestreo;
-
-        QTextStream(stdout)<<"Muestras x Seg: "<< frecuenciaMuestreo<<endl;
-
         lectorSerial->cerrarPuertoSerial();
+
         emit emitGraficarResultados(prueba->listaAngulos);
+
         analisisGraficoAngulos->setListaAngulos(prueba->listaAngulos);
         analisisGraficoDesplazamientoProyeccion->setListaDesplazamientosProyeccion(prueba->listaDesplazamientos);
         analisisGraficoDesplazamientoRecorridoCurvo->setListaDesplazamientosRecorridoCurvo(prueba->listaDesplazamientos);
         analisisGraficoMuestras->setListaMuestras(prueba->listaMuestras);
-        activarTabs();
         if(prueba->getPaciente().isEmpty())
         {
             Paciente pac;
@@ -235,16 +243,16 @@ void MainWindow::mostrarResultados()
             prueba->setPaciente(pac);
         }
         llenarInformeReporte();
+        activarTabs();
+        conectarActionsParaIrATabs();
     }
     else
         QMessageBox::critical(this,"A ocurrido un problema","A ocurrido un problema y no se realizaron mediciones\nverifique que el dispositivo esta conectado y correctamente configurdo");
 
     mostrarBotonesPrueba();
     activarActions();
-    conectarActionsParaIrATabs();
     ui->centralWidget->adjustSize();
 }
-
 
 /*
 * Se utiliza la plantilla de Reporte dentro de los Resources
@@ -252,6 +260,7 @@ void MainWindow::mostrarResultados()
 */
 void MainWindow::llenarInformeReporte()
 {
+    reportes->inicializarInformeReporte();
     reportes->agregarDatosInformeReportePlainText(":rutP",prueba->getPaciente().getRut());
     reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getPaciente().getNombre());
     reportes->agregarDatosInformeReportePlainText(":apellidoP",prueba->getPaciente().getApellido());
@@ -263,7 +272,6 @@ void MainWindow::llenarInformeReporte()
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
     ui->qCustomPlotGraficoDesplazamientosProyeccion->rescaleAxes();
     reportes->agregarDatosInformeReporteImagen(":graficodesp",ui->qCustomPlotGraficoDesplazamientosProyeccion->toPixmap(400,400).toImage());
-
     reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientoProyeccion->obtenerImagenTablaEstadisticos());
     reportes->agregarDatosInformeReporteImagen("...",analisisGraficoDesplazamientoRecorridoCurvo->obtenerImagenTablaEstadisticos());
 
@@ -296,12 +304,18 @@ void MainWindow::ocultarBotonesPrueba()
     ui->pushButtonAnalizarGraficoAngulos->hide();
 }
 
+/*
+* Se Desactivan las tabs a excepcion de la correspondiente
+* Al gráfico Principal.
+*/
 void MainWindow::desactivarTabs()
 {
     for (int var = 1; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
         ui->tabWidgetGrafico_Resultados->setTabEnabled(var,false);
 }
-
+/*
+* Se Reactivan las tabs.
+*/
 void MainWindow::activarTabs()
 {
     for (int var = 1; var < ui->tabWidgetGrafico_Resultados->count(); ++var)
@@ -499,11 +513,9 @@ void MainWindow::marcarObjetivos(const double x,const double y)
             }
         }
     }
-
-    if(prueba->getNumeroPrueba()!=-1 && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos()){
+    //Si no es la Prueba -1 y se escogio la opción de Detener al Marcar.
+    if(prueba->getNumeroPrueba()!=-1 && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
-        QTextStream stdout <<"ora"<<endl;
-    }
 }
 
 /*
@@ -531,7 +543,6 @@ void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
          P->setBrush(QBrush(Qt::white));
     else
         P->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
-
 }
 
 /*
@@ -582,18 +593,17 @@ void MainWindow::slotGraficarTiempoReal(const double x,const double y)
     }
     else{
         ui->qCustomPlotGrafico->graph(0)->addData(x, y);
-        // set data of dots:
         ui->qCustomPlotGrafico->graph(1)->clearData();
         ui->qCustomPlotGrafico->graph(1)->addData(x, y);
-        // remove data of lines that's outside visible range:
-        //ui->qCustomPlotGrafico->graph(0)->removeDataBefore(x-8);
-        // rescale value (vertical) axis to fit the current data:
         ui->qCustomPlotGrafico->graph(1)->rescaleValueAxis(true);
         ui->qCustomPlotGrafico->xAxis->setRange(x+0.25, 8, Qt::AlignRight);
     }
     ui->qCustomPlotGrafico->replot(); //Se redibuja el grafico
 }
-
+/*
+* Se actualizan los rangos del gráfico
+* Se redibuja el gráfico.
+*/
 void MainWindow::actualizarRangoGrafico(int Range)
 {
     ui->qCustomPlotGrafico->xAxis->setRange(-Range,Range);
@@ -620,17 +630,14 @@ void MainWindow::contextMenuRequest(QPoint pos)
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::Resize && obj == ui->dockWidget)
-        if(prueba->getNumeroPrueba()!=-1)
-            relacionAspectodelGrafico();
+        relacionAspectodelGrafico();
 
-    if(event->type()==QEvent::Wheel && obj == ui->qCustomPlotGrafico){
-        if(prueba->getNumeroPrueba()!=-1){
-            QWheelEvent *wheelEvent = (QWheelEvent *)event;
-            QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
-            range+=(wheelEvent->delta()/120);
-            ui->verticalSliderRangeGraphic->setValue(range.upper); //Acticar el Slot
-            ui->qCustomPlotGrafico->replot();
-        }
+    if(event->type()==QEvent::Wheel && obj == ui->qCustomPlotGrafico && prueba->getNumeroPrueba()!=-1){
+        QWheelEvent *wheelEvent = (QWheelEvent *)event;
+        QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
+        range+=(wheelEvent->delta()/120);
+        ui->verticalSliderRangeGraphic->setValue(range.upper); //Acticar el Slot
+        ui->qCustomPlotGrafico->replot();
     }
     return QWidget::eventFilter(obj, event);
 }
@@ -641,13 +648,15 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 */
 void MainWindow::relacionAspectodelGrafico()
 {
-    const int w=ui->qCustomPlotGrafico->width();
-    const int h=ui->qCustomPlotGrafico->height();
-    const QRect rect=ui->qCustomPlotGrafico->geometry();
-    if(w>h)
-        ui->qCustomPlotGrafico->setGeometry(rect.x()+((w-h)/2),rect.y(),h,h);
-    else
-        ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y()+((h-w)/2),w,w);
+    if(prueba->getNumeroPrueba()!=-1){
+        const int w=ui->qCustomPlotGrafico->width();
+        const int h=ui->qCustomPlotGrafico->height();
+        const QRect rect=ui->qCustomPlotGrafico->geometry();
+        if(w>h)
+            ui->qCustomPlotGrafico->setGeometry(rect.x()+((w-h)/2),rect.y(),h,h);
+        else
+            ui->qCustomPlotGrafico->setGeometry(rect.x(),rect.y()+((h-w)/2),w,w);
+    }
 }
 
 /*
@@ -719,6 +728,8 @@ void MainWindow::activarActions()
 
 void MainWindow::conectarActionsParaIrATabs()
 {
+    connect(ui->actionGraficoPrincipal,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico); });
+
     connect(ui->actionReporte,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_resultados); });
 
     connect(ui->actionTablaAngulos,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaAngulos); });
@@ -736,6 +747,7 @@ void MainWindow::conectarActionsParaIrATabs()
 
 void MainWindow::iniciarPrueba()
 {
+    calibrado=false;
     limpiarListasyOcultarBotones();
     desactivarActions();
 
@@ -760,7 +772,7 @@ void MainWindow::iniciarPrueba()
         ui->labelGuardarMuestras->setText("Guardar\nDatos\nDesp..");
 
     ui->tabWidgetGrafico_Resultados->setTabEnabled(0,true);
-    calibrado=false;
+
     ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico);
     ui->centralWidget->adjustSize();
     desactivarTabs();
@@ -810,7 +822,7 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
 {
     if(!cronometro.isValid()){
         cronometro.start();
-        QString texto="Calibrando Sensores espere"+QString::number(ajustesCalculoAngulo->tiempoCalibracion)+" seg";
+        QString texto="Calibrando sensores espere: "+QString::number(ajustesCalculoAngulo->tiempoCalibracion)+" seg.";
         dialogCarga->setTextoCarga(texto);
         dialogCarga->iniciarMovie();
         dialogCarga->exec();
@@ -915,43 +927,8 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 
             //Comienza actualizacion elementos de la interfaz
             //Se pregunta y envia el dato para graficar
-            if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0){
-                if(prueba->getNumeroPrueba()!=-1){
-                    if(prueba->getAjustesGrafico().Unidad.contains("grados"))
-                        emit emitAnguloGraficoTiempoReal(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
-                    else{
-                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
-                            emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoProyeccion().Desplazamiento1,desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
-                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
-                            emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1,desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
-                    }
-                }
-                else
-                    if(prueba->getAjustesGrafico().Unidad.contains("grados"))
-                    {
-                        if(ui->comboBoxTipoGrafico->currentText().contains("AX"))
-                            emitAnguloGraficoTiempoReal(angulo->getTiempo(),angulo->getAngulo1());
-                        if(ui->comboBoxTipoGrafico->currentText().contains("AY"))
-                            emitAnguloGraficoTiempoReal(angulo->getTiempo(),angulo->getAngulo2());
-                    }
-                    else{
-                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
-                        {
-                            if(ui->comboBoxTipoGrafico->currentText().contains("AX"))
-                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoProyeccion().Desplazamiento1);
-                            if(ui->comboBoxTipoGrafico->currentText().contains("AY"))
-                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
-                        }
-                        if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
-                        {
-                            if(ui->comboBoxTipoGrafico->currentText().contains("AX"))
-                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1);
-                            if(ui->comboBoxTipoGrafico->currentText().contains("AY"))
-                                emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
-
-                        }
-                    }
-            }
+            if(prueba->listaMuestras.size() % prueba->getDivisorFPS()==0)
+                seleccionarDatoAGraficar(angulo,desplazamiento);
 
             if(prueba->getTiempoPrueba()!=qInf())//Si el tiempo es distinto de infinito se calcula el porcentaje
             {
@@ -979,11 +956,51 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         {
             cronometro.invalidate();
             mostrarResultados();
+            ui->actionGraficoPrincipal->blockSignals(false);
         }
     }
-
     else
         calibrar(AcX,AcY,AcZ,GyX,GyY,GyZ);
+}
+
+void MainWindow::seleccionarDatoAGraficar(Angulo *angulo,Desplazamiento *desplazamiento)
+{
+    if(prueba->getNumeroPrueba()!=-1){
+        if(prueba->getAjustesGrafico().Unidad.contains("grados"))
+            emit emitAnguloGraficoTiempoReal(angulo->getAngulo1(),angulo->getAngulo2());
+        else{
+            if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+                emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoProyeccion().Desplazamiento1,desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
+            if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
+                emit emitAnguloGraficoTiempoReal(desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1,desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
+        }
+    }
+    else{
+        if(prueba->getAjustesGrafico().Unidad.contains("grados"))
+        {
+            if(ui->comboBoxTipoGrafico->currentText().toLower().contains("medio-lateral"))
+                emitAnguloGraficoTiempoReal(angulo->getTiempo(),angulo->getAngulo1());
+            if(ui->comboBoxTipoGrafico->currentText().toLower().contains("antero-posterior"))
+                emitAnguloGraficoTiempoReal(angulo->getTiempo(),angulo->getAngulo2());
+        }
+        else{
+            if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("proyeccion"))
+            {
+                if(ui->comboBoxTipoGrafico->currentText().toLower().contains("medio-lateral"))
+                    emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoProyeccion().Desplazamiento1);
+                if(ui->comboBoxTipoGrafico->currentText().toLower().contains("antero-posterior"))
+                    emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoProyeccion().Desplazamiento2);
+            }
+            if(prueba->getAjustesGrafico().CalculoDesplazamiento.contains("curvo"))
+            {
+                if(ui->comboBoxTipoGrafico->currentText().toLower().contains("medio-lateral"))
+                    emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento1);
+                if(ui->comboBoxTipoGrafico->currentText().toLower().contains("antero-posterior"))
+                    emitAnguloGraficoTiempoReal(desplazamiento->getTiempo(),desplazamiento->getDesplazamientoRecorridoCurvo().Desplazamiento2);
+
+            }
+        }
+    }
 }
 
 /*

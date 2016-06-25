@@ -188,7 +188,7 @@ QMessageBox QPushButton:hover {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="widgetWelcome">
        <property name="styleSheet">
@@ -483,7 +483,8 @@ QPushButton:hover {
 }</string>
             </property>
             <property name="text">
-             <string>Analizar X e Y</string>
+             <string>Análisis en Tiempo
+A-P M-L</string>
             </property>
            </widget>
           </item>
@@ -852,12 +853,12 @@ Resultados</string>
                 <widget class="QComboBox" name="comboBoxTipoGrafico">
                  <item>
                   <property name="text">
-                   <string>Tiempo AX</string>
+                   <string>Tiempo,Medio-Lateral</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Tiempo AY</string>
+                   <string>Tiempo,Antero-Posterior</string>
                   </property>
                  </item>
                 </widget>
@@ -1089,7 +1090,7 @@ border: 3px solid #398439;
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <property name="elideMode">
               <enum>Qt::ElideLeft</enum>
@@ -1944,6 +1945,7 @@ QProgressBar:hover {
      <addaction name="actionTablaMuestras"/>
      <addaction name="actionGraficoMuestras"/>
     </widget>
+    <addaction name="actionGraficoPrincipal"/>
     <addaction name="actionReporte"/>
     <addaction name="menu_Angulos"/>
     <addaction name="menuDesplazmientos"/>
@@ -2117,21 +2119,37 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionTablaAngulos">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
+   </property>
    <property name="text">
     <string>Tabla Ángulos</string>
    </property>
   </action>
   <action name="actionGraficoAngulos">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
+   </property>
    <property name="text">
     <string>Gráfico Ángulos</string>
    </property>
   </action>
   <action name="actionTablaDesplazamientoProyeccion">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
+   </property>
    <property name="text">
     <string>Tabla Desplazamiento Proyección</string>
    </property>
   </action>
   <action name="actionGraficoDesplazamientoProyeccion">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
+   </property>
    <property name="text">
     <string>Gráfico Desplazamiento Proyeccion</string>
    </property>
@@ -2140,6 +2158,10 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionGraficoDesplazamientoRecorridoCurvo">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
+   </property>
    <property name="text">
     <string>Gráfico Desplazamiento Recorrido Curvo</string>
    </property>
@@ -2148,6 +2170,10 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionTablaDesplazamientoRecorridoCurvo">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
+   </property>
    <property name="text">
     <string>Tabla Desplazamiento Recorrido Curvo</string>
    </property>
@@ -2156,11 +2182,19 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionTablaMuestras">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/data-icon.png</normaloff>:/images/data-icon.png</iconset>
+   </property>
    <property name="text">
     <string>Tabla Muestras</string>
    </property>
   </action>
   <action name="actionGraficoMuestras">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
+   </property>
    <property name="text">
     <string>Gráfico Muestras</string>
    </property>
@@ -2169,8 +2203,24 @@ QProgressBar:hover {
    </property>
   </action>
   <action name="actionReporte">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/results_icon.png</normaloff>:/images/results_icon.png</iconset>
+   </property>
    <property name="text">
     <string>Reporte</string>
+   </property>
+  </action>
+  <action name="actionGraficoPrincipal">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/graficos.png</normaloff>:/images/graficos.png</iconset>
+   </property>
+   <property name="text">
+    <string>Gráfico Principal</string>
+   </property>
+   <property name="toolTip">
+    <string>Gráfico Principal</string>
    </property>
   </action>
  </widget>

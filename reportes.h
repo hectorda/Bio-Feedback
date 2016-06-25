@@ -35,7 +35,7 @@ public:
     void setDatosTablasDesplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
     void setDatosTablaMuestras(QVector<Muestra *> listaMuestras);
     void setDatosGraficoAngulos(QVector<Angulo *> listaAngulos);
-    void setDatosGraficoDezplazamiento(QVector<Desplazamiento *> listaDesplazamientos);
+    void setDatosGraficosDezplazamientos(QVector<Desplazamiento *> listaDesplazamientos);
     void setDatosGraficoMuestras(QVector<Muestra *> listaMuestras);
     void inicializarInformeReporte();
 

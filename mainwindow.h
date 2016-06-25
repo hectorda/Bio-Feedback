@@ -71,6 +71,7 @@ private slots:
     void regresarInicio();
     void obtenerRaw(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
     void calibrar(const double AcX, const double AcY, const double AcZ, const double GyX, const double GyY, const double GyZ);
+    void seleccionarDatoAGraficar(Angulo *angulo, Desplazamiento *desplazamiento);
     void on_stackedWidget_currentChanged(int arg1);
 
 signals:
