@@ -30,6 +30,7 @@ void DialogCarga::iniciar(double tiempo)
     porcentaje=0;
     timer->start(tiempo/100.0);
     movie->start();
+    show();
 }
 
 void DialogCarga::actualizarPorcentaje()
@@ -38,8 +39,9 @@ void DialogCarga::actualizarPorcentaje()
     ui->progressBar->setValue(porcentaje);
 }
 
-void DialogCarga::pararMovie()
+void DialogCarga::parar()
 {
     movie->stop();
     timer->stop();
+    hide();
 }

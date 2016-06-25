@@ -19,7 +19,7 @@ public:
 
     void setTextoCarga(QString &texto);
     void iniciar(double tiempo);
-    void pararMovie();
+    void parar();
 
 private:
     Ui::DialogCarga *ui;

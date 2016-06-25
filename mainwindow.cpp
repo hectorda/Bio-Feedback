@@ -678,13 +678,11 @@ void MainWindow::configurarArduino()
         timer->setSingleShot(true);
 
         connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
-        connect(timer, QTimer::timeout, [=]() { dialogCarga->close();});
-        connect(timer, QTimer::timeout, [=]() { iniciarPrueba(); });
+        connect(timer, QTimer::timeout, [=]() { dialogCarga->parar(); iniciarPrueba(); });
         connect(timer, QTimer::timeout, [=]() { timer->stop();});
-        connect(timer, QTimer::timeout, [=]() { delete timer; dialogCarga->pararMovie();});
+        connect(timer, QTimer::timeout, [=]() { delete timer;});
 
         timer->start(tiempo); //Se fija el tiempo de accion en 3 seg
-        dialogCarga->exec();
     }
     else
         QMessageBox::warning(this,"Error al conectar","Error Abriendo el Puerto Serial",QMessageBox::Ok);
@@ -825,7 +823,6 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
         QString texto="Calibrando sensores espere: "+QString::number(tiempo/1000)+" seg.";
         dialogCarga->setTextoCarga(texto);
         dialogCarga->iniciar(tiempo);
-        dialogCarga->exec();
     }
 
     double tiempo=cronometro.elapsed()/1000.0;
@@ -854,8 +851,7 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
     if(cronometro.elapsed()>ajustesCalculoAngulo->tiempoCalibracion){
         calibrado=true;
         prueba->listaAngulos.clear();
-        dialogCarga->close();
-        dialogCarga->pararMovie();
+        dialogCarga->parar();
     }
 }
 
