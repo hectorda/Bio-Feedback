@@ -87,7 +87,7 @@ void AjustesCalculoAngulo::aplicar()
     {
         filtro=ui->comboBoxFiltroAngulo->currentText();
         alpha=ui->doubleSpinBoxAlphaFC->value();
-        tiempoCalibracion=ui->spinBoxTiempoCalibracion->value();
+        tiempoCalibracion=ui->spinBoxTiempoCalibracion->value()*1000;
         close();
     }
 }

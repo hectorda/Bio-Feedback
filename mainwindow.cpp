@@ -822,7 +822,7 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
     if(!cronometro.isValid()){
         cronometro.start();
         const double tiempo=ajustesCalculoAngulo->tiempoCalibracion;
-        QString texto="Calibrando sensores espere: "+QString::number(tiempo)+" seg.";
+        QString texto="Calibrando sensores espere: "+QString::number(tiempo/1000)+" seg.";
         dialogCarga->setTextoCarga(texto);
         dialogCarga->iniciar(tiempo);
         dialogCarga->exec();
@@ -851,7 +851,7 @@ void MainWindow::calibrar(const double AcX,const double AcY, const double AcZ, c
     else
         calibrado=true;
 
-    if(cronometro.elapsed()/1000.0>ajustesCalculoAngulo->tiempoCalibracion){
+    if(cronometro.elapsed()>ajustesCalculoAngulo->tiempoCalibracion){
         calibrado=true;
         prueba->listaAngulos.clear();
         dialogCarga->close();

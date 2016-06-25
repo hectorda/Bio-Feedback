@@ -12,7 +12,6 @@ DialogCarga::DialogCarga(QWidget *parent) :
     ui->labelMovie->setMovie(movie);
     movie->setScaledSize(QSize(50,50));
     timer=new QTimer();
-    porcentaje=0;
     connect(timer,SIGNAL(timeout()),this,SLOT(actualizarPorcentaje()));
 }
 
