@@ -54,7 +54,7 @@ void Prueba::setDivisorFPS(const int divisor)
     this->divisorFPS=divisor;
 }
 
-void Prueba::setListaObjetivos(const QVector<QCPItemEllipse *> listaObjetivos)
+void Prueba::setListaObjetivos(const QVector<Objetivo *> listaObjetivos)
 {
     this->listaObjetivos=listaObjetivos;
 }
@@ -139,7 +139,7 @@ int Prueba::getDivisorFPS()
     return this->divisorFPS;
 }
 
-QVector<QCPItemEllipse*> Prueba::getListaObjetivos()
+QVector<Objetivo*> Prueba::getListaObjetivos()
 {
     return this->listaObjetivos;
 }
@@ -189,6 +189,8 @@ void Prueba::limpiarListas()
     this->listaMuestras.clear();
     this->listaAngulos.clear();
     this->listaDesplazamientos.clear();
+    foreach (Objetivo *var, this->listaObjetivos)
+        var->pararTimer();
     this->listaObjetivos.clear();
 }
 

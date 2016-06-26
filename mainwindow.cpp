@@ -339,25 +339,25 @@ void MainWindow::desactivarSpacerEntreBotones()
 */
 void MainWindow::generarObjetivos()
 {
+
     const int pruebaNumero=prueba->getNumeroPrueba();
     if(pruebaNumero==3||pruebaNumero==4)
     {
         const int distanciaCentro=prueba->getAjustesGrafico().RadioInterior;
-        const int cantidadObjetivos=pruebaNumero==3? 8: 4;
-        for (int var = 0; var < cantidadObjetivos; ++var){
-            QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-            ui->qCustomPlotGrafico->addItem(objetivo);
+        const int cantidadObjetivos=pruebaNumero==3 ? 8: 4;
+        for (int var = 0; var < cantidadObjetivos; ++var){            
+            QCPItemEllipse *circulo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+            ui->qCustomPlotGrafico->addItem(circulo);
             const double angulo=2*var*((M_PI)/cantidadObjetivos); //
-            objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo);
-            objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo);
-            objetivo->setBrush(QBrush(Qt::red));
+            const double centrox=qCos(angulo)*distanciaCentro;
+            const double centroy=qSin(angulo)*distanciaCentro;
+            Objetivo *objetivo=new Objetivo(circulo,centrox,centroy,prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().colorObjetivoSinMarcar);
             prueba->listaObjetivos.append(objetivo);
         }
-        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-        ui->qCustomPlotGrafico->addItem(objetivo);
-        objetivo->topLeft->setCoords(-prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().RadioObjetivo);
-        objetivo->bottomRight->setCoords(prueba->getAjustesGrafico().RadioObjetivo,-prueba->getAjustesGrafico().RadioObjetivo);
-        objetivo->setBrush(QBrush(Qt::red));
+
+        QCPItemEllipse *circulo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+        ui->qCustomPlotGrafico->addItem(circulo);
+        Objetivo *objetivo=new Objetivo(circulo,0,0,prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().colorObjetivoSinMarcar);
         prueba->listaObjetivos.append(objetivo);
     }
     if(pruebaNumero==1 || pruebaNumero==2)
@@ -377,19 +377,15 @@ void MainWindow::generarObjetivos()
 
                 if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior-prueba->getAjustesGrafico().RadioObjetivo),2)){//Si es que no se sale del radio exterior
                     bool noIntersectaOtros=true;
-                    foreach (QCPItemEllipse *P, prueba->listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
-                        const double perteneceCirc=qSqrt(qPow((randomx - (P->topLeft->coords().x()+prueba->getAjustesGrafico().RadioObjetivo)),2)+qPow((randomy - (P->topLeft->coords().y()-prueba->getAjustesGrafico().RadioObjetivo)),2));
+                    foreach (Objetivo *P, prueba->listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
                         //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
-                        if( perteneceCirc < 2*prueba->getAjustesGrafico().RadioObjetivo + 0.5)
+                        if(P->PertenecePuntoAlObjetivo(randomx,randomy))
                             noIntersectaOtros=false;
                     }
                     if(noIntersectaOtros){
-                        QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-                        ui->qCustomPlotGrafico->addItem(objetivo);
-
-                        objetivo->topLeft->setCoords(randomx-prueba->getAjustesGrafico().RadioObjetivo,randomy+prueba->getAjustesGrafico().RadioObjetivo);
-                        objetivo->bottomRight->setCoords(randomx+prueba->getAjustesGrafico().RadioObjetivo,randomy-prueba->getAjustesGrafico().RadioObjetivo);
-                        objetivo->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
+                        QCPItemEllipse *circulo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+                        ui->qCustomPlotGrafico->addItem(circulo);
+                        Objetivo *objetivo=new Objetivo(circulo,randomx,randomy,prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().colorObjetivoSinMarcar);
                         prueba->listaObjetivos.append(objetivo);
 
                         cantidadintentos=0;
@@ -403,12 +399,12 @@ void MainWindow::generarObjetivos()
         {
             const int distanciaCentro=prueba->getAjustesGrafico().RadioInterior;
             for (int var = 0; var < cantidadObjetivos; ++var){
-                QCPItemEllipse *objetivo=new QCPItemEllipse(ui->qCustomPlotGrafico);
-                ui->qCustomPlotGrafico->addItem(objetivo);
+                QCPItemEllipse *circulo=new QCPItemEllipse(ui->qCustomPlotGrafico);
+                ui->qCustomPlotGrafico->addItem(circulo);
                 const double angulo=2*var*((M_PI)/cantidadObjetivos);
-                objetivo->topLeft->setCoords(qCos(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo);
-                objetivo->bottomRight->setCoords(qCos(angulo)*distanciaCentro+prueba->getAjustesGrafico().RadioObjetivo,qSin(angulo)*distanciaCentro-prueba->getAjustesGrafico().RadioObjetivo);
-                objetivo->setBrush(QBrush(Qt::red));
+                const double centrox=qCos(angulo)*distanciaCentro;
+                const double centroy=qSin(angulo)*distanciaCentro;
+                Objetivo *objetivo=new Objetivo(circulo,centrox,centroy,prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().colorObjetivoSinMarcar);
                 prueba->listaObjetivos.append(objetivo);
             }
         }
@@ -461,19 +457,22 @@ void MainWindow::marcarObjetivos(const double x,const double y)
                 static bool centro=true;
                 if(centro)
                 {
-                    QCPItemEllipse *P=prueba->listaObjetivos.last();
-                    parpadeoCirculo(P);
+                    Objetivo *P=prueba->listaObjetivos.last();
+                    P->iniciarParpadeo();
 
-                    if(PertenecePuntoAlObjetivo(x,y,P))
+                    if(P->PertenecePuntoAlObjetivo(x,y)){
                         centro=false;
+                        P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                    }
                 }
                 else{
 
-                    QCPItemEllipse *P=prueba->listaObjetivos.at(0);
-                    parpadeoCirculo(P);
+                    Objetivo *P=prueba->listaObjetivos.at(0);
+                    P->iniciarParpadeo();
 
-                    if(PertenecePuntoAlObjetivo(x,y,P)){
+                    if(P->PertenecePuntoAlObjetivo(x,y)){
                         prueba->listaObjetivos.removeAt(0);
+                        P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
                         ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
                         QTextStream(stdout)<<prueba->listaObjetivos.size()<<endl;
                         centro=true;
@@ -487,12 +486,13 @@ void MainWindow::marcarObjetivos(const double x,const double y)
             {
                 for (int var = 0; var < prueba->listaObjetivos.size(); ++var)//Se recorre la prueba->lista de Objetivos y verifica si se pasa por algun objetivo.
                 {
-                    QCPItemEllipse *P=prueba->listaObjetivos.at(var);
-                    if(P->brush()==QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar)) //Si aun sigue con el color por defecto.
+                    Objetivo *P=prueba->listaObjetivos.at(var);
+                    if(P->getCirculo()->brush()==QBrush(P->getColorSinMarcar())) //Si aun sigue con el color por defecto.
                     {
-                        if(PertenecePuntoAlObjetivo(x,y,P)){
+                        if(P->PertenecePuntoAlObjetivo(x,y)){
                             prueba->listaObjetivos.removeAt(var);
                             ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                            P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
                         }
                     }
                 }
@@ -501,12 +501,13 @@ void MainWindow::marcarObjetivos(const double x,const double y)
             {
                if(!prueba->listaObjetivos.isEmpty())
                {
-                   QCPItemEllipse *P=prueba->listaObjetivos.at(0);
-                   parpadeoCirculo(P);
+                   Objetivo *P=prueba->listaObjetivos.at(0);
+                   P->iniciarParpadeo();
 
-                   if( PertenecePuntoAlObjetivo(x,y,P)){
+                   if(P->PertenecePuntoAlObjetivo(x,y)){
                        prueba->listaObjetivos.removeAt(0);
                        ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                       P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
                    }
                }
             }
@@ -515,33 +516,6 @@ void MainWindow::marcarObjetivos(const double x,const double y)
     //Si no es la Prueba -1 y se escogio la opción de Detener al Marcar.
     if(prueba->getNumeroPrueba()!=-1 && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
-}
-
-/*
-* Se verifica si el punto dado pertenece a un circulo usando geometria
-* En caso pertenecer cambia el color de esta y ademas retorna True
-* En caso contrario retorna False.
-*/
-bool MainWindow::PertenecePuntoAlObjetivo(const double x,const double y,QCPItemEllipse *P){
-    const double perteneceCirc=qSqrt(qPow(( x - (P->topLeft->coords().x()+prueba->getAjustesGrafico().RadioObjetivo)),2)+qPow(( y - (P->topLeft->coords().y()-prueba->getAjustesGrafico().RadioObjetivo)),2));
-    if( perteneceCirc < prueba->getAjustesGrafico().RadioObjetivo){
-        P->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoMarcado));
-        return true;
-    }
-    return false;
-}
-
-/*
-* Dado un QCPItemEllipse se calcula el tiempo y se hace parpadear
-* repintando la elipse entre dos colores
-* según el módulo del tiempo transcurrido
-*/
-void MainWindow::parpadeoCirculo(QCPItemEllipse *P)
-{
-    if(cronometro.elapsed()/1000%2==0)
-         P->setBrush(QBrush(Qt::white));
-    else
-        P->setBrush(QBrush(prueba->getAjustesGrafico().colorObjetivoSinMarcar));
 }
 
 /*

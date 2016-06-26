@@ -11,6 +11,7 @@
 #include <desplazamiento.h>
 #include <Muestra.h>
 #include <paciente.h>
+#include <objetivo.h>
 
 class Prueba : public QObject
 {
@@ -20,7 +21,7 @@ public:
     QVector<Muestra*> listaMuestras;
     QVector<Angulo*> listaAngulos;
     QVector<Desplazamiento*> listaDesplazamientos;
-    QVector<QCPItemEllipse*> listaObjetivos;
+    QVector<Objetivo*> listaObjetivos;
 
     void setNumeroPrueba(const int numero);
     void setCantidadObjetivos(const int cantidadObjetivos);
@@ -31,7 +32,7 @@ public:
     void setTiempoPrueba(const double tiempo);
     void setDivisorFPS();
     void setDivisorFPS(const int divisor);
-    void setListaObjetivos(const QVector<QCPItemEllipse*> listaObjetivos);
+    void setListaObjetivos(const QVector<Objetivo *> listaObjetivos);
     void setAlturaDispositivo(const double altura);
     void setOrientacion(const QString orientacion);
     void setFrecuenciaMuestreo(const double frecuencia);
@@ -50,7 +51,7 @@ public:
     bool getObjetivosEnOrden();
     double getTiempoPrueba();
     int getDivisorFPS();
-    QVector<QCPItemEllipse *> getListaObjetivos();
+    QVector<Objetivo *> getListaObjetivos();
     double getAlturaDispositivo();
     QString getOrientacion();
     double getFrecuenciaMuestreo();

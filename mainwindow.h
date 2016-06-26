@@ -18,6 +18,7 @@
 #include <reportes.h>
 #include <sql.h>
 #include <prueba.h>
+#include <objetivo.h>
 
 //Ventana de Ayuda->acerca de ...
 #include <acerca.h>

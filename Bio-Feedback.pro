@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     ajustescalculoangulo.cpp \
     acerca.cpp \
     paciente.cpp \
-    dialogcarga.cpp
+    dialogcarga.cpp \
+    objetivo.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     ajustescalculoangulo.h \
     acerca.h \
     paciente.h \
-    dialogcarga.h
+    dialogcarga.h \
+    objetivo.h
 
 FORMS    += mainwindow.ui \
     ajustespuertoserial.ui \
