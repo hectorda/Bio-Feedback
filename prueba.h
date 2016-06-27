@@ -61,12 +61,14 @@ public:
 
     AjustesGrafico::Ajustes getAjustesGrafico();
     AjustesPuertoSerial::Ajustes getAjustesPuertoSerial();
-    void limpiarListas();
-    void exportar();
-    bool importar();
 
     Paciente getPaciente() const;
     void setPaciente(const Paciente &value);
+
+    void limpiarListas();
+    void detenerTimerObjetivos();
+    void exportar();
+    bool importar();
 
 signals:
 

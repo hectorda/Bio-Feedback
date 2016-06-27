@@ -184,13 +184,17 @@ AjustesPuertoSerial::Ajustes Prueba::getAjustesPuertoSerial()
     return this->ajustesPuertoSerial;
 }
 
+void Prueba::detenerTimerObjetivos()
+{
+    foreach (Objetivo *o, this->listaObjetivos)
+        o->pararTimer();
+}
+
 void Prueba::limpiarListas()
 {
     this->listaMuestras.clear();
     this->listaAngulos.clear();
     this->listaDesplazamientos.clear();
-    foreach (Objetivo *var, this->listaObjetivos)
-        var->pararTimer();
     this->listaObjetivos.clear();
 }
 

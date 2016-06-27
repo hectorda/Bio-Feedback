@@ -20,6 +20,7 @@ Objetivo::Objetivo(QCPItemEllipse *cir, double centerx, double centery, int radi
 
 Objetivo::~Objetivo()
 {
+    timerParpadeo->stop();
     delete timerParpadeo;
     delete Circulo;
 }
@@ -97,6 +98,5 @@ void Objetivo::marcarObjetivo(QColor color)
 void Objetivo::pararTimer()
 {
     timerParpadeo->stop();
-
 }
 

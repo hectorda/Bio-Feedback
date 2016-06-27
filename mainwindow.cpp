@@ -221,6 +221,7 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 */
 void MainWindow::mostrarResultados()
 {
+    prueba->detenerTimerObjetivos();
     if(!prueba->listaMuestras.isEmpty()){
         prueba->setCantidadMuestras(prueba->listaMuestras.size());
         prueba->setTiempoTotal(prueba->listaMuestras.last()->getTiempo());
@@ -641,6 +642,7 @@ void MainWindow::configurarArduino()
     const AjustesPuertoSerial::Ajustes aSerial=ajustesSerial->getAjustes();
     if(lectorSerial->abrirPuertoSerial(aSerial))//Se abre el puerto serial con sus ajustes respectivos
     {
+        prueba->detenerTimerObjetivos();
         prueba->setAjustesPuertoSerial(aSerial);
         prueba->setCadenaConfiguracion(ajustesSensores->getAjustesSensores());
         prueba->setFrecuenciaMuestreo(ajustesSensores->obtenerFrecuenciaMuestreo());
