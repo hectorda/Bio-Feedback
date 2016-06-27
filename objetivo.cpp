@@ -61,8 +61,20 @@ void Objetivo::setColorSinMarcar(const QColor &value)
 * En caso contrario retorna False.
 */
 bool Objetivo::PertenecePuntoAlObjetivo(const double x, const double y){
-    const double perteneceCirc=qSqrt(qPow(( x - ( this->Circulo->topLeft->coords().x()+this->radioObjetivo)),2)+qPow(( y - (this->Circulo->topLeft->coords().y()- this->radioObjetivo)),2));
+    const double centroCirX = this->Circulo->topLeft->coords().x() + this->radioObjetivo;
+    const double centroCirY = this->Circulo->topLeft->coords().y() - this->radioObjetivo;
+    const double perteneceCirc=qSqrt(qPow(( x - centroCirX),2)+qPow(( y - centroCirY),2));
     if( perteneceCirc < this->radioObjetivo)
+        return true;
+    return false;
+}
+
+bool Objetivo::intersectaOtro(const double x,const double y)
+{
+    const double centroCirX = this->Circulo->topLeft->coords().x() + this->radioObjetivo;
+    const double centroCirY = this->Circulo->topLeft->coords().y() - this->radioObjetivo;
+    const double perteneceCirc=qSqrt(qPow(( x - centroCirX),2)+qPow(( y - centroCirY),2));
+    if( perteneceCirc < 2*this->radioObjetivo + 0.1) //Si se encuentra en almenos 2 radios de distancia + 0.1 de separacion para asegurar
         return true;
     return false;
 }

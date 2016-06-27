@@ -221,6 +221,7 @@ void MainWindow::actualizarMensajeBarraEstado(const QString &message)
 */
 void MainWindow::mostrarResultados()
 {
+    cronometro.invalidate();
     prueba->detenerTimerObjetivos();
     if(!prueba->listaMuestras.isEmpty()){
         prueba->setCantidadMuestras(prueba->listaMuestras.size());
@@ -379,8 +380,7 @@ void MainWindow::generarObjetivos()
                 if(ecuacionCircExt<=qPow(double(prueba->getAjustesGrafico().RadioExterior-prueba->getAjustesGrafico().RadioObjetivo),2)){//Si es que no se sale del radio exterior
                     bool noIntersectaOtros=true;
                     foreach (Objetivo *P, prueba->listaObjetivos){//Se analiza si el candidato a agregar no intersecta con otros ya agregados
-                        //QTextStream(stdout)<<"x:"<<P->center->toQCPItemPosition()->coords().x()<<" y:"<<P->center->toQCPItemPosition()->coords().y()<<endl;
-                        if(P->PertenecePuntoAlObjetivo(randomx,randomy))
+                        if(P->intersectaOtro(randomx,randomy))
                             noIntersectaOtros=false;
                     }
                     if(noIntersectaOtros){
@@ -388,7 +388,6 @@ void MainWindow::generarObjetivos()
                         ui->qCustomPlotGrafico->addItem(circulo);
                         Objetivo *objetivo=new Objetivo(circulo,randomx,randomy,prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().colorObjetivoSinMarcar);
                         prueba->listaObjetivos.append(objetivo);
-
                         cantidadintentos=0;
                     }
                     else
@@ -639,6 +638,7 @@ void MainWindow::relacionAspectodelGrafico()
 */
 void MainWindow::configurarArduino()
 {
+    calibrado=false;
     const AjustesPuertoSerial::Ajustes aSerial=ajustesSerial->getAjustes();
     if(lectorSerial->abrirPuertoSerial(aSerial))//Se abre el puerto serial con sus ajustes respectivos
     {
@@ -720,7 +720,6 @@ void MainWindow::conectarActionsParaIrATabs()
 
 void MainWindow::iniciarPrueba()
 {
-    calibrado=false;
     limpiarListasyOcultarBotones();
     desactivarActions();
 
@@ -926,8 +925,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
         }
         else//Si se agoto el tiempo de la preueba
         {
-            cronometro.invalidate();
-            mostrarResultados();
+            ui->pushButtonDetenerPrueba->click();
             ui->actionGraficoPrincipal->blockSignals(false);
         }
     }
@@ -984,6 +982,7 @@ void MainWindow::on_pushButtonReiniciarPrueba_clicked()
     lectorSerial->cerrarPuertoSerial();
     limpiarGrafico(ui->qCustomPlotGrafico);
     ui->qCustomPlotGrafico->replot();
+    cronometro.invalidate();
     configurarArduino();
 }
 

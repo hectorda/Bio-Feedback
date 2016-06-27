@@ -24,6 +24,7 @@ public:
     void marcarObjetivo(QColor color);
 
     bool PertenecePuntoAlObjetivo(const double x, const double y);
+    bool intersectaOtro(const double x, const double y);
     void iniciarParpadeo();
     void parpadeoCirculo();
     void pararTimer();

@@ -28,7 +28,7 @@ void DialogCarga::setTextoCarga(QString &texto)
 void DialogCarga::iniciar(double tiempo)
 {
     porcentaje=0;
-    timer->start(tiempo/100.0);
+    timer->start(tiempo/100);
     movie->start();
     show();
 }
@@ -43,5 +43,5 @@ void DialogCarga::parar()
 {
     movie->stop();
     timer->stop();
-    hide();
+    close();
 }
