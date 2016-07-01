@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QtMath>
-#include <muestra.h>
+#include <Muestra.h>
 #include <Kalman.h>
 
 class Angulo

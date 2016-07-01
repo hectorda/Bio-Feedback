@@ -1,4 +1,4 @@
-#include "muestra.h"
+#include "Muestra.h"
 
 Muestra::Muestra()
 {

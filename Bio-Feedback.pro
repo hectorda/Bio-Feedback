@@ -26,7 +26,7 @@ SOURCES += main.cpp\
     analisisgrafico.cpp \
     desplazamiento.cpp \
     prueba.cpp \
-    muestra.cpp \
+    Muestra.cpp \
     Kalman.cpp \
     ajustescalculoangulo.cpp \
     acerca.cpp \
@@ -48,7 +48,7 @@ HEADERS  += mainwindow.h \
     analisisgrafico.h \
     desplazamiento.h \
     prueba.h \
-    muestra.h \
+    Muestra.h \
     Kalman.h \
     ajustescalculoangulo.h \
     acerca.h \

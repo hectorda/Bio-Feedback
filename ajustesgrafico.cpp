@@ -74,8 +74,9 @@ void AjustesGrafico::llenarParametrosComboBox()
     ui->comboBoxUnidadGrafico->addItem(QString("Centímetros"),0);
     ui->comboBoxUnidadGrafico->addItem(QString("Grados"),1);
 
-    ui->comboBoxCalculoDesplazamiento->addItem(QString("Recorrido Curvo"),0);
-    ui->comboBoxCalculoDesplazamiento->addItem(QString("Proyeccion"),1);
+    ui->comboBoxCalculoDesplazamiento->addItem(QString("Proyeccion"),0);
+    ui->comboBoxCalculoDesplazamiento->addItem(QString("Recorrido Curvo"),1);
+
 
 }
 

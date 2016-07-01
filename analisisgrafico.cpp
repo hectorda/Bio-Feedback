@@ -31,7 +31,7 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
     this->listaAngulos=LA;
 
     if(this->listaAngulos.isEmpty())
-        QTextStream stdout<<"No hay datos de Angulos a analizar"<<endl;
+        QTextStream (stdout)<<"No hay datos de Angulos a analizar"<<endl;
 
     else
     {
@@ -44,7 +44,7 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
         const int muestras=listaAngulos.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
 
-        connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaAngulos.at(newValue)->getTiempo();
             reportes->moverLineasIzquierdaAngulos(tiempo);
             calcularEstadisticosAngulos(newValue,ui->horizontalSlider->upperValue());
@@ -52,7 +52,7 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaAngulos.at(newValue)->getTiempo();
             reportes->moverLineasDerechaAngulos(tiempo);
             calcularEstadisticosAngulos(ui->horizontalSlider->lowerValue(),newValue);
@@ -60,7 +60,7 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRestaurar,&QPushButton::clicked,[=](){
             reportes->moverLineasIzquierdaAngulos(0);
             reportes->moverLineasDerechaAngulos(listaAngulos.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
@@ -68,13 +68,13 @@ void AnalisisGrafico::setListaAngulos(QVector<Angulo *> LA)
             ajustarRangosGraficoAngulos(0,listaAngulos.size()-1);
         });
 
-        connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
+        connect(ui->pushButtonAplicarRango,&QPushButton::clicked,[=](){
             const int inicio=ui->horizontalSlider->lowerValue();
             const int fin=ui->horizontalSlider->upperValue();
             ajustarRangosGraficoAngulos(inicio,fin);
         });
 
-        connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRescalar,&QPushButton::clicked,[=](){
             reportes->replotGraficoAngulos();
         });
 
@@ -91,7 +91,7 @@ void AnalisisGrafico::setListaDesplazamientosProyeccion(QVector<Desplazamiento *
     this->listaDesplazamientos=LD;
 
     if(this->listaDesplazamientos.isEmpty())
-        QTextStream stdout<<"No hay datos de Desplazamientos a analizar"<<endl;
+        QTextStream (stdout)<<"No hay datos de Desplazamientos a analizar"<<endl;
 
     else
     {
@@ -104,7 +104,7 @@ void AnalisisGrafico::setListaDesplazamientosProyeccion(QVector<Desplazamiento *
         const int muestras=listaDesplazamientos.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
 
-        connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
             reportes->moverLineasIzquierdaDesplazamientosProyeccion(tiempo);
             calcularEstadisticosDesplazamientoProyeccion(newValue,ui->horizontalSlider->upperValue());
@@ -112,7 +112,7 @@ void AnalisisGrafico::setListaDesplazamientosProyeccion(QVector<Desplazamiento *
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
             reportes->moverLineasDerechaDesplazamientosProyeccion(tiempo);
             calcularEstadisticosDesplazamientoProyeccion(ui->horizontalSlider->lowerValue(),newValue);
@@ -120,7 +120,7 @@ void AnalisisGrafico::setListaDesplazamientosProyeccion(QVector<Desplazamiento *
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRestaurar,&QPushButton::clicked,[=](){
             reportes->moverLineasIzquierdaDesplazamientosProyeccion(0);
             reportes->moverLineasDerechaDesplazamientosProyeccion(listaDesplazamientos.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
@@ -128,13 +128,13 @@ void AnalisisGrafico::setListaDesplazamientosProyeccion(QVector<Desplazamiento *
             ajustarRangosGraficoDesplazamientoProyeccion(0,listaDesplazamientos.size()-1);
         });
 
-        connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
+        connect(ui->pushButtonAplicarRango,&QPushButton::clicked,[=](){
             const int inicio=ui->horizontalSlider->lowerValue();
             const int fin=ui->horizontalSlider->upperValue();
             ajustarRangosGraficoDesplazamientoProyeccion(inicio,fin);
         });
 
-        connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRescalar,&QPushButton::clicked,[=](){
             reportes->replotGraficoDesplazamientoProyeccion();
         });
 
@@ -151,7 +151,7 @@ void AnalisisGrafico::setListaDesplazamientosRecorridoCurvo(QVector<Desplazamien
     this->listaDesplazamientos=LD;
 
     if(this->listaDesplazamientos.isEmpty())
-        QTextStream stdout<<"No hay datos de Desplazamientos a analizar"<<endl;
+        QTextStream (stdout)<<"No hay datos de Desplazamientos a analizar"<<endl;
 
     else
     {
@@ -164,7 +164,7 @@ void AnalisisGrafico::setListaDesplazamientosRecorridoCurvo(QVector<Desplazamien
         const int muestras=listaDesplazamientos.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
 
-        connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
             reportes->moverLineasIzquierdaDesplazamientosRecorridoCurvo(tiempo);
             calcularEstadisticosDesplazamientoRecorridoCurvo(newValue,ui->horizontalSlider->upperValue());
@@ -172,7 +172,7 @@ void AnalisisGrafico::setListaDesplazamientosRecorridoCurvo(QVector<Desplazamien
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaDesplazamientos.at(newValue)->getTiempo();
             reportes->moverLineasDerechaDesplazamientosRecorridoCurvo(tiempo);
             calcularEstadisticosDesplazamientoRecorridoCurvo(ui->horizontalSlider->lowerValue(),newValue);
@@ -180,7 +180,7 @@ void AnalisisGrafico::setListaDesplazamientosRecorridoCurvo(QVector<Desplazamien
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRestaurar,&QPushButton::clicked,[=](){
             reportes->moverLineasIzquierdaDesplazamientosRecorridoCurvo(0);
             reportes->moverLineasDerechaDesplazamientosRecorridoCurvo(listaDesplazamientos.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
@@ -188,13 +188,13 @@ void AnalisisGrafico::setListaDesplazamientosRecorridoCurvo(QVector<Desplazamien
             ajustarRangosGraficoDesplazamientoRecorridoCurvo(0,listaDesplazamientos.size()-1);
         });
 
-        connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
+        connect(ui->pushButtonAplicarRango,&QPushButton::clicked,[=](){
             const int inicio=ui->horizontalSlider->lowerValue();
             const int fin=ui->horizontalSlider->upperValue();
             ajustarRangosGraficoDesplazamientoRecorridoCurvo(inicio,fin);
         });
 
-        connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRescalar,&QPushButton::clicked,[=](){
             reportes->replotGraficoDesplazamientoRecorridoCurvo();
         });
 
@@ -212,7 +212,7 @@ void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
     this->listaMuestras=LR;
 
     if(this->listaMuestras.isEmpty())
-        QTextStream stdout<<"No hay datos de Muestras a analizar"<<endl;
+        QTextStream (stdout)<<"No hay datos de Muestras a analizar"<<endl;
 
     else
     {
@@ -224,7 +224,7 @@ void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
         const int muestras=listaMuestras.size()-1;
         ui->horizontalSlider->setMaximum(muestras);
 
-        connect(ui->horizontalSlider,QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::lowerValueChanged, [=](const int &newValue){
             const double tiempo=listaMuestras.at(newValue)->getTiempo();
             reportes->moverLineasIzquierdaMuestras(tiempo);
             calcularEstadisticosMuestras(newValue,ui->horizontalSlider->upperValue());
@@ -232,7 +232,7 @@ void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
             ui->labelRangoInf->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->horizontalSlider,QxtSpanSlider::upperValueChanged, [=](const int &newValue){
+        connect(ui->horizontalSlider,&QxtSpanSlider::upperValueChanged, [=](const int &newValue){
             const double tiempo=listaMuestras.at(newValue)->getTiempo();
             reportes->moverLineasDerechaMuestras(tiempo);
             calcularEstadisticosMuestras(ui->horizontalSlider->lowerValue(),newValue);
@@ -240,7 +240,7 @@ void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
             ui->labelRangoSup->setText(QString::number(tiempo,'f',3)+" seg");
         });
 
-        connect(ui->pushButtonRestaurar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRestaurar,&QPushButton::clicked,[=](){
             reportes->moverLineasIzquierdaMuestras(0);
             reportes->moverLineasDerechaMuestras(listaMuestras.last()->getTiempo());
             ui->horizontalSlider->setLowerValue(0);
@@ -249,13 +249,13 @@ void AnalisisGrafico::setListaMuestras(QVector<Muestra *> LR)
 
         });
 
-        connect(ui->pushButtonAplicarRango,QPushButton::clicked,[=](){
+        connect(ui->pushButtonAplicarRango,&QPushButton::clicked,[=](){
             const int inicio=ui->horizontalSlider->lowerValue();
             const int fin=ui->horizontalSlider->upperValue();
             ajustarRangosGraficoMuestras(inicio,fin);
         });
 
-        connect(ui->pushButtonRescalar,QPushButton::clicked,[=](){
+        connect(ui->pushButtonRescalar,&QPushButton::clicked,[=](){
             reportes->replotGraficoMuestras();
         });
 

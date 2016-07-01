@@ -39,5 +39,6 @@
         <file>images/SQL/insert.png</file>
         <file>images/import.png</file>
         <file>images/export.png</file>
+        <file>images/paciente.png</file>
     </qresource>
 </RCC>

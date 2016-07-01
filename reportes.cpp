@@ -265,8 +265,8 @@ void Reportes::inicializarGraficoDesplazamientosProyeccion()
     bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
     bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
 
-    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientosProyeccion,"Grafico Desplazamiento Medio-Lateral vs Tiempo");
-    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientosProyeccion,"Grafico Desplazamiento Antero-Posterior vs Tiempo");
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientosProyeccion,"Grafico Desplazamiento (Proyección) Medio-Lateral vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientosProyeccion,"Grafico Desplazamiento (Proyección) Antero-Posterior vs Tiempo");
 
     //Se posicionan los layouts
     graficoDesplazamientosProyeccion->plotLayout()->addElement(0, 0, tituloX);
@@ -323,8 +323,8 @@ void Reportes::inicializarGraficoDesplazamientosRecorridoCurvo()
     bottomAxisRect->axis(QCPAxis::atLeft)->setRange(0,2);
     bottomAxisRect->axis(QCPAxis::atBottom)->setRange(0,2);
 
-    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientosRecorridoCurvo,"Grafico Desplazamiento Medio-Lateral vs Tiempo");
-    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientosRecorridoCurvo,"Grafico Desplazamiento Antero-Posterior vs Tiempo");
+    QCPPlotTitle *tituloX=new QCPPlotTitle(graficoDesplazamientosRecorridoCurvo,"Grafico Desplazamiento (Recorrido Curvo) Medio-Lateral vs Tiempo");
+    QCPPlotTitle *tituloY=new QCPPlotTitle(graficoDesplazamientosRecorridoCurvo,"Grafico Desplazamiento (Recorrido Curvo) Antero-Posterior vs Tiempo");
 
     //Se posicionan los layouts
     graficoDesplazamientosRecorridoCurvo->plotLayout()->addElement(0, 0, tituloX);

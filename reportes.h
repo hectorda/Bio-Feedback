@@ -2,7 +2,7 @@
 #define REPORTES_H
 
 #include <QObject>
-#include <muestra.h>
+#include <Muestra.h>
 #include <angulo.h>
 #include <desplazamiento.h>
 #include <qcustomplot.h>

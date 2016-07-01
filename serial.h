@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QSerialPort>
-#include <muestra.h>
+#include <Muestra.h>
 #include <ajustespuertoserial.h>
 
 class Serial : public QObject

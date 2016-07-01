@@ -15,7 +15,7 @@ Objetivo::Objetivo(QCPItemEllipse *cir, double centerx, double centery, int radi
     this->Circulo->topLeft->setCoords(centerx-this->radioObjetivo,centery+this->radioObjetivo);
     this->Circulo->bottomRight->setCoords(centerx+this->radioObjetivo,centery-this->radioObjetivo);
     this->Circulo->setBrush(QBrush(this->colorSinMarcar));
-    connect(timerParpadeo,QTimer::timeout,[=](){ this->parpadeoCirculo();});
+    connect(timerParpadeo,&QTimer::timeout,[=](){ this->parpadeoCirculo();});
 }
 
 Objetivo::~Objetivo()

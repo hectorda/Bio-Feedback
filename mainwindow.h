@@ -75,6 +75,8 @@ private slots:
     void seleccionarDatoAGraficar(Angulo *angulo, Desplazamiento *desplazamiento);
     void on_stackedWidget_currentChanged(int arg1);
 
+    void on_pushButtonEliminarDatosPaciente_clicked();
+
 signals:
     void emitAnguloGraficoTiempoReal(const double x,const double y);
     void emitRawReporte(Muestra*);

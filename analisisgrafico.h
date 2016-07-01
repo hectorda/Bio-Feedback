@@ -6,7 +6,7 @@
 #include <reportes.h>
 #include <angulo.h>
 #include <desplazamiento.h>
-#include <muestra.h>
+#include <Muestra.h>
 
 namespace Ui {
 class AnalisisGrafico;

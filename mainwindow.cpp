@@ -54,6 +54,8 @@ void MainWindow::inicializar()
     ui->radioButtonHorizontalArriba->hide();
     ui->menuVer->addAction(ui->mainToolBar->toggleViewAction());
 
+    ui->pushButtonEliminarDatosPaciente->hide();
+
     ui->qCustomPlotResultados->hide();
     ui->pushButtonVolverPrueba->hide();
 
@@ -93,7 +95,7 @@ void MainWindow::conexiones()
     connect(ui->pushButtonAnalizarGraficoDesplazamientosProyeccion,SIGNAL(clicked()),analisisGraficoDesplazamientoProyeccion,SLOT(show()));
     connect(ui->pushButtonAnalizarGraficoDesplazamientosRecorridoCurvo,SIGNAL(clicked()),analisisGraficoDesplazamientoRecorridoCurvo,SLOT(show()));
     connect(ui->pushButtonAnalizarGraficoMuestras,SIGNAL(clicked()),analisisGraficoMuestras,SLOT(show()));
-    connect(ui->pushButtonGuardarReportePDF,QPushButton::clicked,[=]{ reportes->guardarInformeReportePDF(); });
+    connect(ui->pushButtonGuardarReportePDF,&QPushButton::clicked,[=]{ reportes->guardarInformeReportePDF(); });
 
 
     //Conect de Botones de Prueba
@@ -105,8 +107,8 @@ void MainWindow::conexiones()
 
 
     //Connect de actions
-    connect(ui->actionExportar,QAction::triggered,[=](){ prueba->exportar(); });
-    connect(ui->actionImportar,QAction::triggered,[=](){
+    connect(ui->actionExportar,&QAction::triggered,[=](){ prueba->exportar(); });
+    connect(ui->actionImportar,&QAction::triggered,[=](){
         if(prueba->importar()){
             reportes->setDatosTablaAngulos(prueba->listaAngulos);
             reportes->setDatosGraficoAngulos(prueba->listaAngulos);
@@ -127,10 +129,10 @@ void MainWindow::conexiones()
     connect(ui->actionConfigurar_Grafico,SIGNAL(triggered(bool)),ajustesGrafico,SLOT(exec()));
     connect(ui->actionConfigurar_Angulo,SIGNAL(triggered(bool)),ajustesCalculoAngulo,SLOT(exec()));
     connect(ui->actionSQL,SIGNAL(triggered(bool)),db,SLOT(show()));
-    connect(ui->actionAgregar_Paciente,QAction::triggered,[=]{ db->abrirTabAgregarPaciente("");});
+    connect(ui->actionAgregar_Paciente,&QAction::triggered,[=]{ db->abrirTabAgregarPaciente("");});
     connect(ui->actionInicio,SIGNAL(triggered()),this,SLOT(regresarInicio()));
     connect(ui->actionSalir,SIGNAL(triggered(bool)),this,SLOT(close()));
-    connect(ui->actionAcerca,QAction::triggered,[=]{ Acerca *acerca=new Acerca(this); acerca->exec();});
+    connect(ui->actionAcerca,&QAction::triggered,[=]{ Acerca *acerca=new Acerca(this); acerca->exec();});
     connect(ui->actionQT,SIGNAL(triggered(bool)),qApp,SLOT(aboutQt()));
 }
 
@@ -140,7 +142,8 @@ void MainWindow::inicializarGrafico()
     if(prueba->getNumeroPrueba()!=-1){
         circuloExterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioExterior,prueba->getAjustesGrafico().RadioExterior);
         circuloExterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioExterior,-prueba->getAjustesGrafico().RadioExterior);
-
+        ui->qCustomPlotGrafico->yAxis->setLabel("Antero-Posterior");
+        ui->qCustomPlotGrafico->xAxis->setLabel("Medio-Lateral");
         circuloExterior->setVisible(true);
         circuloExterior->setBrush(QBrush(Qt::yellow));
 
@@ -653,10 +656,10 @@ void MainWindow::configurarArduino()
         QTimer *timer=new QTimer(this); //Se crea un timer para enviar las configuraciones de los sensores
         timer->setSingleShot(true);
 
-        connect(timer, QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
-        connect(timer, QTimer::timeout, [=]() { dialogCarga->parar(); iniciarPrueba(); });
-        connect(timer, QTimer::timeout, [=]() { timer->stop();});
-        connect(timer, QTimer::timeout, [=]() { delete timer;});
+        connect(timer, &QTimer::timeout, [=]() { lectorSerial->escribirDatosSerial(prueba->getCadenaConfiguracion()); });
+        connect(timer, &QTimer::timeout, [=]() { dialogCarga->parar(); iniciarPrueba(); });
+        connect(timer, &QTimer::timeout, [=]() { timer->stop();});
+        connect(timer, &QTimer::timeout, [=]() { delete timer;});
 
         timer->start(tiempo); //Se fija el tiempo de accion en 3 seg
     }
@@ -701,21 +704,21 @@ void MainWindow::activarActions()
 
 void MainWindow::conectarActionsParaIrATabs()
 {
-    connect(ui->actionGraficoPrincipal,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico); });
+    connect(ui->actionGraficoPrincipal,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_grafico); });
 
-    connect(ui->actionReporte,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_resultados); });
+    connect(ui->actionReporte,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_resultados); });
 
-    connect(ui->actionTablaAngulos,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaAngulos); });
-    connect(ui->actionGraficoAngulos,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoAngulos); });
+    connect(ui->actionTablaAngulos,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaAngulos); });
+    connect(ui->actionGraficoAngulos,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoAngulos); });
 
-    connect(ui->actionTablaDesplazamientoProyeccion,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaDesplazamientosProyeccion); });
-    connect(ui->actionGraficoDesplazamientoProyeccion,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoDesplazamientosProyeccion); });
+    connect(ui->actionTablaDesplazamientoProyeccion,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaDesplazamientosProyeccion); });
+    connect(ui->actionGraficoDesplazamientoProyeccion,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoDesplazamientosProyeccion); });
 
-    connect(ui->actionTablaDesplazamientoRecorridoCurvo,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaDesplazamientosRecorridoCurvo); });
-    connect(ui->actionGraficoDesplazamientoRecorridoCurvo,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoDesplazamientosRecorridoCurvo); });
+    connect(ui->actionTablaDesplazamientoRecorridoCurvo,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_tablaDesplazamientosRecorridoCurvo); });
+    connect(ui->actionGraficoDesplazamientoRecorridoCurvo,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoDesplazamientosRecorridoCurvo); });
 
-    connect(ui->actionTablaMuestras,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_TablaMuestras); });
-    connect(ui->actionGraficoMuestras,QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoMuestras); });
+    connect(ui->actionTablaMuestras,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_TablaMuestras); });
+    connect(ui->actionGraficoMuestras,&QAction::triggered,[=](){ ui->tabWidgetGrafico_Resultados->setCurrentWidget(ui->tab_GraficoMuestras); });
 }
 
 void MainWindow::iniciarPrueba()
@@ -870,22 +873,22 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
                 }
             }
 
-    //        if(!prueba->listaAngulos.isEmpty()){
-    //            Angulo *anguloAnterior=prueba->listaAngulos.last();
-    //             objetoAngulo->calcularAngulo(orientacion,dato);
-    //             QTextStream stdout <<objetoAngulo->getTiempo()<<" "<<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
-    //            //if(filtroAngulo.contains("kalman"))
-    //                objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
-    //            QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<" ";
-    //                //if(filtroAngulo.contains("complementario"))
-    //                objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
-    //                QTextStream stdout <<objetoAngulo->getAnguloX()<<" "<<objetoAngulo->getAnguloY()<<endl;
-    //        }
-    //        else{
-    //            objetoAngulo->calcularAngulo(orientacion,dato);
-    //            if(filtroAngulo.contains("kalman"))
-    //                objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAnguloX(),objetoAngulo->getAnguloY());
-    //        }
+//            if(!prueba->listaAngulos.isEmpty()){
+//                Angulo *anguloAnterior=prueba->listaAngulos.last();
+//                 objetoAngulo->calcularAngulo(orientacion,dato);
+//                 QTextStream stdout <<objetoAngulo->getTiempo()<<" "<<objetoAngulo->getAngulo1()<<" "<<objetoAngulo->getAngulo2()<<" ";
+//                //if(filtroAngulo.contains("kalman"))
+//                    objetoAngulo->calcularAnguloFiltroKalman(orientacion,dato, anguloAnterior);
+//                QTextStream stdout <<objetoAngulo->getAngulo1()<<" "<<objetoAngulo->getAngulo2()<<" ";
+//                    //if(filtroAngulo.contains("complementario"))
+//                    objetoAngulo->calcularAnguloFiltroComplementario(orientacion,dato, anguloAnterior,alpha);
+//                    QTextStream stdout <<objetoAngulo->getAngulo1()<<" "<<objetoAngulo->getAngulo2()<<endl;
+//            }
+//            else{
+//                objetoAngulo->calcularAngulo(orientacion,dato);
+//                if(filtroAngulo.contains("kalman"))
+//                    objetoAngulo->setAnguloInicialKalman(objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
+//            }
 
             Angulo *angulo=new Angulo(objetoAngulo->getTiempo(),objetoAngulo->getAngulo1(),objetoAngulo->getAngulo2());
             desplazamiento->calcularDesplazamiento(angulo,prueba->getAlturaDispositivo());
@@ -1254,6 +1257,8 @@ void MainWindow::on_pushButtonBuscarPaciente_clicked()
             ui->labelAlturaPaciente->setText("Altura: "+paciente.getAltura());
 
             prueba->setPaciente(paciente);
+            ui->pushButtonBuscarPaciente->hide();
+            ui->pushButtonEliminarDatosPaciente->show();
         }
     }
 }
@@ -1357,4 +1362,19 @@ void MainWindow::mostarElementosConfigurarPrueba()
     ui->labelObjetivos->show();
     ui->lcdNumberObjetivosRestantes->show();
     ui->labelObjetivosRestantes->show();
+}
+
+void MainWindow::on_pushButtonEliminarDatosPaciente_clicked()
+{
+    ui->pushButtonBuscarPaciente->show();
+    ui->pushButtonEliminarDatosPaciente->hide();
+
+    prueba->setPaciente(Paciente());
+    ui->labelNombrePaciente->setText("Nombre: ");
+    ui->labelApellidoPaciente->setText("Apellido: ");
+    ui->labelEdadPaciente->setText("Edad: ");
+    ui->labelSexoPaciente->setText("Sexo: ");
+    ui->labelPesoPaciente->setText("Peso: ");
+    ui->labelAlturaPaciente->setText("Altura: ");
+    ui->lineEditRut->setText("");
 }
