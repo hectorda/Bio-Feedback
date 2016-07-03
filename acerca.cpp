@@ -7,6 +7,7 @@ Acerca::Acerca(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    ui->labelVersion->setText("Version: 1.0");
     ui->labelBuild->setText(+"Compilado: " __DATE__  " a las: " __TIME__);
     ui->labelQtVersion->setText("Compilado en: " QT_VERSION_STR);
     connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(close()));
