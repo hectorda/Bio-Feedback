@@ -99,12 +99,10 @@ void MainWindow::conexiones()
 
 
     //Conect de Botones de Prueba
-    connect(ui->pushButtonPrueba1,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
-    connect(ui->pushButtonPrueba2,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
-    connect(ui->pushButtonPrueba3,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
-    connect(ui->pushButtonPrueba4,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
-    connect(ui->pushButtonOtro,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
-
+    connect(ui->pushButtonPruebaBase,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonPruebaModoLibre,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonPruebaRombMod,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
+    connect(ui->pushButtonPruebaTiempoAPML,SIGNAL(clicked()),this,SLOT(irAConfigurarPrueba()));
 
     //Connect de actions
     connect(ui->actionExportar,&QAction::triggered,[=](){ prueba->exportar(); });
@@ -139,7 +137,7 @@ void MainWindow::conexiones()
 void MainWindow::inicializarGrafico()
 {
     limpiarGrafico(ui->qCustomPlotGrafico);
-    if(prueba->getNumeroPrueba()!=-1){
+    if(!prueba->getNombrePrueba().contains("Tiempo")){
         circuloExterior->topLeft->setCoords(-prueba->getAjustesGrafico().RadioExterior,prueba->getAjustesGrafico().RadioExterior);
         circuloExterior->bottomRight->setCoords(prueba->getAjustesGrafico().RadioExterior,-prueba->getAjustesGrafico().RadioExterior);
         ui->qCustomPlotGrafico->yAxis->setLabel("Antero-Posterior");
@@ -272,13 +270,16 @@ void MainWindow::llenarInformeReporte()
     reportes->agregarDatosInformeReportePlainText(":edadP" ,prueba->getPaciente().getEdad());
     reportes->agregarDatosInformeReportePlainText(":alturaP" ,prueba->getPaciente().getAltura());
 
-    reportes->agregarDatosInformeReportePlainText(":numeroP",QString::number(prueba->getNumeroPrueba()));
+    reportes->agregarDatosInformeReportePlainText(":nombreP",prueba->getNombrePrueba());
     reportes->agregarDatosInformeReportePlainText(":tiempoPrueba",QString::number(prueba->getTiempoTotal()));
     reportes->agregarDatosInformeReporteImagen(":graficobarras",ui->qCustomPlotResultados->toPixmap(400,400).toImage());
     ui->qCustomPlotGraficoDesplazamientosProyeccion->rescaleAxes();
-    reportes->agregarDatosInformeReporteImagen(":graficodesp",ui->qCustomPlotGraficoDesplazamientosProyeccion->toPixmap(400,400).toImage());
-    reportes->agregarDatosInformeReporteImagen(":analisisdesplazamiento",analisisGraficoDesplazamientoProyeccion->obtenerImagenTablaEstadisticos());
-    reportes->agregarDatosInformeReporteImagen("...",analisisGraficoDesplazamientoRecorridoCurvo->obtenerImagenTablaEstadisticos());
+    reportes->agregarDatosInformeReporteImagen(":graficodespPro",ui->qCustomPlotGraficoDesplazamientosProyeccion->toPixmap(400,400).toImage());
+    ui->qCustomPlotGraficoDesplazamientosRecorridoCurvo->rescaleAxes();
+    reportes->agregarDatosInformeReporteImagen(":graficodespReCurv",ui->qCustomPlotGraficoDesplazamientosRecorridoCurvo->toPixmap(400,400).toImage());
+
+    reportes->agregarDatosInformeReporteImagen(":analisisdesplazamientoProyeccion",analisisGraficoDesplazamientoProyeccion->obtenerImagenTablaEstadisticos());
+    reportes->agregarDatosInformeReporteImagen(":analisisdesplazamientoRecorridoCurvo",analisisGraficoDesplazamientoRecorridoCurvo->obtenerImagenTablaEstadisticos());
 
     ui->textEditReporte->moveCursor(QTextCursor::Start);
 }
@@ -345,11 +346,11 @@ void MainWindow::desactivarSpacerEntreBotones()
 void MainWindow::generarObjetivos()
 {
 
-    const int pruebaNumero=prueba->getNumeroPrueba();
-    if(pruebaNumero==3||pruebaNumero==4)
+    const QString nombrePrueba=prueba->getNombrePrueba();
+    if(nombrePrueba.contains("Base") || nombrePrueba.contains("Romberg"))
     {
         const int distanciaCentro=prueba->getAjustesGrafico().RadioInterior;
-        const int cantidadObjetivos=pruebaNumero==3 ? 8: 4;
+        const int cantidadObjetivos=nombrePrueba.contains("Romberg") ? 8 : 4;
         for (int var = 0; var < cantidadObjetivos; ++var){            
             QCPItemEllipse *circulo=new QCPItemEllipse(ui->qCustomPlotGrafico);
             ui->qCustomPlotGrafico->addItem(circulo);
@@ -365,7 +366,7 @@ void MainWindow::generarObjetivos()
         Objetivo *objetivo=new Objetivo(circulo,0,0,prueba->getAjustesGrafico().RadioObjetivo,prueba->getAjustesGrafico().colorObjetivoSinMarcar);
         prueba->listaObjetivos.append(objetivo);
     }
-    if(pruebaNumero==1 || pruebaNumero==2)
+    if(nombrePrueba.contains("Libre"))
     {
        const int cantidadObjetivos=prueba->getCantidadObjetivos();
 
@@ -451,9 +452,9 @@ QString MainWindow::obtenerOrientacionSensor()
 */
 void MainWindow::marcarObjetivos(const double x,const double y)
 {
-    const int pruebaNumero=prueba->getNumeroPrueba();
+    const QString nombrePrueba=prueba->getNombrePrueba();
     if(!prueba->listaObjetivos.isEmpty()){
-        if(pruebaNumero== 3 || pruebaNumero== 4)
+        if(nombrePrueba.contains("Base") || nombrePrueba.contains("Romberg"))
         {
             if(!prueba->listaObjetivos.isEmpty())
             {
@@ -483,7 +484,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
                 }
             }
         }
-        if(pruebaNumero==1 || pruebaNumero==2)
+        if(nombrePrueba.contains("Libre"))
         {
             if(!prueba->getObjetivosEnOrden())//Si es que se puede ir a cualquier objetivo
             {
@@ -517,7 +518,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
         }
     }
     //Si no es la Prueba -1 y se escogio la opción de Detener al Marcar.
-    if(prueba->getNumeroPrueba()!=-1 && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
+    if(!prueba->getNombrePrueba().contains("Tiempo") && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
 }
 
@@ -527,7 +528,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
 */
 void MainWindow::slotGraficarTiempoReal(const double x,const double y)
 {
-    if(prueba->getNumeroPrueba()!=-1){
+    if(!prueba->getNombrePrueba().contains("Tiempo")){
         marcarObjetivos(x,y); //Se hace parpadear o verifica el objetivo segun las configuraciones de la prueba
 
         if(ui->checkBoxLimitarGrafico->isChecked())
@@ -608,7 +609,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     if (event->type() == QEvent::Resize && obj == ui->dockWidget)
         relacionAspectodelGrafico();
 
-    if(event->type()==QEvent::Wheel && obj == ui->qCustomPlotGrafico && prueba->getNumeroPrueba()!=-1){
+    if(event->type()==QEvent::Wheel && obj == ui->qCustomPlotGrafico && !prueba->getNombrePrueba().contains("Libre")){
         QWheelEvent *wheelEvent = (QWheelEvent *)event;
         QCPRange range=ui->qCustomPlotGrafico->xAxis->range();
         range+=(wheelEvent->delta()/120);
@@ -624,7 +625,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 */
 void MainWindow::relacionAspectodelGrafico()
 {
-    if(prueba->getNumeroPrueba()!=-1){
+    if(!prueba->getNombrePrueba().contains("Tiempo")){
         const int w=ui->qCustomPlotGrafico->width();
         const int h=ui->qCustomPlotGrafico->height();
         const QRect rect=ui->qCustomPlotGrafico->geometry();
@@ -938,7 +939,7 @@ void MainWindow::obtenerRaw(const double AcX, const double AcY, const double AcZ
 
 void MainWindow::seleccionarDatoAGraficar(Angulo *angulo,Desplazamiento *desplazamiento)
 {
-    if(prueba->getNumeroPrueba()!=-1){
+    if(!prueba->getNombrePrueba().contains("Tiempo")){
         if(prueba->getAjustesGrafico().Unidad.contains("grados"))
             emit emitAnguloGraficoTiempoReal(angulo->getAngulo1(),angulo->getAngulo2());
         else{
@@ -1289,19 +1290,15 @@ void MainWindow::irAConfigurarPrueba()
     else
         ui->labelAlturaSugerida->hide();
 
-    if(clicked=="pushButtonPrueba1"){
-        prueba->setNumeroPrueba(1);
+    if(clicked=="pushButtonPruebaModoLibre"){
+        prueba->setNombrePrueba("Modo Libre");
         ui->labelNombrePrueba->setText("Modo Libre");
         ui->groupBoxAjustesPruebaPersonalizada->hide();
     }
-    if(clicked=="pushButtonPrueba2"){
-        prueba->setNumeroPrueba(2);
-        ui->labelNombrePrueba->setText("Prueba 2");
-        ui->groupBoxAjustesPruebaPersonalizada->hide();
-    }
-    if(clicked=="pushButtonPrueba3"){
-        prueba->setNumeroPrueba(3);
-        ui->labelNombrePrueba->setText("Prueba 3");
+
+    if(clicked=="pushButtonPruebaRombMod"){
+        prueba->setNombrePrueba("Romberg Modificado");
+        ui->labelNombrePrueba->setText("Romberg Modificado");
         ui->groupBoxAjustesPruebaPersonalizada->hide();
 
         ui->labelObjetivosAleatorios->hide();
@@ -1310,9 +1307,9 @@ void MainWindow::irAConfigurarPrueba()
         ui->labelOrdenObjetivos->hide();
         ui->checkBoxOrdenObjetivos->hide();
     }
-    if(clicked=="pushButtonPrueba4"){
-        prueba->setNumeroPrueba(4);
-        ui->labelNombrePrueba->setText("Prueba 4:Prueba Base");
+    if(clicked=="pushButtonPruebaBase"){
+        prueba->setNombrePrueba("Prueba Base");
+        ui->labelNombrePrueba->setText("Prueba Base");
         ui->groupBoxAjustesPruebaPersonalizada->hide();
 
         ui->labelCantidadObjetivos->hide();
@@ -1324,8 +1321,9 @@ void MainWindow::irAConfigurarPrueba()
         ui->labelOrdenObjetivos->hide();
         ui->checkBoxOrdenObjetivos->hide();
     }
-    if(clicked=="pushButtonOtro"){
-        prueba->setNumeroPrueba(-1);
+    if(clicked=="pushButtonPruebaTiempoAPML"){
+        prueba->setNombrePrueba("Analisis Tiempo");
+        ui->labelNombrePrueba->setText("Análisis en Tiempo: A-P M-L");
         ui->groupBoxAjustesObjetivos->hide();
         ui->labelLimitarGrafico->hide();
         ui->checkBoxLimitarGrafico->hide();

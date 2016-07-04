@@ -23,7 +23,7 @@ public:
     QVector<Desplazamiento*> listaDesplazamientos;
     QVector<Objetivo*> listaObjetivos;
 
-    void setNumeroPrueba(const int numero);
+    void setNombrePrueba(const QString nombre);
     void setCantidadObjetivos(const int cantidadObjetivos);
     void setAleatorios(const bool aleatorio);
     void setDetenerAlMarcarTodos(const bool detener);
@@ -43,7 +43,7 @@ public:
     void setAjustesGrafico(const AjustesGrafico::Ajustes ajustes);
     void setAjustesPuertoSerial(const AjustesPuertoSerial::Ajustes ajustes);
 
-    int getNumeroPrueba();
+    QString getNombrePrueba();
     int getCantidadObjetivos();
     bool getAleatorios();
     bool getDetenerAlMarcarTodos();
@@ -73,7 +73,7 @@ public:
 signals:
 
 private:
-    int numeroPrueba;
+    QString nombrePrueba;
     int cantidadObjetivos;
     bool aleatorios;
     bool detenerAlMarcarTodos;

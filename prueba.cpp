@@ -5,9 +5,9 @@ Prueba::Prueba(QObject *parent) : QObject(parent)
 
 }
 
-void Prueba::setNumeroPrueba(const int numero)
+void Prueba::setNombrePrueba(const QString nombre)
 {
-    this->numeroPrueba=numero;
+    this->nombrePrueba=nombre;
 }
 
 void Prueba::setCantidadObjetivos(const int numeroObjetivos)
@@ -99,9 +99,9 @@ void Prueba::setAjustesPuertoSerial(const AjustesPuertoSerial::Ajustes ajustes)
     this->ajustesPuertoSerial=ajustes;
 }
 
-int Prueba::getNumeroPrueba()
+QString Prueba::getNombrePrueba()
 {
-    return this->numeroPrueba;
+    return this->nombrePrueba;
 }
 
 int Prueba::getCantidadObjetivos()
@@ -212,7 +212,7 @@ void Prueba::exportar()
             file.remove();
             if (file.open(QIODevice::Append)){
                 QTextStream stream(&file);
-                stream <<"Datos Prueba: Numero: "<<this->getNumeroPrueba() <<" Muestras: "<<this->getCantidadMuestras()<<" TiempoMediciones: "<<this->getTiempoTotal()<<" OrientacionSensor: "<<this->getOrientacion()<<" AlturaSensor: "<< this->getAlturaDispositivo()<<endl;;
+                stream <<"Datos Prueba: Nombre: "<<this->getNombrePrueba() <<" Muestras: "<<this->getCantidadMuestras()<<" TiempoMediciones: "<<this->getTiempoTotal()<<" OrientacionSensor: "<<this->getOrientacion()<<" AlturaSensor: "<< this->getAlturaDispositivo()<<endl;;
                 stream <<"Ajustes Serial: Puerto:"<<this->ajustesPuertoSerial.portName<<" "<<this->ajustesPuertoSerial.baudRate<<" "<<this->cadenaConfiguracion<<endl;
                 stream <<"Ajustes Grafico: FPS:"<<this->ajustesGrafico.FPS<<" RadioExterior: "<<this->ajustesGrafico.RadioExterior<<" RadioInterior: "<<this->ajustesGrafico.RadioInterior<<" RadioObjetivo: "<<this->ajustesGrafico.RadioObjetivo<<endl;
                 stream <<"Datos Paciente: Rut: "<<this->paciente.getRut()<< " Nombre: "<< this->paciente.getNombre()<<" Apellido: "<<this->paciente.getApellido()<<" Edad: "<<this->paciente.getEdad()<<" Altura: "<<this->paciente.getAltura()<<endl;
@@ -249,13 +249,17 @@ bool Prueba::importar()
             QStringList listPaciente=stream.readLine().split(" ");
 
             /*** Primera linea del Archivo***/
-            const int pNumero=listPrueba.at(3).toInt();
-            const int muestras=listPrueba.at(5).toInt();
-            const double tMediciones=listPrueba.at(7).toDouble();
-            const QString orSensor=listPrueba.at(9);
-            const double altSensor=listPrueba.at(12).toDouble();
+            QString nombrePrueba=listPrueba.at(3);
+            nombrePrueba.append(" ");
+            nombrePrueba.append(listPrueba.at(4));
+            const int muestras=listPrueba.at(6).toInt();
+            const double tMediciones=listPrueba.at(8).toDouble();
+            QString orSensor=listPrueba.at(10);
+            orSensor.append(" ");
+            orSensor.append(listPrueba.at(11));
+            const double altSensor=listPrueba.at(13).toDouble();
 
-            this->setNumeroPrueba(pNumero);
+            this->setNombrePrueba(nombrePrueba);
             this->setOrientacion(orSensor);
             this->setAlturaDispositivo(altSensor);
             this->setTiempoTotal(tMediciones);
