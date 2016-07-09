@@ -650,7 +650,7 @@ void MainWindow::configurarArduino()
         prueba->setAjustesPuertoSerial(aSerial);
         prueba->setCadenaConfiguracion(ajustesSensores->getAjustesSensores());
         prueba->setFrecuenciaMuestreo(ajustesSensores->obtenerFrecuenciaMuestreo());
-        const double tiempo=3000;
+        const double tiempo=2000;
         QString texto=QString("Actualizando configuracion de sensores\nPuerto: %1\nFrecuencia Muestreo: %2 Hz").arg(ajustesSerial->getAjustes().portName).arg(prueba->getFrecuenciaMuestreo());
         dialogCarga->setTextoCarga(texto);
         dialogCarga->iniciar(tiempo);
@@ -1300,6 +1300,9 @@ void MainWindow::irAConfigurarPrueba()
         prueba->setNombrePrueba("Romberg Modificado");
         ui->labelNombrePrueba->setText("Romberg Modificado");
         ui->groupBoxAjustesPruebaPersonalizada->hide();
+
+        ui->labelCantidadObjetivos->hide();
+        ui->spinBoxCantidadObjetivos->hide();
 
         ui->labelObjetivosAleatorios->hide();
         ui->checkBoxObjetivosAleatorios->hide();
