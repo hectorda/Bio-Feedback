@@ -68,6 +68,19 @@ QGroupBox::title {
         <string>Ajustes de Radios</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="spinBoxRObjetivo">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>90</number>
+          </property>
+          <property name="value">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="1">
          <widget class="QSpinBox" name="spinBoxRInterior">
           <property name="minimum">
@@ -98,6 +111,13 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelRadioCircInterior">
+          <property name="text">
+           <string>Radio círculo interior</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinBoxRExterior">
           <property name="minimum">
@@ -111,27 +131,14 @@ QGroupBox::title {
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelRadioCircInterior">
-          <property name="text">
-           <string>Radio círculo interior</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="spinBoxRObjetivo">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>90</number>
-          </property>
-          <property name="value">
-           <number>2</number>
-          </property>
-         </widget>
-        </item>
        </layout>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelUnidad">
+       <property name="text">
+        <string>Unidad para representación</string>
+       </property>
       </widget>
      </item>
      <item row="1" column="1">
@@ -149,7 +156,7 @@ QGroupBox::title {
         </size>
        </property>
        <property name="title">
-        <string>Ajustes Colores objetivos Y FPS</string>
+        <string>Ajustes Colores objetivosFPS</string>
        </property>
        <layout class="QFormLayout" name="formLayout_3">
         <item row="0" column="0">
@@ -173,23 +180,23 @@ QGroupBox::title {
          <widget class="QComboBox" name="comboBoxColorObjetivosMarcados"/>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="labelFPS">
+         <widget class="QLabel" name="label">
           <property name="text">
-           <string>FPS</string>
+           <string>Tiempo para marcar</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QComboBox" name="comboBoxFPS"/>
+         <widget class="QSpinBox" name="spinBoxTiempoMarcarObjetivos">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+         </widget>
         </item>
        </layout>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelUnidad">
-       <property name="text">
-        <string>Unidad para representación</string>
-       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -199,6 +206,24 @@ QGroupBox::title {
        </item>
        <item>
         <widget class="QComboBox" name="comboBoxCalculoDesplazamiento"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="labelFPS">
+         <property name="text">
+          <string>FPS</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBoxFPS"/>
        </item>
       </layout>
      </item>

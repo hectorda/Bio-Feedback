@@ -345,7 +345,6 @@ void MainWindow::desactivarSpacerEntreBotones()
 */
 void MainWindow::generarObjetivos()
 {
-
     const QString nombrePrueba=prueba->getNombrePrueba();
     if(nombrePrueba.contains("Base") || nombrePrueba.contains("Romberg"))
     {
@@ -454,6 +453,7 @@ void MainWindow::marcarObjetivos(const double x,const double y)
 {
     const QString nombrePrueba=prueba->getNombrePrueba();
     if(!prueba->listaObjetivos.isEmpty()){
+        static double tiempoInicialMarcado=-1;
         if(nombrePrueba.contains("Base") || nombrePrueba.contains("Romberg"))
         {
             if(!prueba->listaObjetivos.isEmpty())
@@ -463,11 +463,15 @@ void MainWindow::marcarObjetivos(const double x,const double y)
                 {
                     Objetivo *P=prueba->listaObjetivos.last();
                     P->iniciarParpadeo();
-
                     if(P->PertenecePuntoAlObjetivo(x,y)){
-                        centro=false;
-                        P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                        if(verificarPermanenciaenObjetivo(tiempoInicialMarcado)){
+                            centro=false;
+                            P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                        }
                     }
+                    else
+                        tiempoInicialMarcado=-1;
+
                 }
                 else{
 
@@ -475,12 +479,17 @@ void MainWindow::marcarObjetivos(const double x,const double y)
                     P->iniciarParpadeo();
 
                     if(P->PertenecePuntoAlObjetivo(x,y)){
-                        prueba->listaObjetivos.removeAt(0);
-                        P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
-                        ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
-                        QTextStream(stdout)<<prueba->listaObjetivos.size()<<endl;
-                        centro=true;
+                        if(verificarPermanenciaenObjetivo(tiempoInicialMarcado)){
+                            prueba->listaObjetivos.removeAt(0);
+                            P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                            ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                            QTextStream(stdout)<<prueba->listaObjetivos.size()<<endl;
+                            centro=true;
+                        }
                     }
+                    else
+                        tiempoInicialMarcado=-1;
+
                 }
             }
         }
@@ -494,10 +503,15 @@ void MainWindow::marcarObjetivos(const double x,const double y)
                     if(P->getCirculo()->brush()==QBrush(P->getColorSinMarcar())) //Si aun sigue con el color por defecto.
                     {
                         if(P->PertenecePuntoAlObjetivo(x,y)){
-                            prueba->listaObjetivos.removeAt(var);
-                            ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
-                            P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                            if(verificarPermanenciaenObjetivo(tiempoInicialMarcado)){
+                                prueba->listaObjetivos.removeAt(var);
+                                ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                                P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+
+                            }
                         }
+                        else
+                            tiempoInicialMarcado=-1;
                     }
                 }
             }
@@ -509,10 +523,14 @@ void MainWindow::marcarObjetivos(const double x,const double y)
                    P->iniciarParpadeo();
 
                    if(P->PertenecePuntoAlObjetivo(x,y)){
-                       prueba->listaObjetivos.removeAt(0);
-                       ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
-                       P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                       if(verificarPermanenciaenObjetivo(tiempoInicialMarcado)){
+                           prueba->listaObjetivos.removeAt(0);
+                           ui->lcdNumberObjetivosRestantes->display(prueba->listaObjetivos.size());
+                           P->marcarObjetivo(prueba->getAjustesGrafico().colorObjetivoMarcado);
+                       }
                    }
+                   else
+                       tiempoInicialMarcado=-1;
                }
             }
         }
@@ -520,6 +538,21 @@ void MainWindow::marcarObjetivos(const double x,const double y)
     //Si no es la Prueba -1 y se escogio la opción de Detener al Marcar.
     if(!prueba->getNombrePrueba().contains("Tiempo") && prueba->getCantidadObjetivos()>0 && prueba->listaObjetivos.isEmpty() && prueba->getDetenerAlMarcarTodos())
         ui->pushButtonDetenerPrueba->click();
+}
+
+boolean MainWindow::verificarPermanenciaenObjetivo(double &tiempoInicialMarcado)
+{
+    if(tiempoInicialMarcado==-1)
+        tiempoInicialMarcado=cronometro.elapsed()/1000.0;
+
+    const double tiempoActual=cronometro.elapsed()/1000.0;
+    if(tiempoActual-tiempoInicialMarcado >= prueba->getAjustesGrafico().tiempoParaMarcar){
+        prueba->tiempoObjetivos.append(tiempoActual);
+        //QTextStream stdout << tiempoActual<<"  tamaño"<< prueba->tiempoObjetivos.size() <<endl;
+        tiempoInicialMarcado=-1;
+        return true;
+    }
+    return false;
 }
 
 /*

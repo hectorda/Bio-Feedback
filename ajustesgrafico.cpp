@@ -94,6 +94,7 @@ void AjustesGrafico::aplicar()
         const QColor colorMarcado=qvariant_cast<QColor>(ui->comboBoxColorObjetivosMarcados->itemData(ui->comboBoxColorObjetivosMarcados->currentIndex(), Qt::DecorationRole));
         ajustesActuales.colorObjetivoSinMarcar = colorSinMarcar;
         ajustesActuales.colorObjetivoMarcado = colorMarcado;
+        ajustesActuales.tiempoParaMarcar = ui->spinBoxTiempoMarcarObjetivos->value();
         hide();
     }
 }

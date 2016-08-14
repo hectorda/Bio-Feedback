@@ -22,6 +22,7 @@ public:
     QVector<Angulo*> listaAngulos;
     QVector<Desplazamiento*> listaDesplazamientos;
     QVector<Objetivo*> listaObjetivos;
+    QVector<double> tiempoObjetivos;
 
     void setNombrePrueba(const QString nombre);
     void setCantidadObjetivos(const int cantidadObjetivos);
@@ -69,6 +70,9 @@ public:
     void detenerTimerObjetivos();
     void exportar();
     bool importar();
+
+    QVector<double> getTiempoObjetivos() const;
+    void setTiempoObjetivos(const QVector<double> &value);
 
 signals:
 

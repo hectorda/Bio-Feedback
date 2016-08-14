@@ -126,6 +126,7 @@ private:
     void generarObjetivos();
     bool PertenecePuntoAlObjetivo(const double x, const double y,QCPItemEllipse *P);
     void parpadeoCirculo(QCPItemEllipse *P);
+    boolean verificarPermanenciaenObjetivo(double &tiempoInicialMarcado);
 
 };
 

@@ -23,6 +23,7 @@ public:
         QString CalculoDesplazamiento;
         QColor colorObjetivoSinMarcar;
         QColor colorObjetivoMarcado;
+        int tiempoParaMarcar;
     };
 
     explicit AjustesGrafico(QWidget *parent = 0);

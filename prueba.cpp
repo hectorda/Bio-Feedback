@@ -5,6 +5,16 @@ Prueba::Prueba(QObject *parent) : QObject(parent)
 
 }
 
+QVector<double> Prueba::getTiempoObjetivos() const
+{
+    return tiempoObjetivos;
+}
+
+void Prueba::setTiempoObjetivos(const QVector<double> &value)
+{
+    tiempoObjetivos = value;
+}
+
 void Prueba::setNombrePrueba(const QString nombre)
 {
     this->nombrePrueba=nombre;
@@ -196,6 +206,7 @@ void Prueba::limpiarListas()
     this->listaAngulos.clear();
     this->listaDesplazamientos.clear();
     this->listaObjetivos.clear();
+    this->tiempoObjetivos.clear();
 }
 
 void Prueba::exportar()
